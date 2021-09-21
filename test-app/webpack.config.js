@@ -9,6 +9,7 @@ module.exports = {
   entry: "./bootstrap.js",
   devtool: 'inline-source-map',
   module: {
+    exprContextCritical: false,
     rules: [{
       test: /\.tsx?$/,
       use: 'ts-loader',

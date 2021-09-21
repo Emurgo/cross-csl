@@ -1,12 +1,12 @@
-import * as WasmV4 from './wasm';
+import { WasmV4Adapter } from './wasm-adapter';
 
-export const createYoroiLib = (wasmV4: typeof WasmV4): YoroiLib => {
+export const createYoroiLib = (wasmV4: WasmV4Adapter): YoroiLib => {
   return new YoroiLib(wasmV4)
 }
 
 export class YoroiLib {
-  private _wasmV4: typeof WasmV4
-  constructor(wasmV4: typeof WasmV4) {
+  private _wasmV4: WasmV4Adapter
+  constructor(wasmV4: WasmV4Adapter) {
     this._wasmV4 = wasmV4
   }
 

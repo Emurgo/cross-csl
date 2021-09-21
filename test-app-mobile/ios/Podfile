@@ -18,4 +18,8 @@ target 'testappmobile' do
   #     flipper_post_install(installer)
   #   end
   # end
+
+
+  pod 'react-native-haskell-shelley', :path => '../node_modules/@emurgo/react-native-haskell-shelley'
+
 end
