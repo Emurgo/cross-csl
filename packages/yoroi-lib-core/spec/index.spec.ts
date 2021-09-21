@@ -34,5 +34,20 @@ export const setupTests = (yoroiLib: YoroiLib, suiteName: string): Mocha.Suite =
         expect(await delta.compare(equal)).to.equals(0)
       })
     })
+
+    describe('LinearFee', () => {
+      it('should create LinearFee', async () => {
+        const coefficient = await yoroiLib.WasmContract.BigNum.from_str('100000')
+        const constant = await yoroiLib.WasmContract.BigNum.from_str('1000')
+
+        const linearFee = await yoroiLib.WasmContract.LinearFee.new(coefficient, constant)
+
+        const compareCoefficient = await linearFee.coefficient()
+        const compareConstant = await linearFee.constant()
+
+        expect(await coefficient.compare(compareCoefficient)).to.equals(0)
+        expect(await constant.compare(compareConstant)).to.equals(0)
+      })
+    })
   })
 }
