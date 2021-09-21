@@ -383,7 +383,7 @@ var __webpack_exports__ = {};
 // A dependency graph that contains any wasm must all be imported
 // asynchronously. This `bootstrap.ts` file does the single async import, so
 // that no one else needs to worry about it again.
-Promise.all(/*! import() */[__webpack_require__.e("vendors-node_modules_mocha_browser-entry_js-packages_yoroi-lib-browser_node_modules_emurgo_ca-ddb9ea"), __webpack_require__.e("node_modules_mocha_lib_sync_recursive-index_ts-packages_yoroi-lib-browser_node_modules_emurgo-7705b3")]).then(__webpack_require__.bind(__webpack_require__, /*! ./index.ts */ "./index.ts"))
+Promise.all(/*! import() */[__webpack_require__.e("vendors-packages_yoroi-lib-browser_node_modules_emurgo_cardano-serialization-lib-browser_card-fbecec"), __webpack_require__.e("packages_yoroi-lib-browser_node_modules_emurgo_cardano-serialization-lib-browser_sync_recursi-57c7c7")]).then(__webpack_require__.bind(__webpack_require__, /*! ./index.ts */ "./index.ts"))
   .catch(e => console.error("Error importing `index.ts`:", e));
 
 /******/ })()

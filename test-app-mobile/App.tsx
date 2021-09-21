@@ -16,7 +16,7 @@ export default function App() {
 
     mocha.setup('bdd');
 
-    const suite = setupTests(yoroiLib);
+    const suite = setupTests(yoroiLib, 'Yoroi Lib Mobile');
     const runner = new Mocha.Runner(suite);
     const reporter = new MochaYoroiReporter(runner);
 
