@@ -65,17 +65,13 @@ abstract class WasmProxy<T> {
   }
 }
 
-abstract class Ptr<T> extends WasmProxy<T> {
+abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
   constructor(wasm: T) {
-    if ((wasm as any).free) {
-      super(wasm)
-    } else {
-      throw 'missing free() function'
-    }
+    super(wasm)
   }
 
   free(): Promise<void> {
-    return Promise.resolve((this.wasm as any).free())
+    return Promise.resolve(this.wasm.free())
   }
 }
 
