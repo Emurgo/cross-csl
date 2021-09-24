@@ -1,5 +1,5 @@
-import { init } from '../src/nodejs'
+import { init } from '../src/nodejs';
 
-import { setupTests } from './index.spec'
+import { setupTests } from './index.spec';
 
-setupTests(init(), 'Yoroi Lib Core')
+setupTests(init(), 'Yoroi Lib Core');
