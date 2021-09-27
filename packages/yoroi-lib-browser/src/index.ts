@@ -19,7 +19,7 @@ export const init = (): YoroiLib => {
 }
 
 class Ptr<T> {
-  private _wasm: T
+  private readonly _wasm: T
 
   get wasm(): T {
     return this._wasm

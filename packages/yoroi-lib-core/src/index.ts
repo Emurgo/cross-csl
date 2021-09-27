@@ -5,7 +5,7 @@ export const createYoroiLib = (wasmV4: WasmContract): YoroiLib => {
 }
 
 export class YoroiLib {
-  private _wasmV4: WasmContract
+  private readonly _wasmV4: WasmContract
 
   get WasmContract(): WasmContract {
     return this._wasmV4
