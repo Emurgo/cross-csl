@@ -8,7 +8,7 @@ Currently we can use the handy [`cardano-serialization-lib`](https://github.com/
 We have three packages:
 - `yoroi-lib-core` core package. Contains the main object `YoroiLib`, that receives a `WasmContract` the specific libraries provide;
 - `yoroi-lib-browser` contains the browser implementation of the `WasmContract`, using the methods and types from the browser's WASM object ([Browser (chrome/firefox) WASM package](https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-browser));
-- `yoroi-lib-browser` contains the browser implementation of the `WasmContract`, using the methods and types from the browser's WASM object ([React-Native mobile bindings](https://github.com/Emurgo/react-native-haskell-shelley));
+- `yoroi-lib-mobile` contains the mobile implementation of the `WasmContract`, using the methods and types from the mobiles's WASM object ([React-Native mobile bindings](https://github.com/Emurgo/react-native-haskell-shelley));
 
 Both the browser and mobile versions export a `init` function which should be used the get an instance of `YoroiLib` with the correct `WasmContract`.
 
