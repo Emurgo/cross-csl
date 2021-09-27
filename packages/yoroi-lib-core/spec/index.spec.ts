@@ -44,10 +44,10 @@ export const setupTests = (
 
     describe('BigNum', () => {
       it('should properly compare', async () => {
-        const delta = await yoroiLib.WasmContract.BigNum.fromStr('1000');
-        const smaller = await yoroiLib.WasmContract.BigNum.fromStr('100');
-        const bigger = await yoroiLib.WasmContract.BigNum.fromStr('10000');
-        const equal = await yoroiLib.WasmContract.BigNum.fromStr('1000');
+        const delta = await yoroiLib.Wasm.BigNum.fromStr('1000');
+        const smaller = await yoroiLib.Wasm.BigNum.fromStr('100');
+        const bigger = await yoroiLib.Wasm.BigNum.fromStr('10000');
+        const equal = await yoroiLib.Wasm.BigNum.fromStr('1000');
 
         expect(await delta.compare(smaller)).to.equals(1);
         expect(await delta.compare(bigger)).to.equals(-1);
@@ -57,12 +57,12 @@ export const setupTests = (
 
     describe('LinearFee', () => {
       it('should create LinearFee', async () => {
-        const coefficient = await yoroiLib.WasmContract.BigNum.fromStr(
+        const coefficient = await yoroiLib.Wasm.BigNum.fromStr(
           '100000'
         );
-        const constant = await yoroiLib.WasmContract.BigNum.fromStr('1000');
+        const constant = await yoroiLib.Wasm.BigNum.fromStr('1000');
 
-        const linearFee = await yoroiLib.WasmContract.LinearFee.new(
+        const linearFee = await yoroiLib.Wasm.LinearFee.new(
           coefficient,
           constant
         );
@@ -90,16 +90,16 @@ export const setupTests = (
             .and.to.contain('image')
             .and.to.contain('path://image');
         };
-        const metaKey = await yoroiLib.WasmContract.BigNum.fromStr('721');
+        const metaKey = await yoroiLib.Wasm.BigNum.fromStr('721');
 
         const metadata =
-          await yoroiLib.WasmContract.GeneralTransactionMetadata.new();
+          await yoroiLib.Wasm.GeneralTransactionMetadata.new();
 
         const shouldBeUndefined = await metadata.get(metaKey);
         expect(shouldBeUndefined).to.be.undefined;
 
         const metadatum =
-          await yoroiLib.WasmContract.encodeJsonStrToMetadatum(
+          await yoroiLib.Wasm.encodeJsonStrToMetadatum(
             JSON.stringify({ image: 'path://image', id: '1' }),
             1 // Basic convertions
           );
@@ -108,7 +108,7 @@ export const setupTests = (
 
         await assertMetadata(metadata);
 
-        const aux = await yoroiLib.WasmContract.AuxiliaryData.new(metadata);
+        const aux = await yoroiLib.Wasm.AuxiliaryData.new(metadata);
         const metaFromAux = await aux.metadata();
 
         await assertMetadata(metaFromAux);

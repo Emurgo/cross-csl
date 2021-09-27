@@ -15,6 +15,7 @@ export interface WasmContract {
     json: string,
     schema: number
   ): Promise<TransactionMetadatum>;
+  minAdaRequired(value: Value, minimumUtxoVal: BigNum): Promise<BigNum>;
   BigNum: typeof BigNum;
   LinearFee: typeof LinearFee;
   GeneralTransactionMetadata: typeof GeneralTransactionMetadata;

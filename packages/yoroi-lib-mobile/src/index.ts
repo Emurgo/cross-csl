@@ -11,6 +11,9 @@ export const init = (): YoroiLib => {
       const wasm = await WasmV4.encode_json_str_to_metadatum(json, schema);
       return Promise.resolve(new Mobile.TransactionMetadatum(wasm));
     },
+    minAdaRequired: async (value: Mobile.Value, minimumUtxoVal: Mobile.BigNum) => {
+      return new Mobile.BigNum(await WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm))
+    },
     BigNum: Mobile.BigNum,
     LinearFee: Mobile.LinearFee,
     GeneralTransactionMetadata: Mobile.GeneralTransactionMetadata,

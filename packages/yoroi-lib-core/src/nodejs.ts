@@ -22,6 +22,9 @@ export const init = (): YoroiLib => {
       const wasm = WasmV4.encode_json_str_to_metadatum(json, schema);
       return Promise.resolve(new NodeJs.TransactionMetadatum(wasm));
     },
+    minAdaRequired: (value: NodeJs.Value, minimumUtxoVal: NodeJs.BigNum) => {
+      return Promise.resolve(new NodeJs.BigNum(WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)))
+    },
     BigNum: NodeJs.BigNum,
     LinearFee: NodeJs.LinearFee,
     GeneralTransactionMetadata: NodeJs.GeneralTransactionMetadata,
