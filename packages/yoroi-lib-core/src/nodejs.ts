@@ -1,11 +1,9 @@
-import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib';
+import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
 import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
 import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src/index';
 
 export const init = (): YoroiLib => {
-  // The methods in the browser's Wasm object are not async,
-  // so we have to create another object to pass to createYoroiLib
   return createYoroiLib({
     encryptWithPassword: (
       password: string,
@@ -22,46 +20,46 @@ export const init = (): YoroiLib => {
     },
     encodeJsonStrToMetadatum: (json: string, schema: number) => {
       const wasm = WasmV4.encode_json_str_to_metadatum(json, schema);
-      return Promise.resolve(new Browser.TransactionMetadatum(wasm));
+      return Promise.resolve(new NodeJs.TransactionMetadatum(wasm));
     },
-    BigNum: Browser.BigNum,
-    LinearFee: Browser.LinearFee,
-    GeneralTransactionMetadata: Browser.GeneralTransactionMetadata,
-    TransactionMetadatum: Browser.TransactionMetadatum,
-    AuxiliaryData: Browser.AuxiliaryData,
-    AssetName: Browser.AssetName,
-    AssetNames: Browser.AssetNames,
-    Assets: Browser.Assets,
-    ScriptHash: Browser.ScriptHash,
-    ScriptHashes: Browser.ScriptHashes,
-    MultiAsset: Browser.MultiAsset,
-    Ed25519KeyHash: Browser.Ed25519KeyHash,
-    TransactionHash: Browser.TransactionHash,
-    TransactionInput: Browser.TransactionInput,
-    Value: Browser.Value,
-    Address: Browser.Address,
-    PublicKey: Browser.PublicKey,
-    Bip32PublicKey: Browser.Bip32PublicKey,
-    ByronAddress: Browser.ByronAddress,
-    TransactionOutput: Browser.TransactionOutput,
-    StakeCredential: Browser.StakeCredential,
-    StakeRegistration: Browser.StakeRegistration,
-    StakeDeregistration: Browser.StakeDeregistration,
-    StakeDelegation: Browser.StakeDelegation,
-    Certificate: Browser.Certificate,
-    Certificates: Browser.Certificates,
-    RewardAddress: Browser.RewardAddress,
-    RewardAddresses: Browser.RewardAddresses,
-    Withdrawals: Browser.Withdrawals,
-    TransactionInputs: Browser.TransactionInputs,
-    TransactionOutputs: Browser.TransactionOutputs,
-    TransactionBody: Browser.TransactionBody,
-    TransactionBuilder: Browser.TransactionBuilder
+    BigNum: NodeJs.BigNum,
+    LinearFee: NodeJs.LinearFee,
+    GeneralTransactionMetadata: NodeJs.GeneralTransactionMetadata,
+    TransactionMetadatum: NodeJs.TransactionMetadatum,
+    AuxiliaryData: NodeJs.AuxiliaryData,
+    AssetName: NodeJs.AssetName,
+    AssetNames: NodeJs.AssetNames,
+    Assets: NodeJs.Assets,
+    ScriptHash: NodeJs.ScriptHash,
+    ScriptHashes: NodeJs.ScriptHashes,
+    MultiAsset: NodeJs.MultiAsset,
+    Ed25519KeyHash: NodeJs.Ed25519KeyHash,
+    TransactionHash: NodeJs.TransactionHash,
+    TransactionInput: NodeJs.TransactionInput,
+    Value: NodeJs.Value,
+    Address: NodeJs.Address,
+    PublicKey: NodeJs.PublicKey,
+    Bip32PublicKey: NodeJs.Bip32PublicKey,
+    ByronAddress: NodeJs.ByronAddress,
+    TransactionOutput: NodeJs.TransactionOutput,
+    StakeCredential: NodeJs.StakeCredential,
+    StakeRegistration: NodeJs.StakeRegistration,
+    StakeDeregistration: NodeJs.StakeDeregistration,
+    StakeDelegation: NodeJs.StakeDelegation,
+    Certificate: NodeJs.Certificate,
+    Certificates: NodeJs.Certificates,
+    RewardAddress: NodeJs.RewardAddress,
+    RewardAddresses: NodeJs.RewardAddresses,
+    Withdrawals: NodeJs.Withdrawals,
+    TransactionInputs: NodeJs.TransactionInputs,
+    TransactionOutputs: NodeJs.TransactionOutputs,
+    TransactionBody: NodeJs.TransactionBody,
+    TransactionBuilder: NodeJs.TransactionBuilder
   });
 };
 
-namespace Browser {
-  abstract class WasmProxy<T> {
+namespace NodeJs {
+  export abstract class WasmProxy<T> {
     private _wasm: T;
 
     get wasm(): T {
@@ -73,7 +71,9 @@ namespace Browser {
     }
   }
 
-  abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
+  export abstract class Ptr<
+    T extends { free: () => any }
+  > extends WasmProxy<T> {
     constructor(wasm: T) {
       super(wasm);
     }
@@ -113,14 +113,12 @@ namespace Browser {
       return Promise.resolve(this.wasm.compare(rhs_value.wasm));
     }
 
-    static async fromBytes(bytes: Uint8Array): Promise<BigNum> {
-      const wasmBigNum = WasmV4.BigNum.from_bytes(bytes);
-      return Promise.resolve(new BigNum(wasmBigNum));
+    static fromBytes(bytes: Uint8Array): Promise<BigNum> {
+      return Promise.resolve(new BigNum(WasmV4.BigNum.from_bytes(bytes)));
     }
 
     static fromStr(string: string): Promise<BigNum> {
-      const wasmBigNum = WasmV4.BigNum.from_str(string);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return Promise.resolve(new BigNum(WasmV4.BigNum.from_str(string)));
     }
   }
 
@@ -229,8 +227,8 @@ namespace Browser {
       return Promise.resolve(new AssetName(this.wasm.get(index)));
     }
 
-    async add(item: AssetName): Promise<void> {
-      this.wasm.add(item.wasm);
+    add(item: AssetName): Promise<void> {
+      return Promise.resolve(this.wasm.add(item.wasm));
     }
 
     static new(): Promise<AssetNames> {
@@ -296,8 +294,8 @@ namespace Browser {
       return Promise.resolve(new ScriptHash(this.wasm.get(index)));
     }
 
-    async add(item: ScriptHash): Promise<void> {
-      this.wasm.add(item.wasm);
+    add(item: ScriptHash): Promise<void> {
+      return Promise.resolve(this.wasm.add(item.wasm));
     }
 
     static fromBytes(bytes: Uint8Array): Promise<ScriptHashes> {
