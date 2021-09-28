@@ -16,7 +16,7 @@ export const setupTests = (
   yoroiLib: YoroiLib,
   suiteName: string
 ): Mocha.Suite => {
-  return describe(suiteName, () => {
+  return describe(suiteName, () => {    
     describe('Yoroi Lib', () => {
       it('should encrypt / decrypt with password', async () => {
         const password = 'my password';
@@ -284,7 +284,7 @@ export const setupTests = (
 
           }
         );
-      });
+      }).timeout(10000);
 
       it('should build unsigned TX for sending all balance', async () => {
         const params = buildDummyTxParameters(true);

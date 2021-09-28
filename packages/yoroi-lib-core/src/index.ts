@@ -466,6 +466,64 @@ export class YoroiLib {
       txBuilder: WasmContract.TransactionBuilder,
       changeAddr: ChangeAddr[]
     }> {
+      const result = await this._newAdaUnsignedTxFromUtxo(
+        outputs,
+        changeAdaAddr,
+        utxos,
+        absSlotNumber,
+        protocolParams,
+        certificates,
+        withdrawals,
+        auxData,
+        allowNoOutputs,
+        false,
+      );
+      const fee = await result.txBuilder.getFeeIfSet();
+    
+      const resultWithOneExtraInput = await this._newAdaUnsignedTxFromUtxo(
+        outputs,
+        changeAdaAddr,
+        utxos,
+        absSlotNumber,
+        protocolParams,
+        certificates,
+        withdrawals,
+        auxData,
+        allowNoOutputs,
+        true,
+      );
+      const feeWithOneExtraInput = await resultWithOneExtraInput.txBuilder.getFeeIfSet();
+    
+      if (feeWithOneExtraInput?.hasValue() && fee?.hasValue() && await feeWithOneExtraInput.compare(fee) < 0) {
+        return resultWithOneExtraInput;
+      }
+      return result;
+    }
+
+  private async _newAdaUnsignedTxFromUtxo(
+    outputs: ReadonlyArray<TxOutput>,
+    changeAdaAddr: AddressingAddress,
+    utxos: Array<RemoteUnspentOutput>,
+    absSlotNumber: BigNumber,
+    protocolParams: {
+      linearFee: WasmContract.LinearFee,
+      minimumUtxoVal: WasmContract.BigNum,
+      poolDeposit: WasmContract.BigNum,
+      keyDeposit: WasmContract.BigNum,
+      networkId: number,
+    },
+    certificates: ReadonlyArray<WasmContract.Certificate>,
+    withdrawals: ReadonlyArray<{
+      address: WasmContract.RewardAddress,
+      amount: WasmContract.BigNum,
+    }>,
+    auxData: WasmContract.AuxiliaryData,
+    allowNoOutputs: boolean,
+    oneExtraInput: boolean): Promise<{
+      senderUtxos: RemoteUnspentOutput[],
+      txBuilder: WasmContract.TransactionBuilder,
+      changeAddr: ChangeAddr[]
+    }> {
 
     const shouldForceChange = async (
       assetsForChange: WasmContract.MultiAsset
@@ -590,15 +648,13 @@ export class YoroiLib {
             (!remainingAssets.hasValue() || await remainingAssets.len() === 0) &&
             usedUtxos.length > 0
           ) {
-            // ToDo: do we need this one extra input logic?
-            break;
-            // if (oneExtraInput) {
-            //   // We've added all the assets we need, but we add one extra.
-            //   // Set the flag so that the adding loop stops after this extra one is added.
-            //   oneExtraAdded = true;
-            // } else {
-            //   break;
-            // }
+            if (oneExtraInput) {
+              // We've added all the assets we need, but we add one extra.
+              // Set the flag so that the adding loop stops after this extra one is added.
+              oneExtraAdded = true;
+            } else {
+              break;
+            }
           }
         }
 
