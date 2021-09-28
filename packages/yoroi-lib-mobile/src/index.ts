@@ -61,6 +61,14 @@ namespace Mobile {
     constructor(wasm: T) {
       this._wasm = wasm;
     }
+
+    hasValue(): boolean {
+      if (this._wasm) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   abstract class Ptr<T extends WasmV4.Ptr> extends WasmProxy<T> {

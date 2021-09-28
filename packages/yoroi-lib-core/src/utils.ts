@@ -1,10 +1,22 @@
 import { BigNumber } from 'bignumber.js';
-import { Address, Addressing, AddressingAddress, DefaultTokenEntry, MultiToken, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from './models';
+import { Address, AddressingUtxo, Addressing, AddressingAddress, CardanoAddressedUtxo, DefaultTokenEntry, MultiToken, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput, SendToken } from './models';
 import * as WasmContract from './wasm-contract';
+
+export function firstWithValue<T extends WasmContract.WasmProxy>(
+  ...objs: T[]
+): T {
+  for (let o of objs) {
+    if (o?.hasValue()) {
+      return o;
+    }
+  }
+
+  throw 'At least one of the arguments should have value';
+}
 
 export const ERROR_NOT_IMPLEMENTED = 'ERROR HANDLING NOT IMPLEMENTED';
 
-enum AddInputResult {
+export enum AddInputResult {
   VALID = 0,
   TOO_SMALL = 1,
   OVERFLOW = 2,
@@ -19,7 +31,7 @@ export async function normalizeToAddress(
   // this function, we try parsing in all encodings possible
 
   // 1) Try converting from base58
-  if (wasm.ByronAddress.isValid(addr)) {
+  if (await wasm.ByronAddress.isValid(addr)) {
     const byronAddr = await wasm.ByronAddress.fromBase58(addr);
     return await byronAddr.toAddress();
   }
@@ -53,7 +65,7 @@ export async function cardanoValueFromMultiToken(
   for (const entry of tokens.nonDefaultEntries()) {
     const { policyId, name } = await identifierToCardanoAsset(wasm, entry.identifier);
 
-    const policyContent = await assets.get(policyId) ?? await wasm.Assets.new();
+    const policyContent = firstWithValue(await assets.get(policyId), await wasm.Assets.new());
 
     await policyContent.insert(
       name,
@@ -68,20 +80,6 @@ export async function cardanoValueFromMultiToken(
   return value;
 }
 
-export async function identifierToCardanoAsset(
-  wasm: WasmContract.WasmContract,
-  identifier: string,
-): Promise<{
-  policyId: WasmContract.ScriptHash,
-  name: WasmContract.AssetName,
-}> {
-  const parts = identifier.split('.');
-  return {
-    policyId: await wasm.ScriptHash.fromBytes(Buffer.from(parts[0], 'hex')),
-    name: await wasm.AssetName.new(Buffer.from(parts[1], 'hex')),
-  };
-}
-
 export async function minRequiredForChange(
   wasm: WasmContract.WasmContract,
   txBuilder: WasmContract.TransactionBuilder,
@@ -93,9 +91,8 @@ export async function minRequiredForChange(
   },
 ): Promise<WasmContract.BigNum> {
   const wasmChange = await normalizeToAddress(wasm, changeAdaAddr.address);
-  if (wasmChange == null) {
-    // throw new Error(`${nameof(minRequiredForChange)} change not a valid Shelley address`);
-    throw ERROR_NOT_IMPLEMENTED;
+  if (!wasmChange.hasValue()) {
+    throw new Error(`minRequiredForChange: change not a valid Shelley address`);
   }
   const minimumAda = await wasm.minAdaRequired(
     value,
@@ -108,7 +105,7 @@ export async function minRequiredForChange(
     if (await coin.compare(minimumAda) < 0) {
       const newVal = await wasm.Value.new(minimumAda);
       const assets = await value.multiasset();
-      if (assets) {
+      if (assets.hasValue()) {
         await newVal.setMultiasset(assets);
       }
       return newVal;
@@ -123,7 +120,7 @@ export async function minRequiredForChange(
   return minRequired;
 }
 
-async function addUtxoInput(
+export async function addUtxoInput(
   wasm: WasmContract.WasmContract,
   txBuilder: WasmContract.TransactionBuilder,
   remaining: {
@@ -136,11 +133,10 @@ async function addUtxoInput(
   protocolParams: {
     networkId: number,
   },
-): Promise<void> {
+): Promise<AddInputResult> {
   const wasmAddr = await normalizeToAddress(wasm, input.receiver);
-  if (wasmAddr == null) {
-    // throw new Error(`${nameof(addUtxoInput)} input not a valid Shelley address`);
-    throw ERROR_NOT_IMPLEMENTED;
+  if (!wasmAddr.hasValue()) {
+    throw new Error(`addUtxoInput input not a valid Shelley address`);
   }
   const txInput = await utxoToTxInput(wasm, input);
   const wasmAmount = await cardanoValueFromRemoteFormat(wasm, input);
@@ -175,7 +171,7 @@ async function addUtxoInput(
       defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
     };
     const tokenSetInInput = new Set(input.assets.map(asset => asset.assetId));
-    const remainingTokens = multiTokenFromCardanoValue(
+    const remainingTokens = await multiTokenFromCardanoValue(
       remaining.value,
       defaultEntry,
     );
@@ -201,11 +197,11 @@ async function addUtxoInput(
     // ignore UTXO that contribute less than their fee if they also don't contribute a token
     if (onlyDefaultEntry && excludeIfSmall) {
       const feeForInput = new BigNumber(
-        txBuilder.fee_for_input(
+        await (await txBuilder.feeForInput(
           wasmAddr,
           txInput,
           wasmAmount
-        ).to_str()
+        )).toStr()
       );
       if (feeForInput.gt(input.amount)) {
         return AddInputResult.TOO_SMALL;
@@ -215,12 +211,12 @@ async function addUtxoInput(
     return skipOverflow();
   }
 
-  const skipResult = skipInput();
+  const skipResult = await skipInput();
   if (skipResult !== AddInputResult.VALID) {
     return skipResult;
   }
 
-  txBuilder.add_input(
+  await txBuilder.addInput(
     wasmAddr,
     txInput,
     wasmAmount
@@ -253,7 +249,10 @@ export async function cardanoValueFromRemoteFormat(
   for (const entry of utxo.assets) {
     const { policyId, name } = await identifierToCardanoAsset(wasm, entry.assetId);
 
-    const policyContent = await assets.get(policyId) ?? await wasm.Assets.new();
+    let policyContent = await assets.get(policyId);
+    if (!policyContent.hasValue()) {
+      policyContent = await wasm.Assets.new();
+    }
 
     await policyContent.insert(
       name,
@@ -273,13 +272,14 @@ export async function multiTokenFromCardanoValue(
   defaults: DefaultTokenEntry,
 ): Promise<MultiToken> {
   const multiToken = new MultiToken([], defaults);
+  const coin = await value.coin();
   multiToken.add({
-    amount: new BigNumber(value.coin().to_str()),
+    amount: new BigNumber(await coin.toStr()),
     identifier: defaults.defaultIdentifier,
     networkId: defaults.defaultNetworkId,
   });
 
-  for (const token of parseTokenList(value.multiasset())) {
+  for (const token of await parseTokenList(await value.multiasset())) {
     multiToken.add({
       amount: new BigNumber(token.amount),
       identifier: token.assetId,
@@ -287,4 +287,197 @@ export async function multiTokenFromCardanoValue(
     });
   }
   return multiToken;
+}
+
+export async function parseTokenList(
+  assets: WasmContract.MultiAsset,
+): Promise<Array<{
+  assetId: string,
+  policyId: string,
+  name: string,
+  amount: string,
+}>> {
+  if (!assets.hasValue()) return [];
+
+  const result = [];
+  const hashes = await assets.keys();
+  for (let i = 0; i < await hashes.len(); i++) {
+    const policyId = await hashes.get(i);
+    const assetsForPolicy = await assets.get(policyId);
+    if (!assetsForPolicy.hasValue()) continue;
+
+    const policies = await assetsForPolicy.keys();
+    for (let j = 0; j < await policies.len(); j++) {
+      const assetName = await policies.get(j);
+      const amount = await assetsForPolicy.get(assetName);
+      if (amount.hasValue()) continue;
+
+      result.push({
+        amount: await amount.toStr(),
+        assetId: await cardanoAssetToIdentifier(policyId, assetName),
+        policyId: Buffer.from(await policyId.toBytes()).toString('hex'),
+        name: Buffer.from(await assetName.name()).toString('hex'),
+      });
+    }
+  }
+  return result;
+}
+
+export async function cardanoAssetToIdentifier(
+  policyId: WasmContract.ScriptHash,
+  name: WasmContract.AssetName,
+): Promise<string> {
+  // note: possible for name to be empty causing a trailing hyphen
+  return `${Buffer.from(await policyId.toBytes()).toString('hex')}.${Buffer.from(await name.name()).toString('hex')}`;
+}
+
+export async function identifierToCardanoAsset(
+  wasm: WasmContract.WasmContract,
+  identifier: string,
+): Promise<{
+  policyId: WasmContract.ScriptHash,
+  name: WasmContract.AssetName,
+}> {
+  const parts = identifier.split('.');
+  return {
+    policyId: await wasm.ScriptHash.fromBytes(Buffer.from(parts[0], 'hex')),
+    name: await wasm.AssetName.new(Buffer.from(parts[1], 'hex')),
+  };
+}
+
+/**
+ * Construct the list of what will be included in the tx output
+*/
+export function buildSendTokenList(
+  defaultToken: DefaultTokenEntry,
+  tokens: SendToken[],
+  utxos: Array<MultiToken>,
+): MultiToken {
+  const amount = new MultiToken([], defaultToken);
+
+  for (const token of tokens) {
+    if (token.amount != null) {
+      // if we add a specific amount of a specific token to the output, just add it
+      amount.add({
+        amount: new BigNumber(token.amount),
+        identifier: token.token.identifier,
+        networkId: token.token.networkId,
+      });
+    } else if (token.token.isDefault) {
+      // if we add a non-specific amount of the default token
+      // sum amount values in the UTXO
+      const relatedUtxoSum = utxos.reduce(
+        (value, next) => value.plus(next.getDefaultEntry().amount),
+        new BigNumber(0)
+      );
+      amount.add({
+        amount: relatedUtxoSum,
+        identifier: token.token.identifier,
+        networkId: token.token.networkId,
+      });
+    } else {
+      // if we add a non-specific amount of a given token
+      // sum up the value of all our UTXOs with this token
+      const relatedUtxoSum = utxos.reduce(
+        (value, next) => {
+          const assetEntry = next.nonDefaultEntries().find(
+            entry => entry.identifier === token.token.identifier
+          );
+          if (assetEntry != null) {
+            return value.plus(assetEntry.amount);
+          }
+          return value;
+        },
+        new BigNumber(0)
+      );
+      amount.add({
+        amount: relatedUtxoSum,
+        identifier: token.token.identifier,
+        networkId: token.token.networkId,
+      });
+    }
+  }
+  return amount;
+}
+
+export function multiTokenFromRemote(
+  utxo: RemoteUnspentOutput,
+  networkId: number,
+): MultiToken {
+  const result = new MultiToken(
+    [],
+    {
+      defaultNetworkId: networkId,
+      defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+    }
+  );
+  result.add({
+    identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+    amount: new BigNumber(utxo.amount),
+    networkId,
+  });
+  for (const token of utxo.assets) {
+    result.add({
+      identifier: token.assetId,
+      amount: new BigNumber(token.amount),
+      networkId,
+    });
+  }
+
+  return result;
+}
+
+export async function asAddressedUtxo(
+  wasm: WasmContract.WasmContract,
+  utxos: Array<AddressingUtxo>,
+): Promise<Array<CardanoAddressedUtxo>> {
+  return await Promise.all(utxos.map(async (utxo) => {
+    const tokenTypes = utxo.output.tokens.reduce(
+      (acc, next) => {
+        if (next.token.identifier === PRIMARY_ASSET_CONSTANTS.Cardano) {
+          acc.amount = acc.amount.plus(next.tokenList.amount);
+        } else {
+          acc.tokens.push({
+            amount: next.tokenList.amount,
+            tokenId: next.token.identifier,
+          });
+        }
+        return acc;
+      },
+      {
+        amount: new BigNumber(0),
+        tokens: [],
+      }
+    );
+
+    const assets = await Promise.all(tokenTypes.tokens.map(async (token) => {
+      const pieces = await identifierToCardanoAsset(wasm, token.tokenId);
+      return {
+        amount: token.amount,
+        assetId: token.tokenId,
+        policyId: Buffer.from(await pieces.policyId.toBytes()).toString('hex'),
+        name: Buffer.from(await pieces.name.name()).toString('hex'),
+      };
+    }));
+    
+    return {
+      amount: tokenTypes.amount.toString(),
+      receiver: utxo.address,
+      txHash: utxo.output.transaction.hash,
+      txIndex: utxo.output.utxoTransactionOutput.outputIndex,
+      utxoId: utxo.output.transaction.hash + utxo.output.utxoTransactionOutput.outputIndex,
+      addressing: utxo.addressing,
+      assets,
+    };
+  }));
+}
+
+export function hasSendAllDefault(
+  tokens: Array<SendToken>,
+): boolean {
+  const defaultSendAll = tokens.find(token => {
+    if (token.shouldSendAll === true && token.token.isDefault) return true;
+    return false;
+  });
+  return defaultSendAll != null;
 }

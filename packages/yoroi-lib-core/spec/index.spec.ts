@@ -1,5 +1,8 @@
+import { BigNumber } from 'bignumber.js';
+
 import { expect } from 'chai';
 import { YoroiLib } from '../src';
+import { AddressingAddress, AddressingUtxo, CardanoHaskellConfig, DefaultTokenEntry, SendToken } from '../src/models';
 import { GeneralTransactionMetadata } from '../src/wasm-contract';
 
 /* 
@@ -115,32 +118,187 @@ export const setupTests = (
       });
     });
 
-    // this test is here just as a sample
     describe('Tx Builder', () => {
-      it('should work for now', async () => {
-        await yoroiLib.createUnsignedTx(
+      const buildDummyTxParameters = (sendAll: boolean) => {
+        const absSlotNumber = new BigNumber(38484054);
+        const utxos = [
           {
-            keyDeposit: '10',
-            linearFee: {
-              coefficient: '10',
-              constant: '10'
+            address: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            addressing: {
+              path: [2147485500, 21447485463, 2147483648, 0, 3],
+              startLevel: 1
             },
-            minimumUtxoVal: '10',
-            networkId: 'n',
-            poolDeposit: '10'
+            output: {
+              transaction: {
+                hash: '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785'
+              },
+              utxoTransactionOutput: {
+                outputIndex: 0
+              },
+              tokens: [
+                {
+                  token: {
+                    identifier: '',
+                    isDefault: true,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '2000000'
+                  }
+                }
+              ]
+            }
           },
           {
-            receiver:
-              'addr_test1qqng02gr4ltw28a84pc6ce2paq8m439vuv6dfzdyl2n05q9guds8e4s57thr4zwzp0qkzzyzvpjqu2zs8pqyv7pyhu5seku7js',
-            metadata: [
-              {
-                data: {
-                  image: 'src://path'
+            address: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            addressing: {
+              path: [2147485500, 2147485463, 2147483648, 0, 3],
+              startLevel: 1
+            },
+            output: {
+              transaction: {
+                hash: 'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376'
+              },
+              utxoTransactionOutput: {
+                outputIndex: 0
+              },
+              tokens: [
+                {
+                  token: {
+                    identifier: '',
+                    isDefault: true,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '3000000'
+                  }
+                }
+              ]
+            }
+          },
+          {
+            address: '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            addressing: {
+              path: [2147485500, 2147485463, 2147483648, 1, 6],
+              startLevel: 1
+            },
+            output: {
+              transaction: {
+                hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
+              },
+              utxoTransactionOutput: {
+                outputIndex: 1
+              },
+              tokens: [
+                {
+                  token: {
+                    identifier: '',
+                    isDefault: true,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '537206659'
+                  }
                 },
-                label: '721'
-              }
-            ],
-            sendAll: false
+                {
+                  token: {
+                    identifier: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
+                    isDefault: false,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '2'
+                  }
+                },
+                {
+                  token: {
+                    identifier: '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.',
+                    isDefault: false,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '2'
+                  }
+                }
+              ]
+            }
+          }
+        ] as Array<AddressingUtxo>;
+        const receiver = '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82';
+        const changeAddress = {
+          address: '00811e763774f6ff59835619924f26cc99e1a2320b6edfe40d00ced1a6a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+          addressing: {
+            path: [2147485500, 2147485463, 2147483648, 1, 7],
+            startLevel: 1
+          }
+        } as AddressingAddress;
+        const tokens = [
+          {
+            amount: new BigNumber(38484054),
+            shouldSendAll: sendAll,
+            token: {
+              identifier: '',
+              isDefault: true,
+              networkId: 300
+            }
+          }
+        ] as Array<SendToken>;
+        const config = {
+          keyDeposit: '2000000',
+          linearFee: {
+            constant: '155381',
+            coefficient: '44'
+          },
+          minimumUtxoVal: '1000000',
+          poolDeposit: '500000000',
+          networkId: 300
+        } as CardanoHaskellConfig;
+        const defaultToken = {
+          defaultIdentifier: '',
+          defaultNetworkId: 300
+        } as DefaultTokenEntry;
+
+        return {
+          absSlotNumber,
+          utxos,
+          receiver,
+          changeAddress,
+          tokens,
+          config,
+          defaultToken
+        }
+      }
+
+      it('should build unsigned TX', async () => {
+        const params = buildDummyTxParameters(false);
+
+        const unsignedTx = await yoroiLib.createUnsignedTx(
+          params.absSlotNumber,
+          params.utxos,
+          params.receiver,
+          params.changeAddress,
+          params.tokens,
+          params.config,
+          params.defaultToken,
+          {
+
+          }
+        );
+      });
+
+      it('should build unsigned TX for sending all balance', async () => {
+        const params = buildDummyTxParameters(true);
+
+        const unsignedTx = await yoroiLib.createUnsignedTx(
+          params.absSlotNumber,
+          params.utxos,
+          params.receiver,
+          params.changeAddress,
+          params.tokens,
+          params.config,
+          params.defaultToken,
+          {
+
           }
         );
       });

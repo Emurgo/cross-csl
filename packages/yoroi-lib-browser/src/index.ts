@@ -74,6 +74,14 @@ namespace Browser {
     constructor(wasm: T) {
       this._wasm = wasm;
     }
+
+    hasValue(): boolean {
+      if (this._wasm) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {

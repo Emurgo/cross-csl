@@ -72,6 +72,14 @@ namespace NodeJs {
     constructor(wasm: T) {
       this._wasm = wasm;
     }
+
+    hasValue(): boolean {
+      if (this._wasm) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   export abstract class Ptr<
