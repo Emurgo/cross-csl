@@ -11,31 +11,51 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _txBuilder: WasmContract.TransactionBuilder;
   private _certificates: ReadonlyArray<WasmContract.Certificate>;
   private _senderUtxos: RemoteUnspentOutput[];
-  private _changeAddresses: ChangeAddr[];
+  private _outputs: TxOutput[];
+  private _change: Change[];
 
-  get senderUtxos(): RemoteUnspentOutput[] {
+  get senderUtxos(): ReadonlyArray<RemoteUnspentOutput> {
     return this._senderUtxos;
   }
-  get changeAddresses(): ChangeAddr[] {
-    return this._changeAddresses;
+  
+  get change(): ReadonlyArray<Change> {
+    return this._change;
+  }
+
+  get outputs(): ReadonlyArray<TxOutput> {
+    return this._outputs;
   }
 
   constructor(
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: RemoteUnspentOutput[],
-    changeAddresses: ChangeAddr[]
+    outputs: TxOutput[],
+    change: Change[]
   ) {
     this._txBuilder = txBuilder;
     this._certificates = certificates;
     this._senderUtxos = senderUtxos;
-    this._changeAddresses = changeAddresses;
+    this._outputs = outputs;
+    this._change = change;
   }
+
+  async fee(): Promise<BigNumber> {
+    const fee = await this._txBuilder.getFeeIfSet();
+    if (fee.hasValue()) {
+      return new BigNumber(await fee.toStr());
+    }
+
+    return undefined;
+  }
+  
 }
 
 export interface UnsignedTx {
-  get senderUtxos(): Array<RemoteUnspentOutput>;
-  get changeAddresses(): Array<ChangeAddr>;
+  get senderUtxos(): ReadonlyArray<RemoteUnspentOutput>;
+  get outputs(): ReadonlyArray<TxOutput>;
+  get change(): ReadonlyArray<Change>;
+  fee(): Promise<BigNumber>;
 }
 
 export interface Transaction {
@@ -65,7 +85,7 @@ export interface Value {
   values: MultiToken;
 }
 
-export interface ChangeAddr extends AddressingAddress, Value {}
+export interface Change extends AddressingAddress, Value {}
 
 export interface AddressingAddress extends Address, Addressing {}
 

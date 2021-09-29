@@ -26,7 +26,7 @@ import {
   AddressingAddress,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
-  ChangeAddr,
+  Change,
   DefaultTokenEntry,
   MetadataJsonSchema,
   PRIMARY_ASSET_CONSTANTS,
@@ -282,11 +282,17 @@ export class YoroiLib {
       return addressedUtxo;
     });
 
+    /*
+      The outputs is an empty array and the change is undefined.
+      These info should be implicit on 'send all', meaning the client code should know
+      they beforehand, and therefore sending them back is not needed
+    */
     return new WasmUnsignedTx(
       unsignedTxResponse.txBuilder,
       [],
       addressedUtxos,
-      unsignedTxResponse.changeAddr
+      [],
+      unsignedTxResponse.change
     );
   }
 
@@ -305,7 +311,7 @@ export class YoroiLib {
   ): Promise<{
     senderUtxos: RemoteUnspentOutput[];
     txBuilder: WasmContract.TransactionBuilder;
-    changeAddr: Array<ChangeAddr>;
+    change: Array<Change>;
   }> {
     const totalBalance = allUtxos
       .map((utxo) => new BigNumber(utxo.amount))
@@ -365,7 +371,7 @@ export class YoroiLib {
       }
     }
 
-    const changeAddr = await (async () => {
+    const change = await (async () => {
       if (receiver.addressing == null) return [];
       const { addressing } = receiver;
 
@@ -387,12 +393,12 @@ export class YoroiLib {
     return {
       senderUtxos: allUtxos,
       txBuilder,
-      changeAddr
+      change
     };
   }
 
   private async newAdaUnsignedTx(
-    outputs: ReadonlyArray<TxOutput>,
+    outputs: Array<TxOutput>,
     changeAdaAddr: AddressingAddress,
     allUtxos: Array<CardanoAddressedUtxo>,
     absSlotNumber: BigNumber,
@@ -452,7 +458,8 @@ export class YoroiLib {
       unsignedTxResponse.txBuilder,
       certificates,
       addressedUtxos,
-      unsignedTxResponse.changeAddr
+      outputs,
+      unsignedTxResponse.change
     );
   }
 
@@ -478,7 +485,7 @@ export class YoroiLib {
   ): Promise<{
     senderUtxos: RemoteUnspentOutput[];
     txBuilder: WasmContract.TransactionBuilder;
-    changeAddr: ChangeAddr[];
+    change: Change[];
   }> {
     const result = await this._newAdaUnsignedTxFromUtxo(
       outputs,
@@ -542,7 +549,7 @@ export class YoroiLib {
   ): Promise<{
     senderUtxos: RemoteUnspentOutput[];
     txBuilder: WasmContract.TransactionBuilder;
-    changeAddr: ChangeAddr[];
+    change: Change[];
   }> {
     const shouldForceChange = async (
       assetsForChange: WasmContract.MultiAsset
@@ -617,7 +624,7 @@ export class YoroiLib {
 
     // pick inputs
     // const usedUtxos: Array<RemoteUnspentOutput> = [];
-    const usedUtxos = [];
+    const usedUtxos: RemoteUnspentOutput[] = [];
     {
       // recall: we might have some implicit input to start with from deposit refunds
       const implicitSum = await txBuilder.getImplicitInput();
@@ -755,7 +762,7 @@ export class YoroiLib {
       }
     }
 
-    const changeAddr = await (async () => {
+    const change = await (async () => {
       const implicitInput = await txBuilder.getImplicitInput();
       const totalInput = await txBuilder
         .getExplicitInput()
@@ -822,7 +829,7 @@ export class YoroiLib {
     return {
       senderUtxos: usedUtxos,
       txBuilder,
-      changeAddr
+      change
     };
   }
 
