@@ -54,7 +54,7 @@ export interface WasmContract {
 export abstract class WasmProxy {
   constructor(wasm: any) {}
 
-  abstract hasValue(): boolean
+  abstract hasValue(): boolean;
 }
 
 export abstract class Ptr extends WasmProxy {

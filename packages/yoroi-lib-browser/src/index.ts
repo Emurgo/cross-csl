@@ -25,7 +25,11 @@ export const init = (): YoroiLib => {
       return Promise.resolve(new Browser.TransactionMetadatum(wasm));
     },
     minAdaRequired: (value: Browser.Value, minimumUtxoVal: Browser.BigNum) => {
-      return Promise.resolve(new Browser.BigNum(WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)))
+      return Promise.resolve(
+        new Browser.BigNum(
+          WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+        )
+      );
     },
     BigNum: Browser.BigNum,
     LinearFee: Browser.LinearFee,

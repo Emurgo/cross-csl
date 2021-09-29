@@ -13,7 +13,10 @@ export abstract class BaseError extends Error {
 
 export class NotEnoughMoneyToSendError extends BaseError {
   constructor() {
-    super('ceae0da9-9653-4b46-b658-00701f73573a', 'Not enough balance for transaction');
+    super(
+      'ceae0da9-9653-4b46-b658-00701f73573a',
+      'Not enough balance for transaction'
+    );
   }
 }
 

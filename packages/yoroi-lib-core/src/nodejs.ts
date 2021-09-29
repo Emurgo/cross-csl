@@ -23,7 +23,11 @@ export const init = (): YoroiLib => {
       return Promise.resolve(new NodeJs.TransactionMetadatum(wasm));
     },
     minAdaRequired: (value: NodeJs.Value, minimumUtxoVal: NodeJs.BigNum) => {
-      return Promise.resolve(new NodeJs.BigNum(WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)))
+      return Promise.resolve(
+        new NodeJs.BigNum(
+          WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+        )
+      );
     },
     BigNum: NodeJs.BigNum,
     LinearFee: NodeJs.LinearFee,

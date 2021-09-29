@@ -11,8 +11,13 @@ export const init = (): YoroiLib => {
       const wasm = await WasmV4.encode_json_str_to_metadatum(json, schema);
       return Promise.resolve(new Mobile.TransactionMetadatum(wasm));
     },
-    minAdaRequired: async (value: Mobile.Value, minimumUtxoVal: Mobile.BigNum) => {
-      return new Mobile.BigNum(await WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm))
+    minAdaRequired: async (
+      value: Mobile.Value,
+      minimumUtxoVal: Mobile.BigNum
+    ) => {
+      return new Mobile.BigNum(
+        await WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+      );
     },
     BigNum: Mobile.BigNum,
     LinearFee: Mobile.LinearFee,
@@ -556,9 +561,7 @@ namespace Mobile {
       return await WasmV4.ByronAddress.is_valid(string);
     }
 
-    static async fromAddress(
-      addr: Address
-    ): Promise<ByronAddress | undefined> {
+    static async fromAddress(addr: Address): Promise<ByronAddress | undefined> {
       return new ByronAddress(
         await WasmV4.ByronAddress.from_address(addr.wasm)
       );

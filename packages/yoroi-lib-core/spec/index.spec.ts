@@ -2,7 +2,13 @@ import { BigNumber } from 'bignumber.js';
 
 import { expect } from 'chai';
 import { YoroiLib } from '../src';
-import { AddressingAddress, AddressingUtxo, CardanoHaskellConfig, DefaultTokenEntry, SendToken } from '../src/models';
+import {
+  AddressingAddress,
+  AddressingUtxo,
+  CardanoHaskellConfig,
+  DefaultTokenEntry,
+  SendToken
+} from '../src/models';
 import { GeneralTransactionMetadata } from '../src/wasm-contract';
 
 /* 
@@ -16,7 +22,7 @@ export const setupTests = (
   yoroiLib: YoroiLib,
   suiteName: string
 ): Mocha.Suite => {
-  return describe(suiteName, () => {    
+  return describe(suiteName, () => {
     describe('Yoroi Lib', () => {
       it('should encrypt / decrypt with password', async () => {
         const password = 'my password';
@@ -60,9 +66,7 @@ export const setupTests = (
 
     describe('LinearFee', () => {
       it('should create LinearFee', async () => {
-        const coefficient = await yoroiLib.Wasm.BigNum.fromStr(
-          '100000'
-        );
+        const coefficient = await yoroiLib.Wasm.BigNum.fromStr('100000');
         const constant = await yoroiLib.Wasm.BigNum.fromStr('1000');
 
         const linearFee = await yoroiLib.Wasm.LinearFee.new(
@@ -95,17 +99,15 @@ export const setupTests = (
         };
         const metaKey = await yoroiLib.Wasm.BigNum.fromStr('721');
 
-        const metadata =
-          await yoroiLib.Wasm.GeneralTransactionMetadata.new();
+        const metadata = await yoroiLib.Wasm.GeneralTransactionMetadata.new();
 
         const shouldBeUndefined = await metadata.get(metaKey);
         expect(shouldBeUndefined).to.be.undefined;
 
-        const metadatum =
-          await yoroiLib.Wasm.encodeJsonStrToMetadatum(
-            JSON.stringify({ image: 'path://image', id: '1' }),
-            1 // Basic convertions
-          );
+        const metadatum = await yoroiLib.Wasm.encodeJsonStrToMetadatum(
+          JSON.stringify({ image: 'path://image', id: '1' }),
+          1 // Basic convertions
+        );
 
         await metadata.insert(metaKey, metadatum);
 
@@ -123,7 +125,8 @@ export const setupTests = (
         const absSlotNumber = new BigNumber(38484054);
         const utxos = [
           {
-            address: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            address:
+              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 21447485463, 2147483648, 0, 3],
               startLevel: 1
@@ -150,7 +153,8 @@ export const setupTests = (
             }
           },
           {
-            address: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            address:
+              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 2147485463, 2147483648, 0, 3],
               startLevel: 1
@@ -177,7 +181,8 @@ export const setupTests = (
             }
           },
           {
-            address: '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            address:
+              '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 2147485463, 2147483648, 1, 6],
               startLevel: 1
@@ -202,7 +207,8 @@ export const setupTests = (
                 },
                 {
                   token: {
-                    identifier: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
+                    identifier:
+                      '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
                     isDefault: false,
                     networkId: 300
                   },
@@ -212,7 +218,8 @@ export const setupTests = (
                 },
                 {
                   token: {
-                    identifier: '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.',
+                    identifier:
+                      '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.',
                     isDefault: false,
                     networkId: 300
                   },
@@ -224,9 +231,11 @@ export const setupTests = (
             }
           }
         ] as Array<AddressingUtxo>;
-        const receiver = '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82';
+        const receiver =
+          '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82';
         const changeAddress = {
-          address: '00811e763774f6ff59835619924f26cc99e1a2320b6edfe40d00ced1a6a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+          address:
+            '00811e763774f6ff59835619924f26cc99e1a2320b6edfe40d00ced1a6a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
           addressing: {
             path: [2147485500, 2147485463, 2147483648, 1, 7],
             startLevel: 1
@@ -266,8 +275,8 @@ export const setupTests = (
           tokens,
           config,
           defaultToken
-        }
-      }
+        };
+      };
 
       it('should build unsigned TX', async () => {
         const params = buildDummyTxParameters(false);
@@ -280,9 +289,7 @@ export const setupTests = (
           params.tokens,
           params.config,
           params.defaultToken,
-          {
-
-          }
+          {}
         );
       }).timeout(10000);
 
@@ -297,9 +304,7 @@ export const setupTests = (
           params.tokens,
           params.config,
           params.defaultToken,
-          {
-
-          }
+          {}
         );
       });
     });

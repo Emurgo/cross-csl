@@ -34,115 +34,104 @@ export class WasmUnsignedTx implements UnsignedTx {
 }
 
 export interface UnsignedTx {
-  get senderUtxos(): Array<RemoteUnspentOutput>
-  get changeAddresses(): Array<ChangeAddr>
+  get senderUtxos(): Array<RemoteUnspentOutput>;
+  get changeAddresses(): Array<ChangeAddr>;
 }
 
 export interface Transaction {
-  hash: string
+  hash: string;
 }
 
 export interface UtxoTransactionOutput {
-  outputIndex: number
+  outputIndex: number;
 }
 
 export interface UtxoTxOutput {
-  transaction: Transaction
-  utxoTransactionOutput: UtxoTransactionOutput
+  transaction: Transaction;
+  utxoTransactionOutput: UtxoTransactionOutput;
   tokens: Array<{
-    tokenList: TokenList
-    token: Token
-  }>
+    tokenList: TokenList;
+    token: Token;
+  }>;
 }
 
-export interface AddressingUtxo
-  extends AddressingAddress {
-  output: UtxoTxOutput
+export interface AddressingUtxo extends AddressingAddress {
+  output: UtxoTxOutput;
 }
 
-export interface CardanoAddressedUtxo extends RemoteUnspentOutput, Addressing {
-
-}
+export interface CardanoAddressedUtxo extends RemoteUnspentOutput, Addressing {}
 
 export interface Value {
-  values: MultiToken
+  values: MultiToken;
 }
 
-export interface ChangeAddr
-  extends AddressingAddress, Value {
+export interface ChangeAddr extends AddressingAddress, Value {}
 
-}
-
-export interface AddressingAddress extends Address, Addressing {
-  
-}
+export interface AddressingAddress extends Address, Addressing {}
 
 export interface Address {
-  address: string
+  address: string;
 }
 
 export interface Addressing {
   addressing: {
-    path: number[]
-    startLevel: number
-  }
+    path: number[];
+    startLevel: number;
+  };
 }
 
 export interface TxOutput {
-  address: string
-  amount: MultiToken
+  address: string;
+  amount: MultiToken;
 }
 
 export interface RemoteUnspentOutput {
-  amount: string
-  receiver: string
-  txHash: string
-  txIndex: number
-  utxoId: string
-  assets: ReadonlyArray<UtxoAsset>
+  amount: string;
+  receiver: string;
+  txHash: string;
+  txIndex: number;
+  utxoId: string;
+  assets: ReadonlyArray<UtxoAsset>;
 }
 
 export interface UtxoAsset {
-  assetId: string
-  amount: string
+  assetId: string;
+  amount: string;
 }
 
 export interface SendToken {
-  amount: BigNumber
-  token: Token
-  shouldSendAll: boolean
+  amount: BigNumber;
+  token: Token;
+  shouldSendAll: boolean;
 }
 
 export interface TokenList {
-  amount: string
+  amount: string;
 }
 
 export interface Token {
-  identifier: string
-  networkId: number
-  isDefault: boolean
+  identifier: string;
+  networkId: number;
+  isDefault: boolean;
 }
 
 export interface DefaultTokenEntry {
-  defaultNetworkId: number
-  defaultIdentifier: string
+  defaultNetworkId: number;
+  defaultIdentifier: string;
 }
 
 export interface TokenEntry {
-  amount: BigNumber
-  identifier: string
-  networkId: number
+  amount: BigNumber;
+  identifier: string;
+  networkId: number;
 }
 
 export class MultiToken {
   // this could be a map, but the # of elements is small enough the perf difference is trivial
-  values: Array<TokenEntry>
+  values: Array<TokenEntry>;
   defaults: DefaultTokenEntry;
 
-  constructor(
-    values: Array<TokenEntry>,
-    defaults: DefaultTokenEntry
-   ) {
+  constructor(values: Array<TokenEntry>, defaults: DefaultTokenEntry) {
     this.values = [];
 
     // things are just easier if we enforce the default entry to be part of the list of tokens
@@ -150,25 +139,29 @@ export class MultiToken {
     this.add({
       identifier: defaults.defaultIdentifier,
       networkId: defaults.defaultNetworkId,
-      amount: new BigNumber(0),
+      amount: new BigNumber(0)
     });
-    values.forEach(value => this.add(value));
+    values.forEach((value) => this.add(value));
   }
 
   _checkNetworkId(networkId: number): void {
     const ownNetworkId = this.defaults.defaultNetworkId;
     if (ownNetworkId !== networkId) {
-      throw new Error(`MultiToken: network mismatch ${ownNetworkId} - ${networkId}`);
+      throw new Error(
+        `MultiToken: network mismatch ${ownNetworkId} - ${networkId}`
+      );
     }
   }
 
   get(identifier: string): BigNumber {
-    return this.values.find(value => value.identifier === identifier)?.amount;
+    return this.values.find((value) => value.identifier === identifier)?.amount;
   }
 
   add(entry: TokenEntry): MultiToken {
     this._checkNetworkId(entry.networkId);
-    const existingEntry = this.values.find(value => value.identifier === entry.identifier);
+    const existingEntry = this.values.find(
+      (value) => value.identifier === entry.identifier
+    );
     if (existingEntry == null) {
       this.values.push(entry);
       return this;
@@ -187,7 +180,9 @@ export class MultiToken {
     }
     const existingValue = this.get(identifier);
     if (existingValue != null && existingValue.eq(0)) {
-      this.values = this.values.filter(value => value.identifier !== identifier);
+      this.values = this.values.filter(
+        (value) => value.identifier !== identifier
+      );
     }
   }
 
@@ -195,7 +190,7 @@ export class MultiToken {
     return this.add({
       identifier: entry.identifier,
       amount: entry.amount.negated(),
-      networkId: entry.networkId,
+      networkId: entry.networkId
     });
   }
 
@@ -212,30 +207,30 @@ export class MultiToken {
     return this;
   }
   joinAddCopy(target: MultiToken): MultiToken {
-    const copy = new MultiToken(
-      this.values,
-      this.defaults
-    );
+    const copy = new MultiToken(this.values, this.defaults);
     return copy.joinAddMutable(target);
   }
   joinSubtractCopy(target: MultiToken): MultiToken {
-    const copy = new MultiToken(
-      this.values,
-      this.defaults
-    );
+    const copy = new MultiToken(this.values, this.defaults);
     return copy.joinSubtractMutable(target);
   }
 
   absCopy(): MultiToken {
     return new MultiToken(
-      this.values.map(token => ({ ...token, amount: token.amount.absoluteValue() })),
+      this.values.map((token) => ({
+        ...token,
+        amount: token.amount.absoluteValue()
+      })),
       this.defaults
     );
   }
 
   negatedCopy(): MultiToken {
     return new MultiToken(
-      this.values.map(token => ({ ...token, amount: token.amount.negated() })),
+      this.values.map((token) => ({
+        ...token,
+        amount: token.amount.negated()
+      })),
       this.defaults
     );
   }
@@ -245,21 +240,27 @@ export class MultiToken {
   }
 
   getDefaultEntry(): TokenEntry {
-    return this.values.filter(value => (
-      value.networkId === this.defaults.defaultNetworkId &&
-      value.identifier === this.defaults.defaultIdentifier
-    ))[0];
+    return this.values.filter(
+      (value) =>
+        value.networkId === this.defaults.defaultNetworkId &&
+        value.identifier === this.defaults.defaultIdentifier
+    )[0];
   }
 
   nonDefaultEntries(): Array<TokenEntry> {
-    return this.values.filter(value => !(
-      value.networkId === this.defaults.defaultNetworkId &&
-      value.identifier === this.defaults.defaultIdentifier
-    ));
+    return this.values.filter(
+      (value) =>
+        !(
+          value.networkId === this.defaults.defaultNetworkId &&
+          value.identifier === this.defaults.defaultIdentifier
+        )
+    );
   }
 
   asMap(): Map<string, BigNumber> {
-    return new Map(this.values.map(value => [value.identifier, value.amount]));
+    return new Map(
+      this.values.map((value) => [value.identifier, value.amount])
+    );
   }
 
   isEqualTo(tokens: MultiToken): boolean {
@@ -282,7 +283,7 @@ export class MultiToken {
   }
 
   isEmpty(): boolean {
-    return this.values.filter(token => token.amount.gt(0)).length === 0;
+    return this.values.filter((token) => token.amount.gt(0)).length === 0;
   }
 }
 
