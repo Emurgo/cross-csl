@@ -21,7 +21,12 @@ export default function App() {
     const reporter = new MochaYoroiReporter(runner);
 
     runner.run((failures) => {
-      
+      console.log('Test suite finished');
+      console.log('\x1b[32m', `passes:`, '\x1b[0m', `${reporter.passes}`);
+      console.log('\x1b[31m', `fails:`, '\x1b[0m', `${reporter.fails}`);
+      if (reporter.fails === 0) {
+        console.log('\x1b[32m', `All tests were successfull`, '\x1b[0m');
+      }
     });
   })
 
