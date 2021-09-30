@@ -8,19 +8,23 @@ import {
   NotEnoughMoneyToSendError
 } from '../src/errors';
 import {
-  normalizeToAddress,
-  cardanoValueFromMultiToken,
-  minRequiredForChange,
-  addUtxoInput,
   AddInputResult,
-  multiTokenFromCardanoValue,
-  buildSendTokenList,
-  multiTokenFromRemote,
-  asAddressedUtxo,
-  hasSendAllDefault,
   firstWithValue,
   createMetadata
 } from './utils';
+import { normalizeToAddress } from './utils/addresses';
+import {
+  cardanoValueFromMultiToken,
+  multiTokenFromCardanoValue,
+  buildSendTokenList,
+  multiTokenFromRemote,
+  hasSendAllDefault
+} from './utils/assets';
+import {
+  minRequiredForChange,
+  addUtxoInput,
+  asAddressedUtxo,
+} from './utils/transactions';
 import {
   Address,
   AddressingUtxo,
@@ -29,11 +33,9 @@ import {
   CardanoHaskellConfig,
   Change,
   DefaultTokenEntry,
-  MetadataJsonSchema,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
-  TxMetadata,
   TxOptions,
   TxOutput,
 } from './models';
@@ -47,7 +49,7 @@ export const RUST_u32_MAX = 4294967295;
 
 const defaultTtlOffset = 7200;
 
-export const createYoroiLib = (wasmV4: WasmContract.WasmContract): YoroiLib => {
+export const createYoroiLib = (wasmV4: WasmContract.WasmModuleProxy): YoroiLib => {
   return new YoroiLib(wasmV4);
 };
 
@@ -58,7 +60,7 @@ export interface YoroiLibLogger {
 
 export class YoroiLib {
   private static _logger: YoroiLibLogger;
-  private readonly _wasmV4: WasmContract.WasmContract;
+  private readonly _wasmV4: WasmContract.WasmModuleProxy;
 
   // Not much tought was given to this logging solution, so it's likely to change
   static set logger(val: YoroiLibLogger) {
@@ -78,11 +80,11 @@ export class YoroiLib {
     return YoroiLib._logger;
   }
 
-  get Wasm(): WasmContract.WasmContract {
+  get Wasm(): WasmContract.WasmModuleProxy {
     return this._wasmV4;
   }
 
-  constructor(wasmV4: WasmContract.WasmContract) {
+  constructor(wasmV4: WasmContract.WasmModuleProxy) {
     this._wasmV4 = wasmV4;
   }
 

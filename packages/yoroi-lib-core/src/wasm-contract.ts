@@ -3,7 +3,7 @@ export const EXCEPTIONS = {
   SHOULD_BE_OVERWRITTEN: 'should be overwritten by implementations'
 };
 
-export interface WasmContract {
+export interface WasmModuleProxy {
   encryptWithPassword(
     password: string,
     salt: string,

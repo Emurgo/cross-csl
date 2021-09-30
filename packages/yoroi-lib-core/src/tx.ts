@@ -1,8 +1,10 @@
 import * as WasmContract from './wasm-contract';
 import { BigNumber } from 'bignumber.js';
 
-import { CardanoAddressedUtxo, Change, RemoteUnspentOutput, TxMetadata, TxOutput } from './models';
-import { createMetadata, derivePrivateByAddressing, getCardanoSpendingKeyHash, normalizeToAddress } from './utils';
+import { CardanoAddressedUtxo, Change, TxMetadata, TxOutput } from './models';
+import { createMetadata } from './utils';
+import { normalizeToAddress } from './utils/addresses';
+import { getCardanoSpendingKeyHash, derivePrivateByAddressing } from './utils/crypto';
 
 const HARD_DERIVATION_START: 2147483648 = 0x80000000;
 
@@ -32,7 +34,7 @@ const Bip44DerivationLevels = {
 }
 
 export class WasmUnsignedTx implements UnsignedTx {
-  private _wasm: WasmContract.WasmContract;
+  private _wasm: WasmContract.WasmModuleProxy;
   private _txBuilder: WasmContract.TransactionBuilder;
   private _certificates: ReadonlyArray<WasmContract.Certificate>;
   private _senderUtxos: CardanoAddressedUtxo[];
@@ -51,8 +53,13 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._outputs;
   }
 
+  /**
+   * Initializes the class with the specific wasm types, outputs and change.
+   * Even though this class can be instantiated directly, you should probably be getting
+   * an instance of it through its abstraction UnsignedTx by calling YoroiLib.createUnsignedTx
+   */
   constructor(
-    wasm: WasmContract.WasmContract,
+    wasm: WasmContract.WasmModuleProxy,
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: CardanoAddressedUtxo[],
@@ -226,7 +233,6 @@ export class WasmUnsignedTx implements UnsignedTx {
       }
     }
   }
-  
 }
 
 export interface UnsignedTx {
