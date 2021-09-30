@@ -1253,7 +1253,9 @@ namespace NodeJs {
             linearFee.wasm,
             minimumUtxoVal.wasm,
             poolDeposit.wasm,
-            keyDeposit.wasm
+            keyDeposit.wasm,
+            4294967295,
+            4294967295
           )
         )
       );

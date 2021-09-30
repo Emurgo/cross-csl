@@ -39,6 +39,12 @@ import {
 } from './models';
 import { UnsignedTx, WasmUnsignedTx } from './tx';
 
+/**
+ * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
+  In TypeScript, this type is translated as `number`, which goes much bigger than `4294967295`.
+ */
+export const RUST_u32_MAX = 4294967295;
+
 const defaultTtlOffset = 7200;
 
 export const createYoroiLib = (wasmV4: WasmContract.WasmContract): YoroiLib => {
@@ -63,7 +69,10 @@ export class YoroiLib {
     if (!YoroiLib._logger) {
       YoroiLib._logger = {
         debug: (msg: string, ...args: any[]) => console.log(msg),
-        error: (msg: string, ...args: any[]) => console.error(msg)
+        error: (msg: string, ...args: any[]) => {
+          console.error(msg);
+          console.error(args);
+        }
       };
     }
     return YoroiLib._logger;

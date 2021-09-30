@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib';
 import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
-import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src/index';
+import { createYoroiLib, RUST_u32_MAX, YoroiLib } from '../../yoroi-lib-core/src/index';
 
 export const init = (): YoroiLib => {
   // The methods in the browser's Wasm object are not async,
@@ -1251,7 +1251,9 @@ namespace Browser {
             linearFee.wasm,
             minimumUtxoVal.wasm,
             poolDeposit.wasm,
-            keyDeposit.wasm
+            keyDeposit.wasm,
+            RUST_u32_MAX,
+            RUST_u32_MAX
           )
         )
       );

@@ -1139,7 +1139,7 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@emurgo/react-native-haskell-shelley@^2.0.0":
+"@emurgo/react-native-haskell-shelley@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@emurgo/react-native-haskell-shelley/-/react-native-haskell-shelley-2.0.0.tgz#7d1591c6ca9d904a68e7e7edcb700ac6660c5864"
   integrity sha512-vs5TX6Bv4cPxtyXQlxxoA8oThouaBNzqamJ34Tog5Gy3rtf24g4xCWxhdD2coIGid80Mi9qfV5NE38NYIOOlag==
