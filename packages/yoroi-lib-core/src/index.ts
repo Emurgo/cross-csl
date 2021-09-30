@@ -18,7 +18,8 @@ import {
   multiTokenFromRemote,
   asAddressedUtxo,
   hasSendAllDefault,
-  firstWithValue
+  firstWithValue,
+  createMetadata
 } from './utils';
 import {
   Address,
@@ -35,9 +36,8 @@ import {
   TxMetadata,
   TxOptions,
   TxOutput,
-  UnsignedTx,
-  WasmUnsignedTx
 } from './models';
+import { UnsignedTx, WasmUnsignedTx } from './tx';
 
 const defaultTtlOffset = 7200;
 
@@ -147,7 +147,7 @@ export class YoroiLib {
 
       const txMetadata =
         txOptions.metadata !== undefined
-          ? await this.createMetadata(txOptions.metadata)
+          ? await createMetadata(this.Wasm, txOptions.metadata)
           : null;
 
       if (hasSendAllDefault(tokens)) {
@@ -288,6 +288,7 @@ export class YoroiLib {
       they beforehand, and therefore sending them back is not needed
     */
     return new WasmUnsignedTx(
+      this.Wasm,
       unsignedTxResponse.txBuilder,
       [],
       addressedUtxos,
@@ -455,6 +456,7 @@ export class YoroiLib {
     });
 
     return new WasmUnsignedTx(
+      this.Wasm,
       unsignedTxResponse.txBuilder,
       certificates,
       addressedUtxos,
@@ -831,25 +833,5 @@ export class YoroiLib {
       txBuilder,
       change
     };
-  }
-
-  private async createMetadata(
-    txMetadata: ReadonlyArray<TxMetadata>
-  ): Promise<WasmContract.AuxiliaryData> {
-    const transactionMetadata =
-      await this.Wasm.GeneralTransactionMetadata.new();
-
-    txMetadata.forEach(async (meta: TxMetadata) => {
-      const metadatum = await this.Wasm.encodeJsonStrToMetadatum(
-        JSON.stringify(meta.data),
-        MetadataJsonSchema.BasicConversions
-      );
-      const key = await this.Wasm.BigNum.fromStr(meta.label);
-      await transactionMetadata.insert(key, metadatum);
-    });
-
-    const auxData = await this.Wasm.AuxiliaryData.new(transactionMetadata);
-
-    return auxData;
   }
 }

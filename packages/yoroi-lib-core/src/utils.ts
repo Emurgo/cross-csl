@@ -9,7 +9,9 @@ import {
   MultiToken,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
-  SendToken
+  SendToken,
+  TxMetadata,
+  MetadataJsonSchema
 } from './models';
 import * as WasmContract from './wasm-contract';
 
@@ -490,4 +492,74 @@ export function hasSendAllDefault(tokens: Array<SendToken>): boolean {
     return false;
   });
   return defaultSendAll != null;
+}
+
+export async function getCardanoSpendingKeyHash(
+  wasm: WasmContract.WasmContract,
+  addr: WasmContract.Address,
+): Promise<WasmContract.Ed25519KeyHash> {
+  {
+    const byronAddr = await wasm.ByronAddress.fromAddress(addr);
+    if (byronAddr.hasValue()) return null;
+  }
+  {
+    const baseAddr = await wasm.BaseAddress.fromAddress(addr);
+    if (baseAddr.hasValue()) return await baseAddr.paymentCred().then(x => x.toKeyhash());
+  }
+  {
+    const ptrAddr = await wasm.PointerAddress.fromAddress(addr);
+    if (ptrAddr.hasValue()) return ptrAddr.paymentCred().then(x => x.toKeyhash());
+  }
+  {
+    const enterpriseAddr = await wasm.EnterpriseAddress.fromAddress(addr);
+    if (enterpriseAddr.hasValue()) return enterpriseAddr.paymentCred().then(x => x.toKeyhash());
+  }
+  {
+    const rewardAddr = await wasm.RewardAddress.fromAddress(addr);
+    if (rewardAddr.hasValue()) return rewardAddr.paymentCred().then(x => x.toKeyhash());
+  }
+  throw new Error(`getCardanoSpendingKeyHash: unknown address type`);
+}
+
+export async function derivePrivateByAddressing(
+  addressing: Addressing,
+  startingFrom: {
+    key: WasmContract.Bip32PrivateKey,
+    level: number,
+  }): Promise<WasmContract.Bip32PrivateKey> {
+  if (startingFrom.level + 1 < addressing.addressing.startLevel) {
+    throw new Error(`derivePrivateByAddressing: keyLevel < startLevel`);
+  }
+  let derivedKey = startingFrom.key;
+  for (
+    let i = startingFrom.level - addressing.addressing.startLevel + 1;
+    i < addressing.addressing.path.length;
+    i++
+  ) {
+    derivedKey = await derivedKey.derive(
+      addressing.addressing.path[i]
+    );
+  }
+  return derivedKey;
+}
+
+export async function createMetadata(
+  wasm: WasmContract.WasmContract,
+  txMetadata: ReadonlyArray<TxMetadata>
+): Promise<WasmContract.AuxiliaryData> {
+  const transactionMetadata =
+    await wasm.GeneralTransactionMetadata.new();
+
+  txMetadata.forEach(async (meta: TxMetadata) => {
+    const metadatum = await wasm.encodeJsonStrToMetadatum(
+      JSON.stringify(meta.data),
+      MetadataJsonSchema.BasicConversions
+    );
+    const key = await wasm.BigNum.fromStr(meta.label);
+    await transactionMetadata.insert(key, metadatum);
+  });
+
+  const auxData = await wasm.AuxiliaryData.new(transactionMetadata);
+
+  return auxData;
 }

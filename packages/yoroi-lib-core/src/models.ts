@@ -7,57 +7,6 @@ export const PRIMARY_ASSET_CONSTANTS = {
   Jormungandr: ''
 };
 
-export class WasmUnsignedTx implements UnsignedTx {
-  private _txBuilder: WasmContract.TransactionBuilder;
-  private _certificates: ReadonlyArray<WasmContract.Certificate>;
-  private _senderUtxos: RemoteUnspentOutput[];
-  private _outputs: TxOutput[];
-  private _change: Change[];
-
-  get senderUtxos(): ReadonlyArray<RemoteUnspentOutput> {
-    return this._senderUtxos;
-  }
-  
-  get change(): ReadonlyArray<Change> {
-    return this._change;
-  }
-
-  get outputs(): ReadonlyArray<TxOutput> {
-    return this._outputs;
-  }
-
-  constructor(
-    txBuilder: WasmContract.TransactionBuilder,
-    certificates: ReadonlyArray<WasmContract.Certificate>,
-    senderUtxos: RemoteUnspentOutput[],
-    outputs: TxOutput[],
-    change: Change[]
-  ) {
-    this._txBuilder = txBuilder;
-    this._certificates = certificates;
-    this._senderUtxos = senderUtxos;
-    this._outputs = outputs;
-    this._change = change;
-  }
-
-  async fee(): Promise<BigNumber> {
-    const fee = await this._txBuilder.getFeeIfSet();
-    if (fee.hasValue()) {
-      return new BigNumber(await fee.toStr());
-    }
-
-    return undefined;
-  }
-  
-}
-
-export interface UnsignedTx {
-  get senderUtxos(): ReadonlyArray<RemoteUnspentOutput>;
-  get outputs(): ReadonlyArray<TxOutput>;
-  get change(): ReadonlyArray<Change>;
-  fee(): Promise<BigNumber>;
-}
-
 export interface Transaction {
   hash: string;
 }

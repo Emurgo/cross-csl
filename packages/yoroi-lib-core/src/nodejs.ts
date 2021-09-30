@@ -29,6 +29,35 @@ export const init = (): YoroiLib => {
         )
       );
     },
+    hashTransaction: (txBody: NodeJs.TransactionBody) => {
+      return Promise.resolve(
+        new NodeJs.TransactionHash(
+          WasmV4.hash_transaction(txBody.wasm)
+        )
+      );
+    },
+    makeVkeyWitness: (txBodyHash: NodeJs.TransactionHash, sk: NodeJs.PrivateKey) => {
+      return Promise.resolve(
+        new NodeJs.Vkeywitness(
+          WasmV4.make_vkey_witness(txBodyHash.wasm, sk.wasm)
+        )
+      );
+    },
+    makeIcarusBootstrapWitness: (
+      txBodyHash: NodeJs.TransactionHash,
+      addr: NodeJs.ByronAddress,
+      key: NodeJs.Bip32PrivateKey) =>
+    {
+      return Promise.resolve(
+        new NodeJs.BootstrapWitness(
+          WasmV4.make_icarus_bootstrap_witness(
+            txBodyHash.wasm,
+            addr.wasm,
+            key.wasm
+          )
+        )
+      );
+    },
     BigNum: NodeJs.BigNum,
     LinearFee: NodeJs.LinearFee,
     GeneralTransactionMetadata: NodeJs.GeneralTransactionMetadata,
@@ -47,6 +76,8 @@ export const init = (): YoroiLib => {
     Address: NodeJs.Address,
     PublicKey: NodeJs.PublicKey,
     Bip32PublicKey: NodeJs.Bip32PublicKey,
+    PrivateKey: NodeJs.PrivateKey,
+    Bip32PrivateKey: NodeJs.Bip32PrivateKey,
     ByronAddress: NodeJs.ByronAddress,
     TransactionOutput: NodeJs.TransactionOutput,
     StakeCredential: NodeJs.StakeCredential,
@@ -61,7 +92,19 @@ export const init = (): YoroiLib => {
     TransactionInputs: NodeJs.TransactionInputs,
     TransactionOutputs: NodeJs.TransactionOutputs,
     TransactionBody: NodeJs.TransactionBody,
-    TransactionBuilder: NodeJs.TransactionBuilder
+    TransactionBuilder: NodeJs.TransactionBuilder,
+    BaseAddress: NodeJs.BaseAddress,
+    PointerAddress: NodeJs.PointerAddress,
+    EnterpriseAddress: NodeJs.EnterpriseAddress,
+    Pointer: NodeJs.Pointer,
+    Vkey: NodeJs.Vkey,
+    Ed25519Signature: NodeJs.Ed25519Signature,
+    Vkeywitness: NodeJs.Vkeywitness,
+    Vkeywitnesses: NodeJs.Vkeywitnesses,
+    BootstrapWitness: NodeJs.BootstrapWitness,
+    BootstrapWitnesses: NodeJs.BootstrapWitnesses,
+    TransactionWitnessSet: NodeJs.TransactionWitnessSet,
+    Transaction: NodeJs.Transaction
   });
 };
 
@@ -546,6 +589,103 @@ namespace NodeJs {
     static fromBytes(bytes: Uint8Array): Promise<Bip32PublicKey> {
       return Promise.resolve(
         new Bip32PublicKey(WasmV4.Bip32PublicKey.from_bytes(bytes))
+      );
+    }
+  }
+
+  export class PrivateKey
+    extends Ptr<WasmV4.PrivateKey>
+    implements WasmContract.PrivateKey
+  {
+    toPublic(): Promise<PublicKey> {
+      return Promise.resolve(new PublicKey(this.wasm.to_public()));
+    }
+  
+    asBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.as_bytes());
+    }
+  
+    sign(message: Uint8Array): Promise<Ed25519Signature> {
+      return Promise.resolve(new Ed25519Signature(this.wasm.sign(message)));
+    }
+  
+    static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
+      return Promise.resolve(
+        new PrivateKey(
+          WasmV4.PrivateKey.from_extended_bytes(bytes)
+        )
+      );
+    }
+  
+    static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
+      return Promise.resolve(
+        new PrivateKey(
+          WasmV4.PrivateKey.from_normal_bytes(bytes)
+        )
+      );
+    }
+  }
+  
+  export class Bip32PrivateKey
+    extends Ptr<WasmV4.Bip32PrivateKey>
+    implements WasmContract.Bip32PrivateKey
+  {
+    derive(index: number): Promise<Bip32PrivateKey> {
+      return Promise.resolve(new Bip32PrivateKey(this.wasm.derive(index)))
+    }
+  
+    toRawKey(): Promise<PrivateKey> {
+      return Promise.resolve(new PrivateKey(this.wasm.to_raw_key()));
+    }
+  
+    toPublic(): Promise<Bip32PublicKey> {
+      return Promise.resolve(new Bip32PublicKey(this.wasm.to_public()));
+    }
+  
+    asBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.as_bytes());
+    }
+  
+    toBech32(): Promise<string> {
+      return Promise.resolve(this.wasm.to_bech32());
+    }
+  
+    static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
+      return Promise.resolve(
+        new Bip32PrivateKey(
+          WasmV4.Bip32PrivateKey.from_bip39_entropy(
+            entropy,
+            password
+          )
+        )
+      );
+    }
+  
+    static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
+      return Promise.resolve(
+        new Bip32PrivateKey(
+          WasmV4.Bip32PrivateKey.from_bech32(
+            bech32Str
+          )
+        )
+      );
+    }
+  
+    static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
+      return Promise.resolve(
+        new Bip32PrivateKey(
+          WasmV4.Bip32PrivateKey.from_bytes(
+            bytes
+          )
+        )
+      );
+    }
+  
+    static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
+      return Promise.resolve(
+        new Bip32PrivateKey(
+          WasmV4.Bip32PrivateKey.generate_ed25519_bip32()
+        )
       );
     }
   }
@@ -1114,6 +1254,313 @@ namespace NodeJs {
             minimumUtxoVal.wasm,
             poolDeposit.wasm,
             keyDeposit.wasm
+          )
+        )
+      );
+    }
+  }
+
+  export class BaseAddress
+    extends Ptr<WasmV4.BaseAddress>
+    implements WasmContract.BaseAddress
+  {
+    paymentCred(): Promise<StakeCredential> {
+      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()))
+    }
+
+    stakeCred(): Promise<StakeCredential> {
+      return Promise.resolve(new StakeCredential(this.wasm.stake_cred()));
+    }
+
+    toAddress(): Promise<Address> {
+      return Promise.resolve(new Address(this.wasm.to_address()));
+    }
+
+    static fromAddress(addr: Address): Promise<BaseAddress> {
+      return Promise.resolve(new BaseAddress(WasmV4.BaseAddress.from_address(addr.wasm)));
+    }
+
+    static new(
+      network: number,
+      payment: StakeCredential,
+      stake: StakeCredential,
+    ): Promise<BaseAddress> {
+      return Promise.resolve(new BaseAddress(WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm)));
+    }
+  }
+
+  export class PointerAddress
+    extends Ptr<WasmV4.PointerAddress>
+    implements WasmContract.PointerAddress
+  {
+    paymentCred(): Promise<StakeCredential> {
+      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+    }
+
+    stakePointer(): Promise<Pointer> {
+      return Promise.resolve(new Pointer(this.wasm.stake_pointer()));
+    }
+
+    toAddress(): Promise<Address> {
+      return Promise.resolve(new Address(this.wasm.to_address()));
+    }
+
+    static fromAddress(addr: Address): Promise<PointerAddress> {
+      return Promise.resolve(
+        new PointerAddress(
+          WasmV4.PointerAddress.from_address(addr.wasm)
+        )
+      )
+    }
+
+    static new(network: number, payment: StakeCredential, stake: Pointer): Promise<PointerAddress> {
+      return Promise.resolve(
+        new PointerAddress(
+          WasmV4.PointerAddress.new(
+            network,
+            payment.wasm,
+            stake.wasm
+          )
+        )
+      )
+    }
+  }
+
+  export class EnterpriseAddress
+    extends Ptr<WasmV4.EnterpriseAddress>
+    implements WasmContract.EnterpriseAddress
+  {
+    paymentCred(): Promise<StakeCredential> {
+      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+    }
+
+    toAddress(): Promise<Address> {
+      return Promise.resolve(new Address(this.wasm.to_address()));
+    }
+
+    static fromAddress(addr: Address): Promise<EnterpriseAddress> {
+      return Promise.resolve(
+        new EnterpriseAddress(
+          WasmV4.EnterpriseAddress.from_address(
+            addr.wasm
+          )
+        )
+      );
+    }
+
+    static new(network: number, payment: StakeCredential): Promise<EnterpriseAddress> {
+      return Promise.resolve(
+        new EnterpriseAddress(
+          WasmV4.EnterpriseAddress.new(
+            network,
+            payment.wasm
+          )
+        )
+      );
+    }
+  }
+
+  export class Pointer
+    extends Ptr<WasmV4.Pointer>
+    implements WasmContract.Pointer
+  {
+    slot(): Promise<number> {
+      return Promise.resolve(this.wasm.slot());
+    }
+
+    txIndex(): Promise<number> {
+      return Promise.resolve(this.wasm.tx_index());
+    }
+
+    certIndex(): Promise<number> {
+      return Promise.resolve(this.wasm.cert_index());
+    }
+
+    static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
+      return Promise.resolve(new Pointer(WasmV4.Pointer.new(slot, txIndex, certIndex)))
+    }
+  }
+
+  // witnesses things
+
+  export class Vkey
+    extends Ptr<WasmV4.Vkey>
+    implements WasmContract.Vkey
+  {
+    static new(pk: PublicKey): Promise<Vkey> {
+      return Promise.resolve(new Vkey(WasmV4.Vkey.new(pk.wasm)));
+    }
+  }
+
+  export class Ed25519Signature
+    extends Ptr<WasmV4.Ed25519Signature>
+    implements WasmContract.Ed25519Signature
+  {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes());
+    }
+
+    toHex(): Promise<string> {
+      return Promise.resolve(this.wasm.to_hex());
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
+      return Promise.resolve(
+        new Ed25519Signature(
+          WasmV4.Ed25519Signature.from_bytes(
+            bytes
+          )
+        )
+      );
+    }
+  }
+
+  export class Vkeywitness
+    extends Ptr<WasmV4.Vkeywitness>
+    implements WasmContract.Vkeywitness
+  {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes());
+    }
+
+    signature(): Promise<Ed25519Signature> {
+      return Promise.resolve(new Ed25519Signature(this.wasm.signature()));
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
+      return Promise.resolve(
+        new Vkeywitness(
+          WasmV4.Vkeywitness.from_bytes(bytes)
+        )
+      );
+    }
+
+    static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
+      return Promise.resolve(
+        new Vkeywitness(
+          WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm)
+        )
+      );
+    }
+  }
+
+  export class Vkeywitnesses
+    extends Ptr<WasmV4.Vkeywitnesses>
+    implements WasmContract.Vkeywitnesses
+  {
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len());
+    }
+  
+    add(item: Vkeywitness): Promise<void> {
+      return Promise.resolve(this.wasm.add(item.wasm));
+    }
+  
+    static new(): Promise<Vkeywitnesses> {
+      return Promise.resolve(
+        new Vkeywitnesses(
+          WasmV4.Vkeywitnesses.new()
+        )
+      );
+    }
+  }
+
+  export class BootstrapWitness
+    extends Ptr<WasmV4.BootstrapWitness>
+    implements WasmContract.BootstrapWitness
+  {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes());
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
+      return Promise.resolve(
+        new BootstrapWitness(
+          WasmV4.BootstrapWitness.from_bytes(bytes)
+        )
+      );
+    }
+
+    static new(
+      vkey: Vkey,
+      signature: Ed25519Signature,
+      chainCode: Uint8Array,
+      attributes: Uint8Array,
+    ): Promise<BootstrapWitness> {
+      return Promise.resolve(
+        new BootstrapWitness(
+          WasmV4.BootstrapWitness.new(
+            vkey.wasm,
+            signature.wasm,
+            chainCode,
+            attributes
+          )
+        )
+      );
+    }
+  }
+
+  export class BootstrapWitnesses
+    extends Ptr<WasmV4.BootstrapWitnesses>
+    implements WasmContract.BootstrapWitnesses
+  {
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len());
+    }
+
+    add(item: BootstrapWitness): Promise<void> {
+      return Promise.resolve(this.wasm.add(item.wasm));
+    }
+
+    static new(): Promise<BootstrapWitnesses> {
+      return Promise.resolve(
+        new BootstrapWitnesses(
+          WasmV4.BootstrapWitnesses.new()
+        )
+      )
+    }
+  }
+
+  export class TransactionWitnessSet
+    extends Ptr<WasmV4.TransactionWitnessSet>
+    implements WasmContract.TransactionWitnessSet
+  {
+    setBootstraps(bootstraps: BootstrapWitnesses): Promise<void> {
+      return Promise.resolve(this.wasm.set_bootstraps(bootstraps.wasm));
+    }
+  
+    setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void> {
+      return Promise.resolve(this.wasm.set_vkeys(vkeywitnesses.wasm));
+    }
+  
+    static new(): Promise<TransactionWitnessSet> {
+      return Promise.resolve(
+        new TransactionWitnessSet(
+          WasmV4.TransactionWitnessSet.new()
+        )
+      );
+    }
+  }
+
+  export class Transaction
+    extends Ptr<WasmV4.Transaction>
+    implements WasmContract.Transaction
+  {
+    body(): Promise<TransactionBody> {
+      return Promise.resolve(new TransactionBody(this.wasm.body()));
+    }
+  
+    static new(
+      body: TransactionBody,
+      witnessSet: TransactionWitnessSet,
+      auxiliary: AuxiliaryData,
+    ): Promise<Transaction> {
+      return Promise.resolve(
+        new Transaction(
+          WasmV4.Transaction.new(
+            body.wasm,
+            witnessSet.wasm,
+            auxiliary.wasm
           )
         )
       );

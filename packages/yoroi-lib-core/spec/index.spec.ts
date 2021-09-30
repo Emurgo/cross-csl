@@ -7,7 +7,8 @@ import {
   AddressingUtxo,
   CardanoHaskellConfig,
   DefaultTokenEntry,
-  SendToken
+  SendToken,
+  TxMetadata
 } from '../src/models';
 import { GeneralTransactionMetadata } from '../src/wasm-contract';
 
@@ -128,7 +129,7 @@ export const setupTests = (
             address:
               '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
-              path: [2147485500, 21447485463, 2147483648, 0, 3],
+              path: [2147485500, 4294967295, 2147483648, 0, 3],
               startLevel: 1
             },
             output: {
@@ -278,7 +279,7 @@ export const setupTests = (
         };
       };
 
-      it('should build unsigned TX', async () => {
+      it('should build and sign TX', async () => {
         const params = buildDummyTxParameters(false);
 
         const unsignedTx = await yoroiLib.createUnsignedTx(
@@ -291,9 +292,19 @@ export const setupTests = (
           params.defaultToken,
           {}
         );
+
+        const keyLevel = 0;
+        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09';
+        const stakingKeyWits = new Set<string>();
+        const metadata = {
+          label: '0010100',
+          data: {}
+        } as TxMetadata;
+
+        await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, metadata);
       }).timeout(10000);
 
-      it('should build unsigned TX for sending all balance', async () => {
+      it('should build and sign TX for sending all balance', async () => {
         const params = buildDummyTxParameters(true);
 
         const unsignedTx = await yoroiLib.createUnsignedTx(
@@ -306,6 +317,16 @@ export const setupTests = (
           params.defaultToken,
           {}
         );
+
+        const keyLevel = 0;
+        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09';
+        const stakingKeyWits = new Set<string>();
+        const metadata = {
+          label: '0010100',
+          data: {}
+        } as TxMetadata;
+
+        await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, metadata);
       });
     });
   });
