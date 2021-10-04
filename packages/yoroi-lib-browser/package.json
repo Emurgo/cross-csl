@@ -12,7 +12,7 @@
     "pack": "npm pack"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "^9.1.0"
   },
