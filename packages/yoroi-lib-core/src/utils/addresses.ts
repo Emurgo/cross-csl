@@ -3,7 +3,7 @@ import * as WasmContract from '../wasm-contract';
 export async function normalizeToAddress(
   wasm: WasmContract.WasmModuleProxy,
   addr: string
-): Promise<WasmContract.Address> {
+): Promise<WasmContract.Address | undefined> {
   // in Shelley, addresses can be base16, bech32 or base58
   // this function, we try parsing in all encodings possible
 

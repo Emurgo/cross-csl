@@ -1,7 +1,6 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley';
-import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
-import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src';
+import { YoroiLib, createYoroiLib, WasmContract } from '../../yoroi-lib-core';
 
 export const init = (): YoroiLib => {
   return createYoroiLib({
@@ -92,13 +91,14 @@ export const init = (): YoroiLib => {
 
 namespace Mobile {
   abstract class WasmProxy<T> {
-    private _wasm: T;
+    private _wasm: T | undefined;
 
     get wasm(): T {
-      return this._wasm;
+      if (this._wasm) return this._wasm;
+      throw new Error('Trying to access undefined WASM object');
     }
 
-    constructor(wasm: T) {
+    constructor(wasm: T | undefined) {
       this._wasm = wasm;
     }
 
@@ -112,7 +112,7 @@ namespace Mobile {
   }
 
   abstract class Ptr<T extends WasmV4.Ptr> extends WasmProxy<T> {
-    constructor(wasm: T) {
+    constructor(wasm: T | undefined) {
       super(wasm);
     }
 
@@ -191,17 +191,13 @@ namespace Mobile {
     async insert(
       key: BigNum,
       value: TransactionMetadatum
-    ): Promise<TransactionMetadatum | undefined> {
-      const wasm = await this.wasm.insert(key.wasm, value.wasm);
-      if (wasm) {
-        return new TransactionMetadatum(wasm);
-      }
+    ): Promise<TransactionMetadatum> {
+      return new TransactionMetadatum(await this.wasm.insert(key.wasm, value.wasm));
+      
     }
 
-    async get(key: BigNum): Promise<TransactionMetadatum | undefined> {
-      const wasm = await this.wasm.get(key.wasm);
-      if (!wasm) return undefined;
-      return new TransactionMetadatum(wasm);
+    async get(key: BigNum): Promise<TransactionMetadatum> {
+      return new TransactionMetadatum(await this.wasm.get(key.wasm));
     }
 
     static async new(): Promise<GeneralTransactionMetadata> {
@@ -290,7 +286,7 @@ namespace Mobile {
       return new BigNum(await this.wasm.insert(key.wasm, value.wasm));
     }
 
-    async get(key: AssetName): Promise<BigNum | undefined> {
+    async get(key: AssetName): Promise<BigNum> {
       return new BigNum(await this.wasm.get(key.wasm));
     }
 
@@ -361,7 +357,7 @@ namespace Mobile {
       return new Assets(await this.wasm.insert(key.wasm, value.wasm));
     }
 
-    async get(key: PolicyID): Promise<Assets | undefined> {
+    async get(key: PolicyID): Promise<Assets> {
       return new Assets(await this.wasm.get(key.wasm));
     }
 
@@ -447,7 +443,7 @@ namespace Mobile {
       return await this.wasm.set_coin(coin.wasm);
     }
 
-    async multiasset(): Promise<MultiAsset | undefined> {
+    async multiasset(): Promise<MultiAsset> {
       return new MultiAsset(await this.wasm.multiasset());
     }
 
@@ -681,7 +677,7 @@ namespace Mobile {
       return await WasmV4.ByronAddress.is_valid(string);
     }
 
-    static async fromAddress(addr: Address): Promise<ByronAddress | undefined> {
+    static async fromAddress(addr: Address): Promise<ByronAddress> {
       return new ByronAddress(
         await WasmV4.ByronAddress.from_address(addr.wasm)
       );
@@ -728,11 +724,11 @@ namespace Mobile {
       return await this.wasm.to_bytes();
     }
 
-    async toKeyhash(): Promise<Ed25519KeyHash | undefined> {
+    async toKeyhash(): Promise<Ed25519KeyHash> {
       return new Ed25519KeyHash(await this.wasm.to_keyhash());
     }
 
-    async toScripthash(): Promise<ScriptHash | undefined> {
+    async toScripthash(): Promise<ScriptHash> {
       return new ScriptHash(await this.wasm.to_scripthash());
     }
 
@@ -853,15 +849,15 @@ namespace Mobile {
       return await this.wasm.to_bytes();
     }
 
-    async asStakeRegistration(): Promise<StakeRegistration | undefined> {
+    async asStakeRegistration(): Promise<StakeRegistration> {
       return new StakeRegistration(await this.wasm.as_stake_registration());
     }
 
-    async asStakeDeregistration(): Promise<StakeDeregistration | undefined> {
+    async asStakeDeregistration(): Promise<StakeDeregistration> {
       return new StakeDeregistration(await this.wasm.as_stake_deregistration());
     }
 
-    async asStakeDelegation(): Promise<StakeDelegation | undefined> {
+    async asStakeDelegation(): Promise<StakeDelegation> {
       return new StakeDelegation(await this.wasm.as_stake_delegation());
     }
 
@@ -939,7 +935,7 @@ namespace Mobile {
 
     static async fromAddress(
       addr: Address
-    ): Promise<RewardAddress | undefined> {
+    ): Promise<RewardAddress> {
       return new RewardAddress(
         await WasmV4.RewardAddress.from_address(addr.wasm)
       );
@@ -988,7 +984,7 @@ namespace Mobile {
       return new BigNum(await this.wasm.insert(key.wasm, value.wasm));
     }
 
-    async get(key: RewardAddress): Promise<BigNum | undefined> {
+    async get(key: RewardAddress): Promise<BigNum> {
       return new BigNum(await this.wasm.get(key.wasm));
     }
 
@@ -1027,7 +1023,7 @@ namespace Mobile {
     }
   }
 
-  export type Optional<T> = T | undefined;
+  export type Optional<T> = T;
 
   export class TransactionBody
     extends Ptr<WasmV4.TransactionBody>
@@ -1049,7 +1045,7 @@ namespace Mobile {
       return new BigNum(await this.wasm.fee());
     }
 
-    async ttl(): Promise<Optional<number>> {
+    async ttl(): Promise<Optional<number | undefined>> {
       return await this.wasm.ttl();
     }
 

@@ -69,13 +69,13 @@ export interface WasmModuleProxy {
 }
 
 export abstract class WasmProxy {
-  constructor(wasm: any) {}
+  constructor(wasm: any | undefined) {}
 
   abstract hasValue(): boolean;
 }
 
 export abstract class Ptr extends WasmProxy {
-  constructor(wasm: any) {
+  constructor(wasm: any | undefined) {
     super(wasm);
   }
   /**
@@ -167,8 +167,8 @@ export abstract class GeneralTransactionMetadata extends Ptr {
   abstract insert(
     key: BigNum,
     value: TransactionMetadatum
-  ): Promise<TransactionMetadatum | undefined>;
-  abstract get(key: BigNum): Promise<TransactionMetadatum | undefined>;
+  ): Promise<TransactionMetadatum>;
+  abstract get(key: BigNum): Promise<TransactionMetadatum>;
 
   static new(): Promise<GeneralTransactionMetadata> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
@@ -212,7 +212,7 @@ export abstract class AssetNames extends Ptr {
 export abstract class Assets extends Ptr {
   abstract len(): Promise<number>;
   abstract insert(key: AssetName, value: BigNum): Promise<BigNum>;
-  abstract get(key: AssetName): Promise<BigNum | undefined>;
+  abstract get(key: AssetName): Promise<BigNum>;
   abstract keys(): Promise<AssetNames>;
 
   static new(): Promise<Assets> {
@@ -248,7 +248,7 @@ export type PolicyIDs = ScriptHashes;
 export abstract class MultiAsset extends Ptr {
   abstract len(): Promise<number>;
   abstract insert(key: PolicyID, value: Assets): Promise<Assets>;
-  abstract get(key: PolicyID): Promise<Assets | undefined>;
+  abstract get(key: PolicyID): Promise<Assets>;
   abstract keys(): Promise<PolicyIDs>;
   abstract sub(rhs: MultiAsset): Promise<MultiAsset>;
 
@@ -297,7 +297,7 @@ export abstract class Value extends Ptr {
 
   abstract setCoin(coin: BigNum): Promise<void>;
 
-  abstract multiasset(): Promise<MultiAsset | undefined>;
+  abstract multiasset(): Promise<MultiAsset>;
 
   abstract setMultiasset(multiasset: MultiAsset): Promise<void>;
 
@@ -307,7 +307,7 @@ export abstract class Value extends Ptr {
 
   abstract clampedSub(rhs: Value): Promise<Value>;
 
-  abstract compare(rhs: Value): Promise<number>;
+  abstract compare(rhs: Value): Promise<number | undefined>;
 
   static new(coin: BigNum): Promise<Value> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
@@ -476,7 +476,7 @@ export abstract class ByronAddress extends Ptr {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
 
-  static fromAddress(addr: Address): Promise<ByronAddress | undefined> {
+  static fromAddress(addr: Address): Promise<ByronAddress> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
 }
@@ -500,9 +500,9 @@ export abstract class TransactionOutput extends Ptr {
 export abstract class StakeCredential extends Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract toKeyhash(): Promise<Ed25519KeyHash | undefined>;
+  abstract toKeyhash(): Promise<Ed25519KeyHash>;
 
-  abstract toScripthash(): Promise<ScriptHash | undefined>;
+  abstract toScripthash(): Promise<ScriptHash>;
 
   abstract kind(): Promise<number>;
 
@@ -569,11 +569,11 @@ export abstract class StakeDelegation extends Ptr {
 export abstract class Certificate extends Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract asStakeRegistration(): Promise<StakeRegistration | undefined>;
+  abstract asStakeRegistration(): Promise<StakeRegistration>;
 
-  abstract asStakeDeregistration(): Promise<StakeDeregistration | undefined>;
+  abstract asStakeDeregistration(): Promise<StakeDeregistration>;
 
-  abstract asStakeDelegation(): Promise<StakeDelegation | undefined>;
+  abstract asStakeDelegation(): Promise<StakeDelegation>;
 
   static fromBytes(bytes: Uint8Array): Promise<Certificate> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
@@ -621,7 +621,7 @@ export abstract class RewardAddress extends Ptr {
 
   abstract toAddress(): Promise<Address>;
 
-  static fromAddress(addr: Address): Promise<RewardAddress | undefined> {
+  static fromAddress(addr: Address): Promise<RewardAddress> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
 
@@ -650,7 +650,7 @@ export abstract class Withdrawals extends Ptr {
 
   abstract insert(key: RewardAddress, value: BigNum): Promise<BigNum>;
 
-  abstract get(key: RewardAddress): Promise<BigNum | undefined>;
+  abstract get(key: RewardAddress): Promise<BigNum>;
 
   abstract keys(): Promise<RewardAddresses>;
 
@@ -671,7 +671,7 @@ export abstract class TransactionOutputs extends Ptr {
   abstract get(index: number): Promise<TransactionOutput>;
 }
 
-export type Optional<T> = T | undefined;
+export type Optional<T> = T;
 
 export abstract class TransactionBody extends Ptr {
   abstract toBytes(): Promise<Uint8Array>;
@@ -682,7 +682,7 @@ export abstract class TransactionBody extends Ptr {
 
   abstract fee(): Promise<BigNum>;
 
-  abstract ttl(): Promise<Optional<number>>;
+  abstract ttl(): Promise<Optional<number | undefined>>;
 
   abstract certs(): Promise<Certificates>;
 

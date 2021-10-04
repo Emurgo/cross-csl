@@ -1,7 +1,6 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
-import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
-import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src';
+import { YoroiLib, createYoroiLib, WasmContract } from '../../yoroi-lib-core';
 
 export const init = (): YoroiLib => {
   return createYoroiLib({
@@ -109,14 +108,15 @@ export const init = (): YoroiLib => {
 };
 
 namespace NodeJs {
-  export abstract class WasmProxy<T> {
-    private _wasm: T;
+  export abstract class WasmProxy<T> implements WasmContract.WasmProxy {
+    private _wasm: T | undefined;
 
     get wasm(): T {
-      return this._wasm;
+      if (this._wasm) return this._wasm;
+      throw new Error('Trying to access undefined WASM object');
     }
 
-    constructor(wasm: T) {
+    constructor(wasm: T | undefined) {
       this._wasm = wasm;
     }
 
@@ -132,7 +132,7 @@ namespace NodeJs {
   export abstract class Ptr<
     T extends { free: () => any }
   > extends WasmProxy<T> {
-    constructor(wasm: T) {
+    constructor(wasm: T | undefined) {
       super(wasm);
     }
 
@@ -209,17 +209,12 @@ namespace NodeJs {
     insert(
       key: BigNum,
       value: TransactionMetadatum
-    ): Promise<TransactionMetadatum | undefined> {
-      const wasm = this.wasm.insert(key.wasm, value.wasm);
-      if (wasm) {
-        return Promise.resolve(new TransactionMetadatum(wasm));
-      }
+    ): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.insert(key.wasm, value.wasm)));
     }
 
-    get(key: BigNum): Promise<TransactionMetadatum | undefined> {
-      const wasm = this.wasm.get(key.wasm);
-      if (!wasm) return;
-      return Promise.resolve(new TransactionMetadatum(wasm));
+    get(key: BigNum): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.get(key.wasm)));
     }
 
     static new(): Promise<GeneralTransactionMetadata> {
@@ -308,7 +303,7 @@ namespace NodeJs {
       );
     }
 
-    get(key: AssetName): Promise<BigNum | undefined> {
+    get(key: AssetName): Promise<BigNum> {
       return Promise.resolve(new BigNum(this.wasm.get(key.wasm)));
     }
 
@@ -385,7 +380,7 @@ namespace NodeJs {
       );
     }
 
-    get(key: PolicyID): Promise<Assets | undefined> {
+    get(key: PolicyID): Promise<Assets> {
       return Promise.resolve(new Assets(this.wasm.get(key.wasm)));
     }
 
@@ -475,7 +470,7 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.set_coin(coin.wasm));
     }
 
-    multiasset(): Promise<MultiAsset | undefined> {
+    multiasset(): Promise<MultiAsset> {
       return Promise.resolve(new MultiAsset(this.wasm.multiasset()));
     }
 
@@ -495,7 +490,7 @@ namespace NodeJs {
       return Promise.resolve(new Value(this.wasm.clamped_sub(rhs.wasm)));
     }
 
-    compare(rhs: Value): Promise<number> {
+    compare(rhs: Value): Promise<number | undefined> {
       return Promise.resolve(this.wasm.compare(rhs.wasm));
     }
 
@@ -727,7 +722,7 @@ namespace NodeJs {
       return Promise.resolve(WasmV4.ByronAddress.is_valid(string));
     }
 
-    static fromAddress(addr: Address): Promise<ByronAddress | undefined> {
+    static fromAddress(addr: Address): Promise<ByronAddress> {
       return Promise.resolve(
         new ByronAddress(WasmV4.ByronAddress.from_address(addr.wasm))
       );
@@ -773,11 +768,11 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.to_bytes());
     }
 
-    toKeyhash(): Promise<Ed25519KeyHash | undefined> {
+    toKeyhash(): Promise<Ed25519KeyHash> {
       return Promise.resolve(new Ed25519KeyHash(this.wasm.to_keyhash()));
     }
 
-    toScripthash(): Promise<ScriptHash | undefined> {
+    toScripthash(): Promise<ScriptHash> {
       return Promise.resolve(new ScriptHash(this.wasm.to_scripthash()));
     }
 
@@ -900,19 +895,19 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.to_bytes());
     }
 
-    asStakeRegistration(): Promise<StakeRegistration | undefined> {
+    asStakeRegistration(): Promise<StakeRegistration> {
       return Promise.resolve(
         new StakeRegistration(this.wasm.as_stake_registration())
       );
     }
 
-    asStakeDeregistration(): Promise<StakeDeregistration | undefined> {
+    asStakeDeregistration(): Promise<StakeDeregistration> {
       return Promise.resolve(
         new StakeDeregistration(this.wasm.as_stake_deregistration())
       );
     }
 
-    asStakeDelegation(): Promise<StakeDelegation | undefined> {
+    asStakeDelegation(): Promise<StakeDelegation> {
       return Promise.resolve(
         new StakeDelegation(this.wasm.as_stake_delegation())
       );
@@ -998,7 +993,7 @@ namespace NodeJs {
       return Promise.resolve(new Address(this.wasm.to_address()));
     }
 
-    static fromAddress(addr: Address): Promise<RewardAddress | undefined> {
+    static fromAddress(addr: Address): Promise<RewardAddress> {
       return Promise.resolve(
         new RewardAddress(WasmV4.RewardAddress.from_address(addr.wasm))
       );
@@ -1049,7 +1044,7 @@ namespace NodeJs {
       );
     }
 
-    get(key: RewardAddress): Promise<BigNum | undefined> {
+    get(key: RewardAddress): Promise<BigNum> {
       return Promise.resolve(new BigNum(this.wasm.get(key.wasm)));
     }
 
@@ -1088,7 +1083,7 @@ namespace NodeJs {
     }
   }
 
-  export type Optional<T> = T | undefined;
+  export type Optional<T> = T;
 
   export class TransactionBody
     extends Ptr<WasmV4.TransactionBody>
@@ -1110,7 +1105,7 @@ namespace NodeJs {
       return Promise.resolve(new BigNum(this.wasm.fee()));
     }
 
-    ttl(): Promise<Optional<number>> {
+    ttl(): Promise<Optional<number | undefined>> {
       return Promise.resolve(this.wasm.ttl());
     }
 
