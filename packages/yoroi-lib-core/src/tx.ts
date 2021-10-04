@@ -236,9 +236,9 @@ export class WasmUnsignedTx implements UnsignedTx {
 }
 
 export interface UnsignedTx {
-  get senderUtxos(): ReadonlyArray<CardanoAddressedUtxo>;
-  get outputs(): ReadonlyArray<TxOutput>;
-  get change(): ReadonlyArray<Change>;
+  readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>;
+  readonly outputs: ReadonlyArray<TxOutput>;
+  readonly change: ReadonlyArray<Change>;
   fee(): Promise<BigNumber | undefined>;
   sign(
     keyLevel: number,
