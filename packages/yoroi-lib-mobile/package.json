@@ -7,8 +7,8 @@
     "build": "tsc",
     "clean": "rm -rf ./dist",
     "rebuild": "yarn clean && yarn build",
-    "pack:dry": "npm pack --dry-run",
-    "pack": "npm pack"
+    "pack:dry": "yarn rebuild && npm pack --dry-run",
+    "pack": "yarn rebuild && npm pack"
   },
   "author": "",
   "license": "MIT",
