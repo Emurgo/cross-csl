@@ -2,7 +2,12 @@
 # yarn lockfile v1
 
 
-"@emurgo/cardano-serialization-lib-nodejs@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-8.1.0.tgz#76b0bfbec1eda4fe185de621c7b948f018e07319"
-  integrity sha512-BH8MhQQt+BDqWM4Yqa9Asn/vhJJLxi43pp7Crq6bdQuj2NOT2F6e3nhdLS2KJhvb47YGFdg0pnvGaH+TCmUoIA==
+"@emurgo/cardano-serialization-lib-nodejs@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-9.1.0.tgz#8813b8a040c0425aab454f8ee1ba4f4709031324"
+  integrity sha512-4gW+KqejTSm/rkNwWxK/WUJvlifWqFx5ShgCtWmPuTZ/YJAZSpROI8DP+pqTakG0gGWdxPB3BnVJIPrczNwmtA==
+
+bignumber.js@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.1.tgz#8d7ba124c882bfd8e43260c67475518d0689e4e5"
+  integrity sha512-IdZR9mh6ahOBv/hYGiXyVuyCetmGJhtYkqLBpTStdhEGjegpPlUawydyaF3pbIOFynJTpllEs+NP+CS9jKFLjA==

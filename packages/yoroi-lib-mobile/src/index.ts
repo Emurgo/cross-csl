@@ -11,6 +11,35 @@ export const init = (): YoroiLib => {
       const wasm = await WasmV4.encode_json_str_to_metadatum(json, schema);
       return Promise.resolve(new Mobile.TransactionMetadatum(wasm));
     },
+    minAdaRequired: async (
+      value: Mobile.Value,
+      minimumUtxoVal: Mobile.BigNum
+    ) => {
+      return new Mobile.BigNum(
+        await WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+      );
+    },
+    hashTransaction: async (txBody: Mobile.TransactionBody) => {
+      return new Mobile.TransactionHash(await WasmV4.hash_transaction(txBody.wasm));
+    },
+    makeVkeyWitness: async (txBodyHash: Mobile.TransactionHash, sk: Mobile.PrivateKey) => {
+      return new Mobile.Vkeywitness(
+        await WasmV4.make_vkey_witness(txBodyHash.wasm, sk.wasm)
+      )
+    },
+    makeIcarusBootstrapWitness: async (
+      txBodyHash: Mobile.TransactionHash,
+      addr: Mobile.ByronAddress,
+      key: Mobile.Bip32PrivateKey) =>
+    {
+      return new Mobile.BootstrapWitness(
+        await WasmV4.make_icarus_bootstrap_witness(
+          txBodyHash.wasm,
+          addr.wasm,
+          key.wasm
+        )
+      );
+    },
     BigNum: Mobile.BigNum,
     LinearFee: Mobile.LinearFee,
     GeneralTransactionMetadata: Mobile.GeneralTransactionMetadata,
@@ -29,6 +58,8 @@ export const init = (): YoroiLib => {
     Address: Mobile.Address,
     PublicKey: Mobile.PublicKey,
     Bip32PublicKey: Mobile.Bip32PublicKey,
+    PrivateKey: Mobile.PrivateKey,
+    Bip32PrivateKey: Mobile.Bip32PrivateKey,
     ByronAddress: Mobile.ByronAddress,
     TransactionOutput: Mobile.TransactionOutput,
     StakeCredential: Mobile.StakeCredential,
@@ -43,7 +74,19 @@ export const init = (): YoroiLib => {
     TransactionInputs: Mobile.TransactionInputs,
     TransactionOutputs: Mobile.TransactionOutputs,
     TransactionBody: Mobile.TransactionBody,
-    TransactionBuilder: Mobile.TransactionBuilder
+    TransactionBuilder: Mobile.TransactionBuilder,
+    BaseAddress: Mobile.BaseAddress,
+    PointerAddress: Mobile.PointerAddress,
+    EnterpriseAddress: Mobile.EnterpriseAddress,
+    Pointer: Mobile.Pointer,
+    Vkey: Mobile.Vkey,
+    Ed25519Signature: Mobile.Ed25519Signature,
+    Vkeywitness: Mobile.Vkeywitness,
+    Vkeywitnesses: Mobile.Vkeywitnesses,
+    BootstrapWitness: Mobile.BootstrapWitness,
+    BootstrapWitnesses: Mobile.BootstrapWitnesses,
+    TransactionWitnessSet: Mobile.TransactionWitnessSet,
+    Transaction: Mobile.Transaction
   });
 };
 
@@ -57,6 +100,14 @@ namespace Mobile {
 
     constructor(wasm: T) {
       this._wasm = wasm;
+    }
+
+    hasValue(): boolean {
+      if (this._wasm) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -510,6 +561,91 @@ namespace Mobile {
     }
   }
 
+  export class PrivateKey
+    extends Ptr<WasmV4.PrivateKey>
+    implements WasmContract.PrivateKey
+  {
+    async toPublic(): Promise<PublicKey> {
+      return new PublicKey(await this.wasm.to_public());
+    }
+  
+    async asBytes(): Promise<Uint8Array> {
+      return await this.wasm.as_bytes();
+    }
+  
+    async sign(message: Uint8Array): Promise<Ed25519Signature> {
+      return new Ed25519Signature(await this.wasm.sign(message));
+    }
+  
+    static async fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
+      return new PrivateKey(
+        (await WasmV4.PrivateKey.from_extended_bytes(bytes)) as any
+      );
+    }
+  
+    static async fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
+      return new PrivateKey(
+        (await WasmV4.PrivateKey.from_normal_bytes(bytes)) as any
+      );
+    }
+  }
+  
+  export class Bip32PrivateKey
+    extends Ptr<WasmV4.Bip32PrivateKey>
+    implements WasmContract.Bip32PrivateKey
+  {
+    async derive(index: number): Promise<Bip32PrivateKey> {
+      return new Bip32PrivateKey(await this.wasm.derive(index));
+    }
+  
+    async toRawKey(): Promise<PrivateKey> {
+      return new PrivateKey(await this.wasm.to_raw_key());
+    }
+  
+    async toPublic(): Promise<Bip32PublicKey> {
+      return new Bip32PublicKey(await this.wasm.to_public());
+    }
+  
+    async asBytes(): Promise<Uint8Array> {
+      return await this.wasm.as_bytes();
+    }
+  
+    async toBech32(): Promise<string> {
+      return await this.wasm.to_bech32();
+    }
+  
+    static async fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
+      return new Bip32PrivateKey(
+        await WasmV4.Bip32PrivateKey.from_bip39_entropy(
+          entropy,
+          password
+        )
+      );
+    }
+  
+    static async fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
+      return new Bip32PrivateKey(
+        await WasmV4.Bip32PrivateKey.from_bech32(
+          bech32Str
+        )
+      );
+    }
+  
+    static async fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
+      return new Bip32PrivateKey(
+        await WasmV4.Bip32PrivateKey.from_bytes(
+          bytes
+        )
+      );
+    }
+  
+    static async generateEd25519Bip32(): Promise<Bip32PrivateKey> {
+      return new Bip32PrivateKey(
+        await WasmV4.Bip32PrivateKey.generate_ed25519_bip32()
+      );
+    }
+  }
+
   export class ByronAddress
     extends Ptr<WasmV4.ByronAddress>
     implements WasmContract.ByronAddress
@@ -545,9 +681,7 @@ namespace Mobile {
       return await WasmV4.ByronAddress.is_valid(string);
     }
 
-    static async fromAddress(
-      addr: Address
-    ): Promise<ByronAddress | undefined> {
+    static async fromAddress(addr: Address): Promise<ByronAddress | undefined> {
       return new ByronAddress(
         await WasmV4.ByronAddress.from_address(addr.wasm)
       );
@@ -1054,6 +1188,295 @@ namespace Mobile {
           minimumUtxoVal.wasm,
           poolDeposit.wasm,
           keyDeposit.wasm
+        )
+      );
+    }
+  }
+
+  export class BaseAddress
+    extends Ptr<WasmV4.BaseAddress>
+    implements WasmContract.BaseAddress
+  {
+    async paymentCred(): Promise<StakeCredential> {
+      return new StakeCredential(await this.wasm.payment_cred())
+    }
+
+    async stakeCred(): Promise<StakeCredential> {
+      return new StakeCredential(await this.wasm.stake_cred());
+    }
+
+    async toAddress(): Promise<Address> {
+      return new Address(await this.wasm.to_address());
+    }
+
+    static async fromAddress(addr: Address): Promise<BaseAddress> {
+      return new BaseAddress(await WasmV4.BaseAddress.from_address(addr.wasm));
+    }
+
+    static async new(
+      network: number,
+      payment: StakeCredential,
+      stake: StakeCredential,
+    ): Promise<BaseAddress> {
+      return new BaseAddress(await WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm));
+    }
+  }
+
+  export class PointerAddress
+    implements WasmContract.PointerAddress
+  {
+    constructor () {
+      throw new Error('PointerAddress is not implemented on mobile');
+    }
+
+    free(): Promise<void> {
+      throw new Error('Method not implemented.');
+    }
+
+    hasValue(): boolean {
+      throw new Error('Method not implemented.');
+    }
+    
+    paymentCred(): Promise<StakeCredential> {
+      throw new Error('Method not implemented.');
+    }
+
+    stakePointer(): Promise<Pointer> {
+      throw new Error('Method not implemented.');
+    }
+
+    toAddress(): Promise<Address> {
+      throw new Error('Method not implemented.');
+    }
+
+    static fromAddress(addr: Address): Promise<PointerAddress> {
+      throw new Error('Method not implemented.');
+    }
+
+    static new(network: number, payment: StakeCredential, stake: Pointer): Promise<PointerAddress> {
+      throw new Error('Method not implemented.');
+    }
+  }
+
+  export class EnterpriseAddress
+    extends Ptr<WasmV4.EnterpriseAddress>
+    implements WasmContract.EnterpriseAddress
+  {
+    constructor (wasm: WasmV4.EnterpriseAddress) {
+      super(wasm);
+      throw new Error('EnterpriseAddress is not implemented on mobile');
+    }
+
+    paymentCred(): Promise<StakeCredential> {
+      throw new Error('Method not implemented.');
+    }
+
+    toAddress(): Promise<Address> {
+      throw new Error('Method not implemented.');
+    }
+
+    static fromAddress(addr: Address): Promise<EnterpriseAddress> {
+      throw new Error('Method not implemented.');
+    }
+
+    static new(network: number, payment: StakeCredential): Promise<EnterpriseAddress> {
+      throw new Error('Method not implemented.');
+    }
+  }
+
+  export class Pointer
+    implements WasmContract.Pointer
+  {
+    constructor () {
+      throw new Error('Pointer is not implemented on mobile');
+    }
+
+    free(): Promise<void> {
+      throw new Error('Method not implemented.');
+    }
+
+    hasValue(): boolean {
+      throw new Error('Method not implemented.');
+    }
+
+    slot(): Promise<number> {
+      throw new Error('Method not implemented.');
+    }
+
+    txIndex(): Promise<number> {
+      throw new Error('Method not implemented.');
+    }
+
+    certIndex(): Promise<number> {
+      throw new Error('Method not implemented.');
+    }
+
+    static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
+      throw new Error('Method not implemented.');
+    }
+  }
+
+  export class Vkey
+    extends Ptr<WasmV4.Vkey>
+    implements WasmContract.Vkey
+  {
+    static async new(pk: PublicKey): Promise<Vkey> {
+      return new Vkey(await WasmV4.Vkey.new(pk.wasm));
+    }
+  }
+
+  export class Ed25519Signature
+    extends Ptr<WasmV4.Ed25519Signature>
+    implements WasmContract.Ed25519Signature
+  {
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes();
+    }
+
+    async toHex(): Promise<string> {
+      return await this.wasm.to_hex();
+    }
+
+    static async fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
+      return new Ed25519Signature(
+        await WasmV4.Ed25519Signature.from_bytes(
+          bytes
+        )
+      );
+    }
+  }
+
+  export class Vkeywitness
+    extends Ptr<WasmV4.Vkeywitness>
+    implements WasmContract.Vkeywitness
+  {
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes();
+    }
+
+    async signature(): Promise<Ed25519Signature> {
+      return new Ed25519Signature(await this.wasm.signature());
+    }
+
+    static async fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
+      return new Vkeywitness(
+        await WasmV4.Vkeywitness.from_bytes(bytes)
+      );
+    }
+
+    static async new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
+      return new Vkeywitness(
+        await WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm)
+      );
+    }
+  }
+
+  export class Vkeywitnesses
+    extends Ptr<WasmV4.Vkeywitnesses>
+    implements WasmContract.Vkeywitnesses
+  {
+    async len(): Promise<number> {
+      return await this.wasm.len();
+    }
+  
+    async add(item: Vkeywitness): Promise<void> {
+      return await this.wasm.add(item.wasm);
+    }
+  
+    static async new(): Promise<Vkeywitnesses> {
+      return new Vkeywitnesses(
+          await WasmV4.Vkeywitnesses.new()
+      );
+    }
+  }
+
+  export class BootstrapWitness
+    extends Ptr<WasmV4.BootstrapWitness>
+    implements WasmContract.BootstrapWitness
+  {
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes();
+    }
+
+    static async fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
+      return new BootstrapWitness(
+        await WasmV4.BootstrapWitness.from_bytes(bytes)
+      );
+    }
+
+    static async new(
+      vkey: Vkey,
+      signature: Ed25519Signature,
+      chainCode: Uint8Array,
+      attributes: Uint8Array,
+    ): Promise<BootstrapWitness> {
+      return new BootstrapWitness(
+        await WasmV4.BootstrapWitness.new(
+          vkey.wasm,
+          signature.wasm,
+          chainCode,
+          attributes
+        )
+      );
+    }
+  }
+
+  export class BootstrapWitnesses
+    extends Ptr<WasmV4.BootstrapWitnesses>
+    implements WasmContract.BootstrapWitnesses
+  {
+    async len(): Promise<number> {
+      return await this.wasm.len();
+    }
+
+    async add(item: BootstrapWitness): Promise<void> {
+      return await this.wasm.add(item.wasm);
+    }
+
+    static async new(): Promise<BootstrapWitnesses> {
+      return new BootstrapWitnesses(
+        await WasmV4.BootstrapWitnesses.new()
+      );
+    }
+  }
+
+  export class TransactionWitnessSet
+    extends Ptr<WasmV4.TransactionWitnessSet>
+    implements WasmContract.TransactionWitnessSet
+  {
+    async setBootstraps(bootstraps: BootstrapWitnesses): Promise<void> {
+      return await this.wasm.set_bootstraps(bootstraps.wasm);
+    }
+  
+    async setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void> {
+      return await this.wasm.set_vkeys(vkeywitnesses.wasm);
+    }
+  
+    static async new(): Promise<TransactionWitnessSet> {
+      return new TransactionWitnessSet(
+        await WasmV4.TransactionWitnessSet.new()
+      );
+    }
+  }
+
+  export class Transaction
+    extends Ptr<WasmV4.Transaction>
+    implements WasmContract.Transaction
+  {
+    async body(): Promise<TransactionBody> {
+      return new TransactionBody(await this.wasm.body());
+    }
+  
+    static async new(
+      body: TransactionBody,
+      witnessSet: TransactionWitnessSet,
+      auxiliary: AuxiliaryData,
+    ): Promise<Transaction> {
+      return new Transaction(
+        await WasmV4.Transaction.new(
+          body.wasm,
+          witnessSet.wasm,
+          auxiliary.wasm
         )
       );
     }

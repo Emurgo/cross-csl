@@ -3,7 +3,7 @@ export const EXCEPTIONS = {
   SHOULD_BE_OVERWRITTEN: 'should be overwritten by implementations'
 };
 
-export interface WasmContract {
+export interface WasmModuleProxy {
   encryptWithPassword(
     password: string,
     salt: string,
@@ -15,6 +15,10 @@ export interface WasmContract {
     json: string,
     schema: number
   ): Promise<TransactionMetadatum>;
+  minAdaRequired(value: Value, minimumUtxoVal: BigNum): Promise<BigNum>;
+  hashTransaction(txBody: TransactionBody): Promise<TransactionHash>;
+  makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
+  makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): Promise<BootstrapWitness>;
   BigNum: typeof BigNum;
   LinearFee: typeof LinearFee;
   GeneralTransactionMetadata: typeof GeneralTransactionMetadata;
@@ -33,6 +37,8 @@ export interface WasmContract {
   Address: typeof Address;
   PublicKey: typeof PublicKey;
   Bip32PublicKey: typeof Bip32PublicKey;
+  PrivateKey: typeof PrivateKey;
+  Bip32PrivateKey: typeof Bip32PrivateKey;
   ByronAddress: typeof ByronAddress;
   TransactionOutput: typeof TransactionOutput;
   StakeCredential: typeof StakeCredential;
@@ -48,10 +54,24 @@ export interface WasmContract {
   TransactionOutputs: typeof TransactionOutputs;
   TransactionBody: typeof TransactionBody;
   TransactionBuilder: typeof TransactionBuilder;
+  BaseAddress: typeof BaseAddress;
+  PointerAddress: typeof PointerAddress;
+  EnterpriseAddress: typeof EnterpriseAddress;
+  Pointer: typeof Pointer;
+  Vkey: typeof Vkey;
+  Ed25519Signature: typeof Ed25519Signature;
+  Vkeywitness: typeof Vkeywitness;
+  Vkeywitnesses: typeof Vkeywitnesses;
+  BootstrapWitness: typeof BootstrapWitness;
+  BootstrapWitnesses: typeof BootstrapWitnesses;
+  TransactionWitnessSet: typeof TransactionWitnessSet;
+  Transaction: typeof Transaction;
 }
 
 export abstract class WasmProxy {
   constructor(wasm: any) {}
+
+  abstract hasValue(): boolean;
 }
 
 export abstract class Ptr extends WasmProxy {
@@ -368,6 +388,72 @@ export abstract class Bip32PublicKey extends Ptr {
   }
 }
 
+export abstract class PrivateKey extends Ptr {
+  abstract toPublic(): Promise<PublicKey>;
+
+  abstract asBytes(): Promise<Uint8Array>;
+
+  abstract sign(message: Uint8Array): Promise<Ed25519Signature>;
+
+  static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Bip32PrivateKey extends Ptr {
+  /**
+  * derive this private key with the given index.
+  *
+  * # Security considerations
+  *
+  * * hard derivation index cannot be soft derived with the public key
+  *
+  * # Hard derivation vs Soft derivation
+  *
+  * If you pass an index below 0x80000000 then it is a soft derivation.
+  * The advantage of soft derivation is that it is possible to derive the
+  * public key too. I.e. derivation the private key with a soft derivation
+  * index and then retrieving the associated public key is equivalent to
+  * deriving the public key associated to the parent private key.
+  *
+  * Hard derivation index does not allow public key derivation.
+  *
+  * This is why deriving the private key should not fail while deriving
+  * the public key may fail (if the derivation index is invalid).
+  * @param {number} index
+  * @returns {Promise<Bip32PrivateKey>}
+  */
+  abstract derive(index: number): Promise<Bip32PrivateKey>;
+
+  abstract toRawKey(): Promise<PrivateKey>;
+
+  abstract toPublic(): Promise<Bip32PublicKey>;
+
+  abstract asBytes(): Promise<Uint8Array>;
+
+  abstract toBech32(): Promise<string>;
+
+  static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
 export abstract class ByronAddress extends Ptr {
   abstract toBase58(): Promise<string>;
 
@@ -672,6 +758,157 @@ export abstract class TransactionBuilder extends Ptr {
     poolDeposit: BigNum,
     keyDeposit: BigNum
   ): Promise<TransactionBuilder> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class BaseAddress extends Ptr {
+  abstract paymentCred(): Promise<StakeCredential>;
+
+  abstract stakeCred(): Promise<StakeCredential>;
+
+  abstract toAddress(): Promise<Address>;
+
+  static fromAddress(addr: Address): Promise<BaseAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static new(
+    network: number,
+    payment: StakeCredential,
+    stake: StakeCredential,
+  ): Promise<BaseAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class PointerAddress extends Ptr {
+  abstract paymentCred(): Promise<StakeCredential>;
+
+  abstract stakePointer(): Promise<Pointer>;
+
+  abstract toAddress(): Promise<Address>;
+
+  static fromAddress(addr: Address): Promise<PointerAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static new(network: number, payment: StakeCredential, stake: Pointer): Promise<PointerAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class EnterpriseAddress extends Ptr {
+  abstract paymentCred(): Promise<StakeCredential>;
+
+  abstract toAddress(): Promise<Address>;
+
+  static fromAddress(addr: Address): Promise<EnterpriseAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static new(network: number, payment: StakeCredential): Promise<EnterpriseAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Pointer extends Ptr {
+  abstract slot(): Promise<number>;
+
+  abstract txIndex(): Promise<number>;
+
+  abstract certIndex(): Promise<number>;
+
+  static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Vkey extends Ptr {
+  static new(pk: PublicKey): Promise<Vkey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Ed25519Signature extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
+
+  static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Vkeywitness extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract signature(): Promise<Ed25519Signature>;
+
+  static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Vkeywitnesses extends Ptr {
+  abstract len(): Promise<number>;
+
+  abstract add(item: Vkeywitness): Promise<void>;
+
+  static new(): Promise<Vkeywitnesses> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class BootstrapWitness extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static new(
+    vkey: Vkey,
+    signature: Ed25519Signature,
+    chainCode: Uint8Array,
+    attributes: Uint8Array,
+  ): Promise<BootstrapWitness> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class BootstrapWitnesses extends Ptr {
+  abstract len(): Promise<number>
+
+  abstract add(item: BootstrapWitness): Promise<void>
+
+  static new(): Promise<BootstrapWitnesses> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class TransactionWitnessSet extends Ptr {
+  abstract setBootstraps(bootstraps: BootstrapWitnesses): Promise<void>
+
+  abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>
+
+  static new(): Promise<TransactionWitnessSet> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class Transaction extends Ptr {
+  abstract body(): Promise<TransactionBody>;
+
+  static new(
+    body: TransactionBody,
+    witnessSet: TransactionWitnessSet,
+    auxiliary: AuxiliaryData,
+  ): Promise<Transaction> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
 }

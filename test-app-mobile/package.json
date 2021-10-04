@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@emurgo/react-native-haskell-shelley": "^2.0.0",
+    "@emurgo/react-native-haskell-shelley": "2.0.0",
     "@tradle/react-native-http": "^2.0.1",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",

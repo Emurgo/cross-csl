@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@emurgo/react-native-haskell-shelley": "^2.0.0"
+    "@emurgo/react-native-haskell-shelley": "2.0.0"
   }
 }

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@emurgo/cardano-serialization-lib-browser@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-8.1.0.tgz#e6e7b1f679bceb259b62b8a52180ccca41ca76a4"
-  integrity sha512-WvcVBJO1+YLMEymoYf/Y7Hqp7WTVDvqROwS4smcXYeJiGlTlTJRtiXEymOXBc29LrtOT+BE3cZogQdIwUWTpyA==
+"@emurgo/cardano-serialization-lib-browser@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-9.1.0.tgz#2a80800608877555d1ff52ed839e7f2c8b1ace95"
+  integrity sha512-FaNW/RalB/BPYvQbum0zkUcMxd+jKvsdwvT93GErKd/owE9W4IKhQfqI9icDZSphqFFPkDqHms2VE4XT4P7gDA==
 
 "@types/node@^16.9.2":
   version "16.9.2"

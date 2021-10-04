@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@emurgo/cardano-serialization-lib-browser": "^8.1.0"
+    "@emurgo/cardano-serialization-lib-browser": "^9.1.0"
   },
   "devDependencies": {
     "@types/node": "^16.9.2"

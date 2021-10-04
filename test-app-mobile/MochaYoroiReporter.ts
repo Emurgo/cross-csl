@@ -10,6 +10,17 @@ const {
 export class MochaYoroiReporter {
   private _indents: number = 0;
   private _stats: Mocha.Stats;
+
+  private _passes: number = 0;
+  private _fails: number = 0;
+
+  get passes(): number {
+    return this._passes;
+  }
+
+  get fails(): number {
+    return this._fails;
+  }
   
   constructor(runner: Mocha.Runner) {
     this._stats = runner.stats;
@@ -27,12 +38,12 @@ export class MochaYoroiReporter {
       .on(EVENT_TEST_PASS, test => {
         // Test#fullTitle() returns the suite name(s)
         // prepended to the test title
+        this._passes++;
         console.log('\x1b[32m', `${this.indent()}pass:`, '\x1b[0m', `${test.fullTitle()}`);
       })
       .on(EVENT_TEST_FAIL, (test, err) => {
-        console.log(
-          `${this.indent()}fail: ${test.fullTitle()} - error: ${err.message}`
-        );
+        this._fails++;
+        console.log(`${this.indent()}fail: ${test.fullTitle()} - error: ${err.message}`);
       })
       .once(EVENT_RUN_END, () => {
         this.finish();
