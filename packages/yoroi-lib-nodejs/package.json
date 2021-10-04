@@ -1,13 +1,16 @@
 {
-  "name": "yoroi-lib-core",
+  "name": "yoroi-lib-nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha",
+    "test:watch": "mocha --watch"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bignumber.js": "^9.0.1"
+    "@emurgo/cardano-serialization-lib-nodejs": "^9.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

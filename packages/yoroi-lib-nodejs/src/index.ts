@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
 import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
-import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src/index';
+import { createYoroiLib, YoroiLib } from '../../yoroi-lib-core/src';
 
 export const init = (): YoroiLib => {
   return createYoroiLib({

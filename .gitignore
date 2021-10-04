@@ -75,3 +75,9 @@ buck-out/
 web-build/
 
 # @end expo-cli
+
+# dists
+packages/yoroi-lib-core/dist
+packages/yoroi-lib-nodejs/dist
+packages/yoroi-lib-browser/dist
+packages/yoroi-lib-mobile/dist
