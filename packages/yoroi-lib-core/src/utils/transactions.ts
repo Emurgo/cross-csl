@@ -16,7 +16,7 @@ export async function minRequiredForChange(
   }
 ): Promise<WasmContract.BigNum> {
   const wasmChange = await normalizeToAddress(wasm, changeAdaAddr.address);
-  if (!wasmChange.hasValue()) {
+  if (!wasmChange?.hasValue()) {
     throw new Error(`minRequiredForChange: change not a valid Shelley address`);
   }
   const minimumAda = await wasm.minAdaRequired(
@@ -49,7 +49,7 @@ export async function addUtxoInput(
   remaining: {
     hasInput: boolean; // every tx requires at least one input
     value: WasmContract.Value;
-  },
+  } | undefined,
   input: RemoteUnspentOutput,
   /* don't add the input if the amount is smaller than the fee to add it to the tx */
   excludeIfSmall: boolean,
@@ -58,7 +58,7 @@ export async function addUtxoInput(
   }
 ): Promise<AddInputResult> {
   const wasmAddr = await normalizeToAddress(wasm, input.receiver);
-  if (!wasmAddr.hasValue()) {
+  if (!wasmAddr?.hasValue()) {
     throw new Error(`addUtxoInput input not a valid Shelley address`);
   }
   const txInput = await utxoToTxInput(wasm, input);
@@ -87,7 +87,7 @@ export async function addUtxoInput(
   };
 
   const skipInput = async (): Promise<AddInputResult> => {
-    if (remaining == null) return skipOverflow();
+    if (!remaining) return skipOverflow();
 
     const defaultEntry = {
       defaultNetworkId: protocolParams.networkId,
@@ -195,7 +195,7 @@ export async function asAddressedUtxo(
         },
         {
           amount: new BigNumber(0),
-          tokens: []
+          tokens: [] as {amount: string, tokenId: string}[]
         }
       );
 

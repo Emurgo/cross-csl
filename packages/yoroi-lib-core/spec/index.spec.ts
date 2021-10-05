@@ -102,8 +102,8 @@ export const setupTests = (
 
         const metadata = await yoroiLib.Wasm.GeneralTransactionMetadata.new();
 
-        const shouldBeUndefined = await metadata.get(metaKey);
-        expect(shouldBeUndefined).to.be.undefined;
+        const shouldNotHaveValue = await metadata.get(metaKey);
+        expect(shouldNotHaveValue.hasValue()).to.be.false;
 
         const metadatum = await yoroiLib.Wasm.encodeJsonStrToMetadatum(
           JSON.stringify({ image: 'path://image', id: '1' }),

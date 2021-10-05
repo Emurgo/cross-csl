@@ -159,7 +159,7 @@ export class YoroiLib {
       const txMetadata =
         txOptions.metadata !== undefined
           ? await createMetadata(this.Wasm, txOptions.metadata)
-          : null;
+          : undefined;
 
       if (hasSendAllDefault(tokens)) {
         if (receivers.length !== 1) {
@@ -259,7 +259,7 @@ export class YoroiLib {
       keyDeposit: WasmContract.BigNum;
       networkId: number;
     },
-    auxData: WasmContract.AuxiliaryData
+    auxData: WasmContract.AuxiliaryData | undefined
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
     for (const utxo of allUtxos) {
@@ -319,7 +319,7 @@ export class YoroiLib {
       keyDeposit: WasmContract.BigNum;
       networkId: number;
     },
-    auxData: WasmContract.AuxiliaryData
+    auxData: WasmContract.AuxiliaryData | undefined
   ): Promise<{
     senderUtxos: RemoteUnspentOutput[];
     txBuilder: WasmContract.TransactionBuilder;
@@ -426,7 +426,7 @@ export class YoroiLib {
       address: WasmContract.RewardAddress;
       amount: WasmContract.BigNum;
     }>,
-    auxData: WasmContract.AuxiliaryData,
+    auxData: WasmContract.AuxiliaryData | undefined,
     allowNoOutputs: boolean
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
@@ -493,7 +493,7 @@ export class YoroiLib {
       address: WasmContract.RewardAddress;
       amount: WasmContract.BigNum;
     }>,
-    auxData: WasmContract.AuxiliaryData,
+    auxData: WasmContract.AuxiliaryData | undefined,
     allowNoOutputs: boolean
   ): Promise<{
     senderUtxos: RemoteUnspentOutput[];
@@ -556,7 +556,7 @@ export class YoroiLib {
       address: WasmContract.RewardAddress;
       amount: WasmContract.BigNum;
     }>,
-    auxData: WasmContract.AuxiliaryData,
+    auxData: WasmContract.AuxiliaryData | undefined,
     allowNoOutputs: boolean,
     oneExtraInput: boolean
   ): Promise<{
@@ -565,7 +565,7 @@ export class YoroiLib {
     change: Change[];
   }> {
     const shouldForceChange = async (
-      assetsForChange: WasmContract.MultiAsset
+      assetsForChange: WasmContract.MultiAsset | undefined
     ): Promise<boolean> => {
       const noOutputDisallowed = !allowNoOutputs && outputs.length === 0;
       if (noOutputDisallowed && changeAdaAddr == null) {
@@ -661,9 +661,9 @@ export class YoroiLib {
         const currentInputSumMa = await currentInputSum.multiasset();
         const sub = currentInputSumMa.hasValue()
           ? await currentInputSumMa.sub(await output.multiasset())
-          : undefined;
+          : emptyAsset;
 
-        if (shouldForceChange(firstWithValue(sub, emptyAsset))) {
+        if (await shouldForceChange(sub)) {
           if (changeAdaAddr == null) {
             throw new NoOutputsError();
           }
@@ -741,7 +741,7 @@ export class YoroiLib {
 
         const multiasset = await currentInputSum.multiasset();
         const outputMa = await output.multiasset();
-        const forceChange = shouldForceChange(
+        const forceChange = await shouldForceChange(
           multiasset.hasValue()
             ? await multiasset.sub(outputMa.hasValue() ? outputMa : emptyAsset)
             : undefined
@@ -808,7 +808,7 @@ export class YoroiLib {
         this.Wasm,
         changeAdaAddr.address
       );
-      if (!wasmChange.hasValue()) {
+      if (!wasmChange?.hasValue()) {
         throw new Error(
           `newAdaUnsignedTxFromUtxo: change not a valid Shelley address`
         );

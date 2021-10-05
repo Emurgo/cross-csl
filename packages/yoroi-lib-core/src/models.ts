@@ -122,7 +122,7 @@ export class MultiToken {
     }
   }
 
-  get(identifier: string): BigNumber {
+  get(identifier: string): BigNumber | undefined {
     return this.values.find((value) => value.identifier === identifier)?.amount;
   }
 

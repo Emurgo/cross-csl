@@ -107,12 +107,12 @@ export class WasmUnsignedTx implements UnsignedTx {
     const deduped: Array<CardanoAddressedUtxo> = [];
     for (const senderUtxo of this.senderUtxos) {
       const wasmAddr = await normalizeToAddress(this._wasm, senderUtxo.receiver);
-      if (!wasmAddr.hasValue()) {
+      if (!wasmAddr?.hasValue()) {
         throw new Error(`WasmUnsignedTx.sign: utxo not a valid Shelley address`);
       }
       const keyHash = await getCardanoSpendingKeyHash(this._wasm, wasmAddr);
       const addrHex = Buffer.from(await wasmAddr.toBytes()).toString('hex');
-      if (!keyHash.hasValue()) {
+      if (!keyHash?.hasValue()) {
         if (!seenByronKeys.has(addrHex)) {
           seenByronKeys.add(addrHex);
           deduped.push(senderUtxo);
@@ -178,7 +178,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     );
   }
 
-  async fee(): Promise<BigNumber> {
+  async fee(): Promise<BigNumber | undefined> {
     const fee = await this._txBuilder.getFeeIfSet();
     if (fee.hasValue()) {
       return new BigNumber(await fee.toStr());
@@ -213,7 +213,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     // sign the transactions
     for (let i = 0; i < uniqueUtxos.length; i++) {
       const wasmAddr = await normalizeToAddress(this._wasm, uniqueUtxos[i].receiver);
-      if (!wasmAddr.hasValue()) {
+      if (!wasmAddr?.hasValue()) {
         throw new Error(`WasmUnsignedTx.addWitnesses utxo not a valid Shelley address`);
       }
       const byronAddr = await this._wasm.ByronAddress.fromAddress(wasmAddr);
@@ -236,10 +236,10 @@ export class WasmUnsignedTx implements UnsignedTx {
 }
 
 export interface UnsignedTx {
-  get senderUtxos(): ReadonlyArray<CardanoAddressedUtxo>;
-  get outputs(): ReadonlyArray<TxOutput>;
-  get change(): ReadonlyArray<Change>;
-  fee(): Promise<BigNumber>;
+  readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>;
+  readonly outputs: ReadonlyArray<TxOutput>;
+  readonly change: ReadonlyArray<Change>;
+  fee(): Promise<BigNumber | undefined>;
   sign(
     keyLevel: number,
     privateKey: string,

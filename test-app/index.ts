@@ -1,12 +1,12 @@
 import * as mocha from 'mocha'
 
 import { setupTests } from '../packages/yoroi-lib-core/spec/index.spec'
-import { init as initBrowser } from '../packages/yoroi-lib-browser/src'
+import { init } from '../packages/yoroi-lib-browser'
 
 (async function() {
   mocha.setup('bdd')
 
-  const yoroiLibBrowser = initBrowser()
+  const yoroiLibBrowser = init()
 
   setupTests(yoroiLibBrowser, 'Yoroi Lib Browser')
 

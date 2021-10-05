@@ -4,10 +4,10 @@ import * as WasmContract from '../wasm-contract';
 export async function getCardanoSpendingKeyHash(
   wasm: WasmContract.WasmModuleProxy,
   addr: WasmContract.Address,
-): Promise<WasmContract.Ed25519KeyHash> {
+): Promise<WasmContract.Ed25519KeyHash | undefined> {
   {
     const byronAddr = await wasm.ByronAddress.fromAddress(addr);
-    if (byronAddr.hasValue()) return null;
+    if (byronAddr.hasValue()) return undefined;
   }
   {
     const baseAddr = await wasm.BaseAddress.fromAddress(addr);
