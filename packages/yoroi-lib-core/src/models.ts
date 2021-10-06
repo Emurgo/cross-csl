@@ -1,4 +1,3 @@
-import * as WasmContract from './wasm-contract';
 import { BigNumber } from 'bignumber.js';
 
 export const PRIMARY_ASSET_CONSTANTS = {
@@ -7,15 +6,15 @@ export const PRIMARY_ASSET_CONSTANTS = {
   Jormungandr: ''
 };
 
-export interface Transaction {
+export type Transaction = {
   hash: string;
 }
 
-export interface UtxoTransactionOutput {
+export type UtxoTransactionOutput = {
   outputIndex: number;
 }
 
-export interface UtxoTxOutput {
+export type UtxoTxOutput = {
   transaction: Transaction;
   utxoTransactionOutput: UtxoTransactionOutput;
   tokens: Array<{
@@ -24,37 +23,37 @@ export interface UtxoTxOutput {
   }>;
 }
 
-export interface AddressingUtxo extends AddressingAddress {
+export type AddressingUtxo = AddressingAddress & {
   output: UtxoTxOutput;
 }
 
-export interface CardanoAddressedUtxo extends RemoteUnspentOutput, Addressing {}
+export type CardanoAddressedUtxo = RemoteUnspentOutput & Addressing
 
-export interface Value {
+export type Value = {
   values: MultiToken;
 }
 
-export interface Change extends AddressingAddress, Value {}
+export type Change = AddressingAddress & Value
 
-export interface AddressingAddress extends Address, Addressing {}
+export type AddressingAddress = Address & Addressing
 
-export interface Address {
+export type Address = {
   address: string;
 }
 
-export interface Addressing {
+export type Addressing = {
   addressing: {
     path: number[];
     startLevel: number;
   };
 }
 
-export interface TxOutput {
+export type TxOutput = {
   address: string;
   amount: MultiToken;
 }
 
-export interface RemoteUnspentOutput {
+export type RemoteUnspentOutput = {
   amount: string;
   receiver: string;
   txHash: string;
@@ -63,33 +62,33 @@ export interface RemoteUnspentOutput {
   assets: ReadonlyArray<UtxoAsset>;
 }
 
-export interface UtxoAsset {
+export type UtxoAsset = {
   assetId: string;
   amount: string;
 }
 
-export interface SendToken {
+export type SendToken = {
   amount: BigNumber;
   token: Token;
   shouldSendAll: boolean;
 }
 
-export interface TokenList {
+export type TokenList = {
   amount: string;
 }
 
-export interface Token {
+export type Token = {
   identifier: string;
   networkId: number;
   isDefault: boolean;
 }
 
-export interface DefaultTokenEntry {
+export type DefaultTokenEntry = {
   defaultNetworkId: number;
   defaultIdentifier: string;
 }
 
-export interface TokenEntry {
+export type TokenEntry = {
   amount: BigNumber;
   identifier: string;
   networkId: number;
@@ -256,16 +255,16 @@ export class MultiToken {
   }
 }
 
-export interface TxOptions {
+export type TxOptions = {
   metadata?: ReadonlyArray<TxMetadata>;
 }
 
-export interface TxMetadata {
+export type TxMetadata = {
   label: string;
   data: any;
 }
 
-export interface CardanoHaskellConfig {
+export type CardanoHaskellConfig = {
   keyDeposit: string;
   linearFee: LinearFee;
   minimumUtxoVal: string;
@@ -273,7 +272,7 @@ export interface CardanoHaskellConfig {
   networkId: number;
 }
 
-export interface LinearFee {
+export type LinearFee = {
   coefficient: string;
   constant: string;
 }

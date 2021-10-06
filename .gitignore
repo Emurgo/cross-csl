@@ -81,3 +81,6 @@ packages/yoroi-lib-core/dist
 packages/yoroi-lib-nodejs/dist
 packages/yoroi-lib-browser/dist
 packages/yoroi-lib-mobile/dist
+
+# packaged tgzs
+**/yoroi-lib-*.tgz

@@ -58,6 +58,25 @@ export interface YoroiLibLogger {
   error: (msg: string, ...args: any[]) => void;
 }
 
+export interface IYoroiLib {
+  encryptWithPassword(
+    password: string,
+    salt: string,
+    nonce: string,
+    data: string): Promise<string>
+  decryptWithPassword(password: string, data: string): Promise<string>
+  createUnsignedTx(
+    absSlotNumber: BigNumber,
+    utxos: Array<AddressingUtxo>,
+    receiver: string,
+    changeAddr: AddressingAddress,
+    tokens: Array<SendToken>,
+    config: CardanoHaskellConfig,
+    defaultToken: DefaultTokenEntry,
+    txOptions: TxOptions
+  ): Promise<UnsignedTx>
+}
+
 export class YoroiLib {
   private static _logger: YoroiLibLogger;
   private readonly _wasmV4: WasmContract.WasmModuleProxy;
