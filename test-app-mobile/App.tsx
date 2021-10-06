@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { setupTests } from '../packages/yoroi-lib-core/spec/index.spec'
-import { init } from '../packages/yoroi-lib-mobile'
+import { init } from '../packages/yoroi-lib-mobile/src'
 import { MochaYoroiReporter } from './MochaYoroiReporter'
 
 export default function App() {

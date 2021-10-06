@@ -25,3 +25,14 @@ export async function normalizeToAddress(
 
   return undefined;
 }
+
+export async function toHexOrBase58(
+  wasm: WasmContract.WasmModuleProxy,
+  address: WasmContract.Address,
+): Promise<string> {
+  const asByron = await wasm.ByronAddress.fromAddress(address);
+  if (asByron == null) {
+    return Buffer.from(await address.toBytes()).toString('hex');
+  }
+  return await asByron.toBase58();
+}

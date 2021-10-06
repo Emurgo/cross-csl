@@ -1,10 +1,11 @@
 import * as WasmContract from './wasm-contract';
 import { BigNumber } from 'bignumber.js';
 
-import { CardanoAddressedUtxo, Change, TxMetadata, TxOutput } from './models';
+import { CardanoAddressedUtxo, Change, DefaultTokenEntry, MultiToken, MultiTokenConstruct, PRIMARY_ASSET_CONSTANTS, TxMetadata, TxOutput } from './models';
 import { createMetadata } from './utils';
-import { normalizeToAddress } from './utils/addresses';
+import { normalizeToAddress, toHexOrBase58 } from './utils/addresses';
 import { getCardanoSpendingKeyHash, derivePrivateByAddressing } from './utils/crypto';
+import { multiTokenFromCardanoValue, multiTokenFromRemote, parseTokenList } from './utils/assets';
 
 const HARD_DERIVATION_START: 2147483648 = 0x80000000;
 
@@ -37,20 +38,41 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _wasm: WasmContract.WasmModuleProxy;
   private _txBuilder: WasmContract.TransactionBuilder;
   private _certificates: ReadonlyArray<WasmContract.Certificate>;
-  private _senderUtxos: CardanoAddressedUtxo[];
-  private _outputs: TxOutput[];
-  private _change: Change[];
+
+  private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>;
+  private _inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>;
+  private _totalInput: MultiTokenConstruct;
+  private _outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>;
+  private _totalOutput: MultiTokenConstruct;
+  private _fee: MultiTokenConstruct;
+  private _change: ReadonlyArray<Change>;
 
   get senderUtxos(): ReadonlyArray<CardanoAddressedUtxo> {
     return this._senderUtxos;
   }
-  
-  get change(): ReadonlyArray<Change> {
-    return this._change;
+
+  get inputs(): ReadonlyArray<{address: string, value: MultiTokenConstruct}> {
+    return this._inputs;
   }
 
-  get outputs(): ReadonlyArray<TxOutput> {
+  get totalInput(): MultiTokenConstruct {
+    return this._totalInput;
+  }
+
+  get outputs(): ReadonlyArray<{address: string, value: MultiTokenConstruct}> {
     return this._outputs;
+  }
+
+  get totalOutput(): MultiTokenConstruct {
+    return this._totalOutput;
+  }
+
+  get fee(): MultiTokenConstruct {
+    return this._fee;
+  }
+
+  get change(): ReadonlyArray<Change> {
+    return this._change;
   }
 
   /**
@@ -63,14 +85,22 @@ export class WasmUnsignedTx implements UnsignedTx {
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: CardanoAddressedUtxo[],
-    outputs: TxOutput[],
-    change: Change[]
+    inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    totalInput: MultiTokenConstruct,
+    outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    totalOutput: MultiTokenConstruct,
+    fee: MultiTokenConstruct,
+    change: ReadonlyArray<Change>
   ) {
     this._wasm = wasm;
     this._txBuilder = txBuilder;
     this._certificates = certificates;
     this._senderUtxos = senderUtxos;
+    this._inputs = inputs;
+    this._totalInput = totalInput;
     this._outputs = outputs;
+    this._totalOutput = totalOutput;
+    this._fee = fee;
     this._change = change;
   }
 
@@ -178,15 +208,6 @@ export class WasmUnsignedTx implements UnsignedTx {
     );
   }
 
-  async fee(): Promise<BigNumber | undefined> {
-    const fee = await this._txBuilder.getFeeIfSet();
-    if (fee.hasValue()) {
-      return new BigNumber(await fee.toStr());
-    }
-
-    return undefined;
-  }
-
   private async addWitnesses(
     txHash: WasmContract.TransactionHash,
     uniqueUtxos: Array<CardanoAddressedUtxo>, // pre-req: does not contain duplicate keys
@@ -237,13 +258,210 @@ export class WasmUnsignedTx implements UnsignedTx {
 
 export interface UnsignedTx {
   readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>;
-  readonly outputs: ReadonlyArray<TxOutput>;
+  readonly inputs: ReadonlyArray<{
+    address: string,
+    value: MultiTokenConstruct
+  }>;
+  readonly totalInput: MultiTokenConstruct;
+  readonly outputs: ReadonlyArray<{
+    address: string,
+    value: MultiTokenConstruct
+  }>;
+  readonly totalOutput: MultiTokenConstruct;
+  readonly fee: MultiTokenConstruct;
   readonly change: ReadonlyArray<Change>;
-  fee(): Promise<BigNumber | undefined>;
   sign(
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
     metadata: TxMetadata
   ): Promise<void>;
+}
+
+export async function genWasmUnsignedTx(
+  wasm: WasmContract.WasmModuleProxy,
+  txBuilder: WasmContract.TransactionBuilder,
+  certificates: ReadonlyArray<WasmContract.Certificate>,
+  senderUtxos: CardanoAddressedUtxo[],
+  change: ReadonlyArray<Change>,
+  defaults: DefaultTokenEntry,
+  networkId: number
+): Promise<WasmUnsignedTx> {
+  return new WasmUnsignedTx(
+    wasm,
+    txBuilder,
+    certificates,
+    senderUtxos,
+    await genWasmUnsignedTxInputs(txBuilder, senderUtxos, networkId),
+    await genWasmUnsignedTxTotalInput(txBuilder, change, defaults),
+    await genWasmUnsignedTxOutputs(txBuilder, networkId),
+    await genWasmUnsignedTxTotalOutput(txBuilder, defaults),
+    await genWasmUnsignedTxFee(txBuilder, defaults, networkId),
+    change
+  )
+}
+
+async function genWasmUnsignedTxInputs(
+  txBuilder: WasmContract.TransactionBuilder,
+  senderUtxos: CardanoAddressedUtxo[],
+  networkId: number):
+Promise<ReadonlyArray<{
+  address: string,
+  value: MultiTokenConstruct,
+}>> {
+  const body = await txBuilder.build();
+  const values = [] as {
+    address: string,
+    value: MultiTokenConstruct,
+  }[];
+
+  const inputs = await body.inputs();
+  for (let i = 0; i < await inputs.len(); i++) {
+    const input = await inputs.get(i);
+
+    const txIdBytes = await input.transactionId().then(x => x.toBytes())
+    const key = {
+      hash: Buffer.from(txIdBytes).toString('hex'),
+      index: await input.index(),
+    };
+
+    const utxoEntry = senderUtxos.find(
+      utxo => utxo.txHash === key.hash && utxo.txIndex === key.index
+    );
+
+    if (!utxoEntry) {
+      throw new Error(`missing input for ${JSON.stringify(key)}`);
+    }
+
+    const ma = multiTokenFromRemote(utxoEntry, networkId);
+    values.push({
+      value: {
+        defaults: ma.defaults,
+        values: ma.values
+      },
+      address: utxoEntry.receiver,
+    });
+  }
+
+  return values
+}
+
+async function genWasmUnsignedTxTotalInput(
+  txBuilder: WasmContract.TransactionBuilder,
+  changes: ReadonlyArray<Change>,
+  defaults: DefaultTokenEntry):
+Promise<MultiTokenConstruct> {
+  const values = await multiTokenFromCardanoValue(
+    await txBuilder
+      .getImplicitInput()
+      .then(async (x) => x.checkedAdd(await txBuilder.getExplicitInput())),
+    defaults
+  );
+
+  for (const change of changes) {
+    values.joinSubtractMutable(change.values);
+  }
+
+  return {
+    defaults: values.defaults,
+    values: values.values
+  };
+}
+
+async function genWasmUnsignedTxOutputs(
+  txBuilder: WasmContract.TransactionBuilder,
+  networkId: number):
+Promise<ReadonlyArray<{
+  address: string,
+  value: MultiTokenConstruct,
+}>> {
+  const body = await txBuilder.build();
+
+  const values = [] as {
+    address: string,
+    value: MultiTokenConstruct
+  }[];
+
+  const outputs = await body.outputs();
+    for (let i = 0; i < await outputs.len(); i++) {
+      const output = await outputs.get(i);
+
+      const outputAddressBytes = await output.address().then(x => x.toBytes());
+      const ma = await multiTokenFromCardanoValue(
+        await output.amount(),
+        {
+          defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+          defaultNetworkId: networkId
+        },
+      );
+      values.push({
+        value: {
+          defaults: ma.defaults,
+          values: ma.values
+        },
+        address: Buffer.from(outputAddressBytes).toString('hex'),
+      });
+    }
+
+    return values;
+}
+
+async function genWasmUnsignedTxTotalOutput(
+  txBuilder: WasmContract.TransactionBuilder,
+  defaults: DefaultTokenEntry):
+Promise<MultiTokenConstruct> {
+  const ma = await multiTokenFromCardanoValue(
+    await txBuilder.getExplicitOutput(),
+    defaults);
+  return {
+    defaults: ma.defaults,
+    values: ma.values
+  }
+}
+
+async function genWasmUnsignedTxFee(
+  txBuilder: WasmContract.TransactionBuilder,
+  defaults: DefaultTokenEntry,
+  networkId: number
+): Promise<MultiTokenConstruct> {
+  const values = new MultiToken(
+    [],
+    defaults
+  );
+
+  const wasmFee = await txBuilder.getFeeIfSet();
+  const fee = wasmFee.hasValue()
+    ? new BigNumber(await wasmFee.toStr())
+    : new BigNumber('0')
+
+  values.add({
+    identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+    amount: fee.plus(await txBuilder.getDeposit().then(x => x.toStr())),
+    networkId: networkId,
+  });
+
+  return {
+    defaults: values.defaults,
+    values: values.values
+  }
+}
+
+function genWasmUnsignedTxSenderAddresses(
+  senderUtxos: CardanoAddressedUtxo[]
+): ReadonlyArray<string> {
+  return senderUtxos.map(x => x.receiver);
+}
+
+async function genWasmUnsignedTxReceivers(
+  wasm: WasmContract.WasmModuleProxy,
+  txBuilder: WasmContract.TransactionBuilder,
+): Promise<ReadonlyArray<string>> {
+  const outputs = await txBuilder.build().then(x => x.outputs());
+
+  const outputStrings = [] as string[];
+  for (let i = 0; i < await outputs.len(); i++) {
+    outputStrings.push(await toHexOrBase58(wasm, await outputs.get(i).then(x => x.address())));
+  }
+
+  return outputStrings;
 }

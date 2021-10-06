@@ -24,6 +24,7 @@ import {
   minRequiredForChange,
   addUtxoInput,
   asAddressedUtxo,
+  isBigNumZero,
 } from './utils/transactions';
 import {
   Address,
@@ -39,7 +40,7 @@ import {
   TxOptions,
   TxOutput,
 } from './models';
-import { UnsignedTx, WasmUnsignedTx } from './tx';
+import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './tx';
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
@@ -317,14 +318,18 @@ export class YoroiLib {
       These info should be implicit on 'send all', meaning the client code should know
       they beforehand, and therefore sending them back is not needed
     */
-    return new WasmUnsignedTx(
-      this.Wasm,
-      unsignedTxResponse.txBuilder,
-      [],
-      addressedUtxos,
-      [],
-      unsignedTxResponse.change
-    );
+      return await genWasmUnsignedTx(
+        this.Wasm,
+        unsignedTxResponse.txBuilder,
+        [],
+        addressedUtxos,
+        unsignedTxResponse.change,
+        {
+          defaultNetworkId: protocolParams.networkId,
+          defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+        },
+        protocolParams.networkId
+      );
   }
 
   private async sendAllUnsignedTxFromUtxo(
@@ -485,13 +490,17 @@ export class YoroiLib {
       return addressedUtxo;
     });
 
-    return new WasmUnsignedTx(
+    return await genWasmUnsignedTx(
       this.Wasm,
       unsignedTxResponse.txBuilder,
       certificates,
       addressedUtxos,
-      outputs,
-      unsignedTxResponse.change
+      unsignedTxResponse.change,
+      {
+        defaultNetworkId: protocolParams.networkId,
+        defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+      },
+      protocolParams.networkId
     );
   }
 
@@ -671,22 +680,25 @@ export class YoroiLib {
         const currentInputSum = await txBuilder
           .getExplicitInput()
           .then((x) => x.checkedAdd(implicitSum));
-        const output = await targetOutput.checkedAdd(
-          await this.Wasm.Value.new(await txBuilder.minFee())
-        );
-        const remainingNeeded = await output.clampedSub(currentInputSum);
+        
+        const neededInput = await targetOutput
+          .checkedAdd(await this.Wasm.Value.new(await txBuilder.minFee()));
+        const excessiveInputAssets = await (async () => {
+          const currentInputSumMa = await currentInputSum.multiasset();
+          if (currentInputSumMa.hasValue()) {
+            return currentInputSumMa.sub(await neededInput.multiasset());
+          } else {
+            return emptyAsset;
+          }
+        })();
+        const remainingNeeded = await neededInput.clampedSub(currentInputSum);
 
         // update amount required to make sure we have ADA required for change UTXO entry
-        const currentInputSumMa = await currentInputSum.multiasset();
-        const sub = currentInputSumMa.hasValue()
-          ? await currentInputSumMa.sub(await output.multiasset())
-          : emptyAsset;
-
-        if (await shouldForceChange(sub)) {
+        if (await shouldForceChange(excessiveInputAssets)) {
           if (changeAdaAddr == null) {
             throw new NoOutputsError();
           }
-          const difference = await currentInputSum.clampedSub(output);
+          const difference = await currentInputSum.clampedSub(neededInput);
           const minimumNeededForChange = await minRequiredForChange(
             this.Wasm,
             txBuilder,
@@ -703,25 +715,22 @@ export class YoroiLib {
         }
 
         // stop if we've added all the assets we needed
+        const isNonEmptyInputs = usedUtxos.length > 0;
         {
           const remainingAssets = await remainingNeeded.multiasset();
-          const remainingNeededCoin = await remainingNeeded.coin();
-          if (
-            (await remainingNeededCoin.compare(
-              await this.Wasm.BigNum.fromStr('0')
-            )) === 0 &&
-            (!remainingAssets.hasValue() ||
-              (await remainingAssets.len()) === 0) &&
-            usedUtxos.length > 0
-          ) {
-            if (oneExtraInput) {
-              // We've added all the assets we need, but we add one extra.
-              // Set the flag so that the adding loop stops after this extra one is added.
-              oneExtraAdded = true;
-            } else {
-              break;
+          const isRemainingNeededCoinZero = await isBigNumZero(this.Wasm, await remainingNeeded.coin());
+          const isRemainingNeededAssetZero = (remainingAssets.hasValue()
+            ? await remainingAssets.len()
+            : 0) === 0;
+            if (isRemainingNeededCoinZero && isRemainingNeededAssetZero && isNonEmptyInputs) {
+              if (oneExtraInput) {
+                // We've added all the assets we need, but we add one extra.
+                // Set the flag so that the adding loop stops after this extra one is added.
+                oneExtraAdded = true;
+              } else {
+                break;
+              }
             }
-          }
         }
 
         const added = await addUtxoInput(
@@ -795,10 +804,9 @@ export class YoroiLib {
     }
 
     const change = await (async () => {
-      const implicitInput = await txBuilder.getImplicitInput();
       const totalInput = await txBuilder
         .getExplicitInput()
-        .then((x) => x.checkedAdd(implicitInput));
+        .then(async (x) => x.checkedAdd(await txBuilder.getImplicitInput()));
       const difference = await totalInput.checkedSub(targetOutput);
 
       const forceChange = await shouldForceChange(

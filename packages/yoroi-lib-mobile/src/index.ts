@@ -1,6 +1,7 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley';
 
-import { YoroiLib, createYoroiLib, WasmContract } from '../../yoroi-lib-core';
+import { YoroiLib, createYoroiLib } from '../../yoroi-lib-core/src';
+import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
 export const init = (): YoroiLib => {
   return createYoroiLib({
