@@ -58,10 +58,13 @@ export const setupTests = (
         const smaller = await yoroiLib.Wasm.BigNum.fromStr('100');
         const bigger = await yoroiLib.Wasm.BigNum.fromStr('10000');
         const equal = await yoroiLib.Wasm.BigNum.fromStr('1000');
+        const zero = await yoroiLib.Wasm.BigNum.fromStr('0');
+        const subbed = await delta.clampedSub(await yoroiLib.Wasm.BigNum.fromStr('1000'));
 
         expect(await delta.compare(smaller)).to.equals(1);
         expect(await delta.compare(bigger)).to.equals(-1);
         expect(await delta.compare(equal)).to.equals(0);
+        expect(await subbed.compare(zero)).to.equals(0);
       });
     });
 

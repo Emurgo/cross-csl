@@ -1,7 +1,7 @@
 import * as mocha from 'mocha'
 
 import { setupTests } from '../packages/yoroi-lib-core/spec/index.spec'
-import { init } from '../packages/yoroi-lib-browser'
+import { init } from '../packages/yoroi-lib-browser/src'
 
 (async function() {
   mocha.setup('bdd')

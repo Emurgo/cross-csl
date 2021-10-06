@@ -94,6 +94,12 @@ export type TokenEntry = {
   networkId: number;
 }
 
+// This name will probably change
+export type MultiTokenConstruct = {
+  values: Array<TokenEntry>;
+  defaults: DefaultTokenEntry;
+}
+
 export class MultiToken {
   // this could be a map, but the # of elements is small enough the perf difference is trivial
   values: Array<TokenEntry>;

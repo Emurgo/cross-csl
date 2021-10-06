@@ -7,9 +7,6 @@
     "moduleResolution": "node",
     "outDir": "./dist"
   },
-  "include": [
-    "index.ts"
-  ],
   "exclude": [
     "dist",
     "spec",

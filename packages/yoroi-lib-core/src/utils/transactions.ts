@@ -237,3 +237,10 @@ async function utxoToTxInput(
     utxo.txIndex
   );
 }
+
+export async function isBigNumZero(
+  wasm: WasmContract.WasmModuleProxy,
+  b: WasmContract.BigNum
+): Promise<boolean> {
+  return await b.compare(await wasm.BigNum.fromStr('0')) === 0;
+}
