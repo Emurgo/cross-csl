@@ -1543,6 +1543,10 @@ namespace Browser {
     body(): Promise<TransactionBody> {
       return Promise.resolve(new TransactionBody(this.wasm.body()));
     }
+
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes());
+    }
   
     static new(
       body: TransactionBody,

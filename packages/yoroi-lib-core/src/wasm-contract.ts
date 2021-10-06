@@ -904,6 +904,8 @@ export abstract class TransactionWitnessSet extends Ptr {
 export abstract class Transaction extends Ptr {
   abstract body(): Promise<TransactionBody>;
 
+  abstract toBytes(): Promise<Uint8Array>;
+
   static new(
     body: TransactionBody,
     witnessSet: TransactionWitnessSet,

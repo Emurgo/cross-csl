@@ -1463,6 +1463,11 @@ namespace Mobile {
     async body(): Promise<TransactionBody> {
       return new TransactionBody(await this.wasm.body());
     }
+
+    async toBytes(): Promise<Uint8Array> {
+      const anyWasm = this.wasm as any;
+      return await anyWasm.to_bytes();
+    }
   
     static async new(
       body: TransactionBody,
