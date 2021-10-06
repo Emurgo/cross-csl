@@ -6,7 +6,7 @@ import {
   GenericError,
   NoOutputsError,
   NotEnoughMoneyToSendError
-} from '../src/errors';
+} from './errors';
 import {
   AddInputResult,
   firstWithValue,

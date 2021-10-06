@@ -83,4 +83,4 @@ packages/yoroi-lib-browser/dist
 packages/yoroi-lib-mobile/dist
 
 # packaged tgzs
-**/yoroi-lib-*.tgz
+**/emurgo-yoroi-lib-*.tgz
