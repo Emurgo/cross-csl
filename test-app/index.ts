@@ -8,7 +8,7 @@ import { init } from '../packages/yoroi-lib-browser/src'
 
   const yoroiLibBrowser = init()
 
-  setupTests(yoroiLibBrowser, 'Yoroi Lib Browser')
+  setupTests(yoroiLibBrowser as any, 'Yoroi Lib Browser')
 
   mocha.run()
 })()

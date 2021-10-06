@@ -7,6 +7,7 @@ Currently we can use the handy [`cardano-serialization-lib`](https://github.com/
 ## Implementation
 We have three packages:
 - `yoroi-lib-core` core package. Contains the main object `YoroiLib`, that receives a `WasmContract` the specific libraries provide;
+- `yoroi-lib-nodejs` contains the nodejs implementation of the `WasmContract`, using the methods and types from the nodejs's WASM object ([NodeJS WASM package](https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-nodejs));
 - `yoroi-lib-browser` contains the browser implementation of the `WasmContract`, using the methods and types from the browser's WASM object ([Browser (chrome/firefox) WASM package](https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-browser));
 - `yoroi-lib-mobile` contains the mobile implementation of the `WasmContract`, using the methods and types from the mobile's WASM object ([React-Native mobile bindings](https://github.com/Emurgo/react-native-haskell-shelley));
 
@@ -16,7 +17,36 @@ Both the browser and mobile versions export a `init` function which should be us
 `YoroiLib` doesn't access the types in the [`cardano-serialization-lib`](https://github.com/emurgo/cardano-serialization-lib) directly, but rather uses ***proxies*** exposed by `WasmContract`
 
 
+## Setting up
+Generate a link for `yoroi-lib-core` and link it into the specialized packages. To do that, execute `link-yoroi-lib-core.sh` from the root of the repository.
+
+### Setting up for developing `yoroi-lib-mobile` (Android)
+
+For that, we need to go trhough a much more involved setup for developing Android apps with `react-native`.
+
+Follow the bellow steps for that:
+
+**1. Install Rust:**
+```
+# install rustup
+curl https://sh.rustup.rs -sSf | sh
+
+# use 1.41.0 version
+rustup toolchain install 1.41.0
+rustup install 1.41.0
+rustup target add wasm32-unknown-unknown --toolchain 1.41.0
+```
+Make sure `rustc --version` outputs `1.41`.0, which is the stable version (and not nightly).
+
+**2. Setup your environment for Android development with `react-native`. See the Android section on [this link](https://reactnative.dev/docs/environment-setup)**
+
+**3. Download the NDK from Android Studio (see [here](https://developer.android.com/studio/projects/install-ndk.md) for instructions)**
+
+**4. Install Rust for Android rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android**
+
 ## Tests
+**Make sure you went through the "Setting up" section first**
+
 Testing in this library is not straight-forward as running `yarn test`, because we actually want to test if `YoroiLib` will yield the expected results both using the browser and mobile WASM objects, and then because these objects are only available under their respective platforms, we have to execute the test suites in the browser and in a mobile app.
 
 The tests are exposed via a builder function defined in [`packages/yoroi-lib-core/spec/index.spec.ts`](https://github.com/Emurgo/yoroi-lib/blob/feature/initial/packages/yoroi-lib-core/spec/index.spec.ts).
@@ -24,6 +54,8 @@ The tests are exposed via a builder function defined in [`packages/yoroi-lib-cor
 This function receives an instance of `YoroiLib`, so when testing the specific version, we simply need to instantiate the `YoroiLib` with the appropriate `WasmContract` based on the platform we are testing.
 
 ## Setting up the tests
+### NodeJs version
+This one is simple. Just run `yarn test` from `packages/yoroi-lib-nodejs`
 ### Browser version: `test-app`
 This should be as easy as entering the `test-app` dir and running `yard build` and then `yarn start`. This will build the app and start a `webpack` dev server that will call the `mocha` tests and display the results in the browser.
 

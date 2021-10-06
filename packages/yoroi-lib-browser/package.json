@@ -1,8 +1,12 @@
 {
-  "name": "yoroi-lib-browser",
+  "name": "@emurgo/yoroi-lib-browser",
   "version": "0.0.1-alpha.0",
   "description": "",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf ./dist",
