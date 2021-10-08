@@ -185,6 +185,10 @@ export abstract class AuxiliaryData extends Ptr {
   static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
+
+  static empty(): Promise<AuxiliaryData> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
 }
 
 export abstract class AssetName extends Ptr {

@@ -115,27 +115,9 @@ export class WasmUnsignedTx implements UnsignedTx {
     stakingKeyWits: Set<string>,
     metadata: TxMetadata[]
   ): Promise<SignedTx> {
-    const rootPk = await (async () => {
-      if (privateKey != null) {
-        return await this._wasm.Bip32PrivateKey.fromBytes(
-          Buffer.from(privateKey, 'hex')
-        );
-      }
-      // ToDo: handle the scenario bellow
-      // if (request.recoveryPhrase != null) {
-      //   return this.stores.yoroiTransfer.mode?.extra === 'ledger'
-      //     ? generateLedgerWalletRootKey(request.recoveryPhrase)
-      //     : generateWalletRootKey(request.recoveryPhrase);
-      // }
-      throw new Error(`no key specified`);
-    })();
-
-    const accountIndex = 0 + HARD_DERIVATION_START;
-
-    const signingKey = await rootPk
-      .derive(2147483692) // WalletTypePurpose.BIP44
-      .then(x => x.derive(2147485463)) // CoinTypes.CARDANO
-      .then(x => x.derive(accountIndex));
+    const signingKey = await this._wasm.Bip32PrivateKey.fromBytes(
+      Buffer.from(privateKey, 'hex')
+    );
 
     const seenByronKeys: Set<string> = new Set();
     const seenKeyHashes: Set<string> = new Set();

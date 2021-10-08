@@ -640,7 +640,7 @@ export class YoroiLib {
     const resultWithOneExtraInput = await this._newAdaUnsignedTxFromUtxo(
       outputs,
       changeAdaAddr,
-      utxos,
+      sortedUtxos,
       absSlotNumber,
       protocolParams,
       certificates,
@@ -652,14 +652,11 @@ export class YoroiLib {
     const feeWithOneExtraInput =
       await resultWithOneExtraInput.txBuilder.getFeeIfSet();
 
-    if (
-      feeWithOneExtraInput?.hasValue() &&
-      fee?.hasValue() &&
-      (await feeWithOneExtraInput.compare(fee)) < 0
-    ) {
-      return resultWithOneExtraInput;
-    }
-    return result;
+    const actualResult = feeWithOneExtraInput?.hasValue() && fee?.hasValue() && (await feeWithOneExtraInput.compare(fee)) < 0
+      ? resultWithOneExtraInput
+      : result;
+
+    return actualResult;
   }
 
   private async _newAdaUnsignedTxFromUtxo(
@@ -732,7 +729,6 @@ export class YoroiLib {
     }
 
     await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber());
-
     {
       for (const output of outputs) {
         const wasmReceiver = await normalizeToAddress(
@@ -778,14 +774,14 @@ export class YoroiLib {
         
         const neededInput = await targetOutput
           .checkedAdd(await this.Wasm.Value.new(await txBuilder.minFee()));
-        const excessiveInputAssets = await (async () => {
-          const currentInputSumMa = await currentInputSum.multiasset();
-          if (currentInputSumMa.hasValue()) {
-            return currentInputSumMa.sub(await neededInput.multiasset());
-          } else {
-            return emptyAsset;
-          }
-        })();
+        const currentInputSumMa = await currentInputSum.multiasset();
+        let neededInputMa = await neededInput.multiasset();
+        if (!neededInputMa.hasValue()) {
+          neededInputMa = emptyAsset;
+        }
+        const excessiveInputAssets = currentInputSumMa.hasValue()
+          ? await currentInputSumMa.sub(neededInputMa)
+          : undefined
         const remainingNeeded = await neededInput.clampedSub(currentInputSum);
 
         // update amount required to make sure we have ADA required for change UTXO entry

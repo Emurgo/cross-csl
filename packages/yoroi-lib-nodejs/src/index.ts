@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
 
-import { YoroiLib, createYoroiLib } from '@emurgo/yoroi-lib-core/dist';
-import * as WasmContract from '@emurgo/yoroi-lib-core/dist/wasm-contract';
+import { YoroiLib, createYoroiLib } from '../../yoroi-lib-core/src';
+import * as WasmContract from '../../yoroi-lib-core/src/wasm-contract';
 
 export const init = (): YoroiLib => {
   return createYoroiLib({
@@ -111,6 +111,10 @@ export const init = (): YoroiLib => {
 namespace NodeJs {
   export abstract class WasmProxy<T> implements WasmContract.WasmProxy {
     private _wasm: T | undefined;
+
+    get internalWasm(): T | undefined {
+      return this._wasm;
+    }
 
     get wasm(): T {
       if (this._wasm) return this._wasm;
@@ -246,6 +250,10 @@ namespace NodeJs {
       const wasm = WasmV4.AuxiliaryData.new();
       wasm.set_metadata(metadata.wasm);
       return Promise.resolve(new AuxiliaryData(wasm));
+    }
+
+    static empty(): Promise<AuxiliaryData> {
+      return Promise.resolve(new AuxiliaryData(undefined));
     }
   }
 
@@ -1250,8 +1258,8 @@ namespace NodeJs {
             minimumUtxoVal.wasm,
             poolDeposit.wasm,
             keyDeposit.wasm,
-            4294967295,
-            4294967295
+            5000,
+            16384
           )
         )
       );
@@ -1562,7 +1570,7 @@ namespace NodeJs {
           WasmV4.Transaction.new(
             body.wasm,
             witnessSet.wasm,
-            auxiliary.wasm
+            auxiliary.internalWasm
           )
         )
       );
