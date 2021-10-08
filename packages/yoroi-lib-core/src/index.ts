@@ -25,6 +25,7 @@ import {
   addUtxoInput,
   asAddressedUtxo,
   isBigNumZero,
+  cardanoValueFromRemoteFormat,
 } from './utils/transactions';
 import {
   Address,
@@ -528,10 +529,104 @@ export class YoroiLib {
     txBuilder: WasmContract.TransactionBuilder;
     change: Change[];
   }> {
+    const outputAssets = outputs.reduce((set, o) => {
+      o.amount.values
+        .map(v => v.identifier)
+        .filter(id => id.length > 0)
+        .forEach(id => set.add(id));
+      return set;
+    }, new Set<string>());
+    const isAssetsRequired = outputAssets.size > 0;
+
+    const sasasas = utxos.map(async (u: RemoteUnspentOutput) => {
+      if (u.assets.length === 0) {
+        return [u, true, false, 0];
+      }
+      const hasRequiredAsset = isAssetsRequired
+        && u.assets.some(a => outputAssets.has(a.assetId));
+      const amount = await this.Wasm.BigNum.fromStr(u.amount);
+      const minRequired = await this.Wasm.minAdaRequired(
+        await cardanoValueFromRemoteFormat(this.Wasm, u),
+        protocolParams.minimumUtxoVal,
+      );
+      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10);
+      // Round down the spendable value to the nearest full ADA for safer deposit
+      // TODO: unmagic the constant
+      return [u, false, hasRequiredAsset, Math.floor(spendable / 1_000_000) * 1_000_000];
+    });
+
+    const utxosMapped: Array<{
+      u: RemoteUnspentOutput,
+      isPure: boolean,
+      hasRequiredAsset: boolean,
+      spendableValue: number
+    }> = await Promise.all(utxos.map(async (u: RemoteUnspentOutput) => {
+      if (u.assets.length === 0) {
+        return {
+          u: u,
+          isPure: true,
+          hasRequiredAsset: false,
+          spendableValue: 0
+        };
+      }
+      const hasRequiredAsset = isAssetsRequired
+        && u.assets.some(a => outputAssets.has(a.assetId));
+      const amount = await this.Wasm.BigNum.fromStr(u.amount);
+      const minRequired = await this.Wasm.minAdaRequired(
+        await cardanoValueFromRemoteFormat(this.Wasm, u),
+        protocolParams.minimumUtxoVal,
+      );
+      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10);
+      // Round down the spendable value to the nearest full ADA for safer deposit
+      // TODO: unmagic the constant
+      return {
+        u: u,
+        isPure: false,
+        hasRequiredAsset: hasRequiredAsset,
+        spendableValue: Math.floor(spendable / 1_000_000) * 1_000_000
+      };
+    }));
+
+    // prioritize inputs
+    const sortedUtxos: Array<RemoteUnspentOutput> = utxosMapped.sort((v1, v2) => {
+      const u1 = v1.u;
+      const isPure1 = v1.isPure;
+      const hasRequiredAsset1 = v1.hasRequiredAsset;
+      const spendableValue1 = v1.spendableValue;
+      
+      const u2 = v2.u;
+      const isPure2 = v2.isPure;
+      const hasRequiredAsset2 = v2.hasRequiredAsset;
+      const spendableValue2 = v2.spendableValue
+      
+      if ((hasRequiredAsset1 as any) ^ (hasRequiredAsset2 as any)) {
+        // one but not both of the utxos has required assets
+        // utxos with required assets are always prioritized
+        // ahead of any other, pure or dirty
+        return hasRequiredAsset1 ? -1 : 1;
+      }
+      if (isPure1 && isPure2) {
+        // both utxos are clean - randomize them
+        return Math.random() - 0.5;
+      }
+      if (isPure1 || isPure2) {
+        // At least one of the utxos is clean
+        // The clean utxo is prioritized
+        return isPure1 ? -1 : 1;
+      }
+      // both utxos are dirty
+      if (spendableValue1 !== spendableValue2) {
+        // dirty utxos with highest spendable ADA are prioritised
+        return spendableValue2 - spendableValue1;
+      }
+      // utxo with fewer assets is prioritised
+      return u1.assets.length - u2.assets.length;
+    }).map(u => u.u);
+
     const result = await this._newAdaUnsignedTxFromUtxo(
       outputs,
       changeAdaAddr,
-      utxos,
+      sortedUtxos,
       absSlotNumber,
       protocolParams,
       certificates,
