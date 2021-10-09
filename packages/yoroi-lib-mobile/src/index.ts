@@ -94,6 +94,10 @@ namespace Mobile {
   abstract class WasmProxy<T> {
     private _wasm: T | undefined;
 
+    get internalWasm(): T | undefined {
+      return this._wasm;
+    }
+
     get wasm(): T {
       if (this._wasm) return this._wasm;
       throw new Error('Trying to access undefined WASM object');
@@ -230,6 +234,10 @@ namespace Mobile {
     ): Promise<AuxiliaryData> {
       const wasm = await WasmV4.AuxiliaryData.new(metadata.wasm);
       return Promise.resolve(new AuxiliaryData(wasm));
+    }
+
+    static async empty(): Promise<AuxiliaryData> {
+      return new AuxiliaryData(undefined);
     }
   }
 
@@ -1463,6 +1471,11 @@ namespace Mobile {
     async body(): Promise<TransactionBody> {
       return new TransactionBody(await this.wasm.body());
     }
+
+    async toBytes(): Promise<Uint8Array> {
+      const anyWasm = this.wasm as any;
+      return await anyWasm.to_bytes();
+    }
   
     static async new(
       body: TransactionBody,
@@ -1473,7 +1486,7 @@ namespace Mobile {
         await WasmV4.Transaction.new(
           body.wasm,
           witnessSet.wasm,
-          auxiliary.wasm
+          auxiliary.internalWasm
         )
       );
     }

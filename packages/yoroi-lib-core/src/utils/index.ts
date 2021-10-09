@@ -26,6 +26,10 @@ export async function createMetadata(
   wasm: WasmContract.WasmModuleProxy,
   txMetadata: ReadonlyArray<TxMetadata>
 ): Promise<WasmContract.AuxiliaryData> {
+  if (txMetadata.length === 0) {
+    return await wasm.AuxiliaryData.empty();
+  }
+
   const transactionMetadata =
     await wasm.GeneralTransactionMetadata.new();
 

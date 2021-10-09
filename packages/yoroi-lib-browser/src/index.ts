@@ -110,6 +110,10 @@ namespace Browser {
   abstract class WasmProxy<T> {
     private _wasm: T | undefined;
 
+    get internalWasm(): T | undefined {
+      return this._wasm;
+    }
+
     get wasm(): T {
       if (this._wasm) return this._wasm;
       throw new Error('Trying to access undefined WASM object');
@@ -244,6 +248,10 @@ namespace Browser {
       const wasm = WasmV4.AuxiliaryData.new();
       wasm.set_metadata(metadata.wasm);
       return Promise.resolve(new AuxiliaryData(wasm));
+    }
+
+    static empty(): Promise<AuxiliaryData> {
+      return Promise.resolve(new AuxiliaryData(undefined));
     }
   }
 
@@ -1248,8 +1256,8 @@ namespace Browser {
             minimumUtxoVal.wasm,
             poolDeposit.wasm,
             keyDeposit.wasm,
-            RUST_u32_MAX,
-            RUST_u32_MAX
+            5000,
+            16384
           )
         )
       );
@@ -1543,6 +1551,10 @@ namespace Browser {
     body(): Promise<TransactionBody> {
       return Promise.resolve(new TransactionBody(this.wasm.body()));
     }
+
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes());
+    }
   
     static new(
       body: TransactionBody,
@@ -1554,7 +1566,7 @@ namespace Browser {
           WasmV4.Transaction.new(
             body.wasm,
             witnessSet.wasm,
-            auxiliary.wasm
+            auxiliary.internalWasm
           )
         )
       );

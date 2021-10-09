@@ -34,6 +34,11 @@ const Bip44DerivationLevels = {
   } as Bip44DerivationLevel
 }
 
+export interface SignedTx {
+  id: string
+  encodedTx: Uint8Array
+}
+
 export class WasmUnsignedTx implements UnsignedTx {
   private _wasm: WasmContract.WasmModuleProxy;
   private _txBuilder: WasmContract.TransactionBuilder;
@@ -108,29 +113,11 @@ export class WasmUnsignedTx implements UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: TxMetadata
-  ): Promise<void> {
-    const rootPk = await (async () => {
-      if (privateKey != null) {
-        return await this._wasm.Bip32PrivateKey.fromBytes(
-          Buffer.from(privateKey, 'hex')
-        );
-      }
-      // ToDo: handle the scenario bellow
-      // if (request.recoveryPhrase != null) {
-      //   return this.stores.yoroiTransfer.mode?.extra === 'ledger'
-      //     ? generateLedgerWalletRootKey(request.recoveryPhrase)
-      //     : generateWalletRootKey(request.recoveryPhrase);
-      // }
-      throw new Error(`no key specified`);
-    })();
-
-    const accountIndex = 0 + HARD_DERIVATION_START;
-
-    const signingKey = await rootPk
-      .derive(2147483692) // WalletTypePurpose.BIP44
-      .then(x => x.derive(2147485463)) // CoinTypes.CARDANO
-      .then(x => x.derive(accountIndex));
+    metadata: TxMetadata[]
+  ): Promise<SignedTx> {
+    const signingKey = await this._wasm.Bip32PrivateKey.fromBytes(
+      Buffer.from(privateKey, 'hex')
+    );
 
     const seenByronKeys: Set<string> = new Set();
     const seenKeyHashes: Set<string> = new Set();
@@ -199,13 +186,21 @@ export class WasmUnsignedTx implements UnsignedTx {
     if (await bootstrapWits.len() > 0) await witnessSet.setBootstraps(bootstrapWits);
     if (await vkeyWits.len() > 0) await witnessSet.setVkeys(vkeyWits);
 
-    const aux = await createMetadata(this._wasm, [metadata])
+    const aux = await createMetadata(this._wasm, metadata);
 
-    const tx = await this._wasm.Transaction.new(
+    const signedTx = await this._wasm.Transaction.new(
       txBody,
       witnessSet,
       aux
     );
+
+    const signedTxBody = await signedTx.body();
+    const signedTxHash = await this._wasm.hashTransaction(signedTxBody);
+
+    return {
+      id: Buffer.from(await signedTxHash.toBytes()).toString('hex'),
+      encodedTx: await signedTx.toBytes()
+    }
   }
 
   private async addWitnesses(
@@ -274,8 +269,8 @@ export interface UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: TxMetadata
-  ): Promise<void>;
+    metadata: TxMetadata[]
+  ): Promise<SignedTx>;
 }
 
 export async function genWasmUnsignedTx(
