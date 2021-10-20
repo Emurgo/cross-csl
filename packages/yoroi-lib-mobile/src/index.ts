@@ -1192,7 +1192,9 @@ namespace Mobile {
           linearFee.wasm,
           minimumUtxoVal.wasm,
           poolDeposit.wasm,
-          keyDeposit.wasm
+          keyDeposit.wasm,
+          5000,
+          16384
         )
       );
     }
