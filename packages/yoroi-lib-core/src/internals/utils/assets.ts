@@ -1,12 +1,12 @@
 import { BigNumber } from 'bignumber.js';
-import { MultiToken } from '../multi-token';
+import { MultiToken } from '../../multi-token';
 import {
   DefaultTokenEntry,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
-} from '../models';
-import * as WasmContract from '../wasm-contract';
+} from '../../models';
+import * as WasmContract from '../../wasm-contract';
 import { firstWithValue } from './index';
 
 export async function cardanoValueFromMultiToken(

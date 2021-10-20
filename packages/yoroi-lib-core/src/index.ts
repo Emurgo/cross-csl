@@ -11,22 +11,22 @@ import {
   AddInputResult,
   firstWithValue,
   createMetadata
-} from './utils';
-import { normalizeToAddress } from './utils/addresses';
+} from './internals/utils';
+import { normalizeToAddress } from './internals/utils/addresses';
 import {
   cardanoValueFromMultiToken,
   multiTokenFromCardanoValue,
   buildSendTokenList,
   multiTokenFromRemote,
   hasSendAllDefault
-} from './utils/assets';
+} from './internals/utils/assets';
 import {
   minRequiredForChange,
   addUtxoInput,
   asAddressedUtxo,
   isBigNumZero,
   cardanoValueFromRemoteFormat,
-} from './utils/transactions';
+} from './internals/utils/transactions';
 import {
   Address,
   AddressingUtxo,

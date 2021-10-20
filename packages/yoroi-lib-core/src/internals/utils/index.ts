@@ -1,5 +1,5 @@
-import { MetadataJsonSchema, TxMetadata } from '../models';
-import * as WasmContract from '../wasm-contract';
+import { MetadataJsonSchema, TxMetadata } from '../../models';
+import * as WasmContract from '../../wasm-contract';
 
 export const ERROR_NOT_IMPLEMENTED = 'ERROR HANDLING NOT IMPLEMENTED';
 
