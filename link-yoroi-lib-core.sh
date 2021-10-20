@@ -4,6 +4,7 @@ yarn install
 # create link for core package
 cd packages/yoroi-lib-core
 yarn install
+yarn rebuild rebuild
 yarn link
 cd ../../
 
