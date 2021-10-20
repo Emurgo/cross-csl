@@ -1,5 +1,5 @@
-import { Addressing } from '../../models';
-import * as WasmContract from '../../wasm-contract';
+import { Addressing } from '../models';
+import * as WasmContract from '../wasm-contract';
 
 export async function getCardanoSpendingKeyHash(
   wasm: WasmContract.WasmModuleProxy,

@@ -1,5 +1,5 @@
-import * as WasmContract from '../../wasm-contract';
-import { AddressingAddress, AddressingUtxo, CardanoAddressedUtxo, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from "../../models";
+import * as WasmContract from '../wasm-contract';
+import { AddressingAddress, AddressingUtxo, CardanoAddressedUtxo, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from "../models";
 import { normalizeToAddress } from './addresses';
 import { AddInputResult } from './index';
 import { identifierToCardanoAsset, multiTokenFromCardanoValue } from './assets';

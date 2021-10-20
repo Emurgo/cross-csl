@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { expect } from 'chai';
-import { YoroiLib } from '../src';
+import { IYoroiLib } from '../src';
 import {
   AddressingAddress,
   AddressingUtxo,
@@ -9,8 +9,8 @@ import {
   DefaultTokenEntry,
   SendToken,
   TxMetadata
-} from '../src/models';
-import { GeneralTransactionMetadata } from '../src/wasm-contract';
+} from '../src/';
+import { GeneralTransactionMetadata } from '../src/internals/wasm-contract';
 
 /* 
   These tests were useful to start building the initial setup, but as we add the actual
@@ -20,7 +20,7 @@ import { GeneralTransactionMetadata } from '../src/wasm-contract';
 */
 
 export const setupTests = (
-  yoroiLib: YoroiLib,
+  yoroiLib: IYoroiLib,
   suiteName: string
 ): Mocha.Suite => {
   return describe(suiteName, () => {

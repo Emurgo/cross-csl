@@ -1,4 +1,4 @@
-import * as WasmContract from '../../wasm-contract';
+import * as WasmContract from '../wasm-contract';
 
 export async function normalizeToAddress(
   wasm: WasmContract.WasmModuleProxy,

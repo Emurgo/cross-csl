@@ -1,9 +1,8 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley';
 
-import { YoroiLib, createYoroiLib } from '@emurgo/yoroi-lib-core/dist';
-import * as WasmContract from '@emurgo/yoroi-lib-core/dist/wasm-contract';
+import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core/dist';
 
-export const init = (): YoroiLib => {
+export const init = (): IYoroiLib => {
   return createYoroiLib({
     encryptWithPassword: WasmV4.encrypt_with_password,
     decryptWithPassword: WasmV4.decrypt_with_password,
