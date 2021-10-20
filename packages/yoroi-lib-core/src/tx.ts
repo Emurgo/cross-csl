@@ -1,11 +1,12 @@
 import * as WasmContract from './wasm-contract';
 import { BigNumber } from 'bignumber.js';
 
-import { CardanoAddressedUtxo, Change, DefaultTokenEntry, MultiToken, MultiTokenConstruct, PRIMARY_ASSET_CONSTANTS, TxMetadata, TxOutput } from './models';
+import { CardanoAddressedUtxo, Change, DefaultTokenEntry, MultiTokenConstruct, PRIMARY_ASSET_CONSTANTS, TxMetadata, TxOutput } from './models';
 import { createMetadata } from './utils';
 import { normalizeToAddress, toHexOrBase58 } from './utils/addresses';
 import { getCardanoSpendingKeyHash, derivePrivateByAddressing } from './utils/crypto';
 import { multiTokenFromCardanoValue, multiTokenFromRemote, parseTokenList } from './utils/assets';
+import { MultiToken } from './multi-token';
 
 const HARD_DERIVATION_START: 2147483648 = 0x80000000;
 

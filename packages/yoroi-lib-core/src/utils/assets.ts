@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
+import { MultiToken } from '../multi-token';
 import {
   DefaultTokenEntry,
-  MultiToken,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
