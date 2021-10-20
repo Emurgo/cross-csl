@@ -85,7 +85,8 @@ export const init = (): IYoroiLib => {
     BootstrapWitness: Mobile.BootstrapWitness,
     BootstrapWitnesses: Mobile.BootstrapWitnesses,
     TransactionWitnessSet: Mobile.TransactionWitnessSet,
-    Transaction: Mobile.Transaction
+    Transaction: Mobile.Transaction,
+    NetworkInfo: Mobile.NetworkInfo
   });
 };
 
@@ -1490,6 +1491,48 @@ namespace Mobile {
           auxiliary.internalWasm
         )
       );
+    }
+  }
+
+  /**
+   * `NetworkInfo` is not exported by @emurgo/react-native-haskell-shelley,
+   * so we create our own fake implementation. The calls made to this object are not
+   * proxied to WASM.
+   */
+  export class NetworkInfo
+    extends Ptr<any>
+    implements WasmContract.NetworkInfo
+  {
+    private _networkId: number;
+    private _protocolMagic: number;
+
+    networkId(): Promise<number> {
+      return Promise.resolve(this._networkId);
+    }
+  
+    protocolMagic(): Promise<number> {
+      return Promise.resolve(this._protocolMagic);
+    }
+  
+    static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
+      const networkInfo = new NetworkInfo(undefined);
+      networkInfo._networkId = networkId;
+      networkInfo._protocolMagic = protocolMagic;
+      return Promise.resolve(networkInfo);
+    }
+  
+    static async testnet(): Promise<NetworkInfo> {
+      const networkInfo = new NetworkInfo(undefined);
+      networkInfo._networkId = 0;
+      networkInfo._protocolMagic = 1097911063;
+      return Promise.resolve(networkInfo);
+    }
+  
+    static async mainnet(): Promise<NetworkInfo> {
+      const networkInfo = new NetworkInfo(undefined);
+      networkInfo._networkId = 1;
+      networkInfo._protocolMagic = 764824073;
+      return Promise.resolve(networkInfo);
     }
   }
 }

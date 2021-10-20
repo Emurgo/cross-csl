@@ -66,6 +66,7 @@ export interface WasmModuleProxy {
   BootstrapWitnesses: typeof BootstrapWitnesses;
   TransactionWitnessSet: typeof TransactionWitnessSet;
   Transaction: typeof Transaction;
+  NetworkInfo: typeof NetworkInfo;
 }
 
 export abstract class WasmProxy {
@@ -915,6 +916,24 @@ export abstract class Transaction extends Ptr {
     witnessSet: TransactionWitnessSet,
     auxiliary: AuxiliaryData,
   ): Promise<Transaction> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+}
+
+export abstract class NetworkInfo extends Ptr {
+  abstract networkId(): Promise<number>;
+
+  abstract protocolMagic(): Promise<number>;
+
+  static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static testnet(): Promise<NetworkInfo> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
+
+  static mainnet(): Promise<NetworkInfo> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
 }

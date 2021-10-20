@@ -25,6 +25,17 @@ export const setupTests = (
 ): Mocha.Suite => {
   return describe(suiteName, () => {
     describe('Yoroi Lib', () => {
+      it('should return correct network info', async () => {
+        const testnet = await yoroiLib.Wasm.NetworkInfo.testnet();
+        const mainnet = await yoroiLib.Wasm.NetworkInfo.mainnet();
+
+        const testnetNetworkId = await testnet.networkId();
+        const mainnetNetworkId = await mainnet.networkId();
+        
+        expect(testnetNetworkId).to.equals(0);
+        expect(mainnetNetworkId).to.equals(1);
+      });
+
       it('should encrypt / decrypt with password', async () => {
         const password = 'my password';
         const data = 'my secret data';
