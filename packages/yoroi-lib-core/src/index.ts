@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import * as WasmContract from './wasm-contract';
+import * as WasmContract from './internals/wasm-contract';
 import {
   AssetOverflowError,
   BaseError,
@@ -11,22 +11,22 @@ import {
   AddInputResult,
   firstWithValue,
   createMetadata
-} from './utils';
-import { normalizeToAddress } from './utils/addresses';
+} from './internals/utils';
+import { normalizeToAddress } from './internals/utils/addresses';
 import {
   cardanoValueFromMultiToken,
   multiTokenFromCardanoValue,
   buildSendTokenList,
   multiTokenFromRemote,
   hasSendAllDefault
-} from './utils/assets';
+} from './internals/utils/assets';
 import {
   minRequiredForChange,
   addUtxoInput,
   asAddressedUtxo,
   isBigNumZero,
   cardanoValueFromRemoteFormat,
-} from './utils/transactions';
+} from './internals/utils/transactions';
 import {
   Address,
   AddressingUtxo,
@@ -40,8 +40,22 @@ import {
   SendToken,
   TxOptions,
   TxOutput,
-} from './models';
-import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './tx';
+} from './internals/models';
+import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx';
+
+export { SignedTx, UnsignedTx } from './internals/tx';
+export {
+  AddressingUtxo,
+  AddressingAddress,
+  CardanoAddressedUtxo,
+  CardanoHaskellConfig,
+  DefaultTokenEntry,
+  MultiTokenConstruct,
+  SendToken,
+  TxMetadata,
+  TxOptions
+} from './internals/models';
+export * as WasmContract from './internals/wasm-contract';
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
@@ -51,7 +65,7 @@ export const RUST_u32_MAX = 4294967295;
 
 const defaultTtlOffset = 7200;
 
-export const createYoroiLib = (wasmV4: WasmContract.WasmModuleProxy): YoroiLib => {
+export const createYoroiLib = (wasmV4: WasmContract.WasmModuleProxy): IYoroiLib => {
   return new YoroiLib(wasmV4);
 };
 
@@ -61,6 +75,7 @@ export interface YoroiLibLogger {
 }
 
 export interface IYoroiLib {
+  readonly Wasm: WasmContract.WasmModuleProxy
   encryptWithPassword(
     password: string,
     salt: string,
@@ -79,7 +94,7 @@ export interface IYoroiLib {
   ): Promise<UnsignedTx>
 }
 
-export class YoroiLib {
+class YoroiLib {
   private static _logger: YoroiLibLogger;
   private readonly _wasmV4: WasmContract.WasmModuleProxy;
 

@@ -1,9 +1,8 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
 
-import { YoroiLib, createYoroiLib } from '@emurgo/yoroi-lib-core/dist';
-import * as WasmContract from '@emurgo/yoroi-lib-core/dist/wasm-contract';
+import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core/dist';
 
-export const init = (): YoroiLib => {
+export const init = (): IYoroiLib => {
   return createYoroiLib({
     encryptWithPassword: (
       password: string,

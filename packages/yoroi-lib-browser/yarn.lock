@@ -3219,7 +3219,7 @@ karma-typescript@^5.5.2:
     util "^0.12.1"
     vm-browserify "^1.1.2"
 
-karma-webpack@^5.0.0:
+karma-webpack@5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/karma-webpack/-/karma-webpack-5.0.0.tgz#2a2c7b80163fe7ffd1010f83f5507f95ef39f840"
   integrity sha512-+54i/cd3/piZuP3dr54+NcFeKOPnys5QeM1IY+0SPASwrtHsliXUiCL50iW+K9WWA7RvamC4macvvQ86l3KtaA==
