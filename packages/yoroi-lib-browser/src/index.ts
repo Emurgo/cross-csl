@@ -101,7 +101,8 @@ export const init = (): IYoroiLib => {
     BootstrapWitness: Browser.BootstrapWitness,
     BootstrapWitnesses: Browser.BootstrapWitnesses,
     TransactionWitnessSet: Browser.TransactionWitnessSet,
-    Transaction: Browser.Transaction
+    Transaction: Browser.Transaction,
+    NetworkInfo: Browser.NetworkInfo
   });
 };
 
@@ -1567,6 +1568,43 @@ namespace Browser {
             witnessSet.wasm,
             auxiliary.internalWasm
           )
+        )
+      );
+    }
+  }
+
+  export class NetworkInfo
+    extends Ptr<WasmV4.NetworkInfo>
+    implements WasmContract.NetworkInfo
+  {
+    networkId(): Promise<number> {
+      return Promise.resolve(this.wasm.network_id());
+    }
+  
+    protocolMagic(): Promise<number> {
+      return Promise.resolve(this.wasm.protocol_magic());
+    }
+  
+    static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
+      return Promise.resolve(
+        new NetworkInfo(
+          WasmV4.NetworkInfo.new(networkId, protocolMagic)
+        )
+      );
+    }
+  
+    static testnet(): Promise<NetworkInfo> {
+      return Promise.resolve(
+        new NetworkInfo(
+          WasmV4.NetworkInfo.testnet()
+        )
+      );
+    }
+  
+    static mainnet(): Promise<NetworkInfo> {
+      return Promise.resolve(
+        new NetworkInfo(
+          WasmV4.NetworkInfo.mainnet()
         )
       );
     }
