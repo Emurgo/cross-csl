@@ -84,3 +84,6 @@ packages/yoroi-lib-mobile/dist
 
 # packaged tgzs
 **/emurgo-yoroi-lib-*.tgz
+
+# Browser package Karma coverage
+packages/yoroi-lib-browser/coverage

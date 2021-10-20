@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES6",
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "outDir": "./dist"
+  },
+  "exclude": [
+    "dist",
+    "spec",
+    "node_modules"
+  ]
+}
