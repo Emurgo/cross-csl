@@ -6,7 +6,7 @@ module.exports = {
   experiments: {
     asyncWebAssembly: true
   },
-  entry: "./spec/bootstrap.spec.js",
+  entry: "./spec/index.spec.ts",
   devtool: 'inline-source-map',
   module: {
     exprContextCritical: false,
@@ -28,10 +28,6 @@ module.exports = {
     fallback: {
       "buffer": require.resolve("buffer/")
     }
-  },
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bootstrap.spec.js",
   },
   mode: "development",
   plugins: [
