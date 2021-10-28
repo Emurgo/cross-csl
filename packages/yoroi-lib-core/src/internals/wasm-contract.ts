@@ -918,6 +918,10 @@ export abstract class Transaction extends Ptr {
   ): Promise<Transaction> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+  }
 }
 
 export abstract class NetworkInfo extends Ptr {

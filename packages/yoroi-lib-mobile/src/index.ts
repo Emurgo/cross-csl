@@ -1,6 +1,7 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley';
 
 import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core/dist';
+import { EXCEPTIONS } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract';
 
 export const init = (): IYoroiLib => {
   return createYoroiLib({
@@ -1491,6 +1492,11 @@ namespace Mobile {
           auxiliary.internalWasm
         )
       );
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+      // method missing from the Wasm object
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
     }
   }
 

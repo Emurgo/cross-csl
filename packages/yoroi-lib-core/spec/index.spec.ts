@@ -25,6 +25,27 @@ export const setupTests = (
 ): Mocha.Suite => {
   return describe(suiteName, () => {
     describe('Yoroi Lib', () => {
+
+      /*
+        this if statement is not ideal, as a simple change to the suite name would break the tests.
+        currently, an api from Transaction needed for the id calculation is missing from the WASM
+        implementation on the @emurgo/reactive-native-haskell-shelley, but we want this feature
+        to be available at least on nodejs, so we are adding it now.
+
+        changing this to a more robust test selection, for example, in a way that the client
+        can specify what they want to get tested would be over-engeneering for now, so we keep this if statement.
+
+        if we start having more and more of these edge cases, then we think about a smarter solution.
+       */
+      if (suiteName !== 'Yoroi Lib Mobile') {
+        it('should calculate TX id', async () => {
+          const txbase64 = 'g6QAhIJYIEYPErLtHf+86Djrjh+UH+hVnsXZ+VJ5qFxxr2l93JuNAIJYIEo4FIzsip/FoiJcGCGnl14hEJFsPENcYDlYJoRiFOlYAIJYIJNs1337djWOTF5vbRuJmUxL2YlnP/67rk1zTEZkBk15AIJYIC7S2EfKttLmiA1+3sIM3aUP0toZTenC4VD0gsi43PACAQGCglg5ANqYSau5rMMYRpZcNcZzK5fVqwStPJ8Lq9yN37n0ZsejLC4PXMNi0jI+/B7w1c+TqvN3ufyMTw6CGgL68ICCWDkArTU80Ef+vzikU3+aiuUyjIb1qG9W0kQJ/Yq8FqjjYHzWFPLuOonCC8FhCIJgZA4oUDhARngkvymCGhr7InyiWBxKjhRb6u6XZKqVZjOmjqPS5p51c29I7Z6CRBCXoUlUZXN0dG9rZW4CWBxrjQfWljnpQT3WN6GoFacyPGnIaruvtm2/2xqnoUACAhoAAuUxAxoCcA7moQCEglggnTTDdtPwWZ1UKygPssOpGOXFE23AyXhXTlyfscWRQzJYQCQWKcmkuGBNtT5wHsOf9dyf1ZiRk5o4G7LobhML5My66cBL5VKWBOinGSvumT0FsJERLIn3DJUum3RoijlyAwyCWCAjBsK2Wg8fBgpzDykII3OnJ0x/FnCNA1mU46R7IeGLN1hARUThXPQVtkkFg09eZS/JmuK3DQQKw4lC9WNcmAV+arX9O2z1d5OJaKfGYeh9QlNL4i+64wHEgaDG2lTCTYdUAoJYIHPuUUU8vKI0FgH2NA2owrTqRf1W1+8EfI66r64MEHhwWEBeNi216UIBIweEuvpWslGxQmctAwn+GlqwWKOpanPD4+6sOdFxiKxYltIPG7IOA2JQl6850eWaWIq4ofoXnMkJglggRP2luPiT4Of8Whc/mrofpt2tBvmBPGR87SL1JuN1R3FYQFM+1+JEa89yK16T6IiY+5FyUVplZrtuAahR4/6vlNq1b2FBrNl/B3gNnyLZT80jT/5AeqwD5KHkvqcB2NzG3gL2';
+          const txId = await yoroiLib.calculateTxId(txbase64, 'base64');
+  
+          expect(txId).to.equals('aa5faffc0ffbdd924e0dfcd18ce3b024f7365c1b2531d9c3f125fc87ab7cba5f');
+        });
+      }
+
       it('should return correct network info', async () => {
         const testnet = await yoroiLib.Wasm.NetworkInfo.testnet();
         const mainnet = await yoroiLib.Wasm.NetworkInfo.mainnet();
