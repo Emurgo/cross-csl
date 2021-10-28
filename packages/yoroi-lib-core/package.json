@@ -19,7 +19,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bignumber.js": "^9.0.1"
+    "bignumber.js": "^9.0.1",
+    "hash-wasm": "^4.9.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

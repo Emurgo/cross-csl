@@ -1,4 +1,6 @@
 import { BigNumber } from 'bignumber.js';
+import { blake2b } from 'hash-wasm';
+
 import * as WasmContract from './internals/wasm-contract';
 import {
   AssetOverflowError,
@@ -41,7 +43,7 @@ import {
   TxOptions,
   TxOutput,
 } from './internals/models';
-import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx';
+import { genWasmUnsignedTx, UnsignedTx } from './internals/tx';
 
 export { SignedTx, UnsignedTx } from './internals/tx';
 export {
@@ -76,6 +78,7 @@ export interface YoroiLibLogger {
 
 export interface IYoroiLib {
   readonly Wasm: WasmContract.WasmModuleProxy
+  calculateTxId(encodedTx: string, encoding: 'base64' | 'hex'): Promise<string>
   encryptWithPassword(
     password: string,
     salt: string,
@@ -94,7 +97,7 @@ export interface IYoroiLib {
   ): Promise<UnsignedTx>
 }
 
-class YoroiLib {
+class YoroiLib implements IYoroiLib {
   private static _logger: YoroiLibLogger;
   private readonly _wasmV4: WasmContract.WasmModuleProxy;
 
@@ -122,6 +125,15 @@ class YoroiLib {
 
   constructor(wasmV4: WasmContract.WasmModuleProxy) {
     this._wasmV4 = wasmV4;
+  }
+
+  async calculateTxId(encodedTx: string, encoding: 'base64' | 'hex'): Promise<string> {
+    const txBuffer = Buffer.from(encodedTx, encoding);
+    const tx = await this.Wasm.Transaction.fromBytes(txBuffer);
+    const txBody = await tx.body();
+
+    const blake2bTxHash = await blake2b(await txBody.toBytes(), 256);
+    return blake2bTxHash;
   }
 
   async encryptWithPassword(

@@ -1571,6 +1571,14 @@ namespace Browser {
         )
       );
     }
+
+    static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+      return Promise.resolve(
+        new Transaction(
+          WasmV4.Transaction.from_bytes(bytes)
+        )
+      );
+    }
   }
 
   export class NetworkInfo
