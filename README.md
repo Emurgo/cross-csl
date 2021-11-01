@@ -61,16 +61,20 @@ This should be as easy as entering the `test-app` dir and running `yard build` a
 
 ### Mobile version
 This one is more complicated as we currently need 2 terminals for this (both in the `test-app-mobile` dir). These are the steps to run the tests using the mobile version:
-- create a `local.properties` file under `test-app-mobile/android` and add:
-  - `ndk.dir={path to the android NDK in your environment}`
+- For Android: create a `local.properties` file under `test-app-mobile/android` and add:
   - `sdk.dir={path to the android SDK in your environment}`
+  - `ndk.dir={path to the android NDK in your environment}`
   - NOTE: the above should be the FULL PATH, including the directory with the specific version of the NDK
-- in one terminal, run `yarn android`. This will build the android specific components, including the gradle build that will compile the WASM library. This should take some time to finish;
-- in another terminal, run `yarn start`. This will build the "react-native part" of the app, which shouldn't take too long. Also, this will still listen to any changes on the JS / TS part of the project.
+- For iOS, run:
+  - `cd ios`
+  - `pod install`
+  - `cd ..`
+- in one terminal, run `yarn start`. This will build the "react-native part" of the app, which shouldn't take too long. Also, this will still listen to any changes on the JS / TS part of the project.
+- in another terminal, run `yarn android` OR `yarn ios`. This will build the Android or iOS specific components, including the gradle build that will compile the WASM library. This should take some time to finish on the first run, but subsequent executions should be faster;
 
 You will also need to be running an AVD (Android Virtual Device) so the app can be deployed to it.
 
-After completing the steps above, the app should be deployed to the AVD, and in the first page will start a background execution that will setup and execute the `mocha` tests. You will be able to see the results in the console that you ran `yarn start`;
+After completing the steps above, the app should be deployed to the AVD or iPhone emulator, and in the first page will start a background execution that will setup and execute the `mocha` tests. You will be able to see the results in the console that you ran `yarn start`;
 
 # Next steps
 - find out why the `EVENT_RUN_END` is never triggered in the mobile test app;
