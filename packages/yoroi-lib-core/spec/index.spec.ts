@@ -337,7 +337,7 @@ export const setupTests = (
         } as TxMetadata;
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, []);
-      }).timeout(10000);
+      }).timeout(100000);
 
       it('should build and sign TX for sending all balance', async () => {
         const params = buildDummyTxParameters(true);
@@ -362,7 +362,7 @@ export const setupTests = (
         } as TxMetadata;
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, []);
-      });
+      }).timeout(100000);
     });
   });
 };
