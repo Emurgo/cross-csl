@@ -52,6 +52,8 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _totalOutput: MultiTokenConstruct;
   private _fee: MultiTokenConstruct;
   private _change: ReadonlyArray<Change>;
+  private _metadata: ReadonlyArray<TxMetadata>;
+  private _encodedTx: string;
 
   get senderUtxos(): ReadonlyArray<CardanoAddressedUtxo> {
     return this._senderUtxos;
@@ -81,12 +83,20 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._change;
   }
 
+  get metadata(): ReadonlyArray<TxMetadata> {
+    return this._metadata;
+  }
+
+  get encodedTx(): string {
+    return this._encodedTx;
+  }
+
   /**
    * Initializes the class with the specific wasm types, outputs and change.
    * Even though this class can be instantiated directly, you should probably be getting
    * an instance of it through its abstraction UnsignedTx by calling YoroiLib.createUnsignedTx
    */
-  constructor(
+  private constructor(
     wasm: WasmContract.WasmModuleProxy,
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
@@ -96,7 +106,9 @@ export class WasmUnsignedTx implements UnsignedTx {
     outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
     totalOutput: MultiTokenConstruct,
     fee: MultiTokenConstruct,
-    change: ReadonlyArray<Change>
+    change: ReadonlyArray<Change>,
+    metadata: ReadonlyArray<TxMetadata>,
+    encodedTx: string
   ) {
     this._wasm = wasm;
     this._txBuilder = txBuilder;
@@ -108,13 +120,45 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._totalOutput = totalOutput;
     this._fee = fee;
     this._change = change;
+    this._metadata = metadata;
+    this._encodedTx = encodedTx;
+  }
+
+  static async new(
+    wasm: WasmContract.WasmModuleProxy,
+    txBuilder: WasmContract.TransactionBuilder,
+    certificates: ReadonlyArray<WasmContract.Certificate>,
+    senderUtxos: CardanoAddressedUtxo[],
+    inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    totalInput: MultiTokenConstruct,
+    outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    totalOutput: MultiTokenConstruct,
+    fee: MultiTokenConstruct,
+    change: ReadonlyArray<Change>,
+    metadata: ReadonlyArray<TxMetadata>
+  ): Promise<WasmUnsignedTx> {
+    const txBytes = await txBuilder.build().then(x => x.toBytes())
+    return new WasmUnsignedTx(
+      wasm,
+      txBuilder,
+      certificates,
+      senderUtxos,
+      inputs,
+      totalInput,
+      outputs,
+      totalOutput,
+      fee,
+      change,
+      metadata,
+      Buffer.from(txBytes).toString('hex')
+    );
   }
 
   async sign(
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: TxMetadata[]
+    extraMetadata: TxMetadata[]
   ): Promise<SignedTx> {
     const signingKey = await this._wasm.Bip32PrivateKey.fromBytes(
       Buffer.from(privateKey, 'hex')
@@ -187,7 +231,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     if (await bootstrapWits.len() > 0) await witnessSet.setBootstraps(bootstrapWits);
     if (await vkeyWits.len() > 0) await witnessSet.setVkeys(vkeyWits);
 
-    const aux = await createMetadata(this._wasm, metadata);
+    const fullMetadata = (this.metadata ?? []).concat(extraMetadata ?? [])
+    const aux = await createMetadata(this._wasm, fullMetadata);
 
     const signedTx = await this._wasm.Transaction.new(
       txBody,
@@ -266,11 +311,13 @@ export interface UnsignedTx {
   readonly totalOutput: MultiTokenConstruct;
   readonly fee: MultiTokenConstruct;
   readonly change: ReadonlyArray<Change>;
+  readonly metadata: ReadonlyArray<TxMetadata>;
+  readonly encodedTx: string;
   sign(
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: TxMetadata[]
+    metadata: ReadonlyArray<TxMetadata>
   ): Promise<SignedTx>;
 }
 
@@ -281,9 +328,10 @@ export async function genWasmUnsignedTx(
   senderUtxos: CardanoAddressedUtxo[],
   change: ReadonlyArray<Change>,
   defaults: DefaultTokenEntry,
-  networkId: number
+  networkId: number,
+  metadata: ReadonlyArray<TxMetadata>
 ): Promise<WasmUnsignedTx> {
-  return new WasmUnsignedTx(
+  return await WasmUnsignedTx.new(
     wasm,
     txBuilder,
     certificates,
@@ -293,7 +341,8 @@ export async function genWasmUnsignedTx(
     await genWasmUnsignedTxOutputs(txBuilder, networkId),
     await genWasmUnsignedTxTotalOutput(txBuilder, defaults),
     await genWasmUnsignedTxFee(txBuilder, defaults, networkId),
-    change
+    change,
+    metadata
   )
 }
 

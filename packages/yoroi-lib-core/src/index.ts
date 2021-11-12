@@ -221,7 +221,8 @@ class YoroiLib implements IYoroiLib {
           utxos,
           absSlotNumber,
           protocolParams,
-          txMetadata
+          txMetadata,
+          txOptions
         );
       } else {
         const changeAddresses = receivers.reduce((arr, next) => {
@@ -281,6 +282,7 @@ class YoroiLib implements IYoroiLib {
           [],
           [],
           txMetadata,
+          txOptions,
           false
         );
         YoroiLib.logger.debug(
@@ -307,7 +309,8 @@ class YoroiLib implements IYoroiLib {
       keyDeposit: WasmContract.BigNum;
       networkId: number;
     },
-    auxData: WasmContract.AuxiliaryData | undefined
+    auxData: WasmContract.AuxiliaryData | undefined,
+    txOptions: TxOptions
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
     for (const utxo of allUtxos) {
@@ -356,7 +359,8 @@ class YoroiLib implements IYoroiLib {
           defaultNetworkId: protocolParams.networkId,
           defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
         },
-        protocolParams.networkId
+        protocolParams.networkId,
+        txOptions.metadata ?? []
       );
   }
 
@@ -479,6 +483,7 @@ class YoroiLib implements IYoroiLib {
       amount: WasmContract.BigNum;
     }>,
     auxData: WasmContract.AuxiliaryData | undefined,
+    txOptions: TxOptions,
     allowNoOutputs: boolean
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
@@ -528,7 +533,8 @@ class YoroiLib implements IYoroiLib {
         defaultNetworkId: protocolParams.networkId,
         defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
       },
-      protocolParams.networkId
+      protocolParams.networkId,
+      txOptions.metadata ?? []
     );
   }
 
