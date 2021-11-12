@@ -192,7 +192,7 @@ export async function parseTokenList(assets: WasmContract.MultiAsset): Promise<
     for (let j = 0; j < (await policies.len()); j++) {
       const assetName = await policies.get(j);
       const amount = await assetsForPolicy.get(assetName);
-      if (amount.hasValue()) continue;
+      if (!amount.hasValue()) continue;
 
       result.push({
         amount: await amount.toStr(),
