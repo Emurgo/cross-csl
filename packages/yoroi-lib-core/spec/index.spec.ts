@@ -339,6 +339,104 @@ export const setupTests = (
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, []);
       }).timeout(100000);
 
+      it('should build and sign TX with native assets', async () => {
+        const utxos = [
+          {
+            address:
+              '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            addressing: {
+              path: [2147485500, 2147485463, 2147483648, 1, 6],
+              startLevel: 1
+            },
+            output: {
+              transaction: {
+                hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
+              },
+              utxoTransactionOutput: {
+                outputIndex: 1
+              },
+              tokens: [
+                {
+                  token: {
+                    identifier: '',
+                    isDefault: true,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '537206659'
+                  }
+                },
+                {
+                  token: {
+                    identifier:
+                      '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
+                    isDefault: false,
+                    networkId: 300
+                  },
+                  tokenList: {
+                    amount: '2'
+                  }
+                }
+              ]
+            }
+          }
+        ] as Array<AddressingUtxo>;
+
+        const tokens = [
+          {
+            amount: new BigNumber(1),
+            shouldSendAll: false,
+            token: {
+              identifier: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
+              isDefault: false,
+              networkId: 300
+            }
+          },
+          {
+            amount: new BigNumber(1481480),
+            shouldSendAll: undefined,
+            token: {
+              identifier: '',
+              isDefault: true,
+              networkId: 300
+            }
+          }
+        ] as Array<SendToken>;
+
+        const params = buildDummyTxParameters(false);
+
+        const unsignedTx = await yoroiLib.createUnsignedTx(
+          params.absSlotNumber,
+          utxos,
+          params.receiver,
+          params.changeAddress,
+          tokens,
+          params.config,
+          params.defaultToken,
+          {}
+        );
+
+        expect(unsignedTx.totalInput.values.length).to.equal(2);
+
+        expect(unsignedTx.totalInput.values[0].identifier).to.equal('');
+        expect(unsignedTx.totalInput.values[0].networkId).to.equal(300);
+        expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(unsignedTx.fee.values[0].amount.plus(new BigNumber('1481480')).toString());
+
+        expect(unsignedTx.totalInput.values[1].identifier).to.equal('4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e');
+        expect(unsignedTx.totalInput.values[1].networkId).to.equal(300);
+        expect(unsignedTx.totalInput.values[1].amount.toString()).to.equal('1');
+
+        const keyLevel = 0;
+        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09';
+        const stakingKeyWits = new Set<string>();
+        const metadata = {
+          label: '0010100',
+          data: {}
+        } as TxMetadata;
+
+        await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, []);
+      }).timeout(100000);
+
       it('should build and sign TX for sending all balance', async () => {
         const params = buildDummyTxParameters(true);
 
