@@ -87,3 +87,5 @@ packages/yoroi-lib-mobile/dist
 
 # Browser package Karma coverage
 packages/yoroi-lib-browser/coverage
+
+__storage__

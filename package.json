@@ -1,14 +1,20 @@
 {
   "scripts": {
     "test": "mocha --watch",
-    "format": "prettier --config .prettierrc packages/**/*.ts --write"
+    "format": "prettier --config .prettierrc packages/**/*.ts --write",
+    "sample:sync": "yarn ts-node ./samples.ts sync",
+    "sample:sum": "yarn ts-node ./samples.ts sum"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bignumber.js": "^9.0.1",
+    "yargs": "^17.2.1"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.9.1",
     "@types/sinon": "^10.0.2",
+    "@types/yargs": "^17.0.5",
     "chai": "^4.3.4",
     "flowgen": "^1.14.1",
     "glob": "^7.2.0",
