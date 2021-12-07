@@ -1,4 +1,4 @@
-import { setupTests } from '../../yoroi-lib-core/spec/index.spec';
+import { setupTests } from '../../yoroi-lib-core/spec/index.spec'
 
 /*
   this is kinda hacky, but we need to wrap `setupTests` into a `describe(() => it() => {...})`,
@@ -6,8 +6,8 @@ import { setupTests } from '../../yoroi-lib-core/spec/index.spec';
 */
 describe('Startup', () => {
   it('should bootstrap', async () => {
-    const { init } = await import('../src');
+    const { init } = await import('../src')
 
-    setupTests(init() as any, 'Yoroi Lib Browser');
-  });
-});
+    setupTests(init() as any, 'Yoroi Lib Browser')
+  })
+})

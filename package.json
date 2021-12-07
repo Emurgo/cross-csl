@@ -3,7 +3,9 @@
     "test": "mocha --watch",
     "format": "prettier --config .prettierrc packages/**/*.ts --write",
     "sample:sync": "yarn ts-node ./samples.ts sync",
-    "sample:sum": "yarn ts-node ./samples.ts sum"
+    "sample:sum": "yarn ts-node ./samples.ts sum",
+    "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
@@ -15,7 +17,10 @@
     "@types/node": "^16.9.1",
     "@types/sinon": "^10.0.2",
     "@types/yargs": "^17.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
     "chai": "^4.3.4",
+    "eslint": "^8.4.1",
     "flowgen": "^1.14.1",
     "glob": "^7.2.0",
     "mocha": "^9.1.1",

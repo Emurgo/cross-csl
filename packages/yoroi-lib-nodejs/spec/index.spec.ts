@@ -1,5 +1,5 @@
-import { init } from '../src';
+import { init } from '../src'
 
-import { setupTests } from '../../yoroi-lib-core/spec/index.spec';
+import { setupTests } from '../../yoroi-lib-core/spec/index.spec'
 
-setupTests(init() as any, 'Yoroi Lib Core');
+setupTests(init() as any, 'Yoroi Lib Core')

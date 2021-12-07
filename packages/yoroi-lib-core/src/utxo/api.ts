@@ -1,4 +1,4 @@
-import { TipStatusReference, Utxo, UtxoApiResponse, UtxoAtPointRequest, UtxoDiff, UtxoDiffSincePointRequest } from "./models";
+import { TipStatusReference, Utxo, UtxoApiResponse, UtxoAtPointRequest, UtxoDiff, UtxoDiffSincePointRequest } from "./models"
 export interface UtxoApiContract {
   getBestBlock(): Promise<string>
   getSafeBlock(): Promise<string>

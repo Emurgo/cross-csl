@@ -1,9 +1,9 @@
-import * as WasmContract from '../wasm-contract';
-import { AddressingAddress, AddressingUtxo, CardanoAddressedUtxo, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from "../models";
-import { normalizeToAddress } from './addresses';
-import { AddInputResult } from './index';
-import { identifierToCardanoAsset, multiTokenFromCardanoValue } from './assets';
-import { BigNumber } from 'bignumber.js';
+import * as WasmContract from '../wasm-contract'
+import { AddressingAddress, AddressingUtxo, CardanoAddressedUtxo, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from "../models"
+import { normalizeToAddress } from './addresses'
+import { AddInputResult } from './index'
+import { identifierToCardanoAsset, multiTokenFromCardanoValue } from './assets'
+import { BigNumber } from 'bignumber.js'
 
 export async function minRequiredForChange(
   wasm: WasmContract.WasmModuleProxy,
@@ -15,32 +15,32 @@ export async function minRequiredForChange(
     minimumUtxoVal: WasmContract.BigNum;
   }
 ): Promise<WasmContract.BigNum> {
-  const wasmChange = await normalizeToAddress(wasm, changeAdaAddr.address);
+  const wasmChange = await normalizeToAddress(wasm, changeAdaAddr.address)
   if (!wasmChange?.hasValue()) {
-    throw new Error(`minRequiredForChange: change not a valid Shelley address`);
+    throw new Error(`minRequiredForChange: change not a valid Shelley address`)
   }
   const minimumAda = await wasm.minAdaRequired(
     value,
     protocolParams.minimumUtxoVal
-  );
+  )
 
   // we may have to increase the value used up to the minimum ADA required
   const baseValue = (async () => {
-    const coin = await value.coin();
+    const coin = await value.coin()
     if ((await coin.compare(minimumAda)) < 0) {
-      const newVal = await wasm.Value.new(minimumAda);
-      const assets = await value.multiasset();
+      const newVal = await wasm.Value.new(minimumAda)
+      const assets = await value.multiasset()
       if (assets.hasValue()) {
-        await newVal.setMultiasset(assets);
+        await newVal.setMultiasset(assets)
       }
-      return newVal;
+      return newVal
     }
-    return value;
-  })();
+    return value
+  })()
   const minRequired = await txBuilder
     .feeForOutput(await wasm.TransactionOutput.new(wasmChange, await baseValue))
-    .then((x) => x.checkedAdd(minimumAda));
-  return minRequired;
+    .then((x) => x.checkedAdd(minimumAda))
+  return minRequired
 }
 
 export async function addUtxoInput(
@@ -57,12 +57,12 @@ export async function addUtxoInput(
     networkId: number;
   }
 ): Promise<AddInputResult> {
-  const wasmAddr = await normalizeToAddress(wasm, input.receiver);
+  const wasmAddr = await normalizeToAddress(wasm, input.receiver)
   if (!wasmAddr?.hasValue()) {
-    throw new Error(`addUtxoInput input not a valid Shelley address`);
+    throw new Error(`addUtxoInput input not a valid Shelley address`)
   }
-  const txInput = await utxoToTxInput(wasm, input);
-  const wasmAmount = await cardanoValueFromRemoteFormat(wasm, input);
+  const txInput = await utxoToTxInput(wasm, input)
+  const wasmAmount = await cardanoValueFromRemoteFormat(wasm, input)
 
   const skipOverflow = async (): Promise<AddInputResult> => {
     /**
@@ -77,102 +77,102 @@ export async function addUtxoInput(
      */
     const currentInputSum = await txBuilder
       .getExplicitInput()
-      .then(async (x) => x.checkedAdd(await txBuilder.getImplicitInput()));
+      .then(async (x) => x.checkedAdd(await txBuilder.getImplicitInput()))
     try {
-      await currentInputSum.checkedAdd(wasmAmount);
+      await currentInputSum.checkedAdd(wasmAmount)
     } catch (e) {
-      return AddInputResult.OVERFLOW;
+      return AddInputResult.OVERFLOW
     }
-    return AddInputResult.VALID;
-  };
+    return AddInputResult.VALID
+  }
 
   const skipInput = async (): Promise<AddInputResult> => {
-    if (!remaining) return skipOverflow();
+    if (!remaining) return skipOverflow()
 
     const defaultEntry = {
       defaultNetworkId: protocolParams.networkId,
       defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
-    };
-    const tokenSetInInput = new Set(input.assets.map((asset) => asset.assetId));
+    }
+    const tokenSetInInput = new Set(input.assets.map((asset) => asset.assetId))
     const remainingTokens = await multiTokenFromCardanoValue(
       remaining.value,
       defaultEntry
-    );
+    )
     const includedTargets = remainingTokens
       .nonDefaultEntries()
-      .filter((entry) => tokenSetInInput.has(entry.identifier));
+      .filter((entry) => tokenSetInInput.has(entry.identifier))
 
     if (
       remainingTokens.getDefaultEntry().amount.gt(0) &&
       new BigNumber(input.amount).gt(0)
     ) {
-      includedTargets.push(remainingTokens.getDefaultEntry());
+      includedTargets.push(remainingTokens.getDefaultEntry())
     }
 
     // it's possible to have no target left and yet have no input added yet
     // due to refunds in Cardano
     // so we still want to add the input in this case even if we don't care about the coins in it
     if (includedTargets.length === 0 && remaining.hasInput) {
-      return AddInputResult.NO_NEED;
+      return AddInputResult.NO_NEED
     }
 
     const onlyDefaultEntry =
       includedTargets.length === 1 &&
-      includedTargets[0].identifier === defaultEntry.defaultIdentifier;
+      includedTargets[0].identifier === defaultEntry.defaultIdentifier
     // ignore UTXO that contribute less than their fee if they also don't contribute a token
     if (onlyDefaultEntry && excludeIfSmall) {
       const feeForInput = new BigNumber(
         await (
           await txBuilder.feeForInput(wasmAddr, txInput, wasmAmount)
         ).toStr()
-      );
+      )
       if (feeForInput.gt(input.amount)) {
-        return AddInputResult.TOO_SMALL;
+        return AddInputResult.TOO_SMALL
       }
     }
 
-    return skipOverflow();
-  };
-
-  const skipResult = await skipInput();
-  if (skipResult !== AddInputResult.VALID) {
-    return skipResult;
+    return skipOverflow()
   }
 
-  await txBuilder.addInput(wasmAddr, txInput, wasmAmount);
-  return AddInputResult.VALID;
+  const skipResult = await skipInput()
+  if (skipResult !== AddInputResult.VALID) {
+    return skipResult
+  }
+
+  await txBuilder.addInput(wasmAddr, txInput, wasmAmount)
+  return AddInputResult.VALID
 }
 
 export async function cardanoValueFromRemoteFormat(
   wasm: WasmContract.WasmModuleProxy,
   utxo: RemoteUnspentOutput
 ): Promise<WasmContract.Value> {
-  const value = await wasm.Value.new(await wasm.BigNum.fromStr(utxo.amount));
-  if (utxo.assets.length === 0) return value;
+  const value = await wasm.Value.new(await wasm.BigNum.fromStr(utxo.amount))
+  if (utxo.assets.length === 0) return value
 
-  const assets = await wasm.MultiAsset.new();
+  const assets = await wasm.MultiAsset.new()
   for (const entry of utxo.assets) {
     const { policyId, name } = await identifierToCardanoAsset(
       wasm,
       entry.assetId
-    );
+    )
 
-    let policyContent = await assets.get(policyId);
+    let policyContent = await assets.get(policyId)
     if (!policyContent.hasValue()) {
-      policyContent = await wasm.Assets.new();
+      policyContent = await wasm.Assets.new()
     }
 
     await policyContent.insert(
       name,
       await wasm.BigNum.fromStr(entry.amount.toString())
-    );
+    )
     // recall: we always have to insert since WASM returns copies of objects
-    await assets.insert(policyId, policyContent);
+    await assets.insert(policyId, policyContent)
   }
   if ((await assets.len()) > 0) {
-    await value.setMultiasset(assets);
+    await value.setMultiasset(assets)
   }
-  return value;
+  return value
 }
 
 export async function asAddressedUtxo(
@@ -184,24 +184,24 @@ export async function asAddressedUtxo(
       const tokenTypes = utxo.output.tokens.reduce(
         (acc, next) => {
           if (next.token.identifier === PRIMARY_ASSET_CONSTANTS.Cardano) {
-            acc.amount = acc.amount.plus(next.tokenList.amount);
+            acc.amount = acc.amount.plus(next.tokenList.amount)
           } else {
             acc.tokens.push({
               amount: next.tokenList.amount,
               tokenId: next.token.identifier
-            });
+            })
           }
-          return acc;
+          return acc
         },
         {
           amount: new BigNumber(0),
           tokens: [] as {amount: string, tokenId: string}[]
         }
-      );
+      )
 
       const assets = await Promise.all(
         tokenTypes.tokens.map(async (token) => {
-          const pieces = await identifierToCardanoAsset(wasm, token.tokenId);
+          const pieces = await identifierToCardanoAsset(wasm, token.tokenId)
           return {
             amount: token.amount,
             assetId: token.tokenId,
@@ -209,9 +209,9 @@ export async function asAddressedUtxo(
               'hex'
             ),
             name: Buffer.from(await pieces.name.name()).toString('hex')
-          };
+          }
         })
-      );
+      )
 
       return {
         amount: tokenTypes.amount.toString(),
@@ -223,9 +223,9 @@ export async function asAddressedUtxo(
           utxo.output.utxoTransactionOutput.outputIndex,
         addressing: utxo.addressing,
         assets
-      };
+      }
     })
-  );
+  )
 }
 
 async function utxoToTxInput(
@@ -235,12 +235,12 @@ async function utxoToTxInput(
   return await wasm.TransactionInput.new(
     await wasm.TransactionHash.fromBytes(Buffer.from(utxo.txHash, 'hex')),
     utxo.txIndex
-  );
+  )
 }
 
 export async function isBigNumZero(
   wasm: WasmContract.WasmModuleProxy,
   b: WasmContract.BigNum
 ): Promise<boolean> {
-  return await b.compare(await wasm.BigNum.fromStr('0')) === 0;
+  return await b.compare(await wasm.BigNum.fromStr('0')) === 0
 }
