@@ -714,11 +714,13 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.attributes())
     }
 
-    icarusFromKey(
+    static icarusFromKey(
       key: Bip32PublicKey,
       protocolMagic: number
     ): Promise<ByronAddress> {
-      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+      return Promise.resolve(
+        new ByronAddress(WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic))
+      )
     }
 
     static fromBase58(string: string): Promise<ByronAddress> {

@@ -1,3 +1,13 @@
+// this file contains several "abstract static" methods.
+// This is not an actual feature of TS, but we define the static methods in the abstract classes
+// and simply override them in the implementations so they can be exposed in the namespace,
+// so essentially these static methods work as some sort of "loose" contract.
+// This means we will have several warnings here related to unsed vars, and that's why we disable
+// them for the whole file.
+// Please don't use this as an excuse to start supressing warnings around, be really mindful
+// of what you supress. In this case, it makes perfect sense, because this is essentially
+// just a file with a bunch of contracts with no actual logic.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export const EXCEPTIONS = {
   NOT_IMPLEMENTED: 'not implemented',
   SHOULD_BE_OVERWRITTEN: 'should be overwritten by implementations'
@@ -70,6 +80,8 @@ export interface WasmModuleProxy {
 }
 
 export abstract class WasmProxy {
+  // this constructor is here just to enforce it in the implementing classes
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(wasm: any | undefined) {}
 
   abstract hasValue(): boolean
@@ -468,10 +480,12 @@ export abstract class ByronAddress extends Ptr {
 
   abstract attributes(): Promise<Uint8Array>
 
-  abstract icarusFromKey(
+  static icarusFromKey(
     key: Bip32PublicKey,
     protocolMagic: number
-  ): Promise<ByronAddress>
+  ): Promise<ByronAddress> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
 
   static fromBase58(string: string): Promise<ByronAddress> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN

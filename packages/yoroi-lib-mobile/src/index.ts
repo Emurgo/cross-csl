@@ -676,8 +676,10 @@ namespace Mobile {
       return await this.wasm.attributes()
     }
 
-    async icarusFromKey(
+    static async icarusFromKey(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       key: Bip32PublicKey,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       protocolMagic: number
     ): Promise<ByronAddress> {
       throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
@@ -1273,7 +1275,7 @@ namespace Mobile {
     }
   }
 
-  // ToDo: add docs to core lib mentioning this class can only be instantiated on mobile, but none of the other methods is implemented
+  // ToDo: add docs to core lib mentioning this class can be instantiated on mobile, but none of the other methods is implemented
   export class EnterpriseAddress
     extends Ptr<WasmV4.EnterpriseAddress>
     implements WasmContract.EnterpriseAddress
