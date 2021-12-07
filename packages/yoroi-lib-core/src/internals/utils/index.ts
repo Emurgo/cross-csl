@@ -1,7 +1,7 @@
-import { MetadataJsonSchema, TxMetadata } from '../models';
-import * as WasmContract from '../wasm-contract';
+import { MetadataJsonSchema, TxMetadata } from '../models'
+import * as WasmContract from '../wasm-contract'
 
-export const ERROR_NOT_IMPLEMENTED = 'ERROR HANDLING NOT IMPLEMENTED';
+export const ERROR_NOT_IMPLEMENTED = 'ERROR HANDLING NOT IMPLEMENTED'
 
 export enum AddInputResult {
   VALID = 0,
@@ -13,13 +13,13 @@ export enum AddInputResult {
 export function firstWithValue<T extends WasmContract.WasmProxy>(
   ...objs: T[]
 ): T {
-  for (let o of objs) {
+  for (const o of objs) {
     if (o?.hasValue()) {
-      return o;
+      return o
     }
   }
 
-  throw 'At least one of the arguments should have value';
+  throw 'At least one of the arguments should have value'
 }
 
 export async function createMetadata(
@@ -27,22 +27,22 @@ export async function createMetadata(
   txMetadata: ReadonlyArray<TxMetadata>
 ): Promise<WasmContract.AuxiliaryData> {
   if (txMetadata.length === 0) {
-    return await wasm.AuxiliaryData.empty();
+    return await wasm.AuxiliaryData.empty()
   }
 
   const transactionMetadata =
-    await wasm.GeneralTransactionMetadata.new();
+    await wasm.GeneralTransactionMetadata.new()
 
   txMetadata.forEach(async (meta: TxMetadata) => {
     const metadatum = await wasm.encodeJsonStrToMetadatum(
       JSON.stringify(meta.data),
       MetadataJsonSchema.BasicConversions
-    );
-    const key = await wasm.BigNum.fromStr(meta.label);
-    await transactionMetadata.insert(key, metadatum);
-  });
+    )
+    const key = await wasm.BigNum.fromStr(meta.label)
+    await transactionMetadata.insert(key, metadatum)
+  })
 
-  const auxData = await wasm.AuxiliaryData.new(transactionMetadata);
+  const auxData = await wasm.AuxiliaryData.new(transactionMetadata)
 
-  return auxData;
+  return auxData
 }

@@ -1,9 +1,9 @@
-const path = require('path');
-const os = require('os');
+const path = require('path')
+const os = require('os')
 
-const webpackConfig = require('./webpack.dev.config');
+const webpackConfig = require('./webpack.dev.config')
 
-const packageDir = 'node_modules/@emurgo/cardano-serialization-lib-browser';
+const packageDir = 'node_modules/@emurgo/cardano-serialization-lib-browser'
 
 /*
   It seems Karma is currently unable to serve WASM files,

@@ -1,7 +1,7 @@
 export const EXCEPTIONS = {
   NOT_IMPLEMENTED: 'not implemented',
   SHOULD_BE_OVERWRITTEN: 'should be overwritten by implementations'
-};
+}
 
 export interface WasmModuleProxy {
   encryptWithPassword(
@@ -72,18 +72,18 @@ export interface WasmModuleProxy {
 export abstract class WasmProxy {
   constructor(wasm: any | undefined) {}
 
-  abstract hasValue(): boolean;
+  abstract hasValue(): boolean
 }
 
 export abstract class Ptr extends WasmProxy {
   constructor(wasm: any | undefined) {
-    super(wasm);
+    super(wasm)
   }
   /**
    * Frees the pointer
    * @returns {Promise<void>}
    */
-  abstract free(): Promise<void>;
+  abstract free(): Promise<void>
 }
 
 /*
@@ -95,51 +95,51 @@ export abstract class Ptr extends WasmProxy {
 */
 
 export abstract class BigNum extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
   /**
    * @returns {string}
    */
-  abstract toStr(): Promise<string>;
+  abstract toStr(): Promise<string>
   /**
    * @param {BigNum} other
    * @returns {BigNum}
    */
-  abstract checkedMul(other: BigNum): Promise<BigNum>;
+  abstract checkedMul(other: BigNum): Promise<BigNum>
   /**
    * @param {BigNum} other
    * @returns {BigNum}
    */
-  abstract checkedAdd(other: BigNum): Promise<BigNum>;
+  abstract checkedAdd(other: BigNum): Promise<BigNum>
   /**
    * @param {BigNum} other
    * @returns {BigNum}
    */
-  abstract checkedSub(other: BigNum): Promise<BigNum>;
+  abstract checkedSub(other: BigNum): Promise<BigNum>
   /**
    * returns 0 if it would otherwise underflow
    * @param {BigNum} other
    * @returns {BigNum}
    */
-  abstract clampedSub(other: BigNum): Promise<BigNum>;
+  abstract clampedSub(other: BigNum): Promise<BigNum>
   /**
    * @param {BigNum} rhs_value
    * @returns {number}
    */
-  abstract compare(rhs_value: BigNum): Promise<number>;
+  abstract compare(rhs_value: BigNum): Promise<number>
 
   /**
    * @param {Uint8Array} bytes
    * @returns {BigNum}
    */
   static fromBytes(bytes: Uint8Array): Promise<BigNum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
   /**
    * @param {string} string
    * @returns {BigNum}
    */
   static fromStr(string: string): Promise<BigNum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -147,12 +147,12 @@ export abstract class LinearFee extends Ptr {
   /**
    * @returns {Promise<BigNum>}
    */
-  abstract constant(): Promise<BigNum>;
+  abstract constant(): Promise<BigNum>
 
   /**
    * @returns {Promise<BigNum>}
    */
-  abstract coefficient(): Promise<BigNum>;
+  abstract coefficient(): Promise<BigNum>
 
   /**
    * @param {BigNum} coefficient
@@ -160,7 +160,7 @@ export abstract class LinearFee extends Ptr {
    * @returns {Promise<LinearFee>}
    */
   static new(coefficient: BigNum, constant: BigNum): Promise<LinearFee> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -168,186 +168,186 @@ export abstract class GeneralTransactionMetadata extends Ptr {
   abstract insert(
     key: BigNum,
     value: TransactionMetadatum
-  ): Promise<TransactionMetadatum>;
-  abstract get(key: BigNum): Promise<TransactionMetadatum>;
+  ): Promise<TransactionMetadatum>
+  abstract get(key: BigNum): Promise<TransactionMetadatum>
 
   static new(): Promise<GeneralTransactionMetadata> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionMetadatum extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 }
 
 export abstract class AuxiliaryData extends Ptr {
-  abstract metadata(): Promise<GeneralTransactionMetadata>;
+  abstract metadata(): Promise<GeneralTransactionMetadata>
 
   static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static empty(): Promise<AuxiliaryData> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class AssetName extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
-  abstract name(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
+  abstract name(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<AssetName> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
   static new(name: Uint8Array): Promise<AssetName> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class AssetNames extends Ptr {
-  abstract len(): Promise<number>;
-  abstract get(index: number): Promise<AssetName>;
-  abstract add(item: AssetName): Promise<void>;
+  abstract len(): Promise<number>
+  abstract get(index: number): Promise<AssetName>
+  abstract add(item: AssetName): Promise<void>
 
   static new(): Promise<AssetNames> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Assets extends Ptr {
-  abstract len(): Promise<number>;
-  abstract insert(key: AssetName, value: BigNum): Promise<BigNum>;
-  abstract get(key: AssetName): Promise<BigNum>;
-  abstract keys(): Promise<AssetNames>;
+  abstract len(): Promise<number>
+  abstract insert(key: AssetName, value: BigNum): Promise<BigNum>
+  abstract get(key: AssetName): Promise<BigNum>
+  abstract keys(): Promise<AssetNames>
 
   static new(): Promise<Assets> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class ScriptHash extends WasmProxy {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
   static fromBytes(bytes: Uint8Array): Promise<ScriptHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class ScriptHashes extends WasmProxy {
-  abstract toBytes(): Promise<Uint8Array>;
-  abstract len(): Promise<number>;
-  abstract get(index: number): Promise<ScriptHash>;
-  abstract add(item: ScriptHash): Promise<void>;
+  abstract toBytes(): Promise<Uint8Array>
+  abstract len(): Promise<number>
+  abstract get(index: number): Promise<ScriptHash>
+  abstract add(item: ScriptHash): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<ScriptHashes> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
   static new(): Promise<ScriptHashes> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
-export type PolicyID = ScriptHash;
+export type PolicyID = ScriptHash
 
-export type PolicyIDs = ScriptHashes;
+export type PolicyIDs = ScriptHashes
 
 export abstract class MultiAsset extends Ptr {
-  abstract len(): Promise<number>;
-  abstract insert(key: PolicyID, value: Assets): Promise<Assets>;
-  abstract get(key: PolicyID): Promise<Assets>;
-  abstract keys(): Promise<PolicyIDs>;
-  abstract sub(rhs: MultiAsset): Promise<MultiAsset>;
+  abstract len(): Promise<number>
+  abstract insert(key: PolicyID, value: Assets): Promise<Assets>
+  abstract get(key: PolicyID): Promise<Assets>
+  abstract keys(): Promise<PolicyIDs>
+  abstract sub(rhs: MultiAsset): Promise<MultiAsset>
 
   static new(): Promise<MultiAsset> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Ed25519KeyHash extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionHash extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionInput extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract transactionId(): Promise<TransactionHash>;
+  abstract transactionId(): Promise<TransactionHash>
 
-  abstract index(): Promise<number>;
+  abstract index(): Promise<number>
 
   static new(
     transactionId: TransactionHash,
     index: number
   ): Promise<TransactionInput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionInput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Value extends Ptr {
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): Promise<BigNum>
 
-  abstract setCoin(coin: BigNum): Promise<void>;
+  abstract setCoin(coin: BigNum): Promise<void>
 
-  abstract multiasset(): Promise<MultiAsset>;
+  abstract multiasset(): Promise<MultiAsset>
 
-  abstract setMultiasset(multiasset: MultiAsset): Promise<void>;
+  abstract setMultiasset(multiasset: MultiAsset): Promise<void>
 
-  abstract checkedAdd(rhs: Value): Promise<Value>;
+  abstract checkedAdd(rhs: Value): Promise<Value>
 
-  abstract checkedSub(rhs: Value): Promise<Value>;
+  abstract checkedSub(rhs: Value): Promise<Value>
 
-  abstract clampedSub(rhs: Value): Promise<Value>;
+  abstract clampedSub(rhs: Value): Promise<Value>
 
-  abstract compare(rhs: Value): Promise<number | undefined>;
+  abstract compare(rhs: Value): Promise<number | undefined>
 
   static new(coin: BigNum): Promise<Value> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Address extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract toBech32(prefix?: string): Promise<string>;
+  abstract toBech32(prefix?: string): Promise<string>
 
-  abstract networkId(): Promise<number>;
+  abstract networkId(): Promise<number>
 
   static fromBytes(bytes: Uint8Array): Promise<Address> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBech32(string: string): Promise<Address> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class PublicKey extends Ptr {
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): Promise<string>
 
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Promise<Uint8Array>
 
-  abstract hash(): Promise<Ed25519KeyHash>;
+  abstract hash(): Promise<Ed25519KeyHash>
 
   static fromBech32(bech32_str: string): Promise<PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -374,38 +374,38 @@ export abstract class Bip32PublicKey extends Ptr {
    * @param {number} index
    * @returns {Promise<Bip32PublicKey>}
    */
-  abstract derive(index: number): Promise<Bip32PublicKey>;
+  abstract derive(index: number): Promise<Bip32PublicKey>
 
-  abstract toRawKey(): Promise<PublicKey>;
+  abstract toRawKey(): Promise<PublicKey>
 
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Promise<Uint8Array>
 
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): Promise<string>
 
-  abstract chaincode(): Promise<Uint8Array>;
+  abstract chaincode(): Promise<Uint8Array>
 
   static fromBech32(bech32_str: string): Promise<Bip32PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Bip32PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class PrivateKey extends Ptr {
-  abstract toPublic(): Promise<PublicKey>;
+  abstract toPublic(): Promise<PublicKey>
 
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Promise<Uint8Array>
 
-  abstract sign(message: Uint8Array): Promise<Ed25519Signature>;
+  abstract sign(message: Uint8Array): Promise<Ed25519Signature>
 
   static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -432,269 +432,269 @@ export abstract class Bip32PrivateKey extends Ptr {
   * @param {number} index
   * @returns {Promise<Bip32PrivateKey>}
   */
-  abstract derive(index: number): Promise<Bip32PrivateKey>;
+  abstract derive(index: number): Promise<Bip32PrivateKey>
 
-  abstract toRawKey(): Promise<PrivateKey>;
+  abstract toRawKey(): Promise<PrivateKey>
 
-  abstract toPublic(): Promise<Bip32PublicKey>;
+  abstract toPublic(): Promise<Bip32PublicKey>
 
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Promise<Uint8Array>
 
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): Promise<string>
 
   static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class ByronAddress extends Ptr {
-  abstract toBase58(): Promise<string>;
+  abstract toBase58(): Promise<string>
 
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Promise<Address>
 
-  abstract byronProtocolMagic(): Promise<number>;
+  abstract byronProtocolMagic(): Promise<number>
 
-  abstract attributes(): Promise<Uint8Array>;
+  abstract attributes(): Promise<Uint8Array>
 
   abstract icarusFromKey(
     key: Bip32PublicKey,
     protocolMagic: number
-  ): Promise<ByronAddress>;
+  ): Promise<ByronAddress>
 
   static fromBase58(string: string): Promise<ByronAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static isValid(string: string): Promise<boolean> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromAddress(addr: Address): Promise<ByronAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionOutput extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract address(): Promise<Address>;
+  abstract address(): Promise<Address>
 
-  abstract amount(): Promise<Value>;
+  abstract amount(): Promise<Value>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(address: Address, amount: Value): Promise<TransactionOutput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class StakeCredential extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract toKeyhash(): Promise<Ed25519KeyHash>;
+  abstract toKeyhash(): Promise<Ed25519KeyHash>
 
-  abstract toScripthash(): Promise<ScriptHash>;
+  abstract toScripthash(): Promise<ScriptHash>
 
-  abstract kind(): Promise<number>;
+  abstract kind(): Promise<number>
 
   static fromBytes(bytes: Uint8Array): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromKeyhash(hash: Ed25519KeyHash): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromScripthash(hash: ScriptHash): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class StakeRegistration extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<StakeCredential>
 
   static new(stakeCredential: StakeCredential): Promise<StakeRegistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeRegistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class StakeDeregistration extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<StakeCredential>
 
   static new(stakeCredential: StakeCredential): Promise<StakeDeregistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeDeregistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class StakeDelegation extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<StakeCredential>
 
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Promise<Ed25519KeyHash>
 
   static new(
     stakeCredential: StakeCredential,
     poolKeyHash: Ed25519KeyHash
   ): Promise<StakeDelegation> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeDelegation> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Certificate extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract asStakeRegistration(): Promise<StakeRegistration>;
+  abstract asStakeRegistration(): Promise<StakeRegistration>
 
-  abstract asStakeDeregistration(): Promise<StakeDeregistration>;
+  abstract asStakeDeregistration(): Promise<StakeDeregistration>
 
-  abstract asStakeDelegation(): Promise<StakeDelegation>;
+  abstract asStakeDelegation(): Promise<StakeDelegation>
 
   static fromBytes(bytes: Uint8Array): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static newStakeRegistration(
     stakeRegistration: StakeRegistration
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static newStakeDeregistration(
     stakeDeregistration: StakeDeregistration
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static newStakeDelegation(
     stakeDelegation: StakeDelegation
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Certificates extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract get(index: number): Promise<Certificate>;
+  abstract get(index: number): Promise<Certificate>
 
-  abstract add(item: Certificate): Promise<void>;
+  abstract add(item: Certificate): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<Certificates> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(): Promise<Certificates> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class RewardAddress extends Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<StakeCredential>
 
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<RewardAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(
     network: number,
     payment: StakeCredential
   ): Promise<RewardAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class RewardAddresses extends Ptr {
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract get(index: number): Promise<RewardAddress>;
+  abstract get(index: number): Promise<RewardAddress>
 
-  abstract add(item: RewardAddress): Promise<void>;
+  abstract add(item: RewardAddress): Promise<void>
 
   static new(): Promise<RewardAddresses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Withdrawals extends Ptr {
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract insert(key: RewardAddress, value: BigNum): Promise<BigNum>;
+  abstract insert(key: RewardAddress, value: BigNum): Promise<BigNum>
 
-  abstract get(key: RewardAddress): Promise<BigNum>;
+  abstract get(key: RewardAddress): Promise<BigNum>
 
-  abstract keys(): Promise<RewardAddresses>;
+  abstract keys(): Promise<RewardAddresses>
 
   static new(): Promise<Withdrawals> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionInputs extends Ptr {
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract get(index: number): Promise<TransactionInput>;
+  abstract get(index: number): Promise<TransactionInput>
 }
 
 export abstract class TransactionOutputs extends Ptr {
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract get(index: number): Promise<TransactionOutput>;
+  abstract get(index: number): Promise<TransactionOutput>
 }
 
-export type Optional<T> = T;
+export type Optional<T> = T
 
 export abstract class TransactionBody extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract inputs(): Promise<TransactionInputs>;
+  abstract inputs(): Promise<TransactionInputs>
 
-  abstract outputs(): Promise<TransactionOutputs>;
+  abstract outputs(): Promise<TransactionOutputs>
 
-  abstract fee(): Promise<BigNum>;
+  abstract fee(): Promise<BigNum>
 
-  abstract ttl(): Promise<Optional<number | undefined>>;
+  abstract ttl(): Promise<Optional<number | undefined>>
 
-  abstract certs(): Promise<Certificates>;
+  abstract certs(): Promise<Certificates>
 
-  abstract withdrawals(): Promise<Withdrawals>;
+  abstract withdrawals(): Promise<Withdrawals>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -703,59 +703,59 @@ export abstract class TransactionBuilder extends Ptr {
     hash: Ed25519KeyHash,
     input: TransactionInput,
     amount: Value
-  ): Promise<void>;
+  ): Promise<void>
 
   abstract addBootstrapInput(
     hash: ByronAddress,
     input: TransactionInput,
     amount: Value
-  ): Promise<void>;
+  ): Promise<void>
 
   abstract addInput(
     address: Address,
     input: TransactionInput,
     amount: Value
-  ): Promise<void>;
+  ): Promise<void>
 
   abstract feeForInput(
     address: Address,
     input: TransactionInput,
     amount: Value
-  ): Promise<BigNum>;
+  ): Promise<BigNum>
 
-  abstract addOutput(output: TransactionOutput): Promise<void>;
+  abstract addOutput(output: TransactionOutput): Promise<void>
 
-  abstract feeForOutput(output: TransactionOutput): Promise<BigNum>;
+  abstract feeForOutput(output: TransactionOutput): Promise<BigNum>
 
-  abstract setFee(fee: BigNum): Promise<void>;
+  abstract setFee(fee: BigNum): Promise<void>
 
-  abstract setTtl(ttl: number): Promise<void>;
+  abstract setTtl(ttl: number): Promise<void>
 
   abstract setValidityStartInterval(
     validityStartInterval: number
-  ): Promise<void>;
+  ): Promise<void>
 
-  abstract setCerts(certs: Certificates): Promise<void>;
+  abstract setCerts(certs: Certificates): Promise<void>
 
-  abstract setWithdrawals(withdrawals: Withdrawals): Promise<void>;
+  abstract setWithdrawals(withdrawals: Withdrawals): Promise<void>
 
-  abstract setAuxiliaryData(auxiliary: AuxiliaryData): Promise<void>;
+  abstract setAuxiliaryData(auxiliary: AuxiliaryData): Promise<void>
 
-  abstract getExplicitInput(): Promise<Value>;
+  abstract getExplicitInput(): Promise<Value>
 
-  abstract getImplicitInput(): Promise<Value>;
+  abstract getImplicitInput(): Promise<Value>
 
-  abstract getExplicitOutput(): Promise<Value>;
+  abstract getExplicitOutput(): Promise<Value>
 
-  abstract getDeposit(): Promise<BigNum>;
+  abstract getDeposit(): Promise<BigNum>
 
-  abstract getFeeIfSet(): Promise<BigNum>;
+  abstract getFeeIfSet(): Promise<BigNum>
 
-  abstract addChangeIfNeeded(address: Address): Promise<boolean>;
+  abstract addChangeIfNeeded(address: Address): Promise<boolean>
 
-  abstract build(): Promise<TransactionBody>;
+  abstract build(): Promise<TransactionBody>
 
-  abstract minFee(): Promise<BigNum>;
+  abstract minFee(): Promise<BigNum>
 
   static new(
     linearFee: LinearFee,
@@ -763,19 +763,19 @@ export abstract class TransactionBuilder extends Ptr {
     poolDeposit: BigNum,
     keyDeposit: BigNum
   ): Promise<TransactionBuilder> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class BaseAddress extends Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<StakeCredential>
 
-  abstract stakeCred(): Promise<StakeCredential>;
+  abstract stakeCred(): Promise<StakeCredential>
 
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<BaseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(
@@ -783,97 +783,97 @@ export abstract class BaseAddress extends Ptr {
     payment: StakeCredential,
     stake: StakeCredential,
   ): Promise<BaseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class PointerAddress extends Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<StakeCredential>
 
-  abstract stakePointer(): Promise<Pointer>;
+  abstract stakePointer(): Promise<Pointer>
 
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<PointerAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(network: number, payment: StakeCredential, stake: Pointer): Promise<PointerAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class EnterpriseAddress extends Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<StakeCredential>
 
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<EnterpriseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(network: number, payment: StakeCredential): Promise<EnterpriseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Pointer extends Ptr {
-  abstract slot(): Promise<number>;
+  abstract slot(): Promise<number>
 
-  abstract txIndex(): Promise<number>;
+  abstract txIndex(): Promise<number>
 
-  abstract certIndex(): Promise<number>;
+  abstract certIndex(): Promise<number>
 
   static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Vkey extends Ptr {
   static new(pk: PublicKey): Promise<Vkey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Ed25519Signature extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract toHex(): Promise<string>;
+  abstract toHex(): Promise<string>
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Vkeywitness extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
-  abstract signature(): Promise<Ed25519Signature>;
+  abstract signature(): Promise<Ed25519Signature>
 
   static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Vkeywitnesses extends Ptr {
-  abstract len(): Promise<number>;
+  abstract len(): Promise<number>
 
-  abstract add(item: Vkeywitness): Promise<void>;
+  abstract add(item: Vkeywitness): Promise<void>
 
   static new(): Promise<Vkeywitnesses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class BootstrapWitness extends Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static new(
@@ -882,7 +882,7 @@ export abstract class BootstrapWitness extends Ptr {
     chainCode: Uint8Array,
     attributes: Uint8Array,
   ): Promise<BootstrapWitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -892,7 +892,7 @@ export abstract class BootstrapWitnesses extends Ptr {
   abstract add(item: BootstrapWitness): Promise<void>
 
   static new(): Promise<BootstrapWitnesses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
@@ -902,42 +902,42 @@ export abstract class TransactionWitnessSet extends Ptr {
   abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>
 
   static new(): Promise<TransactionWitnessSet> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class Transaction extends Ptr {
-  abstract body(): Promise<TransactionBody>;
+  abstract body(): Promise<TransactionBody>
 
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Promise<Uint8Array>
 
   static new(
     body: TransactionBody,
     witnessSet: TransactionWitnessSet,
     auxiliary: AuxiliaryData,
   ): Promise<Transaction> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Transaction> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class NetworkInfo extends Ptr {
-  abstract networkId(): Promise<number>;
+  abstract networkId(): Promise<number>
 
-  abstract protocolMagic(): Promise<number>;
+  abstract protocolMagic(): Promise<number>
 
   static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static testnet(): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
   static mainnet(): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN;
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }

@@ -1,34 +1,34 @@
-import { BigNumber } from 'bignumber.js';
-import { blake2b } from 'hash-wasm';
+import { BigNumber } from 'bignumber.js'
+import { blake2b } from 'hash-wasm'
 
-import * as WasmContract from './internals/wasm-contract';
+import * as WasmContract from './internals/wasm-contract'
 import {
   AssetOverflowError,
   BaseError,
   GenericError,
   NoOutputsError,
   NotEnoughMoneyToSendError
-} from './errors';
+} from './errors'
 import {
   AddInputResult,
   firstWithValue,
   createMetadata
-} from './internals/utils';
-import { normalizeToAddress } from './internals/utils/addresses';
+} from './internals/utils'
+import { normalizeToAddress } from './internals/utils/addresses'
 import {
   cardanoValueFromMultiToken,
   multiTokenFromCardanoValue,
   buildSendTokenList,
   multiTokenFromRemote,
   hasSendAllDefault
-} from './internals/utils/assets';
+} from './internals/utils/assets'
 import {
   minRequiredForChange,
   addUtxoInput,
   asAddressedUtxo,
   isBigNumZero,
   cardanoValueFromRemoteFormat,
-} from './internals/utils/transactions';
+} from './internals/utils/transactions'
 import {
   Address,
   AddressingUtxo,
@@ -42,10 +42,10 @@ import {
   SendToken,
   TxOptions,
   TxOutput,
-} from './internals/models';
-import { genWasmUnsignedTx, UnsignedTx } from './internals/tx';
+} from './internals/models'
+import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
 
-export { SignedTx, UnsignedTx } from './internals/tx';
+export { SignedTx, UnsignedTx } from './internals/tx'
 export {
   AddressingUtxo,
   AddressingAddress,
@@ -56,20 +56,20 @@ export {
   SendToken,
   TxMetadata,
   TxOptions
-} from './internals/models';
-export * as WasmContract from './internals/wasm-contract';
+} from './internals/models'
+export * as WasmContract from './internals/wasm-contract'
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
   In TypeScript, this type is translated as `number`, which goes much bigger than `4294967295`.
  */
-export const RUST_u32_MAX = 4294967295;
+export const RUST_u32_MAX = 4294967295
 
-const defaultTtlOffset = 7200;
+const defaultTtlOffset = 7200
 
 export const createYoroiLib = (wasmV4: WasmContract.WasmModuleProxy): IYoroiLib => {
-  return new YoroiLib(wasmV4);
-};
+  return new YoroiLib(wasmV4)
+}
 
 export interface YoroiLibLogger {
   debug: (msg: string, ...args: any[]) => void;
@@ -98,42 +98,42 @@ export interface IYoroiLib {
 }
 
 class YoroiLib implements IYoroiLib {
-  private static _logger: YoroiLibLogger;
-  private readonly _wasmV4: WasmContract.WasmModuleProxy;
+  private static _logger: YoroiLibLogger
+  private readonly _wasmV4: WasmContract.WasmModuleProxy
 
   // Not much tought was given to this logging solution, so it's likely to change
   static set logger(val: YoroiLibLogger) {
-    YoroiLib._logger = val;
+    YoroiLib._logger = val
   }
 
   static get logger(): YoroiLibLogger {
     if (!YoroiLib._logger) {
       YoroiLib._logger = {
-        debug: (msg: string, ...args: any[]) => console.log(msg),
+        debug: (msg: string) => console.log(msg),
         error: (msg: string, ...args: any[]) => {
-          console.error(msg);
-          console.error(args);
+          console.error(msg)
+          console.error(args)
         }
-      };
+      }
     }
-    return YoroiLib._logger;
+    return YoroiLib._logger
   }
 
   get Wasm(): WasmContract.WasmModuleProxy {
-    return this._wasmV4;
+    return this._wasmV4
   }
 
   constructor(wasmV4: WasmContract.WasmModuleProxy) {
-    this._wasmV4 = wasmV4;
+    this._wasmV4 = wasmV4
   }
 
   async calculateTxId(encodedTx: string, encoding: 'base64' | 'hex'): Promise<string> {
-    const txBuffer = Buffer.from(encodedTx, encoding);
-    const tx = await this.Wasm.Transaction.fromBytes(txBuffer);
-    const txBody = await tx.body();
+    const txBuffer = Buffer.from(encodedTx, encoding)
+    const tx = await this.Wasm.Transaction.fromBytes(txBuffer)
+    const txBody = await tx.body()
 
-    const blake2bTxHash = await blake2b(await txBody.toBytes(), 256);
-    return blake2bTxHash;
+    const blake2bTxHash = await blake2b(await txBody.toBytes(), 256)
+    return blake2bTxHash
   }
 
   async encryptWithPassword(
@@ -142,11 +142,11 @@ class YoroiLib implements IYoroiLib {
     nonce: string,
     data: string
   ): Promise<string> {
-    return await this._wasmV4.encryptWithPassword(password, salt, nonce, data);
+    return await this._wasmV4.encryptWithPassword(password, salt, nonce, data)
   }
 
   async decryptWithPassword(password: string, data: string): Promise<string> {
-    return await this._wasmV4.decryptWithPassword(password, data);
+    return await this._wasmV4.decryptWithPassword(password, data)
   }
 
   async createUnsignedTx(
@@ -159,15 +159,15 @@ class YoroiLib implements IYoroiLib {
     defaultToken: DefaultTokenEntry,
     txOptions: TxOptions
   ): Promise<UnsignedTx> {
-    const addressedUtxo = await asAddressedUtxo(this.Wasm, utxos);
+    const addressedUtxo = await asAddressedUtxo(this.Wasm, utxos)
     const receivers = [
       {
         address: receiver
       } as AddressingAddress
-    ];
+    ]
 
     if (!hasSendAllDefault(tokens)) {
-      receivers.push(changeAddr);
+      receivers.push(changeAddr)
     }
 
     return await this.createUnsignedTxForUtxos(
@@ -178,7 +178,7 @@ class YoroiLib implements IYoroiLib {
       addressedUtxo,
       config,
       txOptions
-    );
+    )
   }
 
   private async createUnsignedTxForUtxos(
@@ -202,20 +202,20 @@ class YoroiLib implements IYoroiLib {
         ),
         poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
         networkId: config.networkId
-      };
+      }
 
       const txMetadata =
         txOptions.metadata !== undefined
           ? await createMetadata(this.Wasm, txOptions.metadata)
-          : undefined;
+          : undefined
 
       if (hasSendAllDefault(tokens)) {
         if (receivers.length !== 1) {
           throw new Error(
             `createUnsignedTxForUtxos: wrong output size for sendAll`
-          );
+          )
         }
-        const receiver = receivers[0];
+        const receiver = receivers[0]
         return await this.sendAllUnsignedTx(
           receiver,
           utxos,
@@ -223,38 +223,38 @@ class YoroiLib implements IYoroiLib {
           protocolParams,
           txMetadata,
           txOptions
-        );
+        )
       } else {
         const changeAddresses = receivers.reduce((arr, next) => {
           if (next.addressing != null) {
             arr.push({
               address: next.address,
               addressing: next.addressing
-            });
-            return arr;
+            })
+            return arr
           }
-          return arr;
-        }, [] as Array<AddressingAddress>);
+          return arr
+        }, [] as Array<AddressingAddress>)
 
         if (changeAddresses.length !== 1) {
           throw new Error(
             'createUnsignedTxForUtxos: needs exactly one change address'
-          );
+          )
         }
 
-        const changeAddr = changeAddresses[0];
+        const changeAddr = changeAddresses[0]
         const otherAddresses: Array<Address> = receivers.reduce((arr, next) => {
           if (next.addressing == null) {
-            arr.push({ address: next.address });
-            return arr;
+            arr.push({ address: next.address })
+            return arr
           }
-          return arr;
-        }, [] as Array<Address>);
+          return arr
+        }, [] as Array<Address>)
 
         if (otherAddresses.length > 1) {
           throw new Error(
             "createUnsignedTxForUtxos: can't send to more than one address"
-          );
+          )
         }
 
         const unsignedTxResponse = await this.newAdaUnsignedTx(
@@ -284,17 +284,17 @@ class YoroiLib implements IYoroiLib {
           txMetadata,
           txOptions,
           false
-        );
+        )
         YoroiLib.logger.debug(
           `createUnsignedTxForUtxos success`,
           unsignedTxResponse
-        );
-        return unsignedTxResponse;
+        )
+        return unsignedTxResponse
       }
     } catch (error) {
-      YoroiLib.logger.error(`createUnsignedTxForUtxos error`, error);
-      if (error instanceof BaseError) throw error;
-      throw new GenericError();
+      YoroiLib.logger.error(`createUnsignedTxForUtxos error`, error)
+      if (error instanceof BaseError) throw error
+      throw new GenericError()
     }
   }
 
@@ -312,7 +312,7 @@ class YoroiLib implements IYoroiLib {
     auxData: WasmContract.AuxiliaryData | undefined,
     txOptions: TxOptions
   ): Promise<UnsignedTx> {
-    const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
+    const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
     for (const utxo of allUtxos) {
       addressingMap.set(
         {
@@ -324,7 +324,7 @@ class YoroiLib implements IYoroiLib {
           assets: utxo.assets
         },
         utxo
-      );
+      )
     }
     const unsignedTxResponse = await this.sendAllUnsignedTxFromUtxo(
       receiver,
@@ -332,17 +332,17 @@ class YoroiLib implements IYoroiLib {
       absSlotNumber,
       protocolParams,
       auxData
-    );
+    )
 
     const addressedUtxos = unsignedTxResponse.senderUtxos.map((utxo) => {
-      const addressedUtxo = addressingMap.get(utxo);
+      const addressedUtxo = addressingMap.get(utxo)
       if (addressedUtxo == null) {
         throw new Error(
           'sendAllUnsignedTx: utxo reference was changed. Should not happen'
-        );
+        )
       }
-      return addressedUtxo;
-    });
+      return addressedUtxo
+    })
 
     /*
       The outputs is an empty array and the change is undefined.
@@ -361,7 +361,7 @@ class YoroiLib implements IYoroiLib {
         },
         protocolParams.networkId,
         txOptions.metadata ?? []
-      );
+      )
   }
 
   private async sendAllUnsignedTxFromUtxo(
@@ -383,9 +383,9 @@ class YoroiLib implements IYoroiLib {
   }> {
     const totalBalance = allUtxos
       .map((utxo) => new BigNumber(utxo.amount))
-      .reduce((acc, amount) => acc.plus(amount), new BigNumber(0));
+      .reduce((acc, amount) => acc.plus(amount), new BigNumber(0))
     if (totalBalance.isZero()) {
-      throw new NotEnoughMoneyToSendError();
+      throw new NotEnoughMoneyToSendError()
     }
 
     const txBuilder = await this.Wasm.TransactionBuilder.new(
@@ -393,8 +393,8 @@ class YoroiLib implements IYoroiLib {
       protocolParams.minimumUtxoVal,
       protocolParams.poolDeposit,
       protocolParams.keyDeposit
-    );
-    await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber());
+    )
+    await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber())
 
     for (const input of allUtxos) {
       if (
@@ -405,43 +405,43 @@ class YoroiLib implements IYoroiLib {
         // for the send all case, prefer to throw an error
         // instead of skipping inputs that would cause an error
         // otherwise leads to unexpected cases like wallet migration leaving some UTXO behind
-        throw new AssetOverflowError();
+        throw new AssetOverflowError()
       }
     }
 
     if (auxData?.hasValue()) {
-      await txBuilder.setAuxiliaryData(auxData);
+      await txBuilder.setAuxiliaryData(auxData)
     }
 
     if (totalBalance.lt(await txBuilder.minFee().then((x) => x.toStr()))) {
       // not enough in inputs to even cover the cost of including themselves in a tx
-      throw new NotEnoughMoneyToSendError();
+      throw new NotEnoughMoneyToSendError()
     }
     {
       const wasmReceiver = await normalizeToAddress(
         this.Wasm,
         receiver.address
-      );
+      )
       if (wasmReceiver == null) {
         throw new Error(
           'sendAllUnsignedTxFromUtxo receiver not a valid Shelley address'
-        );
+        )
       }
 
       // semantically, sending all ADA to somebody
       // is the same as if you're sending all the ADA as change to yourself
       // (module the fact the address doesn't belong to you)
-      const couldSendAmount = await txBuilder.addChangeIfNeeded(wasmReceiver);
+      const couldSendAmount = await txBuilder.addChangeIfNeeded(wasmReceiver)
       if (!couldSendAmount) {
         // if you couldn't send any amount,
         // it's because you couldn't cover the fee of adding an output
-        throw new NotEnoughMoneyToSendError();
+        throw new NotEnoughMoneyToSendError()
       }
     }
 
     const change = await (async () => {
-      if (receiver.addressing == null) return [];
-      const { addressing } = receiver;
+      if (receiver.addressing == null) return []
+      const { addressing } = receiver
 
       return [
         {
@@ -455,14 +455,14 @@ class YoroiLib implements IYoroiLib {
             }
           )
         }
-      ];
-    })();
+      ]
+    })()
 
     return {
       senderUtxos: allUtxos,
       txBuilder,
       change
-    };
+    }
   }
 
   private async newAdaUnsignedTx(
@@ -486,7 +486,7 @@ class YoroiLib implements IYoroiLib {
     txOptions: TxOptions,
     allowNoOutputs: boolean
   ): Promise<UnsignedTx> {
-    const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>();
+    const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
     for (const utxo of allUtxos) {
       addressingMap.set(
         {
@@ -498,7 +498,7 @@ class YoroiLib implements IYoroiLib {
           assets: utxo.assets
         },
         utxo
-      );
+      )
     }
 
     const unsignedTxResponse = await this.newAdaUnsignedTxFromUtxo(
@@ -511,17 +511,17 @@ class YoroiLib implements IYoroiLib {
       withdrawals,
       auxData,
       allowNoOutputs
-    );
+    )
 
     const addressedUtxos = unsignedTxResponse.senderUtxos.map((utxo) => {
-      const addressedUtxo = addressingMap.get(utxo);
+      const addressedUtxo = addressingMap.get(utxo)
       if (addressedUtxo == null) {
         throw new Error(
           `newAdaUnsignedTx: utxo reference was changed. Should not happen`
-        );
+        )
       }
-      return addressedUtxo;
-    });
+      return addressedUtxo
+    })
 
     return await genWasmUnsignedTx(
       this.Wasm,
@@ -535,7 +535,7 @@ class YoroiLib implements IYoroiLib {
       },
       protocolParams.networkId,
       txOptions.metadata ?? []
-    );
+    )
   }
 
   private async newAdaUnsignedTxFromUtxo(
@@ -566,27 +566,10 @@ class YoroiLib implements IYoroiLib {
       o.amount.values
         .map(v => v.identifier)
         .filter(id => id.length > 0)
-        .forEach(id => set.add(id));
-      return set;
-    }, new Set<string>());
-    const isAssetsRequired = outputAssets.size > 0;
-
-    const sasasas = utxos.map(async (u: RemoteUnspentOutput) => {
-      if (u.assets.length === 0) {
-        return [u, true, false, 0];
-      }
-      const hasRequiredAsset = isAssetsRequired
-        && u.assets.some(a => outputAssets.has(a.assetId));
-      const amount = await this.Wasm.BigNum.fromStr(u.amount);
-      const minRequired = await this.Wasm.minAdaRequired(
-        await cardanoValueFromRemoteFormat(this.Wasm, u),
-        protocolParams.minimumUtxoVal,
-      );
-      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10);
-      // Round down the spendable value to the nearest full ADA for safer deposit
-      // TODO: unmagic the constant
-      return [u, false, hasRequiredAsset, Math.floor(spendable / 1_000_000) * 1_000_000];
-    });
+        .forEach(id => set.add(id))
+      return set
+    }, new Set<string>())
+    const isAssetsRequired = outputAssets.size > 0
 
     const utxosMapped: Array<{
       u: RemoteUnspentOutput,
@@ -600,16 +583,16 @@ class YoroiLib implements IYoroiLib {
           isPure: true,
           hasRequiredAsset: false,
           spendableValue: 0
-        };
+        }
       }
       const hasRequiredAsset = isAssetsRequired
-        && u.assets.some(a => outputAssets.has(a.assetId));
-      const amount = await this.Wasm.BigNum.fromStr(u.amount);
+        && u.assets.some(a => outputAssets.has(a.assetId))
+      const amount = await this.Wasm.BigNum.fromStr(u.amount)
       const minRequired = await this.Wasm.minAdaRequired(
         await cardanoValueFromRemoteFormat(this.Wasm, u),
         protocolParams.minimumUtxoVal,
-      );
-      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10);
+      )
+      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10)
       // Round down the spendable value to the nearest full ADA for safer deposit
       // TODO: unmagic the constant
       return {
@@ -617,44 +600,44 @@ class YoroiLib implements IYoroiLib {
         isPure: false,
         hasRequiredAsset: hasRequiredAsset,
         spendableValue: Math.floor(spendable / 1_000_000) * 1_000_000
-      };
-    }));
+      }
+    }))
 
     // prioritize inputs
     const sortedUtxos: Array<RemoteUnspentOutput> = utxosMapped.sort((v1, v2) => {
-      const u1 = v1.u;
-      const isPure1 = v1.isPure;
-      const hasRequiredAsset1 = v1.hasRequiredAsset;
-      const spendableValue1 = v1.spendableValue;
+      const u1 = v1.u
+      const isPure1 = v1.isPure
+      const hasRequiredAsset1 = v1.hasRequiredAsset
+      const spendableValue1 = v1.spendableValue
       
-      const u2 = v2.u;
-      const isPure2 = v2.isPure;
-      const hasRequiredAsset2 = v2.hasRequiredAsset;
+      const u2 = v2.u
+      const isPure2 = v2.isPure
+      const hasRequiredAsset2 = v2.hasRequiredAsset
       const spendableValue2 = v2.spendableValue
       
       if ((hasRequiredAsset1 as any) ^ (hasRequiredAsset2 as any)) {
         // one but not both of the utxos has required assets
         // utxos with required assets are always prioritized
         // ahead of any other, pure or dirty
-        return hasRequiredAsset1 ? -1 : 1;
+        return hasRequiredAsset1 ? -1 : 1
       }
       if (isPure1 && isPure2) {
         // both utxos are clean - randomize them
-        return Math.random() - 0.5;
+        return Math.random() - 0.5
       }
       if (isPure1 || isPure2) {
         // At least one of the utxos is clean
         // The clean utxo is prioritized
-        return isPure1 ? -1 : 1;
+        return isPure1 ? -1 : 1
       }
       // both utxos are dirty
       if (spendableValue1 !== spendableValue2) {
         // dirty utxos with highest spendable ADA are prioritised
-        return spendableValue2 - spendableValue1;
+        return spendableValue2 - spendableValue1
       }
       // utxo with fewer assets is prioritised
-      return u1.assets.length - u2.assets.length;
-    }).map(u => u.u);
+      return u1.assets.length - u2.assets.length
+    }).map(u => u.u)
 
     const result = await this._newAdaUnsignedTxFromUtxo(
       outputs,
@@ -667,8 +650,8 @@ class YoroiLib implements IYoroiLib {
       auxData,
       allowNoOutputs,
       false
-    );
-    const fee = await result.txBuilder.getFeeIfSet();
+    )
+    const fee = await result.txBuilder.getFeeIfSet()
 
     const resultWithOneExtraInput = await this._newAdaUnsignedTxFromUtxo(
       outputs,
@@ -681,15 +664,15 @@ class YoroiLib implements IYoroiLib {
       auxData,
       allowNoOutputs,
       true
-    );
+    )
     const feeWithOneExtraInput =
-      await resultWithOneExtraInput.txBuilder.getFeeIfSet();
+      await resultWithOneExtraInput.txBuilder.getFeeIfSet()
 
     const actualResult = feeWithOneExtraInput?.hasValue() && fee?.hasValue() && (await feeWithOneExtraInput.compare(fee)) < 0
       ? resultWithOneExtraInput
-      : result;
+      : result
 
-    return actualResult;
+    return actualResult
   }
 
   private async _newAdaUnsignedTxFromUtxo(
@@ -720,139 +703,139 @@ class YoroiLib implements IYoroiLib {
     const shouldForceChange = async (
       assetsForChange: WasmContract.MultiAsset | undefined
     ): Promise<boolean> => {
-      const noOutputDisallowed = !allowNoOutputs && outputs.length === 0;
+      const noOutputDisallowed = !allowNoOutputs && outputs.length === 0
       if (noOutputDisallowed && changeAdaAddr == null) {
-        throw new NoOutputsError();
+        throw new NoOutputsError()
       }
       if (assetsForChange?.hasValue() && (await assetsForChange.len()) > 0) {
-        return true;
+        return true
       }
-      return noOutputDisallowed;
-    };
+      return noOutputDisallowed
+    }
 
-    const emptyAsset = await this.Wasm.MultiAsset.new();
-    await shouldForceChange(undefined);
+    const emptyAsset = await this.Wasm.MultiAsset.new()
+    await shouldForceChange(undefined)
 
     const txBuilder = await this.Wasm.TransactionBuilder.new(
       protocolParams.linearFee,
       protocolParams.minimumUtxoVal,
       protocolParams.poolDeposit,
       protocolParams.keyDeposit
-    );
+    )
 
     if (certificates.length > 0) {
-      const certsWasm = await this.Wasm.Certificates.new();
+      const certsWasm = await this.Wasm.Certificates.new()
       for (const cert of certificates) {
-        certsWasm.add(cert);
+        certsWasm.add(cert)
       }
-      await txBuilder.setCerts(certsWasm);
+      await txBuilder.setCerts(certsWasm)
     }
 
     if (auxData) {
-      await txBuilder.setAuxiliaryData(auxData);
+      await txBuilder.setAuxiliaryData(auxData)
     }
 
     if (withdrawals.length > 0) {
-      const withdrawalWasm = await this.Wasm.Withdrawals.new();
+      const withdrawalWasm = await this.Wasm.Withdrawals.new()
       for (const withdrawal of withdrawals) {
-        await withdrawalWasm.insert(withdrawal.address, withdrawal.amount);
+        await withdrawalWasm.insert(withdrawal.address, withdrawal.amount)
       }
 
-      await txBuilder.setWithdrawals(withdrawalWasm);
+      await txBuilder.setWithdrawals(withdrawalWasm)
     }
 
-    await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber());
+    await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber())
     {
       for (const output of outputs) {
         const wasmReceiver = await normalizeToAddress(
           this.Wasm,
           output.address
-        );
+        )
         if (!wasmReceiver) {
           throw new Error(
             `newAdaUnsignedTxFromUtxo: receiver not a valid Shelley address`
-          );
+          )
         }
         await txBuilder.addOutput(
           await this.Wasm.TransactionOutput.new(
             wasmReceiver,
             await cardanoValueFromMultiToken(this.Wasm, output.amount)
           )
-        );
+        )
       }
     }
 
     // output excluding fee
     const targetOutput = await (
       await txBuilder.getExplicitOutput()
-    ).checkedAdd(await this.Wasm.Value.new(await txBuilder.getDeposit()));
+    ).checkedAdd(await this.Wasm.Value.new(await txBuilder.getDeposit()))
 
     // pick inputs
     // const usedUtxos: Array<RemoteUnspentOutput> = [];
-    const usedUtxos: RemoteUnspentOutput[] = [];
+    const usedUtxos: RemoteUnspentOutput[] = []
     {
       // recall: we might have some implicit input to start with from deposit refunds
-      const implicitSum = await txBuilder.getImplicitInput();
+      const implicitSum = await txBuilder.getImplicitInput()
 
       // this flag is set when one extra input is added
-      let oneExtraAdded = false;
+      let oneExtraAdded = false
       // add utxos until we have enough to send the transaction
       for (const utxo of utxos) {
         if (oneExtraAdded) {
-          break;
+          break
         }
         const currentInputSum = await txBuilder
           .getExplicitInput()
-          .then((x) => x.checkedAdd(implicitSum));
+          .then((x) => x.checkedAdd(implicitSum))
         
         const neededInput = await targetOutput
-          .checkedAdd(await this.Wasm.Value.new(await txBuilder.minFee()));
-        const currentInputSumMa = await currentInputSum.multiasset();
-        let neededInputMa = await neededInput.multiasset();
+          .checkedAdd(await this.Wasm.Value.new(await txBuilder.minFee()))
+        const currentInputSumMa = await currentInputSum.multiasset()
+        let neededInputMa = await neededInput.multiasset()
         if (!neededInputMa.hasValue()) {
-          neededInputMa = emptyAsset;
+          neededInputMa = emptyAsset
         }
         const excessiveInputAssets = currentInputSumMa.hasValue()
           ? await currentInputSumMa.sub(neededInputMa)
           : undefined
-        const remainingNeeded = await neededInput.clampedSub(currentInputSum);
+        const remainingNeeded = await neededInput.clampedSub(currentInputSum)
 
         // update amount required to make sure we have ADA required for change UTXO entry
         if (await shouldForceChange(excessiveInputAssets)) {
           if (changeAdaAddr == null) {
-            throw new NoOutputsError();
+            throw new NoOutputsError()
           }
-          const difference = await currentInputSum.clampedSub(neededInput);
+          const difference = await currentInputSum.clampedSub(neededInput)
           const minimumNeededForChange = await minRequiredForChange(
             this.Wasm,
             txBuilder,
             changeAdaAddr,
             difference,
             protocolParams
-          );
+          )
           const adaNeededLeftForChange =
-            await minimumNeededForChange.clampedSub(await difference.coin());
-          const remainingNeededCoin = await remainingNeeded.coin();
+            await minimumNeededForChange.clampedSub(await difference.coin())
+          const remainingNeededCoin = await remainingNeeded.coin()
           if ((await remainingNeededCoin.compare(adaNeededLeftForChange)) < 0) {
-            await remainingNeeded.setCoin(adaNeededLeftForChange);
+            await remainingNeeded.setCoin(adaNeededLeftForChange)
           }
         }
 
         // stop if we've added all the assets we needed
-        const isNonEmptyInputs = usedUtxos.length > 0;
+        const isNonEmptyInputs = usedUtxos.length > 0
         {
-          const remainingAssets = await remainingNeeded.multiasset();
-          const isRemainingNeededCoinZero = await isBigNumZero(this.Wasm, await remainingNeeded.coin());
+          const remainingAssets = await remainingNeeded.multiasset()
+          const isRemainingNeededCoinZero = await isBigNumZero(this.Wasm, await remainingNeeded.coin())
           const isRemainingNeededAssetZero = (remainingAssets.hasValue()
             ? await remainingAssets.len()
-            : 0) === 0;
+            : 0) === 0
             if (isRemainingNeededCoinZero && isRemainingNeededAssetZero && isNonEmptyInputs) {
               if (oneExtraInput) {
                 // We've added all the assets we need, but we add one extra.
                 // Set the flag so that the adding loop stops after this extra one is added.
-                oneExtraAdded = true;
+                oneExtraAdded = true
               } else {
-                break;
+                break
               }
             }
         }
@@ -869,60 +852,60 @@ class YoroiLib implements IYoroiLib {
           utxo,
           true,
           { networkId: protocolParams.networkId }
-        );
-        if (added !== AddInputResult.VALID) continue;
+        )
+        if (added !== AddInputResult.VALID) continue
 
-        usedUtxos.push(utxo);
+        usedUtxos.push(utxo)
       }
       if (usedUtxos.length === 0) {
-        throw new NotEnoughMoneyToSendError();
+        throw new NotEnoughMoneyToSendError()
       }
       // check to see if we have enough balance in the wallet to cover the transaction
       {
         const currentInputSum = await txBuilder
           .getExplicitInput()
-          .then((x) => x.checkedAdd(implicitSum));
+          .then((x) => x.checkedAdd(implicitSum))
 
         // need to recalculate each time because fee changes
         const output = await targetOutput.checkedAdd(
           await this.Wasm.Value.new(await txBuilder.minFee())
-        );
+        )
 
-        const compare = await currentInputSum.compare(output);
-        const enoughInput = compare != null && compare >= 0;
+        const compare = await currentInputSum.compare(output)
+        const enoughInput = compare != null && compare >= 0
 
-        const multiasset = await currentInputSum.multiasset();
-        const outputMa = await output.multiasset();
+        const multiasset = await currentInputSum.multiasset()
+        const outputMa = await output.multiasset()
         const forceChange = await shouldForceChange(
           multiasset.hasValue()
             ? await multiasset.sub(outputMa.hasValue() ? outputMa : emptyAsset)
             : undefined
-        );
+        )
         if (forceChange) {
           if (changeAdaAddr == null) {
-            throw new NoOutputsError();
+            throw new NoOutputsError()
           }
           if (!enoughInput) {
-            throw new NotEnoughMoneyToSendError();
+            throw new NotEnoughMoneyToSendError()
           }
-          const difference = await currentInputSum.checkedSub(output);
+          const difference = await currentInputSum.checkedSub(output)
           const minimumNeededForChange = await minRequiredForChange(
             this.Wasm,
             txBuilder,
             changeAdaAddr,
             difference,
             protocolParams
-          );
+          )
           if (
             (await difference
               .coin()
               .then((x) => x.compare(minimumNeededForChange))) < 0
           ) {
-            throw new NotEnoughMoneyToSendError();
+            throw new NotEnoughMoneyToSendError()
           }
         }
         if (!forceChange && !enoughInput) {
-          throw new NotEnoughMoneyToSendError();
+          throw new NotEnoughMoneyToSendError()
         }
       }
     }
@@ -930,19 +913,19 @@ class YoroiLib implements IYoroiLib {
     const change = await (async () => {
       const totalInput = await txBuilder
         .getExplicitInput()
-        .then(async (x) => x.checkedAdd(await txBuilder.getImplicitInput()));
-      const difference = await totalInput.checkedSub(targetOutput);
+        .then(async (x) => x.checkedAdd(await txBuilder.getImplicitInput()))
+      const difference = await totalInput.checkedSub(targetOutput)
 
       const forceChange = await shouldForceChange(
         firstWithValue(await difference.multiasset(), emptyAsset)
-      );
+      )
       if (changeAdaAddr == null) {
         if (forceChange) {
-          throw new NoOutputsError();
+          throw new NoOutputsError()
         }
-        const minFee = await txBuilder.minFee();
+        const minFee = await txBuilder.minFee()
         if ((await difference.coin().then((x) => x.compare(minFee))) < 0) {
-          throw new NotEnoughMoneyToSendError();
+          throw new NotEnoughMoneyToSendError()
         }
         // recall: min fee assumes the largest fee possible
         // so no worries of cbor issue by including larger fee
@@ -950,24 +933,24 @@ class YoroiLib implements IYoroiLib {
           await this.Wasm.BigNum.fromStr(
             await difference.coin().then((x) => x.toStr())
           )
-        );
-        return [];
+        )
+        return []
       }
-      const outputBeforeChange = await txBuilder.getExplicitOutput();
+      const outputBeforeChange = await txBuilder.getExplicitOutput()
 
       const wasmChange = await normalizeToAddress(
         this.Wasm,
         changeAdaAddr.address
-      );
+      )
       if (!wasmChange?.hasValue()) {
         throw new Error(
           `newAdaUnsignedTxFromUtxo: change not a valid Shelley address`
-        );
+        )
       }
-      const changeWasAdded = await txBuilder.addChangeIfNeeded(wasmChange);
+      const changeWasAdded = await txBuilder.addChangeIfNeeded(wasmChange)
       if (forceChange && !changeWasAdded) {
         // note: this should never happened since it should have been handled by earlier code
-        throw new Error(`No change added even though it should be forced`);
+        throw new Error(`No change added even though it should be forced`)
       }
       const output = await multiTokenFromCardanoValue(
         // since the change is added as an output
@@ -979,7 +962,7 @@ class YoroiLib implements IYoroiLib {
           defaultNetworkId: protocolParams.networkId,
           defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
         }
-      );
+      )
       return changeWasAdded
         ? [
             {
@@ -987,13 +970,13 @@ class YoroiLib implements IYoroiLib {
               values: output
             }
           ]
-        : [];
-    })();
+        : []
+    })()
 
     return {
       senderUtxos: usedUtxos,
       txBuilder,
       change
-    };
+    }
   }
 }

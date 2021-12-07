@@ -1,11 +1,11 @@
-import { BigNumber } from 'bignumber.js';
-import { MultiToken } from './multi-token';
+import { BigNumber } from 'bignumber.js'
+import { MultiToken } from './multi-token'
 
 export const PRIMARY_ASSET_CONSTANTS = {
   Cardano: '',
   Ergo: '',
   Jormungandr: ''
-};
+}
 
 export type Transaction = {
   hash: string;

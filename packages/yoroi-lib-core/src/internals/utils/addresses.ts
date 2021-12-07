@@ -1,4 +1,4 @@
-import * as WasmContract from '../wasm-contract';
+import * as WasmContract from '../wasm-contract'
 
 export async function normalizeToAddress(
   wasm: WasmContract.WasmModuleProxy,
@@ -9,30 +9,30 @@ export async function normalizeToAddress(
 
   // 1) Try converting from base58
   if (await wasm.ByronAddress.isValid(addr)) {
-    const byronAddr = await wasm.ByronAddress.fromBase58(addr);
-    return await byronAddr.toAddress();
+    const byronAddr = await wasm.ByronAddress.fromBase58(addr)
+    return await byronAddr.toAddress()
   }
 
   // 2) If already base16, simply return
   try {
-    return await wasm.Address.fromBytes(Buffer.from(addr, 'hex'));
-  } catch (_e) {}
+    return await wasm.Address.fromBytes(Buffer.from(addr, 'hex'))
+  } catch (_e) { /* ignore error */ }
 
   // 3) Try converting from base32
   try {
-    return await wasm.Address.fromBech32(addr);
-  } catch (_e) {}
+    return await wasm.Address.fromBech32(addr)
+  } catch (_e) { /* ignore error */ }
 
-  return undefined;
+  return undefined
 }
 
 export async function toHexOrBase58(
   wasm: WasmContract.WasmModuleProxy,
   address: WasmContract.Address,
 ): Promise<string> {
-  const asByron = await wasm.ByronAddress.fromAddress(address);
+  const asByron = await wasm.ByronAddress.fromAddress(address)
   if (asByron == null) {
-    return Buffer.from(await address.toBytes()).toString('hex');
+    return Buffer.from(await address.toBytes()).toString('hex')
   }
-  return await asByron.toBase58();
+  return await asByron.toBase58()
 }

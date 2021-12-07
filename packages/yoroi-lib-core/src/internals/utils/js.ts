@@ -1,34 +1,34 @@
 export const groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => K) =>
   list.reduce((previous, currentItem) => {
-    const group = getKey(currentItem);
-    if (!previous[group]) previous[group] = [];
-    previous[group].push(currentItem);
-    return previous;
-  }, {} as Record<K, T[]>);
+    const group = getKey(currentItem)
+    if (!previous[group]) previous[group] = []
+    previous[group].push(currentItem)
+    return previous
+  }, {} as Record<K, T[]>)
 
 export const sliceArrayUntilItem = <T>(arr: T[], item: T): T[] => {
-  const idx = arr.indexOf(item);
+  const idx = arr.indexOf(item)
   if (idx !== -1) {
-    return arr.slice(0, idx + 1);
+    return arr.slice(0, idx + 1)
   }
-  return arr;
+  return arr
 }
 
 export const removeItemFromArray = <T>(arr: T[], item: T): void => {
-  const idx = arr.indexOf(item);
+  const idx = arr.indexOf(item)
   if (idx !== -1) {
-    arr.splice(idx, 1);
+    arr.splice(idx, 1)
   }
 }
 
 export const chunk = <T>(arr: T[], size: number): T[][] => {
-  const chunks: T[][] = [];
+  const chunks: T[][] = []
   for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
+    chunks.push(arr.slice(i, i + size))
   }
-  return chunks;
+  return chunks
 }
 
 export const flatten = <T>(arr: T[][]): T[] => {
-  return ([] as T[]).concat.apply([] as T[], arr);
+  return ([] as T[]).concat(...arr)
 }
