@@ -1,6 +1,6 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
 
-import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core/dist'
+import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
 
 export const init = (): IYoroiLib => {
   // The methods in the browser's Wasm object are not async,

@@ -1,7 +1,8 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley'
 
-import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core/dist'
-import { EXCEPTIONS } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract'
+import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
+
+const EXCEPTIONS = WasmContract.EXCEPTIONS
 
 export const init = (): IYoroiLib => {
   return createYoroiLib({
