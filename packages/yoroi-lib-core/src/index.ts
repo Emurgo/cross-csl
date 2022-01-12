@@ -45,18 +45,8 @@ import {
 } from './internals/models'
 import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
 
-export { SignedTx, UnsignedTx } from './internals/tx'
-export {
-  AddressingUtxo,
-  AddressingAddress,
-  CardanoAddressedUtxo,
-  CardanoHaskellConfig,
-  DefaultTokenEntry,
-  MultiTokenConstruct,
-  SendToken,
-  TxMetadata,
-  TxOptions
-} from './internals/models'
+export * from './internals/tx'
+export * from './internals/models'
 export * as WasmContract from './internals/wasm-contract'
 
 /**
