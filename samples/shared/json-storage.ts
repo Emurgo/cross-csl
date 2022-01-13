@@ -1,32 +1,19 @@
-import * as yargs from 'yargs'
-
-import BigNumber from 'bignumber.js'
 import * as fs from 'fs'
-import * as path from 'path'
-import { Utxo } from './packages/yoroi-lib-browser/node_modules/@emurgo/yoroi-lib-core/dist/utxo'
-import { UtxoDiffToBestBlock } from './packages/yoroi-lib-browser/node_modules/@emurgo/yoroi-lib-core/src/utxo/models'
-import { UtxoAtSafePoint } from './packages/yoroi-lib-browser/node_modules/@emurgo/yoroi-lib-core/src/utxo/models'
 
-import { init, UtxoStorage } from './packages/yoroi-lib-core/src/utxo'
+import { UtxoStorage } from '@emurgo/yoroi-lib-core/dist/utxo'
+import {
+  Utxo,
+  UtxoAtSafePoint,
+  UtxoDiffToBestBlock
+} from '@emurgo/yoroi-lib-core/dist/utxo/models'
 
-if (!fs.existsSync(path.join(__dirname, '__storage__'))) {
-  fs.mkdirSync(path.join(__dirname, '__storage__'))
-}
-
-// add all needed addresses to this __storage__/addresses.json file
-if (!fs.existsSync(path.join(__dirname, '__storage__', 'addresses.json'))) {
-  fs.writeFileSync(path.join(__dirname, '__storage__', 'addresses.json'), '[]')
-}
-
-const addresses: string[] = JSON.parse(fs.readFileSync(path.join(__dirname, '__storage__', 'addresses.json'), 'utf-8'))
-
-class JsonUtxoStorage implements UtxoStorage {
+export class JsonUtxoStorage implements UtxoStorage {
   private _safePointPath: string
   private _diffPath: string
 
-  constructor() {
-    this._safePointPath = path.join(__dirname, '__storage__', 'safe-point.json')
-    this._diffPath = path.join(__dirname, '__storage__', 'diff.json')
+  constructor(safePointPath: string, diffPath: string) {
+    this._safePointPath = safePointPath
+    this._diffPath = diffPath
   }
 
   async getUtxoAtSafePoint(): Promise<UtxoAtSafePoint | undefined> {
@@ -88,21 +75,3 @@ class JsonUtxoStorage implements UtxoStorage {
     fs.writeFileSync(this._diffPath, JSON.stringify(currentDiffs, null, 2))
   }
 }
-
-(async () => {
-  const argv = await yargs
-    .command('sync', 'syncs the latest safe point and diffs')
-    .command('sum', 'sums the current UTxO amounts, including the diffs')
-    .argv
-
-  const utxoService = init(new JsonUtxoStorage(), 'http://localhost:8082/')
-  if (argv._.includes('sync')) {  
-    await utxoService.syncUtxoState(addresses)
-  } else if (argv._.includes('sum')) {
-    const utxos = await utxoService.getAvailableUtxos()
-    const sum = utxos.reduce((prev, curr) => {
-      return prev.plus(curr.amount)
-    }, new BigNumber('0'))
-    console.log(sum.toString())
-  }
-})()
