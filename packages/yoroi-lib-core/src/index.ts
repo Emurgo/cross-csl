@@ -48,6 +48,7 @@ import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
 export * from './internals/tx'
 export * from './internals/models'
 export * as WasmContract from './internals/wasm-contract'
+export { UtxoService, UtxoStorage, init as initUtxo } from './utxo'
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
