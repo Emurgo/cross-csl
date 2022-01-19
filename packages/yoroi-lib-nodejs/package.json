@@ -19,7 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@emurgo/cardano-serialization-lib-nodejs": "^9.1.2",
+    "@emurgo/cardano-serialization-lib-nodejs": "9.1.4",
     "@emurgo/yoroi-lib-core": "file:../yoroi-lib-core"
   },
   "devDependencies": {
