@@ -1,17 +1,16 @@
 import { BigNumber } from 'bignumber.js'
-
 import { expect } from 'chai'
-import { IYoroiLib } from '../src'
 import {
   AddressingAddress,
   AddressingUtxo,
   CardanoHaskellConfig,
   DefaultTokenEntry,
-  SendToken,
-} from '../src/'
+  IYoroiLib,
+  SendToken
+} from '../src'
 import { GeneralTransactionMetadata } from '../src/internals/wasm-contract'
 
-/* 
+/*
   These tests were useful to start building the initial setup, but as we add the actual
   behavioral tests on the YoroiLib, we will probably discard the tests we have now
   and keep only the tests that test Yoroi-Lib directly, as they will already cover the
@@ -24,7 +23,6 @@ export const setupTests = (
 ): Mocha.Suite => {
   return describe(suiteName, () => {
     describe('Yoroi Lib', () => {
-
       /*
         this if statement is not ideal, as a simple change to the suite name would break the tests.
         currently, an api from Transaction needed for the id calculation is missing from the WASM
@@ -38,10 +36,13 @@ export const setupTests = (
        */
       if (suiteName !== 'Yoroi Lib Mobile') {
         it('should calculate TX id', async () => {
-          const txbase64 = 'g6QAhIJYIEYPErLtHf+86Djrjh+UH+hVnsXZ+VJ5qFxxr2l93JuNAIJYIEo4FIzsip/FoiJcGCGnl14hEJFsPENcYDlYJoRiFOlYAIJYIJNs1337djWOTF5vbRuJmUxL2YlnP/67rk1zTEZkBk15AIJYIC7S2EfKttLmiA1+3sIM3aUP0toZTenC4VD0gsi43PACAQGCglg5ANqYSau5rMMYRpZcNcZzK5fVqwStPJ8Lq9yN37n0ZsejLC4PXMNi0jI+/B7w1c+TqvN3ufyMTw6CGgL68ICCWDkArTU80Ef+vzikU3+aiuUyjIb1qG9W0kQJ/Yq8FqjjYHzWFPLuOonCC8FhCIJgZA4oUDhARngkvymCGhr7InyiWBxKjhRb6u6XZKqVZjOmjqPS5p51c29I7Z6CRBCXoUlUZXN0dG9rZW4CWBxrjQfWljnpQT3WN6GoFacyPGnIaruvtm2/2xqnoUACAhoAAuUxAxoCcA7moQCEglggnTTDdtPwWZ1UKygPssOpGOXFE23AyXhXTlyfscWRQzJYQCQWKcmkuGBNtT5wHsOf9dyf1ZiRk5o4G7LobhML5My66cBL5VKWBOinGSvumT0FsJERLIn3DJUum3RoijlyAwyCWCAjBsK2Wg8fBgpzDykII3OnJ0x/FnCNA1mU46R7IeGLN1hARUThXPQVtkkFg09eZS/JmuK3DQQKw4lC9WNcmAV+arX9O2z1d5OJaKfGYeh9QlNL4i+64wHEgaDG2lTCTYdUAoJYIHPuUUU8vKI0FgH2NA2owrTqRf1W1+8EfI66r64MEHhwWEBeNi216UIBIweEuvpWslGxQmctAwn+GlqwWKOpanPD4+6sOdFxiKxYltIPG7IOA2JQl6850eWaWIq4ofoXnMkJglggRP2luPiT4Of8Whc/mrofpt2tBvmBPGR87SL1JuN1R3FYQFM+1+JEa89yK16T6IiY+5FyUVplZrtuAahR4/6vlNq1b2FBrNl/B3gNnyLZT80jT/5AeqwD5KHkvqcB2NzG3gL2'
+          const txbase64 =
+            'g6QAhIJYIEYPErLtHf+86Djrjh+UH+hVnsXZ+VJ5qFxxr2l93JuNAIJYIEo4FIzsip/FoiJcGCGnl14hEJFsPENcYDlYJoRiFOlYAIJYIJNs1337djWOTF5vbRuJmUxL2YlnP/67rk1zTEZkBk15AIJYIC7S2EfKttLmiA1+3sIM3aUP0toZTenC4VD0gsi43PACAQGCglg5ANqYSau5rMMYRpZcNcZzK5fVqwStPJ8Lq9yN37n0ZsejLC4PXMNi0jI+/B7w1c+TqvN3ufyMTw6CGgL68ICCWDkArTU80Ef+vzikU3+aiuUyjIb1qG9W0kQJ/Yq8FqjjYHzWFPLuOonCC8FhCIJgZA4oUDhARngkvymCGhr7InyiWBxKjhRb6u6XZKqVZjOmjqPS5p51c29I7Z6CRBCXoUlUZXN0dG9rZW4CWBxrjQfWljnpQT3WN6GoFacyPGnIaruvtm2/2xqnoUACAhoAAuUxAxoCcA7moQCEglggnTTDdtPwWZ1UKygPssOpGOXFE23AyXhXTlyfscWRQzJYQCQWKcmkuGBNtT5wHsOf9dyf1ZiRk5o4G7LobhML5My66cBL5VKWBOinGSvumT0FsJERLIn3DJUum3RoijlyAwyCWCAjBsK2Wg8fBgpzDykII3OnJ0x/FnCNA1mU46R7IeGLN1hARUThXPQVtkkFg09eZS/JmuK3DQQKw4lC9WNcmAV+arX9O2z1d5OJaKfGYeh9QlNL4i+64wHEgaDG2lTCTYdUAoJYIHPuUUU8vKI0FgH2NA2owrTqRf1W1+8EfI66r64MEHhwWEBeNi216UIBIweEuvpWslGxQmctAwn+GlqwWKOpanPD4+6sOdFxiKxYltIPG7IOA2JQl6850eWaWIq4ofoXnMkJglggRP2luPiT4Of8Whc/mrofpt2tBvmBPGR87SL1JuN1R3FYQFM+1+JEa89yK16T6IiY+5FyUVplZrtuAahR4/6vlNq1b2FBrNl/B3gNnyLZT80jT/5AeqwD5KHkvqcB2NzG3gL2'
           const txId = await yoroiLib.calculateTxId(txbase64, 'base64')
-  
-          expect(txId).to.equals('aa5faffc0ffbdd924e0dfcd18ce3b024f7365c1b2531d9c3f125fc87ab7cba5f')
+
+          expect(txId).to.equals(
+            'aa5faffc0ffbdd924e0dfcd18ce3b024f7365c1b2531d9c3f125fc87ab7cba5f'
+          )
         })
       }
 
@@ -51,7 +52,7 @@ export const setupTests = (
 
         const testnetNetworkId = await testnet.networkId()
         const mainnetNetworkId = await mainnet.networkId()
-        
+
         expect(testnetNetworkId).to.equals(0)
         expect(mainnetNetworkId).to.equals(1)
       })
@@ -90,7 +91,9 @@ export const setupTests = (
         const bigger = await yoroiLib.Wasm.BigNum.fromStr('10000')
         const equal = await yoroiLib.Wasm.BigNum.fromStr('1000')
         const zero = await yoroiLib.Wasm.BigNum.fromStr('0')
-        const subbed = await delta.clampedSub(await yoroiLib.Wasm.BigNum.fromStr('1000'))
+        const subbed = await delta.clampedSub(
+          await yoroiLib.Wasm.BigNum.fromStr('1000')
+        )
 
         expect(await delta.compare(smaller)).to.equals(1)
         expect(await delta.compare(bigger)).to.equals(-1)
@@ -328,7 +331,8 @@ export const setupTests = (
         )
 
         const keyLevel = 0
-        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
+        const privateKey =
+          'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
         const stakingKeyWits = new Set<string>()
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])
@@ -382,7 +386,8 @@ export const setupTests = (
             amount: new BigNumber(1),
             shouldSendAll: false,
             token: {
-              identifier: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
+              identifier:
+                '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
               isDefault: false,
               networkId: 300
             }
@@ -415,14 +420,21 @@ export const setupTests = (
 
         expect(unsignedTx.totalInput.values[0].identifier).to.equal('')
         expect(unsignedTx.totalInput.values[0].networkId).to.equal(300)
-        expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(unsignedTx.fee.values[0].amount.plus(new BigNumber('1481480')).toString())
+        expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
+          unsignedTx.fee.values[0].amount
+            .plus(new BigNumber('1481480'))
+            .toString()
+        )
 
-        expect(unsignedTx.totalInput.values[1].identifier).to.equal('4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e')
+        expect(unsignedTx.totalInput.values[1].identifier).to.equal(
+          '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e'
+        )
         expect(unsignedTx.totalInput.values[1].networkId).to.equal(300)
         expect(unsignedTx.totalInput.values[1].amount.toString()).to.equal('1')
 
         const keyLevel = 0
-        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
+        const privateKey =
+          'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
         const stakingKeyWits = new Set<string>()
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])
@@ -443,7 +455,8 @@ export const setupTests = (
         )
 
         const keyLevel = 0
-        const privateKey = 'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
+        const privateKey =
+          'e8c9a059f04a369553df01e4ed8717a97c3cdf2e51e14292e96b8509db8a0442299023959cc6fe889b3f1af85512bb75215ded32e99f0c7f55d9b64629c6efcf9c46e83bf190f51db20951ed451b4f51d10e26df3318d8c3394e65e485567c09'
         const stakingKeyWits = new Set<string>()
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])

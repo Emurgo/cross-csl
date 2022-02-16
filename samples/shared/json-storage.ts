@@ -1,11 +1,37 @@
-import * as fs from 'fs'
-
+import {
+  AccountStorage,
+  AddressRecord
+} from '@emurgo/yoroi-lib-core/dist/account/models'
 import { UtxoStorage } from '@emurgo/yoroi-lib-core/dist/utxo'
 import {
   Utxo,
   UtxoAtSafePoint,
   UtxoDiffToBestBlock
 } from '@emurgo/yoroi-lib-core/dist/utxo/models'
+import * as fs from 'fs'
+
+export class JsonAccountStorage implements AccountStorage {
+  #accountsPath: string
+  constructor(accountsPath: string) {
+    this.#accountsPath = accountsPath
+  }
+
+  async readAccounts(): Promise<AddressRecord[]> {
+    if (!fs.existsSync(this.#accountsPath)) return []
+    return JSON.parse(fs.readFileSync(this.#accountsPath, 'utf-8'))
+  }
+
+  async saveAccounts(addresses: AddressRecord[]): Promise<boolean> {
+    fs.writeFileSync(this.#accountsPath, JSON.stringify(addresses, null, 2))
+    return true
+  }
+
+  async clearStorage(): Promise<void> {
+    if (fs.existsSync(this.#accountsPath)) {
+      fs.unlinkSync(this.#accountsPath)
+    }
+  }
+}
 
 export class JsonUtxoStorage implements UtxoStorage {
   private _safePointPath: string
@@ -28,7 +54,10 @@ export class JsonUtxoStorage implements UtxoStorage {
     return JSON.parse(fs.readFileSync(this._diffPath, 'utf-8'))
   }
 
-  async replaceUtxoAtSafePoint(utxos: Utxo[], safeBlockHash: string): Promise<void> {
+  async replaceUtxoAtSafePoint(
+    utxos: Utxo[],
+    safeBlockHash: string
+  ): Promise<void> {
     const safePoint: UtxoAtSafePoint = {
       lastSafeBlockHash: safeBlockHash,
       utxos: utxos
@@ -52,7 +81,9 @@ export class JsonUtxoStorage implements UtxoStorage {
     }
 
     const currentDiffs = await this.getUtxoDiffToBestBlock()
-    if (!currentDiffs.find(d => d.lastBestBlockHash === diff.lastBestBlockHash)) {
+    if (
+      !currentDiffs.find((d) => d.lastBestBlockHash === diff.lastBestBlockHash)
+    ) {
       currentDiffs.push(diff)
 
       fs.writeFileSync(this._diffPath, JSON.stringify(currentDiffs, null, 2))
@@ -65,7 +96,9 @@ export class JsonUtxoStorage implements UtxoStorage {
     }
 
     const currentDiffs = await this.getUtxoDiffToBestBlock()
-    const diffToRemove = currentDiffs.find(d => d.lastBestBlockHash === blockHash)
+    const diffToRemove = currentDiffs.find(
+      (d) => d.lastBestBlockHash === blockHash
+    )
 
     const index = currentDiffs.indexOf(diffToRemove)
     if (index > -1) {

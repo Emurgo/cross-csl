@@ -1,12 +1,31 @@
-import * as sinon from 'ts-sinon'
-
 import { Axios, AxiosResponse } from 'axios'
-
-import { EmurgoUtxoApi, BatchedEmurgoUtxoApi, GetTipStatusResponse, TipStatusResponse, UtxoAtPointItemResponse, UtxoDiffSincePointResponse, UtxoDiffSincePointItemResponse } from '../src/utxo/emurgo-api'
-import { random256Hash, randomDiffs, randomFakeAddresses, randomInt, randomUtxosForAddresses } from './helpers/builders'
 import { expect } from 'chai'
-import { DiffPoint, DiffType, Utxo, UtxoApiResult, UtxoDiffItem, UtxoDiffItemOutput } from '../src/utxo/models'
-import { chunk } from '../src/internals/utils/js'
+import * as sinon from 'ts-sinon'
+import { chunk } from '../../src/internals/utils/js'
+import {
+  BatchedEmurgoUtxoApi,
+  EmurgoUtxoApi,
+  GetTipStatusResponse,
+  TipStatusResponse,
+  UtxoAtPointItemResponse,
+  UtxoDiffSincePointItemResponse,
+  UtxoDiffSincePointResponse
+} from '../../src/utxo/emurgo-api'
+import {
+  DiffPoint,
+  DiffType,
+  Utxo,
+  UtxoApiResult,
+  UtxoDiffItem,
+  UtxoDiffItemOutput
+} from '../../src/utxo/models'
+import {
+  random256Hash,
+  randomDiffs,
+  randomFakeAddresses,
+  randomInt,
+  randomUtxosForAddresses
+} from '../helpers/builders'
 
 const fakeApiUrl = 'http://utxo.api.io/'
 
@@ -24,14 +43,14 @@ describe('UTxO API', () => {
     const bestBlockHash = await random256Hash()
     const safeBlockHash = await random256Hash()
 
-    axios.get
-      .withArgs(`${fakeApiUrl}v2/tipStatus`)
-      .returns(Promise.resolve({
+    axios.get.withArgs(`${fakeApiUrl}v2/tipStatus`).returns(
+      Promise.resolve({
         data: {
           bestBlock: bestBlockHash,
           safeBlock: safeBlockHash
         }
-      } as AxiosResponse<GetTipStatusResponse>))
+      } as AxiosResponse<GetTipStatusResponse>)
+    )
 
     // act
     const sut = new BatchedEmurgoUtxoApi(baseApi)
@@ -45,7 +64,11 @@ describe('UTxO API', () => {
 
   it('should return tip status with reference', async () => {
     // arrange
-    const bestBlocks = [await random256Hash(), await random256Hash(), await random256Hash()]
+    const bestBlocks = [
+      await random256Hash(),
+      await random256Hash(),
+      await random256Hash()
+    ]
 
     axios.post
       .withArgs(`${fakeApiUrl}v2/tipStatus`, {
@@ -53,23 +76,29 @@ describe('UTxO API', () => {
           bestBlocks: bestBlocks
         }
       })
-      .returns(Promise.resolve({
-        data: {
-          reference: {
-            lastFoundBestBlock: bestBlocks[2],
-            lastFoundSafeBlock: bestBlocks[0]
+      .returns(
+        Promise.resolve({
+          data: {
+            reference: {
+              lastFoundBestBlock: bestBlocks[2],
+              lastFoundSafeBlock: bestBlocks[0]
+            }
           }
-        }
-      } as AxiosResponse<TipStatusResponse>))
-    
+        } as AxiosResponse<TipStatusResponse>)
+      )
+
     // act
     const sut = new BatchedEmurgoUtxoApi(baseApi)
     const tipStatus = await sut.getTipStatusWithReference(bestBlocks)
 
     // assert
     expect(tipStatus.result).to.equal(UtxoApiResult.SUCCESS)
-    expect(tipStatus.value?.reference.lastFoundBestBlock).to.equal(bestBlocks[2])
-    expect(tipStatus.value?.reference.lastFoundSafeBlock).to.equal(bestBlocks[0])
+    expect(tipStatus.value?.reference.lastFoundBestBlock).to.equal(
+      bestBlocks[2]
+    )
+    expect(tipStatus.value?.reference.lastFoundSafeBlock).to.equal(
+      bestBlocks[0]
+    )
   })
 
   it('should return UTxO at point', async () => {
@@ -128,7 +157,12 @@ describe('UTxO API', () => {
 
     const expectedDiffs = await randomDiffs(20, addresses)
 
-    await setupUtxoDiffSincePoint([expectedDiffs.slice(0, 10), expectedDiffs.slice(10, 20)], addresses, untilBlockHash, afterBestBlock)
+    await setupUtxoDiffSincePoint(
+      [expectedDiffs.slice(0, 10), expectedDiffs.slice(10, 20)],
+      addresses,
+      untilBlockHash,
+      afterBestBlock
+    )
 
     // act
     const sut = new BatchedEmurgoUtxoApi(baseApi)
@@ -211,24 +245,27 @@ describe('UTxO API', () => {
           afterPoint: afterPoint,
           diffLimit: 10
         })
-        .returns(Promise.resolve({
-          data: {
-            lastDiffPointSelected: lastDiffPointSelected,
-            diffItems: mapDiffToApiDiff(diff)
-          }
-        } as AxiosResponse<UtxoDiffSincePointResponse>))
-      
+        .returns(
+          Promise.resolve({
+            data: {
+              lastDiffPointSelected: lastDiffPointSelected,
+              diffItems: mapDiffToApiDiff(diff)
+            }
+          } as AxiosResponse<UtxoDiffSincePointResponse>)
+        )
+
       afterPoint = lastDiffPointSelected
     }
 
     axios.post
-        .withArgs(`${fakeApiUrl}v2/txs/utxoDiffSincePoint`, {
-          addresses: addresses,
-          untilBlockHash: untilBlockHash,
-          afterPoint: afterPoint,
-          diffLimit: 10
-        })
-        .returns(Promise.resolve({
+      .withArgs(`${fakeApiUrl}v2/txs/utxoDiffSincePoint`, {
+        addresses: addresses,
+        untilBlockHash: untilBlockHash,
+        afterPoint: afterPoint,
+        diffLimit: 10
+      })
+      .returns(
+        Promise.resolve({
           data: {
             lastDiffPointSelected: {
               blockHash: await random256Hash(),
@@ -237,41 +274,66 @@ describe('UTxO API', () => {
             },
             diffItems: [] as UtxoDiffSincePointItemResponse[]
           }
-        } as AxiosResponse<UtxoDiffSincePointResponse>))
+        } as AxiosResponse<UtxoDiffSincePointResponse>)
+      )
   }
 
-  const assertDiffs = (diffItems: UtxoDiffItem[], expectedDiffs: UtxoDiffItem[]) => {
+  const assertDiffs = (
+    diffItems: UtxoDiffItem[],
+    expectedDiffs: UtxoDiffItem[]
+  ) => {
     for (const expectedDiffItem of expectedDiffs) {
-      const diffItem = diffItems
-        .find(d => d.id === expectedDiffItem.id && d.type === expectedDiffItem.type) as UtxoDiffItem
+      const diffItem = diffItems.find(
+        (d) => d.id === expectedDiffItem.id && d.type === expectedDiffItem.type
+      ) as UtxoDiffItem
       expect(diffItem).to.not.be.undefined
       if (diffItem.type === DiffType.INPUT) {
-        expect(diffItem.amount.toString()).to.equal(expectedDiffItem.amount.toString())
+        expect(diffItem.amount.toString()).to.equal(
+          expectedDiffItem.amount.toString()
+        )
         expect(diffItem.type).to.equal(expectedDiffItem.type)
         expect(diffItem.id).to.equal(expectedDiffItem.id)
       } else {
         const diffItemOutput = diffItem as UtxoDiffItemOutput
         const expectedDiffItemOutput = expectedDiffItem as UtxoDiffItemOutput
-        expect(diffItemOutput.amount.toString()).to.equal(expectedDiffItemOutput.amount.toString())
+        expect(diffItemOutput.amount.toString()).to.equal(
+          expectedDiffItemOutput.amount.toString()
+        )
         expect(diffItemOutput.type).to.equal(expectedDiffItemOutput.type)
         expect(diffItemOutput.id).to.equal(expectedDiffItemOutput.id)
 
         // we generate random UTxOs for practicity.
         // the amount of the UTxO is mapped from the diff item, that's why only for this
         // field we compare the UTxO with the diff item directly
-        expect(diffItemOutput.utxo.amount.toString()).to.equal(expectedDiffItemOutput.amount.toString())
-        expect(diffItemOutput.utxo.assets).to.eq(expectedDiffItemOutput.utxo.assets)
-        expect(diffItemOutput.utxo.blockNum).to.equal(expectedDiffItemOutput.utxo.blockNum)
-        expect(diffItemOutput.utxo.receiver).to.equal(expectedDiffItemOutput.utxo.receiver)
-        expect(diffItemOutput.utxo.txHash).to.equal(expectedDiffItemOutput.utxo.txHash)
-        expect(diffItemOutput.utxo.txIndex).to.equal(expectedDiffItemOutput.utxo.txIndex)
-        expect(diffItemOutput.utxo.utxoId).to.equal(expectedDiffItemOutput.utxo.utxoId)
+        expect(diffItemOutput.utxo.amount.toString()).to.equal(
+          expectedDiffItemOutput.amount.toString()
+        )
+        expect(diffItemOutput.utxo.assets).to.eq(
+          expectedDiffItemOutput.utxo.assets
+        )
+        expect(diffItemOutput.utxo.blockNum).to.equal(
+          expectedDiffItemOutput.utxo.blockNum
+        )
+        expect(diffItemOutput.utxo.receiver).to.equal(
+          expectedDiffItemOutput.utxo.receiver
+        )
+        expect(diffItemOutput.utxo.txHash).to.equal(
+          expectedDiffItemOutput.utxo.txHash
+        )
+        expect(diffItemOutput.utxo.txIndex).to.equal(
+          expectedDiffItemOutput.utxo.txIndex
+        )
+        expect(diffItemOutput.utxo.utxoId).to.equal(
+          expectedDiffItemOutput.utxo.utxoId
+        )
       }
     }
   }
 
-  const mapDiffToApiDiff = (arr: UtxoDiffItem[]): UtxoDiffSincePointItemResponse[] => {
-    return arr.map(x => {
+  const mapDiffToApiDiff = (
+    arr: UtxoDiffItem[]
+  ): UtxoDiffSincePointItemResponse[] => {
+    return arr.map((x) => {
       if (x.type === DiffType.OUTPUT) {
         const diffOut = x as UtxoDiffItemOutput
         return {
@@ -310,17 +372,21 @@ describe('UTxO API', () => {
           page: page,
           pageSize: pageSize
         })
-        .returns(Promise.resolve({
-          data: mapUtxoToApiUtxo(chunk)
-        } as AxiosResponse<UtxoAtPointItemResponse[]>))
+        .returns(
+          Promise.resolve({
+            data: mapUtxoToApiUtxo(chunk)
+          } as AxiosResponse<UtxoAtPointItemResponse[]>)
+        )
     }
   }
 
   const assertUtxoSets = (actual: Utxo[], expected: Utxo[]) => {
     for (const expectedItem of expected) {
-      const actualItem = actual.find(x => x.utxoId === expectedItem.utxoId)
+      const actualItem = actual.find((x) => x.utxoId === expectedItem.utxoId)
       expect(actualItem).to.not.be.undefined
-      expect(actualItem?.amount.toString()).to.eq(expectedItem.amount.toString())
+      expect(actualItem?.amount.toString()).to.eq(
+        expectedItem.amount.toString()
+      )
       expect(actualItem?.assets).to.eq(expectedItem.assets)
       expect(actualItem?.blockNum).to.eq(expectedItem.blockNum)
       expect(actualItem?.receiver).to.eq(expectedItem.receiver)
@@ -335,7 +401,7 @@ describe('UTxO API', () => {
   }
 
   const mapUtxoToApiUtxo = (arr: Utxo[]): UtxoAtPointItemResponse[] => {
-    return arr.map(u => {
+    return arr.map((u) => {
       return {
         amount: u.amount.toString(),
         assets: u.assets,

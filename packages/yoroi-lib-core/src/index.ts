@@ -1,7 +1,5 @@
 import { BigNumber } from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
-
-import * as WasmContract from './internals/wasm-contract'
 import {
   AssetOverflowError,
   BaseError,
@@ -10,29 +8,9 @@ import {
   NotEnoughMoneyToSendError
 } from './errors'
 import {
-  AddInputResult,
-  firstWithValue,
-  createMetadata
-} from './internals/utils'
-import { normalizeToAddress } from './internals/utils/addresses'
-import {
-  cardanoValueFromMultiToken,
-  multiTokenFromCardanoValue,
-  buildSendTokenList,
-  multiTokenFromRemote,
-  hasSendAllDefault
-} from './internals/utils/assets'
-import {
-  minRequiredForChange,
-  addUtxoInput,
-  asAddressedUtxo,
-  isBigNumZero,
-  cardanoValueFromRemoteFormat,
-} from './internals/utils/transactions'
-import {
   Address,
-  AddressingUtxo,
   AddressingAddress,
+  AddressingUtxo,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
   Change,
@@ -41,14 +19,37 @@ import {
   RemoteUnspentOutput,
   SendToken,
   TxOptions,
-  TxOutput,
+  TxOutput
 } from './internals/models'
 import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
+import {
+  AddInputResult,
+  createMetadata,
+  firstWithValue
+} from './internals/utils'
+import { normalizeToAddress } from './internals/utils/addresses'
+import {
+  buildSendTokenList,
+  cardanoValueFromMultiToken,
+  hasSendAllDefault,
+  multiTokenFromCardanoValue,
+  multiTokenFromRemote
+} from './internals/utils/assets'
+import {
+  addUtxoInput,
+  asAddressedUtxo,
+  cardanoValueFromRemoteFormat,
+  isBigNumZero,
+  minRequiredForChange
+} from './internals/utils/transactions'
+import * as WasmContract from './internals/wasm-contract'
 
-export * from './internals/tx'
+export { AccountService } from './account'
+export { AccountChainProtocols, AccountStorage } from './account/models'
 export * from './internals/models'
+export * from './internals/tx'
 export * as WasmContract from './internals/wasm-contract'
-export { UtxoService, UtxoStorage, init as initUtxo } from './utxo'
+export { init as initUtxo, UtxoService, UtxoStorage } from './utxo'
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
@@ -58,13 +59,15 @@ export const RUST_u32_MAX = 4294967295
 
 const defaultTtlOffset = 7200
 
-export const createYoroiLib = (wasmV4: WasmContract.WasmModuleProxy): IYoroiLib => {
+export const createYoroiLib = (
+  wasmV4: WasmContract.WasmModuleProxy
+): IYoroiLib => {
   return new YoroiLib(wasmV4)
 }
 
 export interface YoroiLibLogger {
-  debug: (msg: string, ...args: any[]) => void;
-  error: (msg: string, ...args: any[]) => void;
+  debug: (msg: string, ...args: any[]) => void
+  error: (msg: string, ...args: any[]) => void
 }
 
 export interface IYoroiLib {
@@ -74,7 +77,8 @@ export interface IYoroiLib {
     password: string,
     salt: string,
     nonce: string,
-    data: string): Promise<string>
+    data: string
+  ): Promise<string>
   decryptWithPassword(password: string, data: string): Promise<string>
   createUnsignedTx(
     absSlotNumber: BigNumber,
@@ -118,7 +122,10 @@ class YoroiLib implements IYoroiLib {
     this._wasmV4 = wasmV4
   }
 
-  async calculateTxId(encodedTx: string, encoding: 'base64' | 'hex'): Promise<string> {
+  async calculateTxId(
+    encodedTx: string,
+    encoding: 'base64' | 'hex'
+  ): Promise<string> {
     const txBuffer = Buffer.from(encodedTx, encoding)
     const tx = await this.Wasm.Transaction.fromBytes(txBuffer)
     const txBody = await tx.body()
@@ -294,11 +301,11 @@ class YoroiLib implements IYoroiLib {
     allUtxos: Array<CardanoAddressedUtxo>,
     absSlotNumber: BigNumber,
     protocolParams: {
-      linearFee: WasmContract.LinearFee;
-      minimumUtxoVal: WasmContract.BigNum;
-      poolDeposit: WasmContract.BigNum;
-      keyDeposit: WasmContract.BigNum;
-      networkId: number;
+      linearFee: WasmContract.LinearFee
+      minimumUtxoVal: WasmContract.BigNum
+      poolDeposit: WasmContract.BigNum
+      keyDeposit: WasmContract.BigNum
+      networkId: number
     },
     auxData: WasmContract.AuxiliaryData | undefined,
     txOptions: TxOptions
@@ -340,19 +347,19 @@ class YoroiLib implements IYoroiLib {
       These info should be implicit on 'send all', meaning the client code should know
       they beforehand, and therefore sending them back is not needed
     */
-      return await genWasmUnsignedTx(
-        this.Wasm,
-        unsignedTxResponse.txBuilder,
-        [],
-        addressedUtxos,
-        unsignedTxResponse.change,
-        {
-          defaultNetworkId: protocolParams.networkId,
-          defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
-        },
-        protocolParams.networkId,
-        txOptions.metadata ?? []
-      )
+    return await genWasmUnsignedTx(
+      this.Wasm,
+      unsignedTxResponse.txBuilder,
+      [],
+      addressedUtxos,
+      unsignedTxResponse.change,
+      {
+        defaultNetworkId: protocolParams.networkId,
+        defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+      },
+      protocolParams.networkId,
+      txOptions.metadata ?? []
+    )
   }
 
   private async sendAllUnsignedTxFromUtxo(
@@ -360,17 +367,17 @@ class YoroiLib implements IYoroiLib {
     allUtxos: Array<RemoteUnspentOutput>,
     absSlotNumber: BigNumber,
     protocolParams: {
-      linearFee: WasmContract.LinearFee;
-      minimumUtxoVal: WasmContract.BigNum;
-      poolDeposit: WasmContract.BigNum;
-      keyDeposit: WasmContract.BigNum;
-      networkId: number;
+      linearFee: WasmContract.LinearFee
+      minimumUtxoVal: WasmContract.BigNum
+      poolDeposit: WasmContract.BigNum
+      keyDeposit: WasmContract.BigNum
+      networkId: number
     },
     auxData: WasmContract.AuxiliaryData | undefined
   ): Promise<{
-    senderUtxos: RemoteUnspentOutput[];
-    txBuilder: WasmContract.TransactionBuilder;
-    change: Array<Change>;
+    senderUtxos: RemoteUnspentOutput[]
+    txBuilder: WasmContract.TransactionBuilder
+    change: Array<Change>
   }> {
     const totalBalance = allUtxos
       .map((utxo) => new BigNumber(utxo.amount))
@@ -409,10 +416,7 @@ class YoroiLib implements IYoroiLib {
       throw new NotEnoughMoneyToSendError()
     }
     {
-      const wasmReceiver = await normalizeToAddress(
-        this.Wasm,
-        receiver.address
-      )
+      const wasmReceiver = await normalizeToAddress(this.Wasm, receiver.address)
       if (wasmReceiver == null) {
         throw new Error(
           'sendAllUnsignedTxFromUtxo receiver not a valid Shelley address'
@@ -462,16 +466,16 @@ class YoroiLib implements IYoroiLib {
     allUtxos: Array<CardanoAddressedUtxo>,
     absSlotNumber: BigNumber,
     protocolParams: {
-      linearFee: WasmContract.LinearFee;
-      minimumUtxoVal: WasmContract.BigNum;
-      poolDeposit: WasmContract.BigNum;
-      keyDeposit: WasmContract.BigNum;
-      networkId: number;
+      linearFee: WasmContract.LinearFee
+      minimumUtxoVal: WasmContract.BigNum
+      poolDeposit: WasmContract.BigNum
+      keyDeposit: WasmContract.BigNum
+      networkId: number
     },
     certificates: ReadonlyArray<WasmContract.Certificate>,
     withdrawals: ReadonlyArray<{
-      address: WasmContract.RewardAddress;
-      amount: WasmContract.BigNum;
+      address: WasmContract.RewardAddress
+      amount: WasmContract.BigNum
     }>,
     auxData: WasmContract.AuxiliaryData | undefined,
     txOptions: TxOptions,
@@ -535,100 +539,107 @@ class YoroiLib implements IYoroiLib {
     utxos: Array<RemoteUnspentOutput>,
     absSlotNumber: BigNumber,
     protocolParams: {
-      linearFee: WasmContract.LinearFee;
-      minimumUtxoVal: WasmContract.BigNum;
-      poolDeposit: WasmContract.BigNum;
-      keyDeposit: WasmContract.BigNum;
-      networkId: number;
+      linearFee: WasmContract.LinearFee
+      minimumUtxoVal: WasmContract.BigNum
+      poolDeposit: WasmContract.BigNum
+      keyDeposit: WasmContract.BigNum
+      networkId: number
     },
     certificates: ReadonlyArray<WasmContract.Certificate>,
     withdrawals: ReadonlyArray<{
-      address: WasmContract.RewardAddress;
-      amount: WasmContract.BigNum;
+      address: WasmContract.RewardAddress
+      amount: WasmContract.BigNum
     }>,
     auxData: WasmContract.AuxiliaryData | undefined,
     allowNoOutputs: boolean
   ): Promise<{
-    senderUtxos: RemoteUnspentOutput[];
-    txBuilder: WasmContract.TransactionBuilder;
-    change: Change[];
+    senderUtxos: RemoteUnspentOutput[]
+    txBuilder: WasmContract.TransactionBuilder
+    change: Change[]
   }> {
     const outputAssets = outputs.reduce((set, o) => {
       o.amount.values
-        .map(v => v.identifier)
-        .filter(id => id.length > 0)
-        .forEach(id => set.add(id))
+        .map((v) => v.identifier)
+        .filter((id) => id.length > 0)
+        .forEach((id) => set.add(id))
       return set
     }, new Set<string>())
     const isAssetsRequired = outputAssets.size > 0
 
     const utxosMapped: Array<{
-      u: RemoteUnspentOutput,
-      isPure: boolean,
-      hasRequiredAsset: boolean,
+      u: RemoteUnspentOutput
+      isPure: boolean
+      hasRequiredAsset: boolean
       spendableValue: number
-    }> = await Promise.all(utxos.map(async (u: RemoteUnspentOutput) => {
-      if (u.assets.length === 0) {
+    }> = await Promise.all(
+      utxos.map(async (u: RemoteUnspentOutput) => {
+        if (u.assets.length === 0) {
+          return {
+            u: u,
+            isPure: true,
+            hasRequiredAsset: false,
+            spendableValue: 0
+          }
+        }
+        const hasRequiredAsset =
+          isAssetsRequired && u.assets.some((a) => outputAssets.has(a.assetId))
+        const amount = await this.Wasm.BigNum.fromStr(u.amount)
+        const minRequired = await this.Wasm.minAdaRequired(
+          await cardanoValueFromRemoteFormat(this.Wasm, u),
+          protocolParams.minimumUtxoVal
+        )
+        const spendable = parseInt(
+          await amount.clampedSub(minRequired).then((x) => x.toStr()),
+          10
+        )
+        // Round down the spendable value to the nearest full ADA for safer deposit
+        // TODO: unmagic the constant
         return {
           u: u,
-          isPure: true,
-          hasRequiredAsset: false,
-          spendableValue: 0
+          isPure: false,
+          hasRequiredAsset: hasRequiredAsset,
+          spendableValue: Math.floor(spendable / 1_000_000) * 1_000_000
         }
-      }
-      const hasRequiredAsset = isAssetsRequired
-        && u.assets.some(a => outputAssets.has(a.assetId))
-      const amount = await this.Wasm.BigNum.fromStr(u.amount)
-      const minRequired = await this.Wasm.minAdaRequired(
-        await cardanoValueFromRemoteFormat(this.Wasm, u),
-        protocolParams.minimumUtxoVal,
-      )
-      const spendable = parseInt(await amount.clampedSub(minRequired).then(x => x.toStr()), 10)
-      // Round down the spendable value to the nearest full ADA for safer deposit
-      // TODO: unmagic the constant
-      return {
-        u: u,
-        isPure: false,
-        hasRequiredAsset: hasRequiredAsset,
-        spendableValue: Math.floor(spendable / 1_000_000) * 1_000_000
-      }
-    }))
+      })
+    )
 
     // prioritize inputs
-    const sortedUtxos: Array<RemoteUnspentOutput> = utxosMapped.sort((v1, v2) => {
-      const u1 = v1.u
-      const isPure1 = v1.isPure
-      const hasRequiredAsset1 = v1.hasRequiredAsset
-      const spendableValue1 = v1.spendableValue
-      
-      const u2 = v2.u
-      const isPure2 = v2.isPure
-      const hasRequiredAsset2 = v2.hasRequiredAsset
-      const spendableValue2 = v2.spendableValue
-      
-      if ((hasRequiredAsset1 as any) ^ (hasRequiredAsset2 as any)) {
-        // one but not both of the utxos has required assets
-        // utxos with required assets are always prioritized
-        // ahead of any other, pure or dirty
-        return hasRequiredAsset1 ? -1 : 1
-      }
-      if (isPure1 && isPure2) {
-        // both utxos are clean - randomize them
-        return Math.random() - 0.5
-      }
-      if (isPure1 || isPure2) {
-        // At least one of the utxos is clean
-        // The clean utxo is prioritized
-        return isPure1 ? -1 : 1
-      }
-      // both utxos are dirty
-      if (spendableValue1 !== spendableValue2) {
-        // dirty utxos with highest spendable ADA are prioritised
-        return spendableValue2 - spendableValue1
-      }
-      // utxo with fewer assets is prioritised
-      return u1.assets.length - u2.assets.length
-    }).map(u => u.u)
+    const sortedUtxos: Array<RemoteUnspentOutput> = utxosMapped
+      .sort((v1, v2) => {
+        const u1 = v1.u
+        const isPure1 = v1.isPure
+        const hasRequiredAsset1 = v1.hasRequiredAsset
+        const spendableValue1 = v1.spendableValue
+
+        const u2 = v2.u
+        const isPure2 = v2.isPure
+        const hasRequiredAsset2 = v2.hasRequiredAsset
+        const spendableValue2 = v2.spendableValue
+
+        if ((hasRequiredAsset1 as any) ^ (hasRequiredAsset2 as any)) {
+          // one but not both of the utxos has required assets
+          // utxos with required assets are always prioritized
+          // ahead of any other, pure or dirty
+          return hasRequiredAsset1 ? -1 : 1
+        }
+        if (isPure1 && isPure2) {
+          // both utxos are clean - randomize them
+          return Math.random() - 0.5
+        }
+        if (isPure1 || isPure2) {
+          // At least one of the utxos is clean
+          // The clean utxo is prioritized
+          return isPure1 ? -1 : 1
+        }
+        // both utxos are dirty
+        if (spendableValue1 !== spendableValue2) {
+          // dirty utxos with highest spendable ADA are prioritised
+          return spendableValue2 - spendableValue1
+        }
+        // utxo with fewer assets is prioritised
+        return u1.assets.length - u2.assets.length
+      })
+      .map((u) => u.u)
 
     const result = await this._newAdaUnsignedTxFromUtxo(
       outputs,
@@ -659,9 +670,12 @@ class YoroiLib implements IYoroiLib {
     const feeWithOneExtraInput =
       await resultWithOneExtraInput.txBuilder.getFeeIfSet()
 
-    const actualResult = feeWithOneExtraInput?.hasValue() && fee?.hasValue() && (await feeWithOneExtraInput.compare(fee)) < 0
-      ? resultWithOneExtraInput
-      : result
+    const actualResult =
+      feeWithOneExtraInput?.hasValue() &&
+      fee?.hasValue() &&
+      (await feeWithOneExtraInput.compare(fee)) < 0
+        ? resultWithOneExtraInput
+        : result
 
     return actualResult
   }
@@ -672,24 +686,24 @@ class YoroiLib implements IYoroiLib {
     utxos: Array<RemoteUnspentOutput>,
     absSlotNumber: BigNumber,
     protocolParams: {
-      linearFee: WasmContract.LinearFee;
-      minimumUtxoVal: WasmContract.BigNum;
-      poolDeposit: WasmContract.BigNum;
-      keyDeposit: WasmContract.BigNum;
-      networkId: number;
+      linearFee: WasmContract.LinearFee
+      minimumUtxoVal: WasmContract.BigNum
+      poolDeposit: WasmContract.BigNum
+      keyDeposit: WasmContract.BigNum
+      networkId: number
     },
     certificates: ReadonlyArray<WasmContract.Certificate>,
     withdrawals: ReadonlyArray<{
-      address: WasmContract.RewardAddress;
-      amount: WasmContract.BigNum;
+      address: WasmContract.RewardAddress
+      amount: WasmContract.BigNum
     }>,
     auxData: WasmContract.AuxiliaryData | undefined,
     allowNoOutputs: boolean,
     oneExtraInput: boolean
   ): Promise<{
-    senderUtxos: RemoteUnspentOutput[];
-    txBuilder: WasmContract.TransactionBuilder;
-    change: Change[];
+    senderUtxos: RemoteUnspentOutput[]
+    txBuilder: WasmContract.TransactionBuilder
+    change: Change[]
   }> {
     const shouldForceChange = async (
       assetsForChange: WasmContract.MultiAsset | undefined
@@ -738,10 +752,7 @@ class YoroiLib implements IYoroiLib {
     await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber())
     {
       for (const output of outputs) {
-        const wasmReceiver = await normalizeToAddress(
-          this.Wasm,
-          output.address
-        )
+        const wasmReceiver = await normalizeToAddress(this.Wasm, output.address)
         if (!wasmReceiver) {
           throw new Error(
             `newAdaUnsignedTxFromUtxo: receiver not a valid Shelley address`
@@ -778,9 +789,10 @@ class YoroiLib implements IYoroiLib {
         const currentInputSum = await txBuilder
           .getExplicitInput()
           .then((x) => x.checkedAdd(implicitSum))
-        
-        const neededInput = await targetOutput
-          .checkedAdd(await this.Wasm.Value.new(await txBuilder.minFee()))
+
+        const neededInput = await targetOutput.checkedAdd(
+          await this.Wasm.Value.new(await txBuilder.minFee())
+        )
         const currentInputSumMa = await currentInputSum.multiasset()
         let neededInputMa = await neededInput.multiasset()
         if (!neededInputMa.hasValue()) {
@@ -816,19 +828,25 @@ class YoroiLib implements IYoroiLib {
         const isNonEmptyInputs = usedUtxos.length > 0
         {
           const remainingAssets = await remainingNeeded.multiasset()
-          const isRemainingNeededCoinZero = await isBigNumZero(this.Wasm, await remainingNeeded.coin())
-          const isRemainingNeededAssetZero = (remainingAssets.hasValue()
-            ? await remainingAssets.len()
-            : 0) === 0
-            if (isRemainingNeededCoinZero && isRemainingNeededAssetZero && isNonEmptyInputs) {
-              if (oneExtraInput) {
-                // We've added all the assets we need, but we add one extra.
-                // Set the flag so that the adding loop stops after this extra one is added.
-                oneExtraAdded = true
-              } else {
-                break
-              }
+          const isRemainingNeededCoinZero = await isBigNumZero(
+            this.Wasm,
+            await remainingNeeded.coin()
+          )
+          const isRemainingNeededAssetZero =
+            (remainingAssets.hasValue() ? await remainingAssets.len() : 0) === 0
+          if (
+            isRemainingNeededCoinZero &&
+            isRemainingNeededAssetZero &&
+            isNonEmptyInputs
+          ) {
+            if (oneExtraInput) {
+              // We've added all the assets we need, but we add one extra.
+              // Set the flag so that the adding loop stops after this extra one is added.
+              oneExtraAdded = true
+            } else {
+              break
             }
+          }
         }
 
         const added = await addUtxoInput(

@@ -3,7 +3,7 @@ import * as WasmContract from '../wasm-contract'
 
 export async function getCardanoSpendingKeyHash(
   wasm: WasmContract.WasmModuleProxy,
-  addr: WasmContract.Address,
+  addr: WasmContract.Address
 ): Promise<WasmContract.Ed25519KeyHash | undefined> {
   {
     const byronAddr = await wasm.ByronAddress.fromAddress(addr)
@@ -11,19 +11,23 @@ export async function getCardanoSpendingKeyHash(
   }
   {
     const baseAddr = await wasm.BaseAddress.fromAddress(addr)
-    if (baseAddr.hasValue()) return await baseAddr.paymentCred().then(x => x.toKeyhash())
+    if (baseAddr.hasValue())
+      return await baseAddr.paymentCred().then((x) => x.toKeyhash())
   }
   {
     const ptrAddr = await wasm.PointerAddress.fromAddress(addr)
-    if (ptrAddr.hasValue()) return ptrAddr.paymentCred().then(x => x.toKeyhash())
+    if (ptrAddr.hasValue())
+      return ptrAddr.paymentCred().then((x) => x.toKeyhash())
   }
   {
     const enterpriseAddr = await wasm.EnterpriseAddress.fromAddress(addr)
-    if (enterpriseAddr.hasValue()) return enterpriseAddr.paymentCred().then(x => x.toKeyhash())
+    if (enterpriseAddr.hasValue())
+      return enterpriseAddr.paymentCred().then((x) => x.toKeyhash())
   }
   {
     const rewardAddr = await wasm.RewardAddress.fromAddress(addr)
-    if (rewardAddr.hasValue()) return rewardAddr.paymentCred().then(x => x.toKeyhash())
+    if (rewardAddr.hasValue())
+      return rewardAddr.paymentCred().then((x) => x.toKeyhash())
   }
   throw new Error(`getCardanoSpendingKeyHash: unknown address type`)
 }
@@ -31,9 +35,10 @@ export async function getCardanoSpendingKeyHash(
 export async function derivePrivateByAddressing(
   addressing: Addressing,
   startingFrom: {
-    key: WasmContract.Bip32PrivateKey,
-    level: number,
-  }): Promise<WasmContract.Bip32PrivateKey> {
+    key: WasmContract.Bip32PrivateKey
+    level: number
+  }
+): Promise<WasmContract.Bip32PrivateKey> {
   if (startingFrom.level + 1 < addressing.addressing.startLevel) {
     throw new Error(`derivePrivateByAddressing: keyLevel < startLevel`)
   }
@@ -43,9 +48,11 @@ export async function derivePrivateByAddressing(
     i < addressing.addressing.path.length;
     i++
   ) {
-    derivedKey = await derivedKey.derive(
-      addressing.addressing.path[i]
-    )
+    derivedKey = await derivedKey.derive(addressing.addressing.path[i])
   }
   return derivedKey
+}
+
+export const harden = (num: number) => {
+  return 0x80000000 + num
 }

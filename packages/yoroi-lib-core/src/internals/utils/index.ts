@@ -30,8 +30,7 @@ export async function createMetadata(
     return await wasm.AuxiliaryData.empty()
   }
 
-  const transactionMetadata =
-    await wasm.GeneralTransactionMetadata.new()
+  const transactionMetadata = await wasm.GeneralTransactionMetadata.new()
 
   txMetadata.forEach(async (meta: TxMetadata) => {
     const metadatum = await wasm.encodeJsonStrToMetadatum(

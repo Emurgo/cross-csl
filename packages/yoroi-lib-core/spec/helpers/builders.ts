@@ -1,8 +1,18 @@
 import BigNumber from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
-import { Block, DiffType, Utxo, UtxoDiffItem, UtxoDiffItemOutput } from '../../src/utxo/models'
+import {
+  Block,
+  DiffType,
+  Utxo,
+  UtxoDiffItem,
+  UtxoDiffItemOutput
+} from '../../src/utxo/models'
 
-const generatedHashes: {[key: string]: boolean} = {}
+const generatedHashes: { [key: string]: boolean } = {}
+
+export const random224Hash = async (bech32: string): Promise<string> => {
+  return await blake2b(bech32, 224)
+}
 
 export const random256Hash = async (): Promise<string> => {
   let hash: string
@@ -13,11 +23,13 @@ export const random256Hash = async (): Promise<string> => {
   return hash
 }
 
-export const randomFakeAddress = async (): Promise<string> => {
-  return `addr_${await random256Hash()}`
+export const randomFakeAddress = async (prefix = 'addr_'): Promise<string> => {
+  return `${prefix}${await random256Hash()}`
 }
 
-export const randomFakeAddresses = async (numberOfAddresses: number): Promise<string[]> => {
+export const randomFakeAddresses = async (
+  numberOfAddresses: number
+): Promise<string[]> => {
   const addresses: string[] = []
   for (let i = 0; i < numberOfAddresses; i++) {
     addresses.push(await randomFakeAddress())
@@ -34,7 +46,10 @@ export const randomBlock = async (): Promise<Block> => {
   }
 }
 
-export const randomBlockAfter = async (referenceBlock: Block, difference: number): Promise<Block> => {
+export const randomBlockAfter = async (
+  referenceBlock: Block,
+  difference: number
+): Promise<Block> => {
   return {
     epochNo: referenceBlock.epochNo + difference,
     hash: await random256Hash(),
@@ -57,7 +72,10 @@ export const randomUtxo = async (receiver: string): Promise<Utxo> => {
   }
 }
 
-export const randomUtxos = async (quantityOfUtxos: number, receiver: string): Promise<Utxo[]> => {
+export const randomUtxos = async (
+  quantityOfUtxos: number,
+  receiver: string
+): Promise<Utxo[]> => {
   const utxos: Utxo[] = []
   for (let i = 0; i < quantityOfUtxos; i++) {
     utxos.push(await randomUtxo(receiver))
@@ -65,7 +83,10 @@ export const randomUtxos = async (quantityOfUtxos: number, receiver: string): Pr
   return utxos
 }
 
-export const randomUtxosForAddresses = async (quantityOfUtxos: number, receivers: string[]): Promise<Utxo[]> => {
+export const randomUtxosForAddresses = async (
+  quantityOfUtxos: number,
+  receivers: string[]
+): Promise<Utxo[]> => {
   const utxos: Utxo[] = []
   for (let i = 0; i < quantityOfUtxos; i++) {
     utxos.push(await randomUtxo(receivers[randomInt(0, receivers.length - 1)]))
@@ -73,7 +94,9 @@ export const randomUtxosForAddresses = async (quantityOfUtxos: number, receivers
   return utxos
 }
 
-export const randomUtxoDiffOutput = async (receiver: string): Promise<UtxoDiffItemOutput> => {
+export const randomUtxoDiffOutput = async (
+  receiver: string
+): Promise<UtxoDiffItemOutput> => {
   const utxo = await randomUtxo(receiver)
   return {
     id: utxo.utxoId,
@@ -83,25 +106,37 @@ export const randomUtxoDiffOutput = async (receiver: string): Promise<UtxoDiffIt
   }
 }
 
-export const randomUtxoDiffInput = async (sourceUtxoId: string): Promise<UtxoDiffItem> => {
+export const randomUtxoDiffInput = async (
+  sourceUtxoId: string
+): Promise<UtxoDiffItem> => {
   return {
     id: sourceUtxoId,
     amount: new BigNumber(randomInt(100, 1000000)),
-    type: DiffType.INPUT,
+    type: DiffType.INPUT
   }
 }
 
-export const randomDiffs = async (quantity: number, receivers: string[]): Promise<UtxoDiffItem[]> => {
+export const randomDiffs = async (
+  quantity: number,
+  receivers: string[]
+): Promise<UtxoDiffItem[]> => {
   const diffs: UtxoDiffItem[] = []
   for (let i = 0; i < quantity; i++) {
     const r = randomInt(0, 1)
     if (r === 0) {
-      diffs.push(await randomUtxoDiffOutput(receivers[randomInt(0, receivers.length - 1)]))
+      diffs.push(
+        await randomUtxoDiffOutput(
+          receivers[randomInt(0, receivers.length - 1)]
+        )
+      )
     } else {
-      diffs.push(await randomUtxoDiffInput(`${await random256Hash()}:${randomInt(0, 5)}`))
+      diffs.push(
+        await randomUtxoDiffInput(`${await random256Hash()}:${randomInt(0, 5)}`)
+      )
     }
   }
   return diffs
 }
 
-export const randomInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1)) + min
+export const randomInt = (min: number, max: number): number =>
+  Math.floor(Math.random() * (max - min + 1)) + min
