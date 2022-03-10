@@ -16,7 +16,9 @@
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
     "create-link": "yarn rebuild && yarn link",
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
-    "pack-tar": "yarn rebuild && npm pack"
+    "pack-tar": "yarn rebuild && npm pack",
+    "publish:beta": "npm publish --tag beta --access private",
+    "publish:prod": "npm publish --access private"
   },
   "author": "",
   "license": "MIT",
