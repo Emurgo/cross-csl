@@ -12,7 +12,8 @@
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
-    "postinstall": "cd node_modules/@emurgo/yoroi-lib-core && yarn build"
+    "publish:beta": "npm publish --tag beta --access private",
+    "publish:prod": "npm publish --access private"
   },
   "files": [
     "dist"
@@ -21,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "9.1.4",
-    "@emurgo/yoroi-lib-core": "file:../yoroi-lib-core"
+    "@emurgo/yoroi-lib-core": "0.0.1-alpha.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

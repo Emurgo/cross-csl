@@ -9,13 +9,14 @@
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
-    "postinstall": "cd node_modules/@emurgo/yoroi-lib-core && yarn build"
+    "publish:beta": "npm publish --tag beta --access private",
+    "publish:prod": "npm publish --access private"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@emurgo/react-native-haskell-shelley": "3.1.3",
-    "@emurgo/yoroi-lib-core": "file:../yoroi-lib-core"
+    "@emurgo/yoroi-lib-core": "0.0.1-alpha.0"
   },
   "devDependencies": {
     "typescript": "^4.4.4"
