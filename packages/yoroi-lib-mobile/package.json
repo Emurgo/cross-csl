@@ -16,7 +16,7 @@
     "publish:beta": "npm publish --tag beta --access public",
     "publish:prod": "npm publish --access public"
   },
-  "author": "",
+  "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
     "@emurgo/react-native-haskell-shelley": "3.1.3",
