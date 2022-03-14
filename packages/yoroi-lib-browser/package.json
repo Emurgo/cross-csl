@@ -1,11 +1,10 @@
 {
   "name": "@emurgo/yoroi-lib-browser",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "",
   "main": "dist/index.js",
   "files": [
-    "dist",
-    "package.json"
+    "dist/**"
   ],
   "scripts": {
     "test": "yarn karma start",
@@ -15,14 +14,14 @@
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
-    "publish:beta": "npm publish --tag beta --access private",
-    "publish:prod": "npm publish --access private"
+    "publish:beta": "npm publish --tag beta --access public",
+    "publish:prod": "npm publish --access public"
   },
-  "author": "",
+  "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "9.1.4",
-    "@emurgo/yoroi-lib-core": "0.0.1-alpha.0"
+    "@emurgo/yoroi-lib-core": "0.0.1-alpha.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",

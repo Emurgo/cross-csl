@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-nodejs",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -12,17 +12,17 @@
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
-    "publish:beta": "npm publish --tag beta --access private",
-    "publish:prod": "npm publish --access private"
+    "publish:beta": "npm publish --tag beta --access public",
+    "publish:prod": "npm publish --access public"
   },
   "files": [
-    "dist"
+    "dist/**"
   ],
-  "author": "",
+  "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "9.1.4",
-    "@emurgo/yoroi-lib-core": "0.0.1-alpha.0"
+    "@emurgo/yoroi-lib-core": "0.0.1-alpha.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
