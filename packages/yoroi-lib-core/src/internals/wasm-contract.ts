@@ -29,6 +29,7 @@ export interface WasmModuleProxy {
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>;
   makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
   makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): Promise<BootstrapWitness>;
+  decodeMetadatumToJsonStr(metadatum: TransactionMetadatum, schema: number): Promise<string>;
   BigNum: typeof BigNum;
   LinearFee: typeof LinearFee;
   GeneralTransactionMetadata: typeof GeneralTransactionMetadata;
@@ -954,4 +955,22 @@ export abstract class NetworkInfo extends Ptr {
   static mainnet(): Promise<NetworkInfo> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
+}
+
+export abstract class MetadataList extends Ptr {
+  static new(): Promise<MetadataList> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+   static from_bytes(bytes: Uint8Array): Promise<MetadataList> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  abstract len(): Promise<number>
+
+  abstract get(index: number): Promise<TransactionMetadatum>
+
+  abstract add(item: TransactionMetadatum): Promise<void>
+
+  abstract to_bytes(): Promise<Uint8Array>
 }
