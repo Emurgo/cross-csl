@@ -78,6 +78,7 @@ export interface WasmModuleProxy {
   TransactionWitnessSet: typeof TransactionWitnessSet;
   Transaction: typeof Transaction;
   NetworkInfo: typeof NetworkInfo;
+  MetadataList: typeof MetadataList;
 }
 
 export abstract class WasmProxy {
