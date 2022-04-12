@@ -1,8 +1,22 @@
 import axios from 'axios'
-import { flatten, groupBy, removeItemFromArray, sliceArrayUntilItem } from '../internals/utils/js'
+import {
+  flatten,
+  groupBy,
+  removeItemFromArray,
+  sliceArrayUntilItem
+} from '../internals/utils/js'
 import { UtxoApiContract } from './api'
 import { BatchedEmurgoUtxoApi, EmurgoUtxoApi } from './emurgo-api'
-import { DiffType, TipStatusReference, Utxo, UtxoApiResult, UtxoAtSafePoint, UtxoDiff, UtxoDiffItemOutput, UtxoDiffToBestBlock } from './models'
+import {
+  DiffType,
+  TipStatusReference,
+  Utxo,
+  UtxoApiResult,
+  UtxoAtSafePoint,
+  UtxoDiff,
+  UtxoDiffItemOutput,
+  UtxoDiffToBestBlock
+} from './models'
 
 export interface UtxoStorage {
   getUtxoAtSafePoint(): Promise<UtxoAtSafePoint | undefined>
@@ -39,10 +53,7 @@ export class UtxoService {
   private _api: UtxoApiContract
   private _utxoStorage: UtxoStorage
 
-  constructor(
-    api: UtxoApiContract,
-    utxoStorage: UtxoStorage
-  ) {
+  constructor(api: UtxoApiContract, utxoStorage: UtxoStorage) {
     this._api = api
     this._utxoStorage = utxoStorage
   }
@@ -52,12 +63,11 @@ export class UtxoService {
     const safeUtxos = utxoSafePoint ? utxoSafePoint.utxos : []
 
     const diffs = await this._utxoStorage.getUtxoDiffToBestBlock()
-    const utxos = safeUtxos
-      .concat(flatten(diffs.map(d => d.newUtxos)))
+    const utxos = safeUtxos.concat(flatten(diffs.map((d) => d.newUtxos)))
 
-    const allSpentUtxoId = flatten(diffs.map(d => d.spentUtxoIds))
+    const allSpentUtxoId = flatten(diffs.map((d) => d.spentUtxoIds))
     for (const spendUtxoId of allSpentUtxoId) {
-      const utxoToRemove = utxos.find(u => u.utxoId === spendUtxoId)
+      const utxoToRemove = utxos.find((u) => u.utxoId === spendUtxoId)
       if (utxoToRemove) {
         removeItemFromArray(utxos, utxoToRemove)
       }
@@ -67,40 +77,49 @@ export class UtxoService {
   }
 
   async syncUtxoState(addresses: string[]): Promise<void> {
-    const { safeUtxos, diff, bestBlock, localDiff, tipStatus } = await this.syncSafeStateAndGetDiff(addresses)
+    const { safeUtxos, diff, bestBlock, localDiff, tipStatus } =
+      await this.syncSafeStateAndGetDiff(addresses)
 
-    const groups = groupBy(diff.diffItems, i => i.type)
+    const groups = groupBy(diff.diffItems, (i) => i.type)
 
     const diffToBestBlock: UtxoDiffToBestBlock = {
       lastBestBlockHash: bestBlock,
-      spentUtxoIds: groups[DiffType.INPUT] ? groups[DiffType.INPUT].map(d => d.id) : [],
-      newUtxos: groups[DiffType.OUTPUT] ? (groups[DiffType.OUTPUT] as UtxoDiffItemOutput[]).map(d => d.utxo) : []
+      spentUtxoIds: groups[DiffType.INPUT]
+        ? groups[DiffType.INPUT].map((d) => d.id)
+        : [],
+      newUtxos: groups[DiffType.OUTPUT]
+        ? (groups[DiffType.OUTPUT] as UtxoDiffItemOutput[]).map((d) => d.utxo)
+        : []
     }
 
     if (localDiff && localDiff.length > 0) {
-      const diffFromBestBlock = localDiff
-        .find(d => d.lastBestBlockHash === tipStatus.reference.lastFoundBestBlock)
+      const diffFromBestBlock = localDiff.find(
+        (d) => d.lastBestBlockHash === tipStatus.reference.lastFoundBestBlock
+      )
 
-      const diffFromBestBlockNotFoundError = 'This should never happen, '
-      + 'as we send the lastBestBlockHash from all diffs '
-      + 'to the API, and it should always respond with at least one of them, '
-      + 'or throw an error which should be handled somewhere else.'
-      
-      if (!diffFromBestBlock)
-        throw new Error(diffFromBestBlockNotFoundError)
-      
+      const diffFromBestBlockNotFoundError =
+        'This should never happen, ' +
+        'as we send the lastBestBlockHash from all diffs ' +
+        'to the API, and it should always respond with at least one of them, ' +
+        'or throw an error which should be handled somewhere else.'
+
+      if (!diffFromBestBlock) throw new Error(diffFromBestBlockNotFoundError)
+
       const indexOfDiffFromBestBlock = localDiff.indexOf(diffFromBestBlock)
       if (indexOfDiffFromBestBlock === -1)
         throw new Error(diffFromBestBlockNotFoundError)
 
       for (let i = indexOfDiffFromBestBlock; i < localDiff.length - 1; i++) {
         const diffToRemove = localDiff[indexOfDiffFromBestBlock]
-        await this._utxoStorage.removeDiffWithBestBlock(diffToRemove.lastBestBlockHash)
+        await this._utxoStorage.removeDiffWithBestBlock(
+          diffToRemove.lastBestBlockHash
+        )
       }
 
-      const diffWhichIsNowSafe = localDiff
-        .find(d => d.lastBestBlockHash === tipStatus.reference.lastFoundSafeBlock)
-      
+      const diffWhichIsNowSafe = localDiff.find(
+        (d) => d.lastBestBlockHash === tipStatus.reference.lastFoundSafeBlock
+      )
+
       if (diffWhichIsNowSafe) {
         await this.mergeDiffsIntoSafeUtxoSet(
           safeUtxos,
@@ -115,11 +134,11 @@ export class UtxoService {
   }
 
   private async syncSafeStateAndGetDiff(addresses: string[]): Promise<{
-    safeBlockHash: string,
-    safeUtxos: Utxo[],
-    diff: UtxoDiff,
-    bestBlock: string,
-    localDiff: UtxoDiffToBestBlock[],
+    safeBlockHash: string
+    safeUtxos: Utxo[]
+    diff: UtxoDiff
+    bestBlock: string
+    localDiff: UtxoDiffToBestBlock[]
     tipStatus: TipStatusReference
   }> {
     const { safeBlockHash, safeUtxos } = await this.getUtxoSafePoint(addresses)
@@ -127,22 +146,32 @@ export class UtxoService {
     let referenceBlocks = [safeBlockHash]
     const localDiff = await this._utxoStorage.getUtxoDiffToBestBlock()
     if (localDiff && localDiff.length > 0) {
-      referenceBlocks = referenceBlocks.concat(localDiff.map(d => d.lastBestBlockHash))
+      referenceBlocks = referenceBlocks.concat(
+        localDiff.map((d) => d.lastBestBlockHash)
+      )
     }
 
-    const tipStatusResponse = await this._api.getTipStatusWithReference(referenceBlocks)
+    const tipStatusResponse = await this._api.getTipStatusWithReference(
+      referenceBlocks
+    )
     if (tipStatusResponse.result === UtxoApiResult.SAFEBLOCK_ROLLBACK) {
       await this._utxoStorage.clearUtxoState()
       return await this.syncSafeStateAndGetDiff(addresses)
     }
     const tipStatus = tipStatusResponse.value as TipStatusReference
 
-    const { safeBlockRollback, value } = await this.getUtxoDiffSincePoint(addresses, tipStatus.reference.lastFoundBestBlock)
+    const { safeBlockRollback, value } = await this.getUtxoDiffSincePoint(
+      addresses,
+      tipStatus.reference.lastFoundBestBlock
+    )
     if (safeBlockRollback) {
       await this._utxoStorage.clearUtxoState()
       return await this.syncSafeStateAndGetDiff(addresses)
     } else {
-      if (!value) throw new Error('value should not be falsy if safeBlockRollback is false')
+      if (!value)
+        throw new Error(
+          'value should not be falsy if safeBlockRollback is false'
+        )
       const { diff, bestBlock } = value
       return {
         safeBlockHash,
@@ -155,10 +184,13 @@ export class UtxoService {
     }
   }
 
-  private async getUtxoDiffSincePoint(addresses: string[], afterBestBlock: string): Promise<{
-    safeBlockRollback: boolean,
+  private async getUtxoDiffSincePoint(
+    addresses: string[],
+    afterBestBlock: string
+  ): Promise<{
+    safeBlockRollback: boolean
     value?: {
-      diff: UtxoDiff,
+      diff: UtxoDiff
       bestBlock: string
     }
   }> {
@@ -176,7 +208,8 @@ export class UtxoService {
         safeBlockRollback: true
       }
     } else {
-      if (!diffResult.value) throw new Error('value should be defined when result is SUCCESS')
+      if (!diffResult.value)
+        throw new Error('value should be defined when result is SUCCESS')
       return {
         safeBlockRollback: false,
         value: {
@@ -197,7 +230,7 @@ export class UtxoService {
     const utxoMap = safeUtxos.reduce((prev, curr) => {
       prev[curr.utxoId] = curr
       return prev
-    }, {} as {[key: string]: Utxo})
+    }, {} as { [key: string]: Utxo })
 
     const diffsToMerge = sliceArrayUntilItem(localDiff, diffWhichIsNowSafe)
     for (const diffToMerge of diffsToMerge) {
@@ -209,20 +242,27 @@ export class UtxoService {
         utxoMap[newUtxo.utxoId] = newUtxo
       }
 
-      await this._utxoStorage.removeDiffWithBestBlock(diffToMerge.lastBestBlockHash)
+      await this._utxoStorage.removeDiffWithBestBlock(
+        diffToMerge.lastBestBlockHash
+      )
     }
 
-    const newSafeUtxos = Object.keys(utxoMap).map(k => utxoMap[k])
-    await this._utxoStorage.replaceUtxoAtSafePoint(newSafeUtxos, lastFoundSafeBlock)
+    const newSafeUtxos = Object.keys(utxoMap).map((k) => utxoMap[k])
+    await this._utxoStorage.replaceUtxoAtSafePoint(
+      newSafeUtxos,
+      lastFoundSafeBlock
+    )
   }
 
   private async getUtxoSafePoint(addresses: string[]): Promise<{
-    safeBlockHash: string,
+    safeBlockHash: string
     safeUtxos: Utxo[]
   }> {
     const localSafePoint = await this._utxoStorage.getUtxoAtSafePoint()
     if (!localSafePoint) {
-      const { safeBlockHash, utxos } = await this.getUtxoAtSafePointFromApi(addresses)
+      const { safeBlockHash, utxos } = await this.getUtxoAtSafePointFromApi(
+        addresses
+      )
       this._utxoStorage.replaceUtxoAtSafePoint(utxos, safeBlockHash)
 
       return {
@@ -238,7 +278,7 @@ export class UtxoService {
   }
 
   private async getUtxoAtSafePointFromApi(addresses: string[]): Promise<{
-    safeBlockHash: string,
+    safeBlockHash: string
     utxos: Utxo[]
   }> {
     const safeBlock = await this._api.getSafeBlock()
@@ -250,7 +290,8 @@ export class UtxoService {
     if (utxosResponse.result === UtxoApiResult.SAFEBLOCK_ROLLBACK) {
       return await this.getUtxoAtSafePointFromApi(addresses)
     } else {
-      if (!utxosResponse.value) throw new Error('value should be defined when result is SUCCESS')
+      if (!utxosResponse.value)
+        throw new Error('value should be defined when result is SUCCESS')
       return {
         safeBlockHash: safeBlock,
         utxos: utxosResponse.value

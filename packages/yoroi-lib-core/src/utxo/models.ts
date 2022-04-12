@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js"
+import BigNumber from 'bignumber.js'
 
 export enum UtxoApiResult {
   SUCCESS = 'SUCCESS',
@@ -25,10 +25,10 @@ export type UtxoDiffSincePointRequest = {
 }
 
 export type Asset = {
-  assetId: string,
-  policyId: string,
-  name: string,
-  amount: string,
+  assetId: string
+  policyId: string
+  name: string
+  amount: string
 }
 
 export type Utxo = {
@@ -43,7 +43,7 @@ export type Utxo = {
 
 export enum DiffType {
   INPUT = 'input',
-  OUTPUT = 'output',
+  OUTPUT = 'output'
 }
 
 export type UtxoDiffItem = {

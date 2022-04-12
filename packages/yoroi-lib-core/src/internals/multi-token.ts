@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { DefaultTokenEntry, TokenEntry } from "./models"
+import { DefaultTokenEntry, TokenEntry } from './models'
 
 export class MultiToken {
   // this could be a map, but the # of elements is small enough the perf difference is trivial
@@ -133,9 +133,7 @@ export class MultiToken {
   }
 
   asMap(): Map<string, BigNumber> {
-    return new Map(
-      this.values.map((value) => [value.identifier, value.amount])
-    )
+    return new Map(this.values.map((value) => [value.identifier, value.amount]))
   }
 
   isEqualTo(tokens: MultiToken): boolean {

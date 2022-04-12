@@ -8,30 +8,30 @@ export const PRIMARY_ASSET_CONSTANTS = {
 }
 
 export type Transaction = {
-  hash: string;
+  hash: string
 }
 
 export type UtxoTransactionOutput = {
-  outputIndex: number;
+  outputIndex: number
 }
 
 export type UtxoTxOutput = {
-  transaction: Transaction;
-  utxoTransactionOutput: UtxoTransactionOutput;
+  transaction: Transaction
+  utxoTransactionOutput: UtxoTransactionOutput
   tokens: Array<{
-    tokenList: TokenList;
-    token: Token;
-  }>;
+    tokenList: TokenList
+    token: Token
+  }>
 }
 
 export type AddressingUtxo = AddressingAddress & {
-  output: UtxoTxOutput;
+  output: UtxoTxOutput
 }
 
 export type CardanoAddressedUtxo = RemoteUnspentOutput & Addressing
 
 export type Value = {
-  values: MultiToken;
+  values: MultiToken
 }
 
 export type Change = AddressingAddress & Value
@@ -39,88 +39,88 @@ export type Change = AddressingAddress & Value
 export type AddressingAddress = Address & Addressing
 
 export type Address = {
-  address: string;
+  address: string
 }
 
 export type Addressing = {
   addressing: {
-    path: number[];
-    startLevel: number;
-  };
+    path: number[]
+    startLevel: number
+  }
 }
 
 export type TxOutput = {
-  address: string;
-  amount: MultiToken;
+  address: string
+  amount: MultiToken
 }
 
 export type RemoteUnspentOutput = {
-  amount: string;
-  receiver: string;
-  txHash: string;
-  txIndex: number;
-  utxoId: string;
-  assets: ReadonlyArray<UtxoAsset>;
+  amount: string
+  receiver: string
+  txHash: string
+  txIndex: number
+  utxoId: string
+  assets: ReadonlyArray<UtxoAsset>
 }
 
 export type UtxoAsset = {
-  assetId: string;
-  amount: string;
+  assetId: string
+  amount: string
 }
 
 export type SendToken = {
-  amount: BigNumber;
-  token: Token;
-  shouldSendAll: boolean;
+  amount: BigNumber
+  token: Token
+  shouldSendAll: boolean
 }
 
 export type TokenList = {
-  amount: string;
+  amount: string
 }
 
 export type Token = {
-  identifier: string;
-  networkId: number;
-  isDefault: boolean;
+  identifier: string
+  networkId: number
+  isDefault: boolean
 }
 
 export type DefaultTokenEntry = {
-  defaultNetworkId: number;
-  defaultIdentifier: string;
+  defaultNetworkId: number
+  defaultIdentifier: string
 }
 
 export type TokenEntry = {
-  amount: BigNumber;
-  identifier: string;
-  networkId: number;
+  amount: BigNumber
+  identifier: string
+  networkId: number
 }
 
 // This name will probably change
 export type MultiTokenConstruct = {
-  values: Array<TokenEntry>;
-  defaults: DefaultTokenEntry;
+  values: Array<TokenEntry>
+  defaults: DefaultTokenEntry
 }
 
 export type TxOptions = {
-  metadata?: ReadonlyArray<TxMetadata>;
+  metadata?: ReadonlyArray<TxMetadata>
 }
 
 export type TxMetadata = {
-  label: string;
-  data: any;
+  label: string
+  data: any
 }
 
 export type CardanoHaskellConfig = {
-  keyDeposit: string;
-  linearFee: LinearFee;
-  minimumUtxoVal: string;
-  poolDeposit: string;
-  networkId: number;
+  keyDeposit: string
+  linearFee: LinearFee
+  minimumUtxoVal: string
+  poolDeposit: string
+  networkId: number
 }
 
 export type LinearFee = {
-  coefficient: string;
-  constant: string;
+  coefficient: string
+  constant: string
 }
 
 export enum MetadataJsonSchema {

@@ -31,9 +31,14 @@ export const init = (): IYoroiLib => {
       )
     },
     hashTransaction: (txBody: Browser.TransactionBody) => {
-      return Promise.resolve(new Browser.TransactionHash(WasmV4.hash_transaction(txBody.wasm)))
+      return Promise.resolve(
+        new Browser.TransactionHash(WasmV4.hash_transaction(txBody.wasm))
+      )
     },
-    makeVkeyWitness: (txBodyHash: Browser.TransactionHash, sk: Browser.PrivateKey) => {
+    makeVkeyWitness: (
+      txBodyHash: Browser.TransactionHash,
+      sk: Browser.PrivateKey
+    ) => {
       return Promise.resolve(
         new Browser.Vkeywitness(
           WasmV4.make_vkey_witness(txBodyHash.wasm, sk.wasm)
@@ -43,8 +48,8 @@ export const init = (): IYoroiLib => {
     makeIcarusBootstrapWitness: (
       txBodyHash: Browser.TransactionHash,
       addr: Browser.ByronAddress,
-      key: Browser.Bip32PrivateKey) =>
-    {
+      key: Browser.Bip32PrivateKey
+    ) => {
       return Promise.resolve(
         new Browser.BootstrapWitness(
           WasmV4.make_icarus_bootstrap_witness(
@@ -53,6 +58,14 @@ export const init = (): IYoroiLib => {
             key.wasm
           )
         )
+      )
+    },
+    decodeMetadatumToJsonStr: (
+      metadatum: Browser.TransactionMetadatum,
+      schema: number
+    ) => {
+      return Promise.resolve(
+        WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema)
       )
     },
     BigNum: Browser.BigNum,
@@ -102,7 +115,8 @@ export const init = (): IYoroiLib => {
     BootstrapWitnesses: Browser.BootstrapWitnesses,
     TransactionWitnessSet: Browser.TransactionWitnessSet,
     Transaction: Browser.Transaction,
-    NetworkInfo: Browser.NetworkInfo
+    NetworkInfo: Browser.NetworkInfo,
+    MetadataList: Browser.MetadataList
   })
 }
 
@@ -213,7 +227,9 @@ namespace Browser {
       key: BigNum,
       value: TransactionMetadatum
     ): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.insert(key.wasm, value.wasm)))
+      return Promise.resolve(
+        new TransactionMetadatum(this.wasm.insert(key.wasm, value.wasm))
+      )
     }
 
     get(key: BigNum): Promise<TransactionMetadatum> {
@@ -305,9 +321,7 @@ namespace Browser {
     }
 
     insert(key: AssetName, value: BigNum): Promise<BigNum> {
-      return Promise.resolve(
-        new BigNum(this.wasm.insert(key.wasm, value.wasm))
-      )
+      return Promise.resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)))
     }
 
     get(key: AssetName): Promise<BigNum> {
@@ -382,9 +396,7 @@ namespace Browser {
     }
 
     insert(key: PolicyID, value: Assets): Promise<Assets> {
-      return Promise.resolve(
-        new Assets(this.wasm.insert(key.wasm, value.wasm))
-      )
+      return Promise.resolve(new Assets(this.wasm.insert(key.wasm, value.wasm)))
     }
 
     get(key: PolicyID): Promise<Assets> {
@@ -602,32 +614,28 @@ namespace Browser {
     toPublic(): Promise<PublicKey> {
       return Promise.resolve(new PublicKey(this.wasm.to_public()))
     }
-  
+
     asBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.as_bytes())
     }
-  
+
     sign(message: Uint8Array): Promise<Ed25519Signature> {
       return Promise.resolve(new Ed25519Signature(this.wasm.sign(message)))
     }
-  
+
     static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
       return Promise.resolve(
-        new PrivateKey(
-          WasmV4.PrivateKey.from_extended_bytes(bytes)
-        )
+        new PrivateKey(WasmV4.PrivateKey.from_extended_bytes(bytes))
       )
     }
-  
+
     static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
       return Promise.resolve(
-        new PrivateKey(
-          WasmV4.PrivateKey.from_normal_bytes(bytes)
-        )
+        new PrivateKey(WasmV4.PrivateKey.from_normal_bytes(bytes))
       )
     }
   }
-  
+
   export class Bip32PrivateKey
     extends Ptr<WasmV4.Bip32PrivateKey>
     implements WasmContract.Bip32PrivateKey
@@ -635,59 +643,49 @@ namespace Browser {
     derive(index: number): Promise<Bip32PrivateKey> {
       return Promise.resolve(new Bip32PrivateKey(this.wasm.derive(index)))
     }
-  
+
     toRawKey(): Promise<PrivateKey> {
       return Promise.resolve(new PrivateKey(this.wasm.to_raw_key()))
     }
-  
+
     toPublic(): Promise<Bip32PublicKey> {
       return Promise.resolve(new Bip32PublicKey(this.wasm.to_public()))
     }
-  
+
     asBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.as_bytes())
     }
-  
+
     toBech32(): Promise<string> {
       return Promise.resolve(this.wasm.to_bech32())
     }
-  
-    static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
+
+    static fromBip39Entropy(
+      entropy: Uint8Array,
+      password: Uint8Array
+    ): Promise<Bip32PrivateKey> {
       return Promise.resolve(
         new Bip32PrivateKey(
-          WasmV4.Bip32PrivateKey.from_bip39_entropy(
-            entropy,
-            password
-          )
+          WasmV4.Bip32PrivateKey.from_bip39_entropy(entropy, password)
         )
       )
     }
-  
+
     static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
       return Promise.resolve(
-        new Bip32PrivateKey(
-          WasmV4.Bip32PrivateKey.from_bech32(
-            bech32Str
-          )
-        )
+        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bech32(bech32Str))
       )
     }
-  
+
     static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
       return Promise.resolve(
-        new Bip32PrivateKey(
-          WasmV4.Bip32PrivateKey.from_bytes(
-            bytes
-          )
-        )
+        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bytes(bytes))
       )
     }
-  
+
     static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
       return Promise.resolve(
-        new Bip32PrivateKey(
-          WasmV4.Bip32PrivateKey.generate_ed25519_bip32()
-        )
+        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.generate_ed25519_bip32())
       )
     }
   }
@@ -717,7 +715,9 @@ namespace Browser {
       protocolMagic: number
     ): Promise<ByronAddress> {
       return Promise.resolve(
-        new ByronAddress(WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic))
+        new ByronAddress(
+          WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic)
+        )
       )
     }
 
@@ -1048,9 +1048,7 @@ namespace Browser {
     }
 
     insert(key: RewardAddress, value: BigNum): Promise<BigNum> {
-      return Promise.resolve(
-        new BigNum(this.wasm.insert(key.wasm, value.wasm))
-      )
+      return Promise.resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)))
     }
 
     get(key: RewardAddress): Promise<BigNum> {
@@ -1283,15 +1281,21 @@ namespace Browser {
     }
 
     static fromAddress(addr: Address): Promise<BaseAddress> {
-      return Promise.resolve(new BaseAddress(WasmV4.BaseAddress.from_address(addr.wasm)))
+      return Promise.resolve(
+        new BaseAddress(WasmV4.BaseAddress.from_address(addr.wasm))
+      )
     }
 
     static new(
       network: number,
       payment: StakeCredential,
-      stake: StakeCredential,
+      stake: StakeCredential
     ): Promise<BaseAddress> {
-      return Promise.resolve(new BaseAddress(WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm)))
+      return Promise.resolve(
+        new BaseAddress(
+          WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm)
+        )
+      )
     }
   }
 
@@ -1313,20 +1317,18 @@ namespace Browser {
 
     static fromAddress(addr: Address): Promise<PointerAddress> {
       return Promise.resolve(
-        new PointerAddress(
-          WasmV4.PointerAddress.from_address(addr.wasm)
-        )
+        new PointerAddress(WasmV4.PointerAddress.from_address(addr.wasm))
       )
     }
 
-    static new(network: number, payment: StakeCredential, stake: Pointer): Promise<PointerAddress> {
+    static new(
+      network: number,
+      payment: StakeCredential,
+      stake: Pointer
+    ): Promise<PointerAddress> {
       return Promise.resolve(
         new PointerAddress(
-          WasmV4.PointerAddress.new(
-            network,
-            payment.wasm,
-            stake.wasm
-          )
+          WasmV4.PointerAddress.new(network, payment.wasm, stake.wasm)
         )
       )
     }
@@ -1346,21 +1348,17 @@ namespace Browser {
 
     static fromAddress(addr: Address): Promise<EnterpriseAddress> {
       return Promise.resolve(
-        new EnterpriseAddress(
-          WasmV4.EnterpriseAddress.from_address(
-            addr.wasm
-          )
-        )
+        new EnterpriseAddress(WasmV4.EnterpriseAddress.from_address(addr.wasm))
       )
     }
 
-    static new(network: number, payment: StakeCredential): Promise<EnterpriseAddress> {
+    static new(
+      network: number,
+      payment: StakeCredential
+    ): Promise<EnterpriseAddress> {
       return Promise.resolve(
         new EnterpriseAddress(
-          WasmV4.EnterpriseAddress.new(
-            network,
-            payment.wasm
-          )
+          WasmV4.EnterpriseAddress.new(network, payment.wasm)
         )
       )
     }
@@ -1382,15 +1380,18 @@ namespace Browser {
       return Promise.resolve(this.wasm.cert_index())
     }
 
-    static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
-      return Promise.resolve(new Pointer(WasmV4.Pointer.new(slot, txIndex, certIndex)))
+    static new(
+      slot: number,
+      txIndex: number,
+      certIndex: number
+    ): Promise<Pointer> {
+      return Promise.resolve(
+        new Pointer(WasmV4.Pointer.new(slot, txIndex, certIndex))
+      )
     }
   }
 
-  export class Vkey
-    extends Ptr<WasmV4.Vkey>
-    implements WasmContract.Vkey
-  {
+  export class Vkey extends Ptr<WasmV4.Vkey> implements WasmContract.Vkey {
     static new(pk: PublicKey): Promise<Vkey> {
       return Promise.resolve(new Vkey(WasmV4.Vkey.new(pk.wasm)))
     }
@@ -1410,11 +1411,7 @@ namespace Browser {
 
     static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
       return Promise.resolve(
-        new Ed25519Signature(
-          WasmV4.Ed25519Signature.from_bytes(
-            bytes
-          )
-        )
+        new Ed25519Signature(WasmV4.Ed25519Signature.from_bytes(bytes))
       )
     }
   }
@@ -1433,17 +1430,13 @@ namespace Browser {
 
     static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
       return Promise.resolve(
-        new Vkeywitness(
-          WasmV4.Vkeywitness.from_bytes(bytes)
-        )
+        new Vkeywitness(WasmV4.Vkeywitness.from_bytes(bytes))
       )
     }
 
     static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
       return Promise.resolve(
-        new Vkeywitness(
-          WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm)
-        )
+        new Vkeywitness(WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm))
       )
     }
   }
@@ -1455,17 +1448,13 @@ namespace Browser {
     len(): Promise<number> {
       return Promise.resolve(this.wasm.len())
     }
-  
+
     add(item: Vkeywitness): Promise<void> {
       return Promise.resolve(this.wasm.add(item.wasm))
     }
-  
+
     static new(): Promise<Vkeywitnesses> {
-      return Promise.resolve(
-        new Vkeywitnesses(
-          WasmV4.Vkeywitnesses.new()
-        )
-      )
+      return Promise.resolve(new Vkeywitnesses(WasmV4.Vkeywitnesses.new()))
     }
   }
 
@@ -1479,9 +1468,7 @@ namespace Browser {
 
     static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
       return Promise.resolve(
-        new BootstrapWitness(
-          WasmV4.BootstrapWitness.from_bytes(bytes)
-        )
+        new BootstrapWitness(WasmV4.BootstrapWitness.from_bytes(bytes))
       )
     }
 
@@ -1489,7 +1476,7 @@ namespace Browser {
       vkey: Vkey,
       signature: Ed25519Signature,
       chainCode: Uint8Array,
-      attributes: Uint8Array,
+      attributes: Uint8Array
     ): Promise<BootstrapWitness> {
       return Promise.resolve(
         new BootstrapWitness(
@@ -1518,9 +1505,7 @@ namespace Browser {
 
     static new(): Promise<BootstrapWitnesses> {
       return Promise.resolve(
-        new BootstrapWitnesses(
-          WasmV4.BootstrapWitnesses.new()
-        )
+        new BootstrapWitnesses(WasmV4.BootstrapWitnesses.new())
       )
     }
   }
@@ -1532,16 +1517,14 @@ namespace Browser {
     setBootstraps(bootstraps: BootstrapWitnesses): Promise<void> {
       return Promise.resolve(this.wasm.set_bootstraps(bootstraps.wasm))
     }
-  
+
     setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void> {
       return Promise.resolve(this.wasm.set_vkeys(vkeywitnesses.wasm))
     }
-  
+
     static new(): Promise<TransactionWitnessSet> {
       return Promise.resolve(
-        new TransactionWitnessSet(
-          WasmV4.TransactionWitnessSet.new()
-        )
+        new TransactionWitnessSet(WasmV4.TransactionWitnessSet.new())
       )
     }
   }
@@ -1557,11 +1540,11 @@ namespace Browser {
     toBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.to_bytes())
     }
-  
+
     static new(
       body: TransactionBody,
       witnessSet: TransactionWitnessSet,
-      auxiliary: AuxiliaryData,
+      auxiliary: AuxiliaryData
     ): Promise<Transaction> {
       return Promise.resolve(
         new Transaction(
@@ -1576,9 +1559,7 @@ namespace Browser {
 
     static fromBytes(bytes: Uint8Array): Promise<Transaction> {
       return Promise.resolve(
-        new Transaction(
-          WasmV4.Transaction.from_bytes(bytes)
-        )
+        new Transaction(WasmV4.Transaction.from_bytes(bytes))
       )
     }
   }
@@ -1590,33 +1571,54 @@ namespace Browser {
     networkId(): Promise<number> {
       return Promise.resolve(this.wasm.network_id())
     }
-  
+
     protocolMagic(): Promise<number> {
       return Promise.resolve(this.wasm.protocol_magic())
     }
-  
+
     static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
       return Promise.resolve(
-        new NetworkInfo(
-          WasmV4.NetworkInfo.new(networkId, protocolMagic)
-        )
+        new NetworkInfo(WasmV4.NetworkInfo.new(networkId, protocolMagic))
       )
     }
-  
+
     static testnet(): Promise<NetworkInfo> {
+      return Promise.resolve(new NetworkInfo(WasmV4.NetworkInfo.testnet()))
+    }
+
+    static mainnet(): Promise<NetworkInfo> {
+      return Promise.resolve(new NetworkInfo(WasmV4.NetworkInfo.mainnet()))
+    }
+  }
+
+  export class MetadataList
+    extends Ptr<WasmV4.MetadataList>
+    implements WasmContract.MetadataList
+  {
+    static new(): Promise<MetadataList> {
+      return Promise.resolve(new MetadataList(WasmV4.MetadataList.new()))
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<MetadataList> {
       return Promise.resolve(
-        new NetworkInfo(
-          WasmV4.NetworkInfo.testnet()
-        )
+        new MetadataList(WasmV4.MetadataList.from_bytes(bytes))
       )
     }
-  
-    static mainnet(): Promise<NetworkInfo> {
-      return Promise.resolve(
-        new NetworkInfo(
-          WasmV4.NetworkInfo.mainnet()
-        )
-      )
+
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len())
+    }
+
+    get(index: number): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.get(index)))
+    }
+
+    add(item: TransactionMetadatum): Promise<void> {
+      return Promise.resolve(this.wasm.add(item.wasm))
+    }
+
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
     }
   }
 }

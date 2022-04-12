@@ -1,11 +1,24 @@
 import * as WasmContract from './wasm-contract'
 import { BigNumber } from 'bignumber.js'
 
-import { CardanoAddressedUtxo, Change, DefaultTokenEntry, MultiTokenConstruct, PRIMARY_ASSET_CONSTANTS, TxMetadata } from './models'
+import {
+  CardanoAddressedUtxo,
+  Change,
+  DefaultTokenEntry,
+  MultiTokenConstruct,
+  PRIMARY_ASSET_CONSTANTS,
+  TxMetadata
+} from './models'
 import { createMetadata } from './utils'
 import { normalizeToAddress } from './utils/addresses'
-import { getCardanoSpendingKeyHash, derivePrivateByAddressing } from './utils/crypto'
-import { multiTokenFromCardanoValue, multiTokenFromRemote } from './utils/assets'
+import {
+  getCardanoSpendingKeyHash,
+  derivePrivateByAddressing
+} from './utils/crypto'
+import {
+  multiTokenFromCardanoValue,
+  multiTokenFromRemote
+} from './utils/assets'
 import { MultiToken } from './multi-token'
 
 interface Bip44DerivationLevel {
@@ -44,9 +57,15 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _certificates: ReadonlyArray<WasmContract.Certificate>
 
   private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
-  private _inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>
+  private _inputs: ReadonlyArray<{
+    address: string
+    value: MultiTokenConstruct
+  }>
   private _totalInput: MultiTokenConstruct
-  private _outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>
+  private _outputs: ReadonlyArray<{
+    address: string
+    value: MultiTokenConstruct
+  }>
   private _totalOutput: MultiTokenConstruct
   private _fee: MultiTokenConstruct
   private _change: ReadonlyArray<Change>
@@ -57,7 +76,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._senderUtxos
   }
 
-  get inputs(): ReadonlyArray<{address: string, value: MultiTokenConstruct}> {
+  get inputs(): ReadonlyArray<{ address: string; value: MultiTokenConstruct }> {
     return this._inputs
   }
 
@@ -65,7 +84,10 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._totalInput
   }
 
-  get outputs(): ReadonlyArray<{address: string, value: MultiTokenConstruct}> {
+  get outputs(): ReadonlyArray<{
+    address: string
+    value: MultiTokenConstruct
+  }> {
     return this._outputs
   }
 
@@ -99,9 +121,9 @@ export class WasmUnsignedTx implements UnsignedTx {
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: CardanoAddressedUtxo[],
-    inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalInput: MultiTokenConstruct,
-    outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    outputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalOutput: MultiTokenConstruct,
     fee: MultiTokenConstruct,
     change: ReadonlyArray<Change>,
@@ -127,15 +149,15 @@ export class WasmUnsignedTx implements UnsignedTx {
     txBuilder: WasmContract.TransactionBuilder,
     certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: CardanoAddressedUtxo[],
-    inputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalInput: MultiTokenConstruct,
-    outputs: ReadonlyArray<{address: string, value: MultiTokenConstruct}>,
+    outputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalOutput: MultiTokenConstruct,
     fee: MultiTokenConstruct,
     change: ReadonlyArray<Change>,
     metadata: ReadonlyArray<TxMetadata>
   ): Promise<WasmUnsignedTx> {
-    const txBytes = await txBuilder.build().then(x => x.toBytes())
+    const txBytes = await txBuilder.build().then((x) => x.toBytes())
     return new WasmUnsignedTx(
       wasm,
       txBuilder,
@@ -209,7 +231,7 @@ export class WasmUnsignedTx implements UnsignedTx {
       keyLevel,
       signingKey,
       vkeyWits,
-      bootstrapWits,
+      bootstrapWits
     )
 
     const stakingKeySigSet = new Set<string>()
@@ -219,24 +241,19 @@ export class WasmUnsignedTx implements UnsignedTx {
       }
       stakingKeySigSet.add(witness)
       vkeyWits.add(
-        await this._wasm.Vkeywitness.fromBytes(
-          Buffer.from(witness, 'hex')
-        )
+        await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
       )
     }
 
     const witnessSet = await this._wasm.TransactionWitnessSet.new()
-    if (await bootstrapWits.len() > 0) await witnessSet.setBootstraps(bootstrapWits)
-    if (await vkeyWits.len() > 0) await witnessSet.setVkeys(vkeyWits)
+    if ((await bootstrapWits.len()) > 0)
+      await witnessSet.setBootstraps(bootstrapWits)
+    if ((await vkeyWits.len()) > 0) await witnessSet.setVkeys(vkeyWits)
 
     const fullMetadata = (this.metadata ?? []).concat(extraMetadata ?? [])
     const aux = await createMetadata(this._wasm, fullMetadata)
 
-    const signedTx = await this._wasm.Transaction.new(
-      txBody,
-      witnessSet,
-      aux
-    )
+    const signedTx = await this._wasm.Transaction.new(txBody, witnessSet, aux)
 
     const signedTxBody = await signedTx.body()
     const signedTxHash = await this._wasm.hashTransaction(signedTxBody)
@@ -253,41 +270,48 @@ export class WasmUnsignedTx implements UnsignedTx {
     keyLevel: number,
     signingKey: WasmContract.Bip32PrivateKey,
     vkeyWits: WasmContract.Vkeywitnesses,
-    bootstrapWits: WasmContract.BootstrapWitnesses,
+    bootstrapWits: WasmContract.BootstrapWitnesses
   ): Promise<void> {
     // get private keys
-    const privateKeys = await Promise.all(uniqueUtxos.map(async (utxo) => {
-      const lastLevelSpecified = utxo.addressing.startLevel + utxo.addressing.path.length - 1
-      if (lastLevelSpecified !== Bip44DerivationLevels.ADDRESS.level) {
-        throw new Error(`WasmUnsignedTx.addWitnesses incorrect addressing size`)
-      }
-      return await derivePrivateByAddressing(
-        utxo,
-        {
-          level: keyLevel,
-          key: signingKey,
+    const privateKeys = await Promise.all(
+      uniqueUtxos.map(async (utxo) => {
+        const lastLevelSpecified =
+          utxo.addressing.startLevel + utxo.addressing.path.length - 1
+        if (lastLevelSpecified !== Bip44DerivationLevels.ADDRESS.level) {
+          throw new Error(
+            `WasmUnsignedTx.addWitnesses incorrect addressing size`
+          )
         }
-      )
-    }))
-      
+        return await derivePrivateByAddressing(utxo, {
+          level: keyLevel,
+          key: signingKey
+        })
+      })
+    )
+
     // sign the transactions
     for (let i = 0; i < uniqueUtxos.length; i++) {
-      const wasmAddr = await normalizeToAddress(this._wasm, uniqueUtxos[i].receiver)
+      const wasmAddr = await normalizeToAddress(
+        this._wasm,
+        uniqueUtxos[i].receiver
+      )
       if (!wasmAddr?.hasValue()) {
-        throw new Error(`WasmUnsignedTx.addWitnesses utxo not a valid Shelley address`)
+        throw new Error(
+          `WasmUnsignedTx.addWitnesses utxo not a valid Shelley address`
+        )
       }
       const byronAddr = await this._wasm.ByronAddress.fromAddress(wasmAddr)
       if (!byronAddr.hasValue()) {
         const vkeyWit = await this._wasm.makeVkeyWitness(
           txHash,
-          await privateKeys[i].toRawKey(),
+          await privateKeys[i].toRawKey()
         )
         vkeyWits.add(vkeyWit)
       } else {
         const bootstrapWit = await this._wasm.makeIcarusBootstrapWitness(
           txHash,
           byronAddr,
-          privateKeys[i],
+          privateKeys[i]
         )
         bootstrapWits.add(bootstrapWit)
       }
@@ -296,27 +320,27 @@ export class WasmUnsignedTx implements UnsignedTx {
 }
 
 export interface UnsignedTx {
-  readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>;
+  readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
   readonly inputs: ReadonlyArray<{
-    address: string,
+    address: string
     value: MultiTokenConstruct
-  }>;
-  readonly totalInput: MultiTokenConstruct;
+  }>
+  readonly totalInput: MultiTokenConstruct
   readonly outputs: ReadonlyArray<{
-    address: string,
+    address: string
     value: MultiTokenConstruct
-  }>;
-  readonly totalOutput: MultiTokenConstruct;
-  readonly fee: MultiTokenConstruct;
-  readonly change: ReadonlyArray<Change>;
-  readonly metadata: ReadonlyArray<TxMetadata>;
-  readonly encodedTx: string;
+  }>
+  readonly totalOutput: MultiTokenConstruct
+  readonly fee: MultiTokenConstruct
+  readonly change: ReadonlyArray<Change>
+  readonly metadata: ReadonlyArray<TxMetadata>
+  readonly encodedTx: string
   sign(
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
     metadata: ReadonlyArray<TxMetadata>
-  ): Promise<SignedTx>;
+  ): Promise<SignedTx>
 }
 
 export async function genWasmUnsignedTx(
@@ -347,29 +371,31 @@ export async function genWasmUnsignedTx(
 async function genWasmUnsignedTxInputs(
   txBuilder: WasmContract.TransactionBuilder,
   senderUtxos: CardanoAddressedUtxo[],
-  networkId: number):
-Promise<ReadonlyArray<{
-  address: string,
-  value: MultiTokenConstruct,
-}>> {
+  networkId: number
+): Promise<
+  ReadonlyArray<{
+    address: string
+    value: MultiTokenConstruct
+  }>
+> {
   const body = await txBuilder.build()
   const values = [] as {
-    address: string,
-    value: MultiTokenConstruct,
+    address: string
+    value: MultiTokenConstruct
   }[]
 
   const inputs = await body.inputs()
-  for (let i = 0; i < await inputs.len(); i++) {
+  for (let i = 0; i < (await inputs.len()); i++) {
     const input = await inputs.get(i)
 
-    const txIdBytes = await input.transactionId().then(x => x.toBytes())
+    const txIdBytes = await input.transactionId().then((x) => x.toBytes())
     const key = {
       hash: Buffer.from(txIdBytes).toString('hex'),
-      index: await input.index(),
+      index: await input.index()
     }
 
     const utxoEntry = senderUtxos.find(
-      utxo => utxo.txHash === key.hash && utxo.txIndex === key.index
+      (utxo) => utxo.txHash === key.hash && utxo.txIndex === key.index
     )
 
     if (!utxoEntry) {
@@ -382,7 +408,7 @@ Promise<ReadonlyArray<{
         defaults: ma.defaults,
         values: ma.values
       },
-      address: utxoEntry.receiver,
+      address: utxoEntry.receiver
     })
   }
 
@@ -392,8 +418,8 @@ Promise<ReadonlyArray<{
 async function genWasmUnsignedTxTotalInput(
   txBuilder: WasmContract.TransactionBuilder,
   changes: ReadonlyArray<Change>,
-  defaults: DefaultTokenEntry):
-Promise<MultiTokenConstruct> {
+  defaults: DefaultTokenEntry
+): Promise<MultiTokenConstruct> {
   const values = await multiTokenFromCardanoValue(
     await txBuilder
       .getImplicitInput()
@@ -413,49 +439,49 @@ Promise<MultiTokenConstruct> {
 
 async function genWasmUnsignedTxOutputs(
   txBuilder: WasmContract.TransactionBuilder,
-  networkId: number):
-Promise<ReadonlyArray<{
-  address: string,
-  value: MultiTokenConstruct,
-}>> {
+  networkId: number
+): Promise<
+  ReadonlyArray<{
+    address: string
+    value: MultiTokenConstruct
+  }>
+> {
   const body = await txBuilder.build()
 
   const values = [] as {
-    address: string,
+    address: string
     value: MultiTokenConstruct
   }[]
 
   const outputs = await body.outputs()
-    for (let i = 0; i < await outputs.len(); i++) {
-      const output = await outputs.get(i)
+  for (let i = 0; i < (await outputs.len()); i++) {
+    const output = await outputs.get(i)
 
-      const outputAddressBytes = await output.address().then(x => x.toBytes())
-      const ma = await multiTokenFromCardanoValue(
-        await output.amount(),
-        {
-          defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
-          defaultNetworkId: networkId
-        },
-      )
-      values.push({
-        value: {
-          defaults: ma.defaults,
-          values: ma.values
-        },
-        address: Buffer.from(outputAddressBytes).toString('hex'),
-      })
-    }
+    const outputAddressBytes = await output.address().then((x) => x.toBytes())
+    const ma = await multiTokenFromCardanoValue(await output.amount(), {
+      defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+      defaultNetworkId: networkId
+    })
+    values.push({
+      value: {
+        defaults: ma.defaults,
+        values: ma.values
+      },
+      address: Buffer.from(outputAddressBytes).toString('hex')
+    })
+  }
 
-    return values
+  return values
 }
 
 async function genWasmUnsignedTxTotalOutput(
   txBuilder: WasmContract.TransactionBuilder,
-  defaults: DefaultTokenEntry):
-Promise<MultiTokenConstruct> {
+  defaults: DefaultTokenEntry
+): Promise<MultiTokenConstruct> {
   const ma = await multiTokenFromCardanoValue(
     await txBuilder.getExplicitOutput(),
-    defaults)
+    defaults
+  )
   return {
     defaults: ma.defaults,
     values: ma.values
@@ -467,10 +493,7 @@ async function genWasmUnsignedTxFee(
   defaults: DefaultTokenEntry,
   networkId: number
 ): Promise<MultiTokenConstruct> {
-  const values = new MultiToken(
-    [],
-    defaults
-  )
+  const values = new MultiToken([], defaults)
 
   const wasmFee = await txBuilder.getFeeIfSet()
   const fee = wasmFee.hasValue()
@@ -479,8 +502,8 @@ async function genWasmUnsignedTxFee(
 
   values.add({
     identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
-    amount: fee.plus(await txBuilder.getDeposit().then(x => x.toStr())),
-    networkId: networkId,
+    amount: fee.plus(await txBuilder.getDeposit().then((x) => x.toStr())),
+    networkId: networkId
   })
 
   return {

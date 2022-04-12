@@ -1,5 +1,11 @@
 import * as WasmContract from '../wasm-contract'
-import { AddressingAddress, AddressingUtxo, CardanoAddressedUtxo, PRIMARY_ASSET_CONSTANTS, RemoteUnspentOutput } from "../models"
+import {
+  AddressingAddress,
+  AddressingUtxo,
+  CardanoAddressedUtxo,
+  PRIMARY_ASSET_CONSTANTS,
+  RemoteUnspentOutput
+} from '../models'
 import { normalizeToAddress } from './addresses'
 import { AddInputResult } from './index'
 import { identifierToCardanoAsset, multiTokenFromCardanoValue } from './assets'
@@ -11,8 +17,8 @@ export async function minRequiredForChange(
   changeAdaAddr: AddressingAddress,
   value: WasmContract.Value,
   protocolParams: {
-    linearFee: WasmContract.LinearFee;
-    minimumUtxoVal: WasmContract.BigNum;
+    linearFee: WasmContract.LinearFee
+    minimumUtxoVal: WasmContract.BigNum
   }
 ): Promise<WasmContract.BigNum> {
   const wasmChange = await normalizeToAddress(wasm, changeAdaAddr.address)
@@ -46,15 +52,17 @@ export async function minRequiredForChange(
 export async function addUtxoInput(
   wasm: WasmContract.WasmModuleProxy,
   txBuilder: WasmContract.TransactionBuilder,
-  remaining: {
-    hasInput: boolean; // every tx requires at least one input
-    value: WasmContract.Value;
-  } | undefined,
+  remaining:
+    | {
+        hasInput: boolean // every tx requires at least one input
+        value: WasmContract.Value
+      }
+    | undefined,
   input: RemoteUnspentOutput,
   /* don't add the input if the amount is smaller than the fee to add it to the tx */
   excludeIfSmall: boolean,
   protocolParams: {
-    networkId: number;
+    networkId: number
   }
 ): Promise<AddInputResult> {
   const wasmAddr = await normalizeToAddress(wasm, input.receiver)
@@ -195,7 +203,7 @@ export async function asAddressedUtxo(
         },
         {
           amount: new BigNumber(0),
-          tokens: [] as {amount: string, tokenId: string}[]
+          tokens: [] as { amount: string; tokenId: string }[]
         }
       )
 
@@ -242,5 +250,5 @@ export async function isBigNumZero(
   wasm: WasmContract.WasmModuleProxy,
   b: WasmContract.BigNum
 ): Promise<boolean> {
-  return await b.compare(await wasm.BigNum.fromStr('0')) === 0
+  return (await b.compare(await wasm.BigNum.fromStr('0'))) === 0
 }

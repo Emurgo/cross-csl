@@ -4,7 +4,7 @@ import {
   DefaultTokenEntry,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
-  SendToken,
+  SendToken
 } from '../models'
 import * as WasmContract from '../wasm-contract'
 import { firstWithValue } from './index'
@@ -80,8 +80,8 @@ export async function identifierToCardanoAsset(
   wasm: WasmContract.WasmModuleProxy,
   identifier: string
 ): Promise<{
-  policyId: WasmContract.ScriptHash;
-  name: WasmContract.AssetName;
+  policyId: WasmContract.ScriptHash
+  name: WasmContract.AssetName
 }> {
   const parts = identifier.split('.')
   return {
@@ -173,10 +173,10 @@ export function hasSendAllDefault(tokens: Array<SendToken>): boolean {
 
 export async function parseTokenList(assets: WasmContract.MultiAsset): Promise<
   Array<{
-    assetId: string;
-    policyId: string;
-    name: string;
-    amount: string;
+    assetId: string
+    policyId: string
+    name: string
+    amount: string
   }>
 > {
   if (!assets.hasValue()) return []

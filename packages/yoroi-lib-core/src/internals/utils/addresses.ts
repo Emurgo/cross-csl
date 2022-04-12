@@ -16,19 +16,23 @@ export async function normalizeToAddress(
   // 2) If already base16, simply return
   try {
     return await wasm.Address.fromBytes(Buffer.from(addr, 'hex'))
-  } catch (_e) { /* ignore error */ }
+  } catch (_e) {
+    /* ignore error */
+  }
 
   // 3) Try converting from base32
   try {
     return await wasm.Address.fromBech32(addr)
-  } catch (_e) { /* ignore error */ }
+  } catch (_e) {
+    /* ignore error */
+  }
 
   return undefined
 }
 
 export async function toHexOrBase58(
   wasm: WasmContract.WasmModuleProxy,
-  address: WasmContract.Address,
+  address: WasmContract.Address
 ): Promise<string> {
   const asByron = await wasm.ByronAddress.fromAddress(address)
   if (asByron == null) {
