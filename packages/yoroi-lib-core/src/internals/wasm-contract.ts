@@ -963,7 +963,7 @@ export abstract class MetadataList extends Ptr {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
-   static from_bytes(bytes: Uint8Array): Promise<MetadataList> {
+   static fromBytes(bytes: Uint8Array): Promise<MetadataList> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
@@ -973,5 +973,5 @@ export abstract class MetadataList extends Ptr {
 
   abstract add(item: TransactionMetadatum): Promise<void>
 
-  abstract to_bytes(): Promise<Uint8Array>
+  abstract toBytes(): Promise<Uint8Array>
 }
