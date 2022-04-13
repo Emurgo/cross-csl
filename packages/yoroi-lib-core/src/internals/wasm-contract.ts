@@ -89,6 +89,9 @@ export interface WasmModuleProxy {
   Transaction: typeof Transaction
   NetworkInfo: typeof NetworkInfo
   MetadataList: typeof MetadataList
+  TransactionMetadatumLabels: typeof TransactionMetadatumLabels
+  MetadataMap: typeof MetadataMap
+  Int: typeof Int
 }
 
 export abstract class WasmProxy {
@@ -189,19 +192,138 @@ export abstract class LinearFee extends Ptr {
 }
 
 export abstract class GeneralTransactionMetadata extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract len(): Promise<number>
+
   abstract insert(
     key: BigNum,
     value: TransactionMetadatum
   ): Promise<TransactionMetadatum>
+
   abstract get(key: BigNum): Promise<TransactionMetadatum>
 
+  abstract keys(): Promise<TransactionMetadatumLabels>
+
   static new(): Promise<GeneralTransactionMetadata> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<GeneralTransactionMetadata> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class TransactionMetadatumLabels extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract len(): Promise<number>
+
+  abstract get(index: number): Promise<BigNum>
+
+  abstract add(elem: BigNum): Promise<void>
+
+  static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatumLabels> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static new(): Promise<TransactionMetadatumLabels> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class MetadataMap extends Ptr {
+  abstract free(): Promise<void>
+
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract len(): Promise<number>
+
+  abstract insert(key: TransactionMetadatum, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+
+  abstract insertStr(key: string, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+
+  abstract insertI32(key: number, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+
+  abstract get(key: TransactionMetadatum): Promise<TransactionMetadatum>
+
+  abstract getStr(key: string): Promise<TransactionMetadatum>
+
+  abstract getI32(key: number): Promise<TransactionMetadatum>
+
+  abstract has(key: TransactionMetadatum): Promise<boolean>
+
+  abstract keys(): Promise<MetadataList>
+
+  static fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static new(): Promise<MetadataMap> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class Int extends Ptr {
+  abstract isPositive(): Promise<boolean>
+
+  abstract asPositive(): Promise<BigNum | undefined>
+
+  abstract asNegative(): Promise<BigNum | undefined>
+
+  abstract asI32(): Promise<number | undefined>
+
+  static new(x: BigNum): Promise<Int> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newNegative(x: BigNum): Promise<Int> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newI32(x: number): Promise<Int> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
 export abstract class TransactionMetadatum extends Ptr {
   abstract toBytes(): Promise<Uint8Array>
+
+  abstract kind(): Promise<number>
+
+  abstract asMap(): Promise<MetadataMap>
+
+  abstract asList(): Promise<MetadataList>
+
+  abstract asInt(): Promise<Int>
+
+  abstract asBytes(): Promise<Uint8Array>
+
+  abstract asText(): Promise<string>
+
+  static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newMap(map: MetadataMap): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newList(list: MetadataList): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newInt(int: Int): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static newText(text: string): Promise<TransactionMetadatum> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
 }
 
 export abstract class AuxiliaryData extends Ptr {
