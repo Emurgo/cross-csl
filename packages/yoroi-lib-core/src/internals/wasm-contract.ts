@@ -345,7 +345,7 @@ export abstract class AuxiliaryData extends Ptr {
 
   abstract setPlutusScripts(plutus_scripts: PlutusScripts): Promise<void>
 
-  static fromBytes(bytes: Uint8Array): AuxiliaryData {
+  static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
