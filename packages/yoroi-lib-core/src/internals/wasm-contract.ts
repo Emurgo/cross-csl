@@ -92,6 +92,10 @@ export interface WasmModuleProxy {
   TransactionMetadatumLabels: typeof TransactionMetadatumLabels
   MetadataMap: typeof MetadataMap
   Int: typeof Int
+  NativeScript: typeof NativeScript
+  NativeScripts: typeof NativeScripts
+  PlutusScript: typeof PlutusScript
+  PlutusScripts: typeof PlutusScripts
 }
 
 export abstract class WasmProxy {
