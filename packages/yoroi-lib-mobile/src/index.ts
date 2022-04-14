@@ -100,7 +100,10 @@ export const init = (): IYoroiLib => {
     TransactionWitnessSet: Mobile.TransactionWitnessSet,
     Transaction: Mobile.Transaction,
     NetworkInfo: Mobile.NetworkInfo,
-    MetadataList: Mobile.MetadataList
+    MetadataList: Mobile.MetadataList,
+    TransactionMetadatumLabels: Mobile.TransactionMetadatumLabels,
+    MetadataMap: Mobile.MetadataMap,
+    Int: Mobile.Int
   })
 }
 
@@ -211,6 +214,14 @@ namespace Mobile {
     extends Ptr<WasmV4.GeneralTransactionMetadata>
     implements WasmContract.GeneralTransactionMetadata
   {
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes()
+    }
+
+    async len(): Promise<number> {
+      return await this.wasm.len()
+    }
+
     async insert(
       key: BigNum,
       value: TransactionMetadatum
@@ -224,9 +235,162 @@ namespace Mobile {
       return new TransactionMetadatum(await this.wasm.get(key.wasm))
     }
 
+    async keys(): Promise<TransactionMetadatumLabels> {
+      return new TransactionMetadatumLabels(await this.wasm.keys())
+    }
+
     static async new(): Promise<GeneralTransactionMetadata> {
       const wasm = await WasmV4.GeneralTransactionMetadata.new()
       return new GeneralTransactionMetadata(wasm)
+    }
+
+    static async fromBytes(
+      bytes: Uint8Array
+    ): Promise<GeneralTransactionMetadata> {
+      const wasm = await WasmV4.GeneralTransactionMetadata.from_bytes(bytes)
+      return Promise.resolve(new GeneralTransactionMetadata(wasm))
+    }
+  }
+
+  export class TransactionMetadatumLabels
+    extends Ptr<WasmV4.TransactionMetadatumLabels>
+    implements WasmContract.TransactionMetadatumLabels
+  {
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes()
+    }
+
+    async len(): Promise<number> {
+      return await this.wasm.len()
+    }
+
+    async get(index: number): Promise<BigNum> {
+      return new BigNum(await this.wasm.get(index))
+    }
+
+    async add(elem: BigNum): Promise<void> {
+      return await this.wasm.add(elem.wasm)
+    }
+
+    static async fromBytes(
+      bytes: Uint8Array
+    ): Promise<TransactionMetadatumLabels> {
+      return new TransactionMetadatumLabels(
+        await WasmV4.TransactionMetadatumLabels.from_bytes(bytes)
+      )
+    }
+
+    static async new(): Promise<TransactionMetadatumLabels> {
+      return new TransactionMetadatumLabels(
+        await WasmV4.TransactionMetadatumLabels.new()
+      )
+    }
+  }
+
+  export class MetadataMap
+    extends Ptr<WasmV4.MetadataMap>
+    implements WasmContract.MetadataMap
+  {
+    async toBytes(): Promise<Uint8Array> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len())
+    }
+
+    async insert(
+      key: TransactionMetadatum,
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      const wasm = await this.wasm.insert(key.wasm, value.wasm)
+      if (wasm) {
+        return Promise.resolve(new TransactionMetadatum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    async insertStr(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      key: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async insertI32(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      key: number,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async get(key: TransactionMetadatum): Promise<TransactionMetadatum> {
+      return new TransactionMetadatum(await this.wasm.get(key.wasm))
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getStr(key: string): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getI32(key: number): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async has(key: TransactionMetadatum): Promise<boolean> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async keys(): Promise<MetadataList> {
+      return new MetadataList(await this.wasm.keys())
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    static async new(): Promise<MetadataMap> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+  }
+
+  export class Int extends Ptr<WasmV4.Int> implements WasmContract.Int {
+    async isPositive(): Promise<boolean> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asPositive(): Promise<BigNum | undefined> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asNegative(): Promise<BigNum | undefined> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asI32(): Promise<number | undefined> {
+      return await this.wasm.as_i32()
+    }
+
+    static async new(x: BigNum): Promise<Int> {
+      return new Int(await WasmV4.Int.new(x.wasm))
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newNegative(x: BigNum): Promise<Int> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newI32(x: number): Promise<Int> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
     }
   }
 
@@ -234,8 +398,64 @@ namespace Mobile {
     extends Ptr<WasmV4.TransactionMetadatum>
     implements WasmContract.TransactionMetadatum
   {
-    toBytes(): Promise<Uint8Array> {
-      return this.wasm.to_bytes()
+    async toBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes()
+    }
+
+    async kind(): Promise<number> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asMap(): Promise<MetadataMap> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asList(): Promise<MetadataList> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asInt(): Promise<Int> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    async asBytes(): Promise<Uint8Array> {
+      return await this.wasm.to_bytes()
+    }
+
+    async asText(): Promise<string> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    static async fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+      return new TransactionMetadatum(
+        await WasmV4.TransactionMetadatum.from_bytes(bytes)
+      )
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newMap(map: MetadataMap): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    static async newList(list: MetadataList): Promise<TransactionMetadatum> {
+      return new TransactionMetadatum(
+        await WasmV4.TransactionMetadatum.new_list(list.wasm)
+      )
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newInt(int: Int): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async newText(text: string): Promise<TransactionMetadatum> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
     }
   }
 

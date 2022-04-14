@@ -114,7 +114,10 @@ export const init = (): IYoroiLib => {
     TransactionWitnessSet: NodeJs.TransactionWitnessSet,
     Transaction: NodeJs.Transaction,
     NetworkInfo: NodeJs.NetworkInfo,
-    MetadataList: NodeJs.MetadataList
+    MetadataList: NodeJs.MetadataList,
+    TransactionMetadatumLabels: NodeJs.TransactionMetadatumLabels,
+    MetadataMap: NodeJs.MetadataMap,
+    Int: NodeJs.Int
   })
 }
 
@@ -221,6 +224,14 @@ namespace NodeJs {
     extends Ptr<WasmV4.GeneralTransactionMetadata>
     implements WasmContract.GeneralTransactionMetadata
   {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len())
+    }
+
     insert(
       key: BigNum,
       value: TransactionMetadatum
@@ -234,9 +245,172 @@ namespace NodeJs {
       return Promise.resolve(new TransactionMetadatum(this.wasm.get(key.wasm)))
     }
 
+    keys(): Promise<TransactionMetadatumLabels> {
+      return Promise.resolve(new TransactionMetadatumLabels(this.wasm.keys()))
+    }
+
     static new(): Promise<GeneralTransactionMetadata> {
       const wasm = WasmV4.GeneralTransactionMetadata.new()
       return Promise.resolve(new GeneralTransactionMetadata(wasm))
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<GeneralTransactionMetadata> {
+      const wasm = WasmV4.GeneralTransactionMetadata.from_bytes(bytes)
+      return Promise.resolve(new GeneralTransactionMetadata(wasm))
+    }
+  }
+
+  export class TransactionMetadatumLabels
+    extends Ptr<WasmV4.TransactionMetadatumLabels>
+    implements WasmContract.TransactionMetadatumLabels
+  {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len())
+    }
+
+    get(index: number): Promise<BigNum> {
+      return Promise.resolve(new BigNum(this.wasm.get(index)))
+    }
+
+    add(elem: BigNum): Promise<void> {
+      return Promise.resolve(this.wasm.add(elem.wasm))
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatumLabels> {
+      return Promise.resolve(
+        new TransactionMetadatumLabels(
+          WasmV4.TransactionMetadatumLabels.from_bytes(bytes)
+        )
+      )
+    }
+
+    static new(): Promise<TransactionMetadatumLabels> {
+      return Promise.resolve(
+        new TransactionMetadatumLabels(WasmV4.TransactionMetadatumLabels.new())
+      )
+    }
+  }
+
+  export class MetadataMap
+    extends Ptr<WasmV4.MetadataMap>
+    implements WasmContract.MetadataMap
+  {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
+    len(): Promise<number> {
+      return Promise.resolve(this.wasm.len())
+    }
+
+    insert(
+      key: TransactionMetadatum,
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      const wasm = this.wasm.insert(key.wasm, value.wasm)
+      if (wasm) {
+        return Promise.resolve(new TransactionMetadatum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    insertStr(
+      key: string,
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      const wasm = this.wasm.insert_str(key, value.wasm)
+      if (wasm) {
+        return Promise.resolve(new TransactionMetadatum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    insertI32(
+      key: number,
+      value: TransactionMetadatum
+    ): Promise<TransactionMetadatum | undefined> {
+      const wasm = this.wasm.insert_i32(key, value.wasm)
+      if (wasm) {
+        return Promise.resolve(new TransactionMetadatum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    get(key: TransactionMetadatum): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.get(key.wasm)))
+    }
+
+    getStr(key: string): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.get_str(key)))
+    }
+
+    getI32(key: number): Promise<TransactionMetadatum> {
+      return Promise.resolve(new TransactionMetadatum(this.wasm.get_i32(key)))
+    }
+
+    has(key: TransactionMetadatum): Promise<boolean> {
+      return Promise.resolve(this.wasm.has(key.wasm))
+    }
+
+    keys(): Promise<MetadataList> {
+      return Promise.resolve(new MetadataList(this.wasm.keys()))
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
+      return Promise.resolve(
+        new MetadataMap(WasmV4.MetadataMap.from_bytes(bytes))
+      )
+    }
+
+    static new(): Promise<MetadataMap> {
+      return Promise.resolve(new MetadataMap(WasmV4.MetadataMap.new()))
+    }
+  }
+
+  export class Int extends Ptr<WasmV4.Int> implements WasmContract.Int {
+    isPositive(): Promise<boolean> {
+      return Promise.resolve(this.wasm.is_positive())
+    }
+
+    asPositive(): Promise<BigNum | undefined> {
+      const wasm = this.wasm.as_positive()
+      if (wasm) {
+        return Promise.resolve(new BigNum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    asNegative(): Promise<BigNum | undefined> {
+      const wasm = this.wasm.as_negative()
+      if (wasm) {
+        return Promise.resolve(new BigNum(wasm))
+      } else {
+        return Promise.resolve(undefined)
+      }
+    }
+
+    asI32(): Promise<number | undefined> {
+      return Promise.resolve(this.wasm.as_i32())
+    }
+
+    static new(x: BigNum): Promise<Int> {
+      return Promise.resolve(new Int(WasmV4.Int.new(x.wasm)))
+    }
+
+    static newNegative(x: BigNum): Promise<Int> {
+      return Promise.resolve(new Int(WasmV4.Int.new_negative(x.wasm)))
+    }
+
+    static newI32(x: number): Promise<Int> {
+      return Promise.resolve(new Int(WasmV4.Int.new_i32(x)))
     }
   }
 
@@ -246,6 +420,68 @@ namespace NodeJs {
   {
     toBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.to_bytes())
+    }
+
+    kind(): Promise<number> {
+      return Promise.resolve(this.wasm.kind())
+    }
+
+    asMap(): Promise<MetadataMap> {
+      return Promise.resolve(new MetadataMap(this.wasm.as_map()))
+    }
+
+    asList(): Promise<MetadataList> {
+      return Promise.resolve(new MetadataList(this.wasm.as_list()))
+    }
+
+    asInt(): Promise<Int> {
+      return Promise.resolve(new Int(this.wasm.as_int()))
+    }
+
+    asBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
+    asText(): Promise<string> {
+      return Promise.resolve(this.wasm.as_text())
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(WasmV4.TransactionMetadatum.from_bytes(bytes))
+      )
+    }
+
+    static newMap(map: MetadataMap): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_map(map.wasm))
+      )
+    }
+
+    static newList(list: MetadataList): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(
+          WasmV4.TransactionMetadatum.new_list(list.wasm)
+        )
+      )
+    }
+
+    static newInt(int: Int): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_int(int.wasm))
+      )
+    }
+
+    static newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_bytes(bytes))
+      )
+    }
+
+    static newText(text: string): Promise<TransactionMetadatum> {
+      return Promise.resolve(
+        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_text(text))
+      )
     }
   }
 
