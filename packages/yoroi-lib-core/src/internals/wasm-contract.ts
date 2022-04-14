@@ -1162,7 +1162,7 @@ export abstract class NativeScript extends Ptr {
 
   // abstract as_timelock_expiry(): TimelockExpiry | undefined
 
-  static fromBytes(bytes: Uint8Array): NativeScript {
+  static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
