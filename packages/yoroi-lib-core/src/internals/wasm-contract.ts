@@ -92,6 +92,10 @@ export interface WasmModuleProxy {
   TransactionMetadatumLabels: typeof TransactionMetadatumLabels
   MetadataMap: typeof MetadataMap
   Int: typeof Int
+  NativeScript: typeof NativeScript
+  NativeScripts: typeof NativeScripts
+  PlutusScript: typeof PlutusScript
+  PlutusScripts: typeof PlutusScripts
 }
 
 export abstract class WasmProxy {
@@ -239,11 +243,20 @@ export abstract class MetadataMap extends Ptr {
 
   abstract len(): Promise<number>
 
-  abstract insert(key: TransactionMetadatum, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insert(
+    key: TransactionMetadatum,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
-  abstract insertStr(key: string, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insertStr(
+    key: string,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
-  abstract insertI32(key: number, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insertI32(
+    key: number,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
   abstract get(key: TransactionMetadatum): Promise<TransactionMetadatum>
 
@@ -327,7 +340,23 @@ export abstract class TransactionMetadatum extends Ptr {
 }
 
 export abstract class AuxiliaryData extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
   abstract metadata(): Promise<GeneralTransactionMetadata>
+
+  abstract setMetadata(metadata: GeneralTransactionMetadata): Promise<void>
+
+  abstract nativeScripts(): Promise<NativeScripts | undefined>
+
+  abstract setNativeScripts(native_scripts: NativeScripts): Promise<void>
+
+  abstract plutusScripts(): Promise<PlutusScripts | undefined>
+
+  abstract setPlutusScripts(plutus_scripts: PlutusScripts): Promise<void>
+
+  static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
 
   static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
@@ -1120,4 +1149,86 @@ export abstract class MetadataList extends Ptr {
   abstract add(item: TransactionMetadatum): Promise<void>
 
   abstract toBytes(): Promise<Uint8Array>
+}
+
+export abstract class NativeScript extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract hash(namespace: number): Promise<Ed25519KeyHash>
+
+  abstract kind(): Promise<number>
+
+  // ToDo: uncomment these functions. For now we need this only for AuxiliaryData
+  // abstract as_script_pubkey(): ScriptPubkey | undefined
+
+  // abstract as_script_all(): ScriptAll | undefined
+
+  // abstract as_script_any(): ScriptAny | undefined
+
+  // abstract as_script_n_of_k(): ScriptNOfK | undefined
+
+  // abstract as_timelock_start(): TimelockStart | undefined
+
+  // abstract as_timelock_expiry(): TimelockExpiry | undefined
+
+  static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  // ToDo: uncomment these functions. For now we need this only for AuxiliaryData
+  // static new_script_pubkey(script_pubkey: ScriptPubkey): NativeScript
+
+  // static new_script_all(script_all: ScriptAll): NativeScript
+
+  // static new_script_any(script_any: ScriptAny): NativeScript
+
+  // static new_script_n_of_k(script_n_of_k: ScriptNOfK): NativeScript
+
+  // static new_timelock_start(timelock_start: TimelockStart): NativeScript
+
+  // static new_timelock_expiry(timelock_expiry: TimelockExpiry): NativeScript
+}
+
+export abstract class NativeScripts extends Ptr {
+  abstract len(): Promise<number>
+
+  abstract get(index: number): Promise<NativeScript>
+
+  abstract add(elem: NativeScript): Promise<void>
+
+  static new(): Promise<NativeScripts> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class PlutusScript extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract bytes(): Promise<Uint8Array>
+
+  static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static new(bytes: Uint8Array): Promise<PlutusScript> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class PlutusScripts extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
+  abstract len(): Promise<number>
+
+  abstract get(index: number): Promise<PlutusScript>
+
+  abstract add(elem: PlutusScript): Promise<void>
+
+  static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static new(): Promise<PlutusScripts> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
 }
