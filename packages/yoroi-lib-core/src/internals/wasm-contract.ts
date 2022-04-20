@@ -243,11 +243,20 @@ export abstract class MetadataMap extends Ptr {
 
   abstract len(): Promise<number>
 
-  abstract insert(key: TransactionMetadatum, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insert(
+    key: TransactionMetadatum,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
-  abstract insertStr(key: string, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insertStr(
+    key: string,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
-  abstract insertI32(key: number, value: TransactionMetadatum): Promise<TransactionMetadatum | undefined>
+  abstract insertI32(
+    key: number,
+    value: TransactionMetadatum
+  ): Promise<TransactionMetadatum | undefined>
 
   abstract get(key: TransactionMetadatum): Promise<TransactionMetadatum>
 

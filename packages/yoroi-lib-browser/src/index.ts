@@ -496,9 +496,7 @@ namespace Browser {
     implements WasmContract.AuxiliaryData
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.to_bytes()
-      )
+      return Promise.resolve(this.wasm.to_bytes())
     }
 
     metadata(): Promise<GeneralTransactionMetadata> {
@@ -507,63 +505,47 @@ namespace Browser {
     }
 
     setMetadata(metadata: GeneralTransactionMetadata): Promise<void> {
-      return Promise.resolve(
-        this.wasm.set_metadata(metadata.wasm)
-      )
+      return Promise.resolve(this.wasm.set_metadata(metadata.wasm))
     }
 
     nativeScripts(): Promise<NativeScripts | undefined> {
       const wasm = this.wasm.native_scripts()
       if (wasm) {
-        return Promise.resolve(
-          new NativeScripts(wasm)
-        )
+        return Promise.resolve(new NativeScripts(wasm))
       } else {
-        return Promise.resolve(
-          undefined
-        )
+        return Promise.resolve(undefined)
       }
     }
 
     setNativeScripts(native_scripts: NativeScripts): Promise<void> {
-      return Promise.resolve(
-        this.wasm.set_native_scripts(native_scripts.wasm)
-      )
+      return Promise.resolve(this.wasm.set_native_scripts(native_scripts.wasm))
     }
 
     plutusScripts(): Promise<PlutusScripts | undefined> {
       const wasm = this.wasm.plutus_scripts()
       if (wasm) {
-        return Promise.resolve(
-          new PlutusScripts(wasm)
-        )
+        return Promise.resolve(new PlutusScripts(wasm))
       } else {
-        return Promise.resolve(
-          undefined
-        )
+        return Promise.resolve(undefined)
       }
     }
 
     setPlutusScripts(plutus_scripts: PlutusScripts): Promise<void> {
-      return Promise.resolve(
-        this.wasm.set_plutus_scripts(plutus_scripts.wasm)
-      )
+      return Promise.resolve(this.wasm.set_plutus_scripts(plutus_scripts.wasm))
     }
 
     static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
       return Promise.resolve(
-        new AuxiliaryData(
-          WasmV4.AuxiliaryData.from_bytes(bytes)
-        )
+        new AuxiliaryData(WasmV4.AuxiliaryData.from_bytes(bytes))
       )
     }
-  
+
     static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
       const wasm = WasmV4.AuxiliaryData.new()
       wasm.set_metadata(metadata.wasm)
       return Promise.resolve(new AuxiliaryData(wasm))
     }
-  
+
     static empty(): Promise<AuxiliaryData> {
       return Promise.resolve(new AuxiliaryData(undefined))
     }
@@ -1925,140 +1907,96 @@ namespace Browser {
     implements WasmContract.NativeScript
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.to_bytes()
-      )
+      return Promise.resolve(this.wasm.to_bytes())
     }
-  
+
     hash(namespace: number): Promise<Ed25519KeyHash> {
-      return Promise.resolve(
-        new Ed25519KeyHash(this.wasm.hash(namespace))
-      )
+      return Promise.resolve(new Ed25519KeyHash(this.wasm.hash(namespace)))
     }
-  
+
     kind(): Promise<number> {
-      return Promise.resolve(
-        this.wasm.kind()
-      )
+      return Promise.resolve(this.wasm.kind())
     }
-  
+
     static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
       return Promise.resolve(
-        new NativeScript(
-          WasmV4.NativeScript.from_bytes(bytes)
-        )
+        new NativeScript(WasmV4.NativeScript.from_bytes(bytes))
       )
     }
   }
-  
+
   export class NativeScripts
     extends Ptr<WasmV4.NativeScripts>
     implements WasmContract.NativeScripts
   {
     len(): Promise<number> {
-      return Promise.resolve(
-        this.wasm.len()
-      )
+      return Promise.resolve(this.wasm.len())
     }
-  
+
     get(index: number): Promise<NativeScript> {
-      return Promise.resolve(
-        new NativeScript(this.wasm.get(index))
-      )
+      return Promise.resolve(new NativeScript(this.wasm.get(index)))
     }
-  
+
     add(elem: NativeScript): Promise<void> {
-      return Promise.resolve(
-        this.wasm.add(elem.wasm)
-      )
+      return Promise.resolve(this.wasm.add(elem.wasm))
     }
-  
+
     static new(): Promise<NativeScripts> {
-      return Promise.resolve(
-        new NativeScripts(
-          WasmV4.NativeScripts.new()
-        )
-      )
+      return Promise.resolve(new NativeScripts(WasmV4.NativeScripts.new()))
     }
   }
-  
+
   export class PlutusScript
     extends Ptr<WasmV4.PlutusScript>
     implements WasmContract.PlutusScript
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.to_bytes()
-      )
+      return Promise.resolve(this.wasm.to_bytes())
     }
-  
+
     bytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.bytes()
-      )
+      return Promise.resolve(this.wasm.bytes())
     }
-  
+
     static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
       return Promise.resolve(
-        new PlutusScript(
-          WasmV4.PlutusScript.from_bytes(bytes)
-        )
+        new PlutusScript(WasmV4.PlutusScript.from_bytes(bytes))
       )
     }
-  
+
     static new(bytes: Uint8Array): Promise<PlutusScript> {
-      return Promise.resolve(
-        new PlutusScript(
-          WasmV4.PlutusScript.new(bytes)
-        )
-      )
+      return Promise.resolve(new PlutusScript(WasmV4.PlutusScript.new(bytes)))
     }
   }
-  
+
   export class PlutusScripts
     extends Ptr<WasmV4.PlutusScripts>
     implements WasmContract.PlutusScripts
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.to_bytes()
-      )
+      return Promise.resolve(this.wasm.to_bytes())
     }
-  
+
     len(): Promise<number> {
-      return Promise.resolve(
-        this.wasm.len()
-      )
+      return Promise.resolve(this.wasm.len())
     }
-  
+
     get(index: number): Promise<PlutusScript> {
-      return Promise.resolve(
-        new PlutusScript(
-          this.wasm.get(index)
-        )
-      )
+      return Promise.resolve(new PlutusScript(this.wasm.get(index)))
     }
-  
+
     add(elem: PlutusScript): Promise<void> {
-      return Promise.resolve(
-        this.wasm.add(elem.wasm)
-      )
+      return Promise.resolve(this.wasm.add(elem.wasm))
     }
-  
+
     static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
       return Promise.resolve(
-        new PlutusScripts(
-          WasmV4.PlutusScripts.from_bytes(bytes)
-        )
+        new PlutusScripts(WasmV4.PlutusScripts.from_bytes(bytes))
       )
     }
-  
+
     static new(): Promise<PlutusScripts> {
-      return Promise.resolve(
-        new PlutusScripts(
-          WasmV4.PlutusScripts.new()
-        )
-      )
+      return Promise.resolve(new PlutusScripts(WasmV4.PlutusScripts.new()))
     }
   }
 }

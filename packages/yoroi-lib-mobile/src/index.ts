@@ -468,9 +468,7 @@ namespace Mobile {
     implements WasmContract.AuxiliaryData
   {
     async toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(
-        this.wasm.to_bytes()
-      )
+      return Promise.resolve(this.wasm.to_bytes())
     }
 
     async metadata(): Promise<GeneralTransactionMetadata> {
@@ -502,9 +500,7 @@ namespace Mobile {
     }
 
     static async fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
-      return new AuxiliaryData(
-        await WasmV4.AuxiliaryData.from_bytes(bytes)
-      )
+      return new AuxiliaryData(await WasmV4.AuxiliaryData.from_bytes(bytes))
     }
 
     static async new(
@@ -1859,22 +1855,22 @@ namespace Mobile {
     toBytes(): Promise<Uint8Array> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hash(namespace: number): Promise<Ed25519KeyHash> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     kind(): Promise<number> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
   }
-  
+
   /**
    * WARNING! This type is here to comply with the exported interface, but it is not implemented
    */
@@ -1885,22 +1881,22 @@ namespace Mobile {
     len(): Promise<number> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     get(index: number): Promise<NativeScript> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     add(elem: NativeScript): Promise<void> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     static new(): Promise<NativeScripts> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
   }
-  
+
   /**
    * WARNING! This type is here to comply with the exported interface, but it is not implemented
    */
@@ -1911,22 +1907,22 @@ namespace Mobile {
     toBytes(): Promise<Uint8Array> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     bytes(): Promise<Uint8Array> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static new(bytes: Uint8Array): Promise<PlutusScript> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
   }
-  
+
   /**
    * WARNING! This type is here to comply with the exported interface, but it is not implemented
    */
@@ -1937,26 +1933,26 @@ namespace Mobile {
     toBytes(): Promise<Uint8Array> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     len(): Promise<number> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     get(index: number): Promise<PlutusScript> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     add(elem: PlutusScript): Promise<void> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
-  
+
     static new(): Promise<PlutusScripts> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
