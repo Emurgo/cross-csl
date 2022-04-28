@@ -350,7 +350,6 @@ class YoroiLib implements IYoroiLib {
     return await genWasmUnsignedTx(
       this.Wasm,
       unsignedTxResponse.txBuilder,
-      [],
       addressedUtxos,
       unsignedTxResponse.change,
       {
@@ -521,7 +520,6 @@ class YoroiLib implements IYoroiLib {
     return await genWasmUnsignedTx(
       this.Wasm,
       unsignedTxResponse.txBuilder,
-      certificates,
       addressedUtxos,
       unsignedTxResponse.change,
       {

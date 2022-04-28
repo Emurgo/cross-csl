@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-nodejs",
-  "version": "0.0.1-alpha.10",
+  "version": "0.1.0-alpha.12",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "9.1.4",
-    "@emurgo/yoroi-lib-core": "^0.0.1-alpha.10"
+    "@emurgo/yoroi-lib-core": "^0.1.0-alpha.12"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

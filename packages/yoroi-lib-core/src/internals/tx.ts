@@ -53,8 +53,11 @@ export interface SignedTx {
 
 export class WasmUnsignedTx implements UnsignedTx {
   private _wasm: WasmContract.WasmModuleProxy
-  private _txBuilder: WasmContract.TransactionBuilder
-  private _certificates: ReadonlyArray<WasmContract.Certificate>
+  private _txBody: WasmContract.TransactionBody
+  private _certificates: WasmContract.Certificates
+  private _withdrawals: WasmContract.Withdrawals
+  private _ttl: number | undefined
+  private _hash: WasmContract.TransactionHash
 
   private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
   private _inputs: ReadonlyArray<{
@@ -111,6 +114,22 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._encodedTx
   }
 
+  get certificates(): WasmContract.Certificates {
+    return this._certificates
+  }
+
+  get withdrawals(): WasmContract.Withdrawals {
+    return this._withdrawals
+  }
+
+  get ttl(): number | undefined {
+    return this._ttl
+  }
+
+  get hash(): WasmContract.TransactionHash {
+    return this._hash
+  }
+
   /**
    * Initializes the class with the specific wasm types, outputs and change.
    * Even though this class can be instantiated directly, you should probably be getting
@@ -118,8 +137,7 @@ export class WasmUnsignedTx implements UnsignedTx {
    */
   private constructor(
     wasm: WasmContract.WasmModuleProxy,
-    txBuilder: WasmContract.TransactionBuilder,
-    certificates: ReadonlyArray<WasmContract.Certificate>,
+    txBody: WasmContract.TransactionBody,
     senderUtxos: CardanoAddressedUtxo[],
     inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalInput: MultiTokenConstruct,
@@ -128,11 +146,14 @@ export class WasmUnsignedTx implements UnsignedTx {
     fee: MultiTokenConstruct,
     change: ReadonlyArray<Change>,
     metadata: ReadonlyArray<TxMetadata>,
-    encodedTx: string
+    certificates: WasmContract.Certificates,
+    withdrawals: WasmContract.Withdrawals,
+    ttl: number | undefined,
+    encodedTx: string,
+    hash: WasmContract.TransactionHash
   ) {
     this._wasm = wasm
-    this._txBuilder = txBuilder
-    this._certificates = certificates
+    this._txBody = txBody
     this._senderUtxos = senderUtxos
     this._inputs = inputs
     this._totalInput = totalInput
@@ -141,13 +162,16 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._fee = fee
     this._change = change
     this._metadata = metadata
+    this._certificates = certificates
+    this._withdrawals = withdrawals
+    this._ttl = ttl
     this._encodedTx = encodedTx
+    this._hash = hash
   }
 
   static async new(
     wasm: WasmContract.WasmModuleProxy,
     txBuilder: WasmContract.TransactionBuilder,
-    certificates: ReadonlyArray<WasmContract.Certificate>,
     senderUtxos: CardanoAddressedUtxo[],
     inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
     totalInput: MultiTokenConstruct,
@@ -157,11 +181,16 @@ export class WasmUnsignedTx implements UnsignedTx {
     change: ReadonlyArray<Change>,
     metadata: ReadonlyArray<TxMetadata>
   ): Promise<WasmUnsignedTx> {
-    const txBytes = await txBuilder.build().then((x) => x.toBytes())
+    const txBody = await txBuilder.build()
+    const txBytes = await txBody.toBytes()
+    const certs = await txBody.certs()
+    const withdrawals = await txBody.withdrawals()
+    const ttl = await txBody.ttl()
+    const hash = await wasm.hashTransaction(txBody)
+
     return new WasmUnsignedTx(
       wasm,
-      txBuilder,
-      certificates,
+      txBody,
       senderUtxos,
       inputs,
       totalInput,
@@ -170,7 +199,11 @@ export class WasmUnsignedTx implements UnsignedTx {
       fee,
       change,
       metadata,
-      Buffer.from(txBytes).toString('hex')
+      certs,
+      withdrawals,
+      ttl,
+      Buffer.from(txBytes).toString('hex'),
+      hash
     )
   }
 
@@ -219,8 +252,7 @@ export class WasmUnsignedTx implements UnsignedTx {
       Verify how and if this needs to be replicated here as well.
     */
 
-    const txBody = await this._txBuilder.build()
-    const txHash = await this._wasm.hashTransaction(txBody)
+    const txHash = await this._wasm.hashTransaction(this._txBody)
 
     const vkeyWits = await this._wasm.Vkeywitnesses.new()
     const bootstrapWits = await this._wasm.BootstrapWitnesses.new()
@@ -253,7 +285,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     const fullMetadata = (this.metadata ?? []).concat(extraMetadata ?? [])
     const aux = await createMetadata(this._wasm, fullMetadata)
 
-    const signedTx = await this._wasm.Transaction.new(txBody, witnessSet, aux)
+    const signedTx = await this._wasm.Transaction.new(this._txBody, witnessSet, aux)
 
     const signedTxBody = await signedTx.body()
     const signedTxHash = await this._wasm.hashTransaction(signedTxBody)
@@ -334,7 +366,11 @@ export interface UnsignedTx {
   readonly fee: MultiTokenConstruct
   readonly change: ReadonlyArray<Change>
   readonly metadata: ReadonlyArray<TxMetadata>
+  readonly certificates: WasmContract.Certificates
+  readonly withdrawals: WasmContract.Withdrawals
+  readonly ttl: number | undefined
   readonly encodedTx: string
+  readonly hash: WasmContract.TransactionHash
   sign(
     keyLevel: number,
     privateKey: string,
@@ -346,7 +382,6 @@ export interface UnsignedTx {
 export async function genWasmUnsignedTx(
   wasm: WasmContract.WasmModuleProxy,
   txBuilder: WasmContract.TransactionBuilder,
-  certificates: ReadonlyArray<WasmContract.Certificate>,
   senderUtxos: CardanoAddressedUtxo[],
   change: ReadonlyArray<Change>,
   defaults: DefaultTokenEntry,
@@ -356,7 +391,6 @@ export async function genWasmUnsignedTx(
   return await WasmUnsignedTx.new(
     wasm,
     txBuilder,
-    certificates,
     senderUtxos,
     await genWasmUnsignedTxInputs(txBuilder, senderUtxos, networkId),
     await genWasmUnsignedTxTotalInput(txBuilder, change, defaults),
