@@ -14,7 +14,8 @@
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
     "publish:beta": "npm publish --tag beta --access public",
-    "publish:prod": "npm publish --access public"
+    "publish:prod": "npm publish --access public",
+    "release": "yarn rebuild && npm publish --scope=emurgo"
   },
   "author": "EMURGO",
   "license": "MIT",
