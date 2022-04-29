@@ -14,10 +14,10 @@ import {
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
   Change,
-  DefaultTokenEntry,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
+  Token,
   TxOptions,
   TxOutput
 } from './internals/models'
@@ -87,7 +87,7 @@ export interface IYoroiLib {
     changeAddr: AddressingAddress,
     tokens: Array<SendToken>,
     config: CardanoHaskellConfig,
-    defaultToken: DefaultTokenEntry,
+    defaultToken: Token,
     txOptions: TxOptions
   ): Promise<UnsignedTx>
 }
@@ -154,7 +154,7 @@ class YoroiLib implements IYoroiLib {
     changeAddr: AddressingAddress,
     tokens: Array<SendToken>,
     config: CardanoHaskellConfig,
-    defaultToken: DefaultTokenEntry,
+    defaultToken: Token,
     txOptions: TxOptions
   ): Promise<UnsignedTx> {
     const addressedUtxo = await asAddressedUtxo(this.Wasm, utxos)
@@ -182,7 +182,7 @@ class YoroiLib implements IYoroiLib {
   private async createUnsignedTxForUtxos(
     absSlotNumber: BigNumber,
     receivers: Array<AddressingAddress>,
-    defaultToken: DefaultTokenEntry,
+    defaultToken: Token,
     tokens: SendToken[],
     utxos: Array<CardanoAddressedUtxo>,
     config: CardanoHaskellConfig,
@@ -353,8 +353,9 @@ class YoroiLib implements IYoroiLib {
       addressedUtxos,
       unsignedTxResponse.change,
       {
-        defaultNetworkId: protocolParams.networkId,
-        defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+        networkId: protocolParams.networkId,
+        identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+        isDefault: true
       },
       protocolParams.networkId,
       txOptions.metadata ?? []
@@ -444,8 +445,9 @@ class YoroiLib implements IYoroiLib {
           values: await multiTokenFromCardanoValue(
             await txBuilder.getExplicitOutput(),
             {
-              defaultNetworkId: protocolParams.networkId,
-              defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+              networkId: protocolParams.networkId,
+              identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+              isDefault: true
             }
           )
         }
@@ -523,8 +525,9 @@ class YoroiLib implements IYoroiLib {
       addressedUtxos,
       unsignedTxResponse.change,
       {
-        defaultNetworkId: protocolParams.networkId,
-        defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+        networkId: protocolParams.networkId,
+        identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+        isDefault: true
       },
       protocolParams.networkId,
       txOptions.metadata ?? []
@@ -966,8 +969,9 @@ class YoroiLib implements IYoroiLib {
           .getExplicitOutput()
           .then((x) => x.checkedSub(outputBeforeChange)),
         {
-          defaultNetworkId: protocolParams.networkId,
-          defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+          networkId: protocolParams.networkId,
+          identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+          isDefault: true
         }
       )
       return changeWasAdded

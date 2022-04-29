@@ -79,11 +79,6 @@ export type Token = {
   isDefault: boolean
 }
 
-export type DefaultTokenEntry = {
-  defaultNetworkId: number
-  defaultIdentifier: string
-}
-
 export type TokenEntry = {
   amount: BigNumber
   identifier: string
@@ -93,7 +88,7 @@ export type TokenEntry = {
 // This name will probably change
 export type MultiTokenConstruct = {
   values: Array<TokenEntry>
-  defaults: DefaultTokenEntry
+  defaults: Token
 }
 
 export type TxOptions = {

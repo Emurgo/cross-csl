@@ -4,7 +4,7 @@ import {
   AddressingAddress,
   AddressingUtxo,
   CardanoHaskellConfig,
-  DefaultTokenEntry,
+  Token,
   IYoroiLib,
   SendToken
 } from '../src'
@@ -295,9 +295,10 @@ export const setupTests = (
           networkId: 300
         } as CardanoHaskellConfig
         const defaultToken = {
-          defaultIdentifier: '',
-          defaultNetworkId: 300
-        } as DefaultTokenEntry
+          identifier: '',
+          networkId: 300,
+          isDefault: true
+        } as Token
 
         return {
           absSlotNumber,

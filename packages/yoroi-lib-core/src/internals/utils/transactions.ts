@@ -98,8 +98,9 @@ export async function addUtxoInput(
     if (!remaining) return skipOverflow()
 
     const defaultEntry = {
-      defaultNetworkId: protocolParams.networkId,
-      defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+      networkId: protocolParams.networkId,
+      identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+      isDefault: true
     }
     const tokenSetInInput = new Set(input.assets.map((asset) => asset.assetId))
     const remainingTokens = await multiTokenFromCardanoValue(
@@ -126,7 +127,7 @@ export async function addUtxoInput(
 
     const onlyDefaultEntry =
       includedTargets.length === 1 &&
-      includedTargets[0].identifier === defaultEntry.defaultIdentifier
+      includedTargets[0].identifier === defaultEntry.identifier
     // ignore UTXO that contribute less than their fee if they also don't contribute a token
     if (onlyDefaultEntry && excludeIfSmall) {
       const feeForInput = new BigNumber(

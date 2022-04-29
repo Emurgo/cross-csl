@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js'
 import {
   CardanoAddressedUtxo,
   Change,
-  DefaultTokenEntry,
+  Token,
   MultiTokenConstruct,
   PRIMARY_ASSET_CONSTANTS,
   TxMetadata
@@ -384,7 +384,7 @@ export async function genWasmUnsignedTx(
   txBuilder: WasmContract.TransactionBuilder,
   senderUtxos: CardanoAddressedUtxo[],
   change: ReadonlyArray<Change>,
-  defaults: DefaultTokenEntry,
+  defaults: Token,
   networkId: number,
   metadata: ReadonlyArray<TxMetadata>
 ): Promise<WasmUnsignedTx> {
@@ -452,7 +452,7 @@ async function genWasmUnsignedTxInputs(
 async function genWasmUnsignedTxTotalInput(
   txBuilder: WasmContract.TransactionBuilder,
   changes: ReadonlyArray<Change>,
-  defaults: DefaultTokenEntry
+  defaults: Token
 ): Promise<MultiTokenConstruct> {
   const values = await multiTokenFromCardanoValue(
     await txBuilder
@@ -493,8 +493,9 @@ async function genWasmUnsignedTxOutputs(
 
     const outputAddressBytes = await output.address().then((x) => x.toBytes())
     const ma = await multiTokenFromCardanoValue(await output.amount(), {
-      defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano,
-      defaultNetworkId: networkId
+      identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+      networkId: networkId,
+      isDefault: true
     })
     values.push({
       value: {
@@ -510,7 +511,7 @@ async function genWasmUnsignedTxOutputs(
 
 async function genWasmUnsignedTxTotalOutput(
   txBuilder: WasmContract.TransactionBuilder,
-  defaults: DefaultTokenEntry
+  defaults: Token
 ): Promise<MultiTokenConstruct> {
   const ma = await multiTokenFromCardanoValue(
     await txBuilder.getExplicitOutput(),
@@ -524,7 +525,7 @@ async function genWasmUnsignedTxTotalOutput(
 
 async function genWasmUnsignedTxFee(
   txBuilder: WasmContract.TransactionBuilder,
-  defaults: DefaultTokenEntry,
+  defaults: Token,
   networkId: number
 ): Promise<MultiTokenConstruct> {
   const values = new MultiToken([], defaults)
