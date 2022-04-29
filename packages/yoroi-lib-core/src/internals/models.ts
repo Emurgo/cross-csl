@@ -85,8 +85,7 @@ export type TokenEntry = {
   networkId: number
 }
 
-// This name will probably change
-export type MultiTokenConstruct = {
+export type MultiTokenValue = {
   values: Array<TokenEntry>
   defaults: Token
 }

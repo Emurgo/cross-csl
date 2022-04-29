@@ -5,7 +5,7 @@ import {
   CardanoAddressedUtxo,
   Change,
   Token,
-  MultiTokenConstruct,
+  MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
   TxMetadata
 } from './models'
@@ -62,15 +62,15 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
   private _inputs: ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
-  private _totalInput: MultiTokenConstruct
+  private _totalInput: MultiTokenValue
   private _outputs: ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
-  private _totalOutput: MultiTokenConstruct
-  private _fee: MultiTokenConstruct
+  private _totalOutput: MultiTokenValue
+  private _fee: MultiTokenValue
   private _change: ReadonlyArray<Change>
   private _metadata: ReadonlyArray<TxMetadata>
   private _encodedTx: string
@@ -79,26 +79,26 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._senderUtxos
   }
 
-  get inputs(): ReadonlyArray<{ address: string; value: MultiTokenConstruct }> {
+  get inputs(): ReadonlyArray<{ address: string; value: MultiTokenValue }> {
     return this._inputs
   }
 
-  get totalInput(): MultiTokenConstruct {
+  get totalInput(): MultiTokenValue {
     return this._totalInput
   }
 
   get outputs(): ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }> {
     return this._outputs
   }
 
-  get totalOutput(): MultiTokenConstruct {
+  get totalOutput(): MultiTokenValue {
     return this._totalOutput
   }
 
-  get fee(): MultiTokenConstruct {
+  get fee(): MultiTokenValue {
     return this._fee
   }
 
@@ -139,11 +139,11 @@ export class WasmUnsignedTx implements UnsignedTx {
     wasm: WasmContract.WasmModuleProxy,
     txBody: WasmContract.TransactionBody,
     senderUtxos: CardanoAddressedUtxo[],
-    inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
-    totalInput: MultiTokenConstruct,
-    outputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
-    totalOutput: MultiTokenConstruct,
-    fee: MultiTokenConstruct,
+    inputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
+    totalInput: MultiTokenValue,
+    outputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
+    totalOutput: MultiTokenValue,
+    fee: MultiTokenValue,
     change: ReadonlyArray<Change>,
     metadata: ReadonlyArray<TxMetadata>,
     certificates: WasmContract.Certificates,
@@ -173,11 +173,11 @@ export class WasmUnsignedTx implements UnsignedTx {
     wasm: WasmContract.WasmModuleProxy,
     txBuilder: WasmContract.TransactionBuilder,
     senderUtxos: CardanoAddressedUtxo[],
-    inputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
-    totalInput: MultiTokenConstruct,
-    outputs: ReadonlyArray<{ address: string; value: MultiTokenConstruct }>,
-    totalOutput: MultiTokenConstruct,
-    fee: MultiTokenConstruct,
+    inputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
+    totalInput: MultiTokenValue,
+    outputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
+    totalOutput: MultiTokenValue,
+    fee: MultiTokenValue,
     change: ReadonlyArray<Change>,
     metadata: ReadonlyArray<TxMetadata>
   ): Promise<WasmUnsignedTx> {
@@ -355,15 +355,15 @@ export interface UnsignedTx {
   readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
   readonly inputs: ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
-  readonly totalInput: MultiTokenConstruct
+  readonly totalInput: MultiTokenValue
   readonly outputs: ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
-  readonly totalOutput: MultiTokenConstruct
-  readonly fee: MultiTokenConstruct
+  readonly totalOutput: MultiTokenValue
+  readonly fee: MultiTokenValue
   readonly change: ReadonlyArray<Change>
   readonly metadata: ReadonlyArray<TxMetadata>
   readonly certificates: WasmContract.Certificates
@@ -409,13 +409,13 @@ async function genWasmUnsignedTxInputs(
 ): Promise<
   ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
 > {
   const body = await txBuilder.build()
   const values = [] as {
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }[]
 
   const inputs = await body.inputs()
@@ -453,7 +453,7 @@ async function genWasmUnsignedTxTotalInput(
   txBuilder: WasmContract.TransactionBuilder,
   changes: ReadonlyArray<Change>,
   defaults: Token
-): Promise<MultiTokenConstruct> {
+): Promise<MultiTokenValue> {
   const values = await multiTokenFromCardanoValue(
     await txBuilder
       .getImplicitInput()
@@ -477,14 +477,14 @@ async function genWasmUnsignedTxOutputs(
 ): Promise<
   ReadonlyArray<{
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }>
 > {
   const body = await txBuilder.build()
 
   const values = [] as {
     address: string
-    value: MultiTokenConstruct
+    value: MultiTokenValue
   }[]
 
   const outputs = await body.outputs()
@@ -512,7 +512,7 @@ async function genWasmUnsignedTxOutputs(
 async function genWasmUnsignedTxTotalOutput(
   txBuilder: WasmContract.TransactionBuilder,
   defaults: Token
-): Promise<MultiTokenConstruct> {
+): Promise<MultiTokenValue> {
   const ma = await multiTokenFromCardanoValue(
     await txBuilder.getExplicitOutput(),
     defaults
@@ -527,7 +527,7 @@ async function genWasmUnsignedTxFee(
   txBuilder: WasmContract.TransactionBuilder,
   defaults: Token,
   networkId: number
-): Promise<MultiTokenConstruct> {
+): Promise<MultiTokenValue> {
   const values = new MultiToken([], defaults)
 
   const wasmFee = await txBuilder.getFeeIfSet()
