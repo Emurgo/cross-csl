@@ -15,7 +15,7 @@ export type Utxo = {
   transaction: Transaction
   index: number
   tokens: Array<{
-    tokenList: TokenList
+    amount: string
     token: Token
   }>
 }
@@ -67,10 +67,6 @@ export type SendToken = {
   amount: BigNumber
   token: Token
   shouldSendAll: boolean
-}
-
-export type TokenList = {
-  amount: string
 }
 
 export type Token = {

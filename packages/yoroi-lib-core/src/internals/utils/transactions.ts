@@ -193,10 +193,10 @@ export async function asAddressedUtxo(
       const tokenTypes = utxo.output.tokens.reduce(
         (acc, next) => {
           if (next.token.identifier === PRIMARY_ASSET_CONSTANTS.Cardano) {
-            acc.amount = acc.amount.plus(next.tokenList.amount)
+            acc.amount = acc.amount.plus(next.amount)
           } else {
             acc.tokens.push({
-              amount: next.tokenList.amount,
+              amount: next.amount,
               tokenId: next.token.identifier
             })
           }

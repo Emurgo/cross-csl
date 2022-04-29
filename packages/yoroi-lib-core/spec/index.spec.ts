@@ -181,9 +181,7 @@ export const setupTests = (
                     isDefault: true,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '2000000'
-                  }
+                  amount: '2000000'
                 }
               ]
             }
@@ -207,9 +205,7 @@ export const setupTests = (
                     isDefault: true,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '3000000'
-                  }
+                  amount: '3000000'
                 }
               ]
             }
@@ -233,9 +229,7 @@ export const setupTests = (
                     isDefault: true,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '537206659'
-                  }
+                  amount: '537206659'
                 },
                 {
                   token: {
@@ -244,9 +238,7 @@ export const setupTests = (
                     isDefault: false,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '2'
-                  }
+                  amount: '2'
                 },
                 {
                   token: {
@@ -255,9 +247,7 @@ export const setupTests = (
                     isDefault: false,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '2'
-                  }
+                  amount: '2'
                 }
               ]
             }
@@ -354,9 +344,7 @@ export const setupTests = (
                     isDefault: true,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '537206659'
-                  }
+                  amount: '537206659'
                 },
                 {
                   token: {
@@ -365,9 +353,7 @@ export const setupTests = (
                     isDefault: false,
                     networkId: 300
                   },
-                  tokenList: {
-                    amount: '2'
-                  }
+                  amount: '2'
                 }
               ]
             }
