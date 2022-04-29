@@ -20,6 +20,5 @@ target 'testappmobile' do
   # end
 
 
-  pod 'react-native-haskell-shelley', :path => '../node_modules/@emurgo/react-native-haskell-shelley'
 
 end
