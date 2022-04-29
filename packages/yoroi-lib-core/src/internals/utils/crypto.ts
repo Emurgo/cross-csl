@@ -39,16 +39,16 @@ export async function derivePrivateByAddressing(
     level: number
   }
 ): Promise<WasmContract.Bip32PrivateKey> {
-  if (startingFrom.level + 1 < addressing.addressing.startLevel) {
+  if (startingFrom.level + 1 < addressing.startLevel) {
     throw new Error(`derivePrivateByAddressing: keyLevel < startLevel`)
   }
   let derivedKey = startingFrom.key
   for (
-    let i = startingFrom.level - addressing.addressing.startLevel + 1;
-    i < addressing.addressing.path.length;
+    let i = startingFrom.level - addressing.startLevel + 1;
+    i < addressing.path.length;
     i++
   ) {
-    derivedKey = await derivedKey.derive(addressing.addressing.path[i])
+    derivedKey = await derivedKey.derive(addressing.path[i])
   }
   return derivedKey
 }

@@ -314,7 +314,7 @@ export class WasmUnsignedTx implements UnsignedTx {
             `WasmUnsignedTx.addWitnesses incorrect addressing size`
           )
         }
-        return await derivePrivateByAddressing(utxo, {
+        return await derivePrivateByAddressing(utxo.addressing, {
           level: keyLevel,
           key: signingKey
         })

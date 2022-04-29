@@ -173,9 +173,7 @@ export const setupTests = (
               transaction: {
                 hash: '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785'
               },
-              utxoTransactionOutput: {
-                outputIndex: 0
-              },
+              index: 0,
               tokens: [
                 {
                   token: {
@@ -201,9 +199,7 @@ export const setupTests = (
               transaction: {
                 hash: 'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376'
               },
-              utxoTransactionOutput: {
-                outputIndex: 0
-              },
+              index: 0,
               tokens: [
                 {
                   token: {
@@ -229,9 +225,7 @@ export const setupTests = (
               transaction: {
                 hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
               },
-              utxoTransactionOutput: {
-                outputIndex: 1
-              },
+              index: 1,
               tokens: [
                 {
                   token: {
@@ -351,9 +345,7 @@ export const setupTests = (
               transaction: {
                 hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
               },
-              utxoTransactionOutput: {
-                outputIndex: 1
-              },
+              index: 1,
               tokens: [
                 {
                   token: {

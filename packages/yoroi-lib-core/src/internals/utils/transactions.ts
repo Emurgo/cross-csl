@@ -225,10 +225,10 @@ export async function asAddressedUtxo(
         amount: tokenTypes.amount.toString(),
         receiver: utxo.address,
         txHash: utxo.output.transaction.hash,
-        txIndex: utxo.output.utxoTransactionOutput.outputIndex,
+        txIndex: utxo.output.index,
         utxoId:
           utxo.output.transaction.hash +
-          utxo.output.utxoTransactionOutput.outputIndex,
+          utxo.output.index,
         addressing: utxo.addressing,
         assets
       }

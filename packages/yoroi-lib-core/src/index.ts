@@ -243,7 +243,7 @@ class YoroiLib implements IYoroiLib {
         const changeAddr = changeAddresses[0]
         const otherAddresses: Array<Address> = receivers.reduce((arr, next) => {
           if (next.addressing == null) {
-            arr.push({ address: next.address })
+            arr.push(next.address)
             return arr
           }
           return arr
@@ -259,7 +259,7 @@ class YoroiLib implements IYoroiLib {
           otherAddresses.length === 1
             ? [
                 {
-                  address: otherAddresses[0].address,
+                  address: otherAddresses[0],
                   amount: buildSendTokenList(
                     defaultToken,
                     tokens,
