@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs'
 
 import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
-import { Ptr, WasmProxy } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract'
+const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 export const init = (): IYoroiLib => {
   return createYoroiLib({
@@ -1261,7 +1261,7 @@ namespace NodeJs {
   }
 
   export class RewardAddresses
-    extends Ptr<WasmV4.RewardAddresses>
+    extends AsyncIteratablePtr<WasmV4.RewardAddresses, RewardAddress>
     implements WasmContract.RewardAddresses
   {
     toBytes(): Promise<Uint8Array> {

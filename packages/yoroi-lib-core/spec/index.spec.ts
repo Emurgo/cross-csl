@@ -442,7 +442,7 @@ export const setupTests = (
       }).timeout(100000)
     })
     
-    describe.only('Iteratables', () => {
+    describe('Iteratables', () => {
       it('should iterate over RewardAddresses', async () => {
         const getRewardAddress = async () => {
           const mainnet = await yoroiLib.Wasm.NetworkInfo.mainnet()
