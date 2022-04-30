@@ -819,11 +819,17 @@ export abstract class RewardAddress extends Ptr {
 }
 
 export abstract class RewardAddresses extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
   abstract len(): Promise<number>
 
   abstract get(index: number): Promise<RewardAddress>
 
   abstract add(item: RewardAddress): Promise<void>
+
+  static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
 
   static new(): Promise<RewardAddresses> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
@@ -831,6 +837,8 @@ export abstract class RewardAddresses extends Ptr {
 }
 
 export abstract class Withdrawals extends Ptr {
+  abstract toBytes(): Promise<Uint8Array>
+
   abstract len(): Promise<number>
 
   abstract insert(key: RewardAddress, value: BigNum): Promise<BigNum>
@@ -840,6 +848,10 @@ export abstract class Withdrawals extends Ptr {
   abstract keys(): Promise<RewardAddresses>
 
   static new(): Promise<Withdrawals> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }

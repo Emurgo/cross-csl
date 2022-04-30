@@ -1302,6 +1302,10 @@ namespace Browser {
     extends Ptr<WasmV4.RewardAddresses>
     implements WasmContract.RewardAddresses
   {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
     len(): Promise<number> {
       return Promise.resolve(this.wasm.len())
     }
@@ -1314,6 +1318,10 @@ namespace Browser {
       return Promise.resolve(this.wasm.add(item.wasm))
     }
 
+    static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
+      return Promise.resolve(new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes)))
+    }
+
     static new(): Promise<RewardAddresses> {
       return Promise.resolve(new RewardAddresses(WasmV4.RewardAddresses.new()))
     }
@@ -1323,6 +1331,10 @@ namespace Browser {
     extends Ptr<WasmV4.Withdrawals>
     implements WasmContract.Withdrawals
   {
+    toBytes(): Promise<Uint8Array> {
+      return Promise.resolve(this.wasm.to_bytes())
+    }
+
     len(): Promise<number> {
       return Promise.resolve(this.wasm.len())
     }
@@ -1341,6 +1353,10 @@ namespace Browser {
 
     static new(): Promise<Withdrawals> {
       return Promise.resolve(new Withdrawals(WasmV4.Withdrawals.new()))
+    }
+
+    static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
+      return Promise.resolve(new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes)))
     }
   }
 
