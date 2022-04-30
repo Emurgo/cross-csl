@@ -98,7 +98,7 @@ export interface WasmModuleProxy {
   PlutusScripts: typeof PlutusScripts
 }
 
-export abstract class WasmProxy {
+export abstract class _WasmProxy {
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(wasm: any | undefined) {}
@@ -106,7 +106,32 @@ export abstract class WasmProxy {
   abstract hasValue(): boolean
 }
 
-export abstract class Ptr extends WasmProxy {
+export abstract class WasmProxy<T> implements _WasmProxy {
+  private _wasm: T | undefined
+
+  get internalWasm(): T | undefined {
+    return this._wasm
+  }
+
+  get wasm(): T {
+    if (this._wasm) return this._wasm
+    throw new Error('Trying to access undefined WASM object')
+  }
+
+  constructor(wasm: T | undefined) {
+    this._wasm = wasm
+  }
+
+  hasValue(): boolean {
+    if (this._wasm) {
+      return true
+    } else {
+      return false
+    }
+  }
+}
+
+export abstract class _Ptr extends _WasmProxy {
   constructor(wasm: any | undefined) {
     super(wasm)
   }
@@ -117,6 +142,16 @@ export abstract class Ptr extends WasmProxy {
   abstract free(): Promise<void>
 }
 
+export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
+  constructor(wasm: T | undefined) {
+    super(wasm)
+  }
+
+  free(): Promise<void> {
+    return Promise.resolve(this.wasm.free())
+  }
+}
+
 /*
   The classes defined here act like placeholders just so we can export the types.
   By doing this, we can generate kind off an "abstract namespace", so the platform
@@ -125,7 +160,7 @@ export abstract class Ptr extends WasmProxy {
     to explicitly know that by calling factory methods or other overheads.
 */
 
-export abstract class BigNum extends Ptr {
+export abstract class BigNum extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
   /**
    * @returns {string}
@@ -174,7 +209,7 @@ export abstract class BigNum extends Ptr {
   }
 }
 
-export abstract class LinearFee extends Ptr {
+export abstract class LinearFee extends _Ptr {
   /**
    * @returns {Promise<BigNum>}
    */
@@ -195,7 +230,7 @@ export abstract class LinearFee extends Ptr {
   }
 }
 
-export abstract class GeneralTransactionMetadata extends Ptr {
+export abstract class GeneralTransactionMetadata extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>
@@ -218,7 +253,7 @@ export abstract class GeneralTransactionMetadata extends Ptr {
   }
 }
 
-export abstract class TransactionMetadatumLabels extends Ptr {
+export abstract class TransactionMetadatumLabels extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>
@@ -236,7 +271,7 @@ export abstract class TransactionMetadatumLabels extends Ptr {
   }
 }
 
-export abstract class MetadataMap extends Ptr {
+export abstract class MetadataMap extends _Ptr {
   abstract free(): Promise<void>
 
   abstract toBytes(): Promise<Uint8Array>
@@ -277,7 +312,7 @@ export abstract class MetadataMap extends Ptr {
   }
 }
 
-export abstract class Int extends Ptr {
+export abstract class Int extends _Ptr {
   abstract isPositive(): Promise<boolean>
 
   abstract asPositive(): Promise<BigNum | undefined>
@@ -299,7 +334,7 @@ export abstract class Int extends Ptr {
   }
 }
 
-export abstract class TransactionMetadatum extends Ptr {
+export abstract class TransactionMetadatum extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract kind(): Promise<number>
@@ -339,7 +374,7 @@ export abstract class TransactionMetadatum extends Ptr {
   }
 }
 
-export abstract class AuxiliaryData extends Ptr {
+export abstract class AuxiliaryData extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract metadata(): Promise<GeneralTransactionMetadata>
@@ -367,7 +402,7 @@ export abstract class AuxiliaryData extends Ptr {
   }
 }
 
-export abstract class AssetName extends Ptr {
+export abstract class AssetName extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
   abstract name(): Promise<Uint8Array>
 
@@ -379,7 +414,7 @@ export abstract class AssetName extends Ptr {
   }
 }
 
-export abstract class AssetNames extends Ptr {
+export abstract class AssetNames extends _Ptr {
   abstract len(): Promise<number>
   abstract get(index: number): Promise<AssetName>
   abstract add(item: AssetName): Promise<void>
@@ -389,7 +424,7 @@ export abstract class AssetNames extends Ptr {
   }
 }
 
-export abstract class Assets extends Ptr {
+export abstract class Assets extends _Ptr {
   abstract len(): Promise<number>
   abstract insert(key: AssetName, value: BigNum): Promise<BigNum>
   abstract get(key: AssetName): Promise<BigNum>
@@ -400,14 +435,14 @@ export abstract class Assets extends Ptr {
   }
 }
 
-export abstract class ScriptHash extends WasmProxy {
+export abstract class ScriptHash extends _WasmProxy {
   abstract toBytes(): Promise<Uint8Array>
   static fromBytes(bytes: Uint8Array): Promise<ScriptHash> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
-export abstract class ScriptHashes extends WasmProxy {
+export abstract class ScriptHashes extends _WasmProxy {
   abstract toBytes(): Promise<Uint8Array>
   abstract len(): Promise<number>
   abstract get(index: number): Promise<ScriptHash>
@@ -425,7 +460,7 @@ export type PolicyID = ScriptHash
 
 export type PolicyIDs = ScriptHashes
 
-export abstract class MultiAsset extends Ptr {
+export abstract class MultiAsset extends _Ptr {
   abstract len(): Promise<number>
   abstract insert(key: PolicyID, value: Assets): Promise<Assets>
   abstract get(key: PolicyID): Promise<Assets>
@@ -437,7 +472,7 @@ export abstract class MultiAsset extends Ptr {
   }
 }
 
-export abstract class Ed25519KeyHash extends Ptr {
+export abstract class Ed25519KeyHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
@@ -445,7 +480,7 @@ export abstract class Ed25519KeyHash extends Ptr {
   }
 }
 
-export abstract class TransactionHash extends Ptr {
+export abstract class TransactionHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
@@ -453,7 +488,7 @@ export abstract class TransactionHash extends Ptr {
   }
 }
 
-export abstract class TransactionInput extends Ptr {
+export abstract class TransactionInput extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract transactionId(): Promise<TransactionHash>
@@ -472,7 +507,7 @@ export abstract class TransactionInput extends Ptr {
   }
 }
 
-export abstract class Value extends Ptr {
+export abstract class Value extends _Ptr {
   abstract coin(): Promise<BigNum>
 
   abstract setCoin(coin: BigNum): Promise<void>
@@ -494,7 +529,7 @@ export abstract class Value extends Ptr {
   }
 }
 
-export abstract class Address extends Ptr {
+export abstract class Address extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract toBech32(prefix?: string): Promise<string>
@@ -510,7 +545,7 @@ export abstract class Address extends Ptr {
   }
 }
 
-export abstract class PublicKey extends Ptr {
+export abstract class PublicKey extends _Ptr {
   abstract toBech32(): Promise<string>
 
   abstract asBytes(): Promise<Uint8Array>
@@ -526,7 +561,7 @@ export abstract class PublicKey extends Ptr {
   }
 }
 
-export abstract class Bip32PublicKey extends Ptr {
+export abstract class Bip32PublicKey extends _Ptr {
   /**
    * derive this private key with the given index.
    *
@@ -568,7 +603,7 @@ export abstract class Bip32PublicKey extends Ptr {
   }
 }
 
-export abstract class PrivateKey extends Ptr {
+export abstract class PrivateKey extends _Ptr {
   abstract toPublic(): Promise<PublicKey>
 
   abstract asBytes(): Promise<Uint8Array>
@@ -584,7 +619,7 @@ export abstract class PrivateKey extends Ptr {
   }
 }
 
-export abstract class Bip32PrivateKey extends Ptr {
+export abstract class Bip32PrivateKey extends _Ptr {
   /**
    * derive this private key with the given index.
    *
@@ -637,7 +672,7 @@ export abstract class Bip32PrivateKey extends Ptr {
   }
 }
 
-export abstract class ByronAddress extends Ptr {
+export abstract class ByronAddress extends _Ptr {
   abstract toBase58(): Promise<string>
 
   abstract toAddress(): Promise<Address>
@@ -666,7 +701,7 @@ export abstract class ByronAddress extends Ptr {
   }
 }
 
-export abstract class TransactionOutput extends Ptr {
+export abstract class TransactionOutput extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract address(): Promise<Address>
@@ -682,7 +717,7 @@ export abstract class TransactionOutput extends Ptr {
   }
 }
 
-export abstract class StakeCredential extends Ptr {
+export abstract class StakeCredential extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract toKeyhash(): Promise<Ed25519KeyHash>
@@ -704,7 +739,7 @@ export abstract class StakeCredential extends Ptr {
   }
 }
 
-export abstract class StakeRegistration extends Ptr {
+export abstract class StakeRegistration extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract stakeCredential(): Promise<StakeCredential>
@@ -718,7 +753,7 @@ export abstract class StakeRegistration extends Ptr {
   }
 }
 
-export abstract class StakeDeregistration extends Ptr {
+export abstract class StakeDeregistration extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract stakeCredential(): Promise<StakeCredential>
@@ -732,7 +767,7 @@ export abstract class StakeDeregistration extends Ptr {
   }
 }
 
-export abstract class StakeDelegation extends Ptr {
+export abstract class StakeDelegation extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract stakeCredential(): Promise<StakeCredential>
@@ -751,7 +786,7 @@ export abstract class StakeDelegation extends Ptr {
   }
 }
 
-export abstract class Certificate extends Ptr {
+export abstract class Certificate extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract asStakeRegistration(): Promise<StakeRegistration>
@@ -783,7 +818,7 @@ export abstract class Certificate extends Ptr {
   }
 }
 
-export abstract class Certificates extends Ptr {
+export abstract class Certificates extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>
@@ -801,7 +836,7 @@ export abstract class Certificates extends Ptr {
   }
 }
 
-export abstract class RewardAddress extends Ptr {
+export abstract class RewardAddress extends _Ptr {
   abstract paymentCred(): Promise<StakeCredential>
 
   abstract toAddress(): Promise<Address>
@@ -818,7 +853,7 @@ export abstract class RewardAddress extends Ptr {
   }
 }
 
-export abstract class RewardAddresses extends Ptr {
+export abstract class RewardAddresses extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>
@@ -836,7 +871,7 @@ export abstract class RewardAddresses extends Ptr {
   }
 }
 
-export abstract class Withdrawals extends Ptr {
+export abstract class Withdrawals extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>
@@ -856,13 +891,13 @@ export abstract class Withdrawals extends Ptr {
   }
 }
 
-export abstract class TransactionInputs extends Ptr {
+export abstract class TransactionInputs extends _Ptr {
   abstract len(): Promise<number>
 
   abstract get(index: number): Promise<TransactionInput>
 }
 
-export abstract class TransactionOutputs extends Ptr {
+export abstract class TransactionOutputs extends _Ptr {
   abstract len(): Promise<number>
 
   abstract get(index: number): Promise<TransactionOutput>
@@ -870,7 +905,7 @@ export abstract class TransactionOutputs extends Ptr {
 
 export type Optional<T> = T
 
-export abstract class TransactionBody extends Ptr {
+export abstract class TransactionBody extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract inputs(): Promise<TransactionInputs>
@@ -890,7 +925,7 @@ export abstract class TransactionBody extends Ptr {
   }
 }
 
-export abstract class TransactionBuilder extends Ptr {
+export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
     hash: Ed25519KeyHash,
     input: TransactionInput,
@@ -959,7 +994,7 @@ export abstract class TransactionBuilder extends Ptr {
   }
 }
 
-export abstract class BaseAddress extends Ptr {
+export abstract class BaseAddress extends _Ptr {
   abstract paymentCred(): Promise<StakeCredential>
 
   abstract stakeCred(): Promise<StakeCredential>
@@ -979,7 +1014,7 @@ export abstract class BaseAddress extends Ptr {
   }
 }
 
-export abstract class PointerAddress extends Ptr {
+export abstract class PointerAddress extends _Ptr {
   abstract paymentCred(): Promise<StakeCredential>
 
   abstract stakePointer(): Promise<Pointer>
@@ -999,7 +1034,7 @@ export abstract class PointerAddress extends Ptr {
   }
 }
 
-export abstract class EnterpriseAddress extends Ptr {
+export abstract class EnterpriseAddress extends _Ptr {
   abstract paymentCred(): Promise<StakeCredential>
 
   abstract toAddress(): Promise<Address>
@@ -1016,7 +1051,7 @@ export abstract class EnterpriseAddress extends Ptr {
   }
 }
 
-export abstract class Pointer extends Ptr {
+export abstract class Pointer extends _Ptr {
   abstract slot(): Promise<number>
 
   abstract txIndex(): Promise<number>
@@ -1032,13 +1067,13 @@ export abstract class Pointer extends Ptr {
   }
 }
 
-export abstract class Vkey extends Ptr {
+export abstract class Vkey extends _Ptr {
   static new(pk: PublicKey): Promise<Vkey> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
 
-export abstract class Ed25519Signature extends Ptr {
+export abstract class Ed25519Signature extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract toHex(): Promise<string>
@@ -1048,7 +1083,7 @@ export abstract class Ed25519Signature extends Ptr {
   }
 }
 
-export abstract class Vkeywitness extends Ptr {
+export abstract class Vkeywitness extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract signature(): Promise<Ed25519Signature>
@@ -1062,7 +1097,7 @@ export abstract class Vkeywitness extends Ptr {
   }
 }
 
-export abstract class Vkeywitnesses extends Ptr {
+export abstract class Vkeywitnesses extends _Ptr {
   abstract len(): Promise<number>
 
   abstract add(item: Vkeywitness): Promise<void>
@@ -1072,7 +1107,7 @@ export abstract class Vkeywitnesses extends Ptr {
   }
 }
 
-export abstract class BootstrapWitness extends Ptr {
+export abstract class BootstrapWitness extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
@@ -1089,7 +1124,7 @@ export abstract class BootstrapWitness extends Ptr {
   }
 }
 
-export abstract class BootstrapWitnesses extends Ptr {
+export abstract class BootstrapWitnesses extends _Ptr {
   abstract len(): Promise<number>
 
   abstract add(item: BootstrapWitness): Promise<void>
@@ -1099,7 +1134,7 @@ export abstract class BootstrapWitnesses extends Ptr {
   }
 }
 
-export abstract class TransactionWitnessSet extends Ptr {
+export abstract class TransactionWitnessSet extends _Ptr {
   abstract setBootstraps(bootstraps: BootstrapWitnesses): Promise<void>
 
   abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>
@@ -1109,7 +1144,7 @@ export abstract class TransactionWitnessSet extends Ptr {
   }
 }
 
-export abstract class Transaction extends Ptr {
+export abstract class Transaction extends _Ptr {
   abstract body(): Promise<TransactionBody>
 
   abstract toBytes(): Promise<Uint8Array>
@@ -1127,7 +1162,7 @@ export abstract class Transaction extends Ptr {
   }
 }
 
-export abstract class NetworkInfo extends Ptr {
+export abstract class NetworkInfo extends _Ptr {
   abstract networkId(): Promise<number>
 
   abstract protocolMagic(): Promise<number>
@@ -1145,7 +1180,7 @@ export abstract class NetworkInfo extends Ptr {
   }
 }
 
-export abstract class MetadataList extends Ptr {
+export abstract class MetadataList extends _Ptr {
   static new(): Promise<MetadataList> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
@@ -1163,7 +1198,7 @@ export abstract class MetadataList extends Ptr {
   abstract toBytes(): Promise<Uint8Array>
 }
 
-export abstract class NativeScript extends Ptr {
+export abstract class NativeScript extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract hash(namespace: number): Promise<Ed25519KeyHash>
@@ -1201,7 +1236,7 @@ export abstract class NativeScript extends Ptr {
   // static new_timelock_expiry(timelock_expiry: TimelockExpiry): NativeScript
 }
 
-export abstract class NativeScripts extends Ptr {
+export abstract class NativeScripts extends _Ptr {
   abstract len(): Promise<number>
 
   abstract get(index: number): Promise<NativeScript>
@@ -1213,7 +1248,7 @@ export abstract class NativeScripts extends Ptr {
   }
 }
 
-export abstract class PlutusScript extends Ptr {
+export abstract class PlutusScript extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract bytes(): Promise<Uint8Array>
@@ -1227,7 +1262,7 @@ export abstract class PlutusScript extends Ptr {
   }
 }
 
-export abstract class PlutusScripts extends Ptr {
+export abstract class PlutusScripts extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>

@@ -10,7 +10,7 @@ export enum AddInputResult {
   NO_NEED = 3
 }
 
-export function firstWithValue<T extends WasmContract.WasmProxy>(
+export function firstWithValue<T extends WasmContract._WasmProxy>(
   ...objs: T[]
 ): T {
   for (const o of objs) {
