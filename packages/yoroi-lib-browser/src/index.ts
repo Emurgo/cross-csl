@@ -1,6 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
 
 import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
+import { Ptr, WasmProxy } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract'
 
 export const init = (): IYoroiLib => {
   // The methods in the browser's Wasm object are not async,
@@ -128,41 +129,6 @@ export const init = (): IYoroiLib => {
 }
 
 namespace Browser {
-  abstract class WasmProxy<T> {
-    private _wasm: T | undefined
-
-    get internalWasm(): T | undefined {
-      return this._wasm
-    }
-
-    get wasm(): T {
-      if (this._wasm) return this._wasm
-      throw new Error('Trying to access undefined WASM object')
-    }
-
-    constructor(wasm: T | undefined) {
-      this._wasm = wasm
-    }
-
-    hasValue(): boolean {
-      if (this._wasm) {
-        return true
-      } else {
-        return false
-      }
-    }
-  }
-
-  abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
-    constructor(wasm: T | undefined) {
-      super(wasm)
-    }
-
-    free(): Promise<void> {
-      return Promise.resolve(this.wasm.free())
-    }
-  }
-
   export class BigNum
     extends Ptr<WasmV4.BigNum>
     implements WasmContract.BigNum
