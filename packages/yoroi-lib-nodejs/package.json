@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-nodejs",
-  "version": "0.1.0-alpha.12",
+  "version": "0.1.1-alpha.14",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "pack-tar:dry": "yarn rebuild && npm pack --dry-run",
     "pack-tar": "yarn rebuild && npm pack",
     "publish:beta": "npm publish --tag beta --access public",
-    "publish:prod": "npm publish --access public"
+    "publish:prod": "npm publish --access public",
+    "release": "yarn rebuild && npm publish --scope=emurgo"
   },
   "files": [
     "dist/**"
@@ -22,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "9.1.4",
-    "@emurgo/yoroi-lib-core": "^0.1.0-alpha.12"
+    "@emurgo/yoroi-lib-core": "^0.1.1-alpha.14"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

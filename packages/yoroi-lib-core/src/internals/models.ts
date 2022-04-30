@@ -11,42 +11,37 @@ export type Transaction = {
   hash: string
 }
 
-export type UtxoTransactionOutput = {
-  outputIndex: number
-}
-
-export type UtxoTxOutput = {
+export type Utxo = {
   transaction: Transaction
-  utxoTransactionOutput: UtxoTransactionOutput
+  index: number
   tokens: Array<{
-    tokenList: TokenList
+    amount: string
     token: Token
   }>
 }
 
 export type AddressingUtxo = AddressingAddress & {
-  output: UtxoTxOutput
+  output: Utxo
 }
 
-export type CardanoAddressedUtxo = RemoteUnspentOutput & Addressing
+export type CardanoAddressedUtxo = RemoteUnspentOutput & {
+  addressing: Addressing
+}
 
-export type Value = {
+export type Change = AddressingAddress & {
   values: MultiToken
 }
 
-export type Change = AddressingAddress & Value
-
-export type AddressingAddress = Address & Addressing
-
-export type Address = {
-  address: string
+export type AddressingAddress = {
+  address: Address
+  addressing: Addressing
 }
 
+export type Address = string
+
 export type Addressing = {
-  addressing: {
-    path: number[]
-    startLevel: number
-  }
+  path: number[]
+  startLevel: number
 }
 
 export type TxOutput = {
@@ -74,19 +69,10 @@ export type SendToken = {
   shouldSendAll: boolean
 }
 
-export type TokenList = {
-  amount: string
-}
-
 export type Token = {
   identifier: string
   networkId: number
   isDefault: boolean
-}
-
-export type DefaultTokenEntry = {
-  defaultNetworkId: number
-  defaultIdentifier: string
 }
 
 export type TokenEntry = {
@@ -95,10 +81,9 @@ export type TokenEntry = {
   networkId: number
 }
 
-// This name will probably change
-export type MultiTokenConstruct = {
+export type MultiTokenValue = {
   values: Array<TokenEntry>
-  defaults: DefaultTokenEntry
+  defaults: Token
 }
 
 export type TxOptions = {

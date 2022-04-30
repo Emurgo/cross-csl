@@ -1,26 +1,26 @@
 import { BigNumber } from 'bignumber.js'
-import { DefaultTokenEntry, TokenEntry } from './models'
+import { Token, TokenEntry } from './models'
 
 export class MultiToken {
   // this could be a map, but the # of elements is small enough the perf difference is trivial
   values: Array<TokenEntry>
-  defaults: DefaultTokenEntry
+  defaults: Token
 
-  constructor(values: Array<TokenEntry>, defaults: DefaultTokenEntry) {
+  constructor(values: Array<TokenEntry>, defaults: Token) {
     this.values = []
 
     // things are just easier if we enforce the default entry to be part of the list of tokens
     this.defaults = defaults
     this.add({
-      identifier: defaults.defaultIdentifier,
-      networkId: defaults.defaultNetworkId,
+      identifier: defaults.identifier,
+      networkId: defaults.networkId,
       amount: new BigNumber(0)
     })
     values.forEach((value) => this.add(value))
   }
 
   _checkNetworkId(networkId: number): void {
-    const ownNetworkId = this.defaults.defaultNetworkId
+    const ownNetworkId = this.defaults.networkId
     if (ownNetworkId !== networkId) {
       throw new Error(
         `MultiToken: network mismatch ${ownNetworkId} - ${networkId}`
@@ -50,7 +50,7 @@ export class MultiToken {
     // if after modifying a token value we end up with a value of 0,
     // we should just remove the token from the list
     // However, we must keep a value of 0 for the default entry
-    if (identifier === this.defaults.defaultIdentifier) {
+    if (identifier === this.defaults.identifier) {
       return
     }
     const existingValue = this.get(identifier)
@@ -117,8 +117,8 @@ export class MultiToken {
   getDefaultEntry(): TokenEntry {
     return this.values.filter(
       (value) =>
-        value.networkId === this.defaults.defaultNetworkId &&
-        value.identifier === this.defaults.defaultIdentifier
+        value.networkId === this.defaults.networkId &&
+        value.identifier === this.defaults.identifier
     )[0]
   }
 
@@ -126,8 +126,8 @@ export class MultiToken {
     return this.values.filter(
       (value) =>
         !(
-          value.networkId === this.defaults.defaultNetworkId &&
-          value.identifier === this.defaults.defaultIdentifier
+          value.networkId === this.defaults.networkId &&
+          value.identifier === this.defaults.identifier
         )
     )
   }

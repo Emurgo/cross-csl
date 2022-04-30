@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import { MultiToken } from '../multi-token'
 import {
-  DefaultTokenEntry,
+  Token,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken
@@ -46,21 +46,21 @@ export async function cardanoValueFromMultiToken(
 
 export async function multiTokenFromCardanoValue(
   value: WasmContract.Value,
-  defaults: DefaultTokenEntry
+  defaults: Token
 ): Promise<MultiToken> {
   const multiToken = new MultiToken([], defaults)
   const coin = await value.coin()
   multiToken.add({
     amount: new BigNumber(await coin.toStr()),
-    identifier: defaults.defaultIdentifier,
-    networkId: defaults.defaultNetworkId
+    identifier: defaults.identifier,
+    networkId: defaults.networkId
   })
 
   for (const token of await parseTokenList(await value.multiasset())) {
     multiToken.add({
       amount: new BigNumber(token.amount),
       identifier: token.assetId,
-      networkId: defaults.defaultNetworkId
+      networkId: defaults.networkId
     })
   }
   return multiToken
@@ -91,7 +91,7 @@ export async function identifierToCardanoAsset(
 }
 
 export function buildSendTokenList(
-  defaultToken: DefaultTokenEntry,
+  defaultToken: Token,
   tokens: SendToken[],
   utxos: Array<MultiToken>
 ): MultiToken {
@@ -144,8 +144,9 @@ export function multiTokenFromRemote(
   networkId: number
 ): MultiToken {
   const result = new MultiToken([], {
-    defaultNetworkId: networkId,
-    defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+    networkId: networkId,
+    identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+    isDefault: true
   })
   result.add({
     identifier: PRIMARY_ASSET_CONSTANTS.Cardano,

@@ -98,8 +98,9 @@ export async function addUtxoInput(
     if (!remaining) return skipOverflow()
 
     const defaultEntry = {
-      defaultNetworkId: protocolParams.networkId,
-      defaultIdentifier: PRIMARY_ASSET_CONSTANTS.Cardano
+      networkId: protocolParams.networkId,
+      identifier: PRIMARY_ASSET_CONSTANTS.Cardano,
+      isDefault: true
     }
     const tokenSetInInput = new Set(input.assets.map((asset) => asset.assetId))
     const remainingTokens = await multiTokenFromCardanoValue(
@@ -126,7 +127,7 @@ export async function addUtxoInput(
 
     const onlyDefaultEntry =
       includedTargets.length === 1 &&
-      includedTargets[0].identifier === defaultEntry.defaultIdentifier
+      includedTargets[0].identifier === defaultEntry.identifier
     // ignore UTXO that contribute less than their fee if they also don't contribute a token
     if (onlyDefaultEntry && excludeIfSmall) {
       const feeForInput = new BigNumber(
@@ -192,10 +193,10 @@ export async function asAddressedUtxo(
       const tokenTypes = utxo.output.tokens.reduce(
         (acc, next) => {
           if (next.token.identifier === PRIMARY_ASSET_CONSTANTS.Cardano) {
-            acc.amount = acc.amount.plus(next.tokenList.amount)
+            acc.amount = acc.amount.plus(next.amount)
           } else {
             acc.tokens.push({
-              amount: next.tokenList.amount,
+              amount: next.amount,
               tokenId: next.token.identifier
             })
           }
@@ -225,10 +226,10 @@ export async function asAddressedUtxo(
         amount: tokenTypes.amount.toString(),
         receiver: utxo.address,
         txHash: utxo.output.transaction.hash,
-        txIndex: utxo.output.utxoTransactionOutput.outputIndex,
+        txIndex: utxo.output.index,
         utxoId:
           utxo.output.transaction.hash +
-          utxo.output.utxoTransactionOutput.outputIndex,
+          utxo.output.index,
         addressing: utxo.addressing,
         assets
       }
