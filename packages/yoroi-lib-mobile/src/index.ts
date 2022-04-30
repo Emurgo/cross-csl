@@ -1224,6 +1224,10 @@ namespace Mobile {
     extends Ptr<WasmV4.RewardAddresses>
     implements WasmContract.RewardAddresses
   {
+    toBytes(): Promise<Uint8Array> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
+    }
+
     async len(): Promise<number> {
       return await this.wasm.len()
     }
@@ -1239,12 +1243,21 @@ namespace Mobile {
     static async new(): Promise<RewardAddresses> {
       return new RewardAddresses(await WasmV4.RewardAddresses.new())
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
+    }
   }
 
   export class Withdrawals
     extends Ptr<WasmV4.Withdrawals>
     implements WasmContract.Withdrawals
   {
+    async toBytes(): Promise<Uint8Array> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
+    }
+
     async len(): Promise<number> {
       return await this.wasm.len()
     }
@@ -1263,6 +1276,11 @@ namespace Mobile {
 
     static async new(): Promise<Withdrawals> {
       return new Withdrawals(await WasmV4.Withdrawals.new())
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
   }
 
