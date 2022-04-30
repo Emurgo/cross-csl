@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/react-native-haskell-shelley'
 
 import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
-import { Ptr, WasmProxy } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract'
+const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 const EXCEPTIONS = WasmContract.EXCEPTIONS
 
@@ -1187,7 +1187,7 @@ namespace Mobile {
   }
 
   export class RewardAddresses
-    extends Ptr<WasmV4.RewardAddresses>
+    extends AsyncIteratablePtr<WasmV4.RewardAddresses, RewardAddress>
     implements WasmContract.RewardAddresses
   {
     toBytes(): Promise<Uint8Array> {

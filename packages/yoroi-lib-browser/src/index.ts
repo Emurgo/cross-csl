@@ -1,7 +1,7 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
 
 import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
-import { Ptr, WasmProxy } from '@emurgo/yoroi-lib-core/dist/internals/wasm-contract'
+const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 export const init = (): IYoroiLib => {
   // The methods in the browser's Wasm object are not async,
@@ -1265,7 +1265,7 @@ namespace Browser {
   }
 
   export class RewardAddresses
-    extends Ptr<WasmV4.RewardAddresses>
+    extends AsyncIteratablePtr<WasmV4.RewardAddresses, RewardAddress>
     implements WasmContract.RewardAddresses
   {
     toBytes(): Promise<Uint8Array> {

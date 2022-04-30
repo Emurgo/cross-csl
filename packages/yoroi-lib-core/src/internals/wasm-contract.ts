@@ -152,6 +152,41 @@ export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
   }
 }
 
+export abstract class AsyncIteratablePtr<
+  T  extends { free: () => any },
+  TIteratable
+  >
+  extends Ptr<T>
+  implements AsyncIterable<TIteratable>
+{
+  [Symbol.asyncIterator](): AsyncIterator<TIteratable, any, undefined> {
+    let i = 0
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that: AsyncIteratablePtr<T, TIteratable> = this
+    return {
+      async next() {
+        const len = await that.len()
+        if (i < len) {
+          const value = await that.get(i)
+          i++
+          return Promise.resolve({
+            value: value,
+            done: false
+          })
+        }
+
+        return Promise.resolve({
+          value: null,
+          done: true
+        })
+      }
+    }
+  }
+
+  abstract len(): Promise<number>
+  abstract get(idx: number): Promise<TIteratable>
+}
+
 /*
   The classes defined here act like placeholders just so we can export the types.
   By doing this, we can generate kind off an "abstract namespace", so the platform
@@ -853,7 +888,12 @@ export abstract class RewardAddress extends _Ptr {
   }
 }
 
-export abstract class RewardAddresses extends _Ptr {
+export abstract class RewardAddresses
+  extends _Ptr
+  implements AsyncIterable<RewardAddress>
+{
+  abstract [Symbol.asyncIterator](): AsyncIterator<RewardAddress, any, undefined>
+
   abstract toBytes(): Promise<Uint8Array>
 
   abstract len(): Promise<number>

@@ -8,7 +8,7 @@ import {
   IYoroiLib,
   SendToken
 } from '../src'
-import { GeneralTransactionMetadata } from '../src/internals/wasm-contract'
+import { GeneralTransactionMetadata, RewardAddress } from '../src/internals/wasm-contract'
 
 /*
   These tests were useful to start building the initial setup, but as we add the actual
@@ -440,6 +440,43 @@ export const setupTests = (
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])
       }).timeout(100000)
+    })
+    
+    describe('Iteratables', () => {
+      it('should iterate over RewardAddresses', async () => {
+        const getRewardAddress = async () => {
+          const mainnet = await yoroiLib.Wasm.NetworkInfo.mainnet()
+
+          const privKey = await yoroiLib.Wasm.Bip32PrivateKey.generateEd25519Bip32()
+          const pubKey = await privKey.toPublic()
+          const stakeCredential = await yoroiLib.Wasm
+            .StakeCredential.fromKeyhash(await pubKey.toRawKey().then(x => x.hash()))
+          const rewardAddress = yoroiLib.Wasm.RewardAddress.new(
+            await mainnet.networkId(),
+            stakeCredential
+          )
+
+          return rewardAddress
+        }
+
+        const rewardAddresses = await yoroiLib.Wasm.RewardAddresses.new()
+        rewardAddresses.add(await getRewardAddress())
+        rewardAddresses.add(await getRewardAddress())
+        rewardAddresses.add(await getRewardAddress())
+
+        const rewardAddressesArray = [] as RewardAddress[]
+        for await (const rewardAddress of rewardAddresses) {
+          rewardAddressesArray.push(rewardAddress)
+        }
+
+        expect(rewardAddressesArray.length).to.equal(await rewardAddresses.len())
+        expect(await rewardAddressesArray[0].toAddress().then(a => a.toBech32()))
+          .to.equal(await rewardAddresses.get(0).then(a => a.toAddress()).then(a => a.toBech32()))
+        expect(await rewardAddressesArray[1].toAddress().then(a => a.toBech32()))
+          .to.equal(await rewardAddresses.get(1).then(a => a.toAddress()).then(a => a.toBech32()))
+        expect(await rewardAddressesArray[2].toAddress().then(a => a.toBech32()))
+          .to.equal(await rewardAddresses.get(2).then(a => a.toAddress()).then(a => a.toBech32()))
+      })
     })
   })
 }
