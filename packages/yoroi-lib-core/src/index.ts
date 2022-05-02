@@ -10,7 +10,6 @@ import {
 import {
   Address,
   AddressingAddress,
-  AddressingUtxo,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
   Change,
@@ -37,7 +36,6 @@ import {
 } from './internals/utils/assets'
 import {
   addUtxoInput,
-  asAddressedUtxo,
   cardanoValueFromRemoteFormat,
   isBigNumZero,
   minRequiredForChange
@@ -82,7 +80,7 @@ export interface IYoroiLib {
   decryptWithPassword(password: string, data: string): Promise<string>
   createUnsignedTx(
     absSlotNumber: BigNumber,
-    utxos: Array<AddressingUtxo>,
+    utxos: Array<CardanoAddressedUtxo>,
     receiver: string,
     changeAddr: AddressingAddress,
     tokens: Array<SendToken>,
@@ -149,7 +147,7 @@ class YoroiLib implements IYoroiLib {
 
   async createUnsignedTx(
     absSlotNumber: BigNumber,
-    utxos: Array<AddressingUtxo>,
+    utxos: Array<CardanoAddressedUtxo>,
     receiver: string,
     changeAddr: AddressingAddress,
     tokens: Array<SendToken>,
@@ -157,7 +155,6 @@ class YoroiLib implements IYoroiLib {
     defaultToken: Token,
     txOptions: TxOptions
   ): Promise<UnsignedTx> {
-    const addressedUtxo = await asAddressedUtxo(this.Wasm, utxos)
     const receivers = [
       {
         address: receiver
@@ -173,7 +170,7 @@ class YoroiLib implements IYoroiLib {
       receivers,
       defaultToken,
       tokens,
-      addressedUtxo,
+      utxos,
       config,
       txOptions
     )

@@ -20,10 +20,6 @@ export type Utxo = {
   }>
 }
 
-export type AddressingUtxo = AddressingAddress & {
-  output: Utxo
-}
-
 export type CardanoAddressedUtxo = RemoteUnspentOutput & {
   addressing: Addressing
 }

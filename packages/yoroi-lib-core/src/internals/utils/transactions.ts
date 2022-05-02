@@ -1,8 +1,6 @@
 import * as WasmContract from '../wasm-contract'
 import {
   AddressingAddress,
-  AddressingUtxo,
-  CardanoAddressedUtxo,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput
 } from '../models'
@@ -182,59 +180,6 @@ export async function cardanoValueFromRemoteFormat(
     await value.setMultiasset(assets)
   }
   return value
-}
-
-export async function asAddressedUtxo(
-  wasm: WasmContract.WasmModuleProxy,
-  utxos: Array<AddressingUtxo>
-): Promise<Array<CardanoAddressedUtxo>> {
-  return await Promise.all(
-    utxos.map(async (utxo) => {
-      const tokenTypes = utxo.output.tokens.reduce(
-        (acc, next) => {
-          if (next.token.identifier === PRIMARY_ASSET_CONSTANTS.Cardano) {
-            acc.amount = acc.amount.plus(next.amount)
-          } else {
-            acc.tokens.push({
-              amount: next.amount,
-              tokenId: next.token.identifier
-            })
-          }
-          return acc
-        },
-        {
-          amount: new BigNumber(0),
-          tokens: [] as { amount: string; tokenId: string }[]
-        }
-      )
-
-      const assets = await Promise.all(
-        tokenTypes.tokens.map(async (token) => {
-          const pieces = await identifierToCardanoAsset(wasm, token.tokenId)
-          return {
-            amount: token.amount,
-            assetId: token.tokenId,
-            policyId: Buffer.from(await pieces.policyId.toBytes()).toString(
-              'hex'
-            ),
-            name: Buffer.from(await pieces.name.name()).toString('hex')
-          }
-        })
-      )
-
-      return {
-        amount: tokenTypes.amount.toString(),
-        receiver: utxo.address,
-        txHash: utxo.output.transaction.hash,
-        txIndex: utxo.output.index,
-        utxoId:
-          utxo.output.transaction.hash +
-          utxo.output.index,
-        addressing: utxo.addressing,
-        assets
-      }
-    })
-  )
 }
 
 async function utxoToTxInput(
