@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import { expect } from 'chai'
 import {
   AddressingAddress,
-  AddressingUtxo,
+  CardanoAddressedUtxo,
   CardanoHaskellConfig,
   Token,
   IYoroiLib,
@@ -161,98 +161,53 @@ export const setupTests = (
     describe('Tx Builder', () => {
       const buildDummyTxParameters = (sendAll: boolean) => {
         const absSlotNumber = new BigNumber(38484054)
-        const utxos = [
+        const utxos: CardanoAddressedUtxo[] = [
           {
-            address:
-              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 4294967295, 2147483648, 0, 3],
               startLevel: 1
             },
-            output: {
-              transaction: {
-                hash: '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785'
-              },
-              index: 0,
-              tokens: [
-                {
-                  token: {
-                    identifier: '',
-                    isDefault: true,
-                    networkId: 300
-                  },
-                  amount: '2000000'
-                }
-              ]
-            }
+            amount: '2000000',
+            assets: [],
+            receiver: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            txHash: '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785',
+            txIndex: 0,
+            utxoId: '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac67850'
           },
           {
-            address:
-              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 2147485463, 2147483648, 0, 3],
               startLevel: 1
             },
-            output: {
-              transaction: {
-                hash: 'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376'
-              },
-              index: 0,
-              tokens: [
-                {
-                  token: {
-                    identifier: '',
-                    isDefault: true,
-                    networkId: 300
-                  },
-                  amount: '3000000'
-                }
-              ]
-            }
+            amount: '3000000',
+            assets: [],
+            receiver: '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            txHash: 'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376',
+            txIndex: 0,
+            utxoId: 'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a3760'
           },
           {
-            address:
-              '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 2147485463, 2147483648, 1, 6],
               startLevel: 1
             },
-            output: {
-              transaction: {
-                hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
+            amount: '537206659',
+            assets: [
+              {
+                amount: '2',
+                assetId: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e'
               },
-              index: 1,
-              tokens: [
-                {
-                  token: {
-                    identifier: '',
-                    isDefault: true,
-                    networkId: 300
-                  },
-                  amount: '537206659'
-                },
-                {
-                  token: {
-                    identifier:
-                      '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
-                    isDefault: false,
-                    networkId: 300
-                  },
-                  amount: '2'
-                },
-                {
-                  token: {
-                    identifier:
-                      '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.',
-                    isDefault: false,
-                    networkId: 300
-                  },
-                  amount: '2'
-                }
-              ]
-            }
+              {
+                amount: '2',
+                assetId: '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.'
+              }
+            ],
+            receiver: '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            txHash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf',
+            txIndex: 1,
+            utxoId: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf1'
           }
-        ] as Array<AddressingUtxo>
+        ]
         const receiver =
           '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82'
         const changeAddress = {
@@ -324,41 +279,25 @@ export const setupTests = (
       }).timeout(100000)
 
       it('should build and sign TX with native assets', async () => {
-        const utxos = [
+        const utxos: CardanoAddressedUtxo[] = [
           {
-            address:
-              '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
             addressing: {
               path: [2147485500, 2147485463, 2147483648, 1, 6],
               startLevel: 1
             },
-            output: {
-              transaction: {
-                hash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf'
-              },
-              index: 1,
-              tokens: [
-                {
-                  token: {
-                    identifier: '',
-                    isDefault: true,
-                    networkId: 300
-                  },
-                  amount: '537206659'
-                },
-                {
-                  token: {
-                    identifier:
-                      '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e',
-                    isDefault: false,
-                    networkId: 300
-                  },
-                  amount: '2'
-                }
-              ]
-            }
+            amount: '537206659',
+            assets: [
+              {
+                amount: '2',
+                assetId: '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e'
+              }
+            ],
+            receiver: '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+            txHash: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf',
+            txIndex: 1,
+            utxoId: '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf1'
           }
-        ] as Array<AddressingUtxo>
+        ]
 
         const tokens = [
           {
