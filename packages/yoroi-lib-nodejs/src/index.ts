@@ -857,6 +857,10 @@ namespace NodeJs {
       return Promise.resolve(new PublicKey(this.wasm.to_public()))
     }
 
+    toBech32(): Promise<string> {
+      return Promise.resolve(this.wasm.to_bech32())
+    }
+
     asBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.as_bytes())
     }
@@ -874,6 +878,18 @@ namespace NodeJs {
     static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
       return Promise.resolve(
         new PrivateKey(WasmV4.PrivateKey.from_normal_bytes(bytes))
+      )
+    }
+
+    static generateEd25519(): Promise<PrivateKey> {
+      return Promise.resolve(
+        new PrivateKey(WasmV4.PrivateKey.generate_ed25519())
+      )
+    }
+  
+    static generateEd25519extended(): Promise<PrivateKey> {
+      return Promise.resolve(
+        new PrivateKey(WasmV4.PrivateKey.generate_ed25519extended())
       )
     }
   }
