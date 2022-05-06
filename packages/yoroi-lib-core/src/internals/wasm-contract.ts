@@ -659,7 +659,7 @@ export abstract class PrivateKey extends _Ptr {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 
-  static generate_ed25519extended(): Promise<PrivateKey> {
+  static generateEd25519extended(): Promise<PrivateKey> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
