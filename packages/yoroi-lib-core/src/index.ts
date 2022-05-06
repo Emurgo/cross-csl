@@ -5,9 +5,11 @@ import {
   BaseError,
   GenericError,
   NoOutputsError,
-  NotEnoughMoneyToSendError
+  NotEnoughMoneyToSendError,
+  RewardAddressEmptyError
 } from './errors'
 import {
+  AccountStatePart,
   Address,
   AddressingAddress,
   CardanoAddressedUtxo,
@@ -18,7 +20,8 @@ import {
   SendToken,
   Token,
   TxOptions,
-  TxOutput
+  TxOutput,
+  WithdrawalRequest
 } from './internals/models'
 import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
 import {
@@ -41,6 +44,7 @@ import {
   minRequiredForChange
 } from './internals/utils/transactions'
 import * as WasmContract from './internals/wasm-contract'
+import { BigNum, RewardAddress } from './internals/wasm-contract'
 
 export { AccountService } from './account'
 export { AccountChainProtocols, AccountStorage } from './account/models'
@@ -86,6 +90,17 @@ export interface IYoroiLib {
     tokens: Array<SendToken>,
     config: CardanoHaskellConfig,
     defaultToken: Token,
+    txOptions: TxOptions
+  ): Promise<UnsignedTx>
+  createUnsignedWithdrawalTx(
+    accountState: {
+      [key: string]: null | AccountStatePart
+    },
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    withdrawalRequests: Array<WithdrawalRequest>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
     txOptions: TxOptions
   ): Promise<UnsignedTx>
 }
@@ -176,6 +191,121 @@ class YoroiLib implements IYoroiLib {
     )
   }
 
+  async createUnsignedWithdrawalTx(
+    accountState: {
+      [key: string]: null | AccountStatePart
+    },
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    withdrawalRequests: Array<WithdrawalRequest>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
+    txOptions: TxOptions
+  ): Promise<UnsignedTx> {
+    const certificates = []
+    const neededKeys = {
+      neededHashes: new Set<string>(),
+      wits: new Set<string>(),
+    }
+    const requiredWits: Array<WasmContract.Ed25519KeyHash> = []
+
+    for (const withdrawalRequest of withdrawalRequests) {
+      const wasmAddr = await this.Wasm.RewardAddress.fromAddress(
+        await this.Wasm.Address.fromBytes(
+          Buffer.from(withdrawalRequest.rewardAddress, 'hex')
+        )
+      )
+      if (!wasmAddr.hasValue()) throw new Error(`createUnsignedWithdrawalTx: withdrawal not a reward address`)
+      const paymentCred = await wasmAddr.paymentCred()
+
+      const keyHash = await paymentCred.toKeyhash()
+      if (!keyHash.hasValue()) throw new Error(`Unexpected: withdrawal from a script hash`)
+      requiredWits.push(keyHash)
+
+      if (withdrawalRequest.shouldDeregister) {
+        certificates.push(await this.Wasm.Certificate.newStakeDeregistration(
+          await this.Wasm.StakeDeregistration.new(paymentCred)
+        ))
+        neededKeys.neededHashes.add(Buffer.from(await paymentCred.toBytes()).toString('hex'))
+      }
+    }
+
+    const finalWithdrawals = await Object.keys(accountState).reduce(
+      async (listPromise, address) => {
+        const list = await listPromise
+        const rewardForAddress = accountState[address]
+        // if key is not registered, we just skip this withdrawal
+        if (rewardForAddress == null) {
+          return list
+        }
+
+        const rewardBalance = new BigNumber(rewardForAddress.remainingAmount)
+
+        // if the reward address is empty, we filter it out of the withdrawal list
+        // although the protocol allows withdrawals of 0 ADA, it's pointless to do
+        // recall: you may want to undelegate the ADA even if there is 0 ADA in the reward address
+        // since you may want to get back your deposit
+        if (rewardBalance.eq(0)) {
+          return list
+        }
+
+        const rewardAddress = await this.Wasm.RewardAddress.fromAddress(
+          await this.Wasm.Address.fromBytes(
+            Buffer.from(address, 'hex')
+          )
+        )
+        if (!rewardAddress.hasValue()) {
+          throw new Error(`createUnsignedWithdrawalTx: withdrawal not a reward address`)
+        }
+        {
+          const stakeCredential = await rewardAddress.paymentCred()
+          neededKeys.neededHashes.add(Buffer.from(await stakeCredential.toBytes()).toString('hex'))
+        }
+        list.push({
+          address: rewardAddress,
+          amount: await this.Wasm.BigNum.fromStr(rewardForAddress.remainingAmount)
+        })
+        return list
+      }, Promise.resolve([] as {
+        address: RewardAddress,
+        amount: BigNum,
+      }[])
+    )
+
+    if (finalWithdrawals.length === 0 && certificates.length === 0) {
+      throw new RewardAddressEmptyError()
+    }
+
+    const protocolParams = {
+      keyDeposit: await this._wasmV4.BigNum.fromStr(config.keyDeposit),
+      linearFee: await this._wasmV4.LinearFee.new(
+        await this._wasmV4.BigNum.fromStr(config.linearFee.coefficient),
+        await this._wasmV4.BigNum.fromStr(config.linearFee.constant)
+      ),
+      minimumUtxoVal: await this._wasmV4.BigNum.fromStr(
+        config.minimumUtxoVal
+      ),
+      poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
+      networkId: config.networkId
+    }
+
+    const unsignedTx = await this.newAdaUnsignedTx(
+      [],
+      changeAddr,
+      utxos,
+      absSlotNumber,
+      protocolParams,
+      certificates,
+      finalWithdrawals,
+      undefined,
+      neededKeys,
+      txOptions,
+      false
+    )
+
+    return unsignedTx
+  }
+
   private async createUnsignedTxForUtxos(
     absSlotNumber: BigNumber,
     receivers: Array<AddressingAddress>,
@@ -217,6 +347,10 @@ class YoroiLib implements IYoroiLib {
           absSlotNumber,
           protocolParams,
           txMetadata,
+          {
+            neededHashes: new Set([]),
+            wits: new Set([]),
+          },
           txOptions
         )
       } else {
@@ -252,7 +386,7 @@ class YoroiLib implements IYoroiLib {
           )
         }
 
-        const unsignedTxResponse = await this.newAdaUnsignedTx(
+        const unsignedTx = await this.newAdaUnsignedTx(
           otherAddresses.length === 1
             ? [
                 {
@@ -277,14 +411,18 @@ class YoroiLib implements IYoroiLib {
           [],
           [],
           txMetadata,
+          {
+            neededHashes: new Set([]),
+            wits: new Set([]),
+          },
           txOptions,
           false
         )
         YoroiLib.logger.debug(
           `createUnsignedTxForUtxos success`,
-          unsignedTxResponse
+          unsignedTx
         )
-        return unsignedTxResponse
+        return unsignedTx
       }
     } catch (error) {
       YoroiLib.logger.error(`createUnsignedTxForUtxos error`, error)
@@ -305,6 +443,7 @@ class YoroiLib implements IYoroiLib {
       networkId: number
     },
     auxData: WasmContract.AuxiliaryData | undefined,
+    neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     txOptions: TxOptions
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
@@ -355,6 +494,7 @@ class YoroiLib implements IYoroiLib {
         isDefault: true
       },
       protocolParams.networkId,
+      neededStakingKeyHashes,
       txOptions.metadata ?? []
     )
   }
@@ -476,6 +616,7 @@ class YoroiLib implements IYoroiLib {
       amount: WasmContract.BigNum
     }>,
     auxData: WasmContract.AuxiliaryData | undefined,
+    neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     txOptions: TxOptions,
     allowNoOutputs: boolean
   ): Promise<UnsignedTx> {
@@ -527,6 +668,7 @@ class YoroiLib implements IYoroiLib {
         isDefault: true
       },
       protocolParams.networkId,
+      neededStakingKeyHashes,
       txOptions.metadata ?? []
     )
   }
