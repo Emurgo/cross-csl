@@ -216,7 +216,10 @@ export class WasmUnsignedTx implements UnsignedTx {
       for (let i = 0; i < await certs.len(); i++) {
         const cert = await certs.get(i)
         try {
-          deregistrations.push(await cert.asStakeDeregistration())
+          const dereg = await cert.asStakeDeregistration()
+          if (dereg.hasValue()) {
+            deregistrations.push(await cert.asStakeDeregistration())
+          }
         } catch {
           // not a deregistration, ignore
         }
