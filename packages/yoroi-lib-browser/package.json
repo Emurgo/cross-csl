@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-browser",
-  "version": "0.2.1-alpha.22",
+  "version": "0.2.2-alpha.23",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "9.1.4",
-    "@emurgo/yoroi-lib-core": "0.2.1-alpha.22"
+    "@emurgo/yoroi-lib-core": "0.2.2-alpha.23"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",
