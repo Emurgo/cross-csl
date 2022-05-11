@@ -7,6 +7,18 @@ export const PRIMARY_ASSET_CONSTANTS = {
   Jormungandr: ''
 }
 
+export type AccountStatePart = {
+  remainingAmount: string
+  rewards: string
+  withdrawals: string
+}
+
+export type WithdrawalRequest = {
+  addressing: Addressing
+  rewardAddress: string
+  shouldDeregister: boolean
+}
+
 export type Transaction = {
   hash: string
 }

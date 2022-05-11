@@ -641,6 +641,8 @@ export abstract class Bip32PublicKey extends _Ptr {
 export abstract class PrivateKey extends _Ptr {
   abstract toPublic(): Promise<PublicKey>
 
+  abstract toBech32(): Promise<string>
+
   abstract asBytes(): Promise<Uint8Array>
 
   abstract sign(message: Uint8Array): Promise<Ed25519Signature>
@@ -650,6 +652,14 @@ export abstract class PrivateKey extends _Ptr {
   }
 
   static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static generateEd25519(): Promise<PrivateKey> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+
+  static generateEd25519extended(): Promise<PrivateKey> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }

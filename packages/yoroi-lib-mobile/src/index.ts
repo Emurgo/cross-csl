@@ -812,6 +812,10 @@ namespace Mobile {
       return new PublicKey(await this.wasm.to_public())
     }
 
+    async toBech32(): Promise<string> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+
     async asBytes(): Promise<Uint8Array> {
       return await this.wasm.as_bytes()
     }
@@ -830,6 +834,14 @@ namespace Mobile {
       return new PrivateKey(
         (await WasmV4.PrivateKey.from_normal_bytes(bytes)) as any
       )
+    }
+
+    static async generateEd25519(): Promise<PrivateKey> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+    }
+  
+    static async generateEd25519extended(): Promise<PrivateKey> {
+      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
     }
   }
 

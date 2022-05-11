@@ -28,12 +28,18 @@ export class AssetOverflowError extends BaseError {
 
 export class NoOutputsError extends BaseError {
   constructor() {
-    super('23f2aa70-7e40-4cae-a113-3f8919ad45ec', 'Asset overflow')
+    super('23f2aa70-7e40-4cae-a113-3f8919ad45ec', 'No outputs')
   }
 }
 
 export class GenericError extends BaseError {
   constructor() {
     super('c07c9d6f-ba71-44b2-af26-72704a154bf6', '')
+  }
+}
+
+export class RewardAddressEmptyError extends BaseError {
+  constructor() {
+    super('6ad14231-59f5-405d-8fc1-69a0acb92195', 'Reward address empty')
   }
 }

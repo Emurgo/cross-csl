@@ -9,10 +9,10 @@
   dependencies:
     base-64 "0.1.0"
 
-"@emurgo/yoroi-lib-core@0.1.5-alpha.20":
-  version "0.1.5-alpha.20"
-  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.1.5-alpha.20.tgz#a6e4d4953850de38b0add99fd70da83321a98c22"
-  integrity sha512-5twfn2HlnMnQGm5ZIbyoJPc2m5Pan/1YjWogqFQnzARtplslkcE0IGrKg3Z8rReAyA1yNXD4sxn/z14h4bqXjA==
+"@emurgo/yoroi-lib-core@0.2.3-alpha.24":
+  version "0.2.3-alpha.24"
+  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.2.3-alpha.24.tgz#424c770eb19a25c8fc8e98514f0c5d30b9871eed"
+  integrity sha512-nrkEFwMOyxgV9J17mmCDdSx/8g6H32C5rFsNkNSwZoIvpUM7ErEFgvvpYyaNl7a92KIbbtkzNi7kydocEL9EXg==
   dependencies:
     axios "^0.24.0"
     bignumber.js "^9.0.1"
