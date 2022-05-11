@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
+import { string } from 'yargs'
 import {
   AssetOverflowError,
   BaseError,
@@ -189,6 +190,59 @@ class YoroiLib implements IYoroiLib {
       config,
       txOptions
     )
+  }
+
+  async createUnsignedVotingTx(
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
+    txOptions: TxOptions,
+    votingPublicKey: string,
+    stakingPublicKey: string,
+    rewardAddress: string,
+    nonce: number,
+    signer: (a: Uint8Array) => string,
+  ): Promise<UnsignedTx> {
+    const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
+      JSON.stringify({
+
+      }),
+      this.Wasm.MetadataJsonSchema.BasicConversions,
+    );
+
+
+    const protocolParams = {
+      keyDeposit: await this._wasmV4.BigNum.fromStr(config.keyDeposit),
+      linearFee: await this._wasmV4.LinearFee.new(
+        await this._wasmV4.BigNum.fromStr(config.linearFee.coefficient),
+        await this._wasmV4.BigNum.fromStr(config.linearFee.constant)
+      ),
+      minimumUtxoVal: await this._wasmV4.BigNum.fromStr(
+        config.minimumUtxoVal
+      ),
+      poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
+      networkId: config.networkId
+    }
+
+    const unsignedTx = await this.newAdaUnsignedTx(
+      [],
+      changeAddr,
+      utxos,
+      absSlotNumber,
+      protocolParams,
+      [],
+      [],
+      undefined,
+      {
+        neededHashes: new Set(),
+        wits: new Set(),
+      },
+      txOptions,
+      false
+    )
+
+    return unsignedTx
   }
 
   async createUnsignedWithdrawalTx(

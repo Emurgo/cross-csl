@@ -1997,4 +1997,11 @@ namespace Browser {
       return Promise.resolve(new PlutusScripts(WasmV4.PlutusScripts.new()))
     }
   }
+
+  export class MetadataJsonSchema extends Ptr<WasmV4.MetadataJsonSchema>
+  implements WasmContract.MetadataJsonSchema {
+    static NoConversions: number = 0
+    static BasicConversions: number = 1
+    static DetailedSchema: number = 2
+   }
 }

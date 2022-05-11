@@ -96,6 +96,7 @@ export interface WasmModuleProxy {
   NativeScripts: typeof NativeScripts
   PlutusScript: typeof PlutusScript
   PlutusScripts: typeof PlutusScripts
+  MetadataJsonSchema: typeof MetadataJsonSchema
 }
 
 export abstract class _WasmProxy {
@@ -1326,6 +1327,18 @@ export abstract class PlutusScripts extends _Ptr {
   }
 
   static new(): Promise<PlutusScripts> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+}
+
+export abstract class MetadataJsonSchema extends _Ptr {
+  static NoConversions(): Promise<number> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+  static BasicConversions(): Promise<number> {
+    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+  }
+  static DetailedSchema(): Promise<number> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
 }
