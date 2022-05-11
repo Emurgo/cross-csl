@@ -1998,10 +1998,10 @@ namespace Browser {
     }
   }
 
-  export class MetadataJsonSchema extends Ptr<WasmV4.PlutusScripts>
+  export class MetadataJsonSchema extends Ptr<WasmV4.MetadataJsonSchema>
   implements WasmContract.MetadataJsonSchema {
-    static NoConversions: number = 0
-    static BasicConversions: number = 1
-    static DetailedSchema: number = 2
+    static NoConversions: number = WasmV4.MetadataJsonSchema.NoConversions
+    static BasicConversions: number = WasmV4.MetadataJsonSchema.BasicConversions
+    static DetailedSchema: number = WasmV4.MetadataJsonSchema.DetailedSchema
    }
 }
