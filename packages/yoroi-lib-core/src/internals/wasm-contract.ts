@@ -1332,13 +1332,7 @@ export abstract class PlutusScripts extends _Ptr {
 }
 
 export abstract class MetadataJsonSchema extends _Ptr {
-  static NoConversions(): Promise<number> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
-  }
-  static BasicConversions(): Promise<number> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
-  }
-  static DetailedSchema(): Promise<number> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
-  }
+  static NoConversions: number
+  static BasicConversions: number
+  static DetailedSchema: number
 }
