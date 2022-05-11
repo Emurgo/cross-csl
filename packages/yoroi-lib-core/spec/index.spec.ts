@@ -1239,7 +1239,7 @@ export const setupTests = (
           new Set<string>([]),
           []
         )
-      })
+      }).timeout(100000)
 
       it('should build and sign withdrawal request with deregistration', async () => {
         const unsignedWithdrawalTx = await yoroiLib.createUnsignedWithdrawalTx(
@@ -1261,35 +1261,26 @@ export const setupTests = (
 
         expect(unsignedWithdrawalTx.deregistrations.length).to.equal(1)
         expect(await unsignedWithdrawalTx.certificates.len()).to.equal(1)
-      })
+      }).timeout(100000)
     })
 
     describe('createUnsignedVotingTx', () => {
       it('should build and sign voting request', async () => {
-        const changeAddr = {
-          address:
-            '001c589b0d01c11c98abc49533c30bae1ec665912c95c915a217d75234c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
-          addressing: {
-            path: [2147485500, 2147485463, 2147483648, 1, 407],
-            startLevel: 1
-          }
-        }
-
         const params = buildDummyTxParameters(false)
+
+        const pk = await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+          Buffer.from('780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367', 'hex')
+        )
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
+          await pk.toRawKey(),
+          await pk.toRawKey(),
           params.utxos,
           params.changeAddress,
           params.config,
           {},
-          '',
-          '',
-          '',
           5,
-          (val: Uint8Array): string => {
-            return ''
-          }
         )
 
         await unsignedVotingTx.sign(
@@ -1298,7 +1289,7 @@ export const setupTests = (
           new Set<string>([]),
           []
         )
-      })
+      }).timeout(100000)
     })
 
     describe('Iteratables', () => {
@@ -1358,7 +1349,7 @@ export const setupTests = (
             .then((a) => a.toAddress())
             .then((a) => a.toBech32())
         )
-      })
+      }).timeout(100000)
     })
   })
 }
