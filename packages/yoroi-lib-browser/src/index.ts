@@ -1,10 +1,6 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
 
-import {
-  IYoroiLib,
-  createYoroiLib,
-  WasmContract
-} from '@emurgo/yoroi-lib-core'
+import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
 const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 export const init = (): IYoroiLib => {

@@ -106,6 +106,18 @@ export interface IYoroiLib {
     config: CardanoHaskellConfig,
     txOptions: TxOptions
   ): Promise<UnsignedTx>
+  createUnsignedVotingTx(
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
+    txOptions: TxOptions,
+    votingPublicKey: string,
+    stakingPublicKey: string,
+    rewardAddress: string,
+    nonce: number,
+    signer: (a: Uint8Array) => string
+  ): Promise<UnsignedTx>
 }
 
 class YoroiLib implements IYoroiLib {

@@ -32,6 +32,103 @@ const cardanoConfig = {
   networkId: 300
 } as CardanoHaskellConfig
 
+const buildDummyTxParameters = (sendAll: boolean) => {
+  const utxos: CardanoAddressedUtxo[] = [
+    {
+      addressing: {
+        path: [2147485500, 4294967295, 2147483648, 0, 3],
+        startLevel: 1
+      },
+      amount: '2000000',
+      assets: [],
+      receiver:
+        '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+      txHash:
+        '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785',
+      txIndex: 0,
+      utxoId:
+        '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac67850'
+    },
+    {
+      addressing: {
+        path: [2147485500, 2147485463, 2147483648, 0, 3],
+        startLevel: 1
+      },
+      amount: '3000000',
+      assets: [],
+      receiver:
+        '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+      txHash:
+        'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376',
+      txIndex: 0,
+      utxoId:
+        'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a3760'
+    },
+    {
+      addressing: {
+        path: [2147485500, 2147485463, 2147483648, 1, 6],
+        startLevel: 1
+      },
+      amount: '537206659',
+      assets: [
+        {
+          amount: '2',
+          assetId:
+            '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e'
+        },
+        {
+          amount: '2',
+          assetId: '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.'
+        }
+      ],
+      receiver:
+        '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+      txHash:
+        '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf',
+      txIndex: 1,
+      utxoId:
+        '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf1'
+    }
+  ]
+  const receiver =
+    '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82'
+  const changeAddress = {
+    address:
+      '00811e763774f6ff59835619924f26cc99e1a2320b6edfe40d00ced1a6a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
+    addressing: {
+      path: [2147485500, 2147485463, 2147483648, 1, 7],
+      startLevel: 1
+    }
+  } as AddressingAddress
+  const tokens = [
+    {
+      amount: new BigNumber(38484054),
+      shouldSendAll: sendAll,
+      token: {
+        identifier: '',
+        isDefault: true,
+        networkId: 300
+      }
+    }
+  ] as Array<SendToken>
+
+  const defaultToken = {
+    identifier: '',
+    networkId: 300,
+    isDefault: true
+  } as Token
+
+  return {
+    absSlotNumber,
+    utxos,
+    receiver,
+    changeAddress,
+    tokens,
+    config: cardanoConfig,
+    defaultToken
+  }
+}
+
 export const setupTests = (
   yoroiLib: IYoroiLib,
   suiteName: string
@@ -174,104 +271,6 @@ export const setupTests = (
     })
 
     describe('Tx Builder', () => {
-      const buildDummyTxParameters = (sendAll: boolean) => {
-        const utxos: CardanoAddressedUtxo[] = [
-          {
-            addressing: {
-              path: [2147485500, 4294967295, 2147483648, 0, 3],
-              startLevel: 1
-            },
-            amount: '2000000',
-            assets: [],
-            receiver:
-              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
-            txHash:
-              '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac6785',
-            txIndex: 0,
-            utxoId:
-              '441df8be3d1d8bf1ef7d5b4701bb48495d17e3ef9888afed70e7aa93d7ac67850'
-          },
-          {
-            addressing: {
-              path: [2147485500, 2147485463, 2147483648, 0, 3],
-              startLevel: 1
-            },
-            amount: '3000000',
-            assets: [],
-            receiver:
-              '002c6d359437c1c6c39ad5860e358aec43894db01c243ee43ab178bbd5a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
-            txHash:
-              'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a376',
-            txIndex: 0,
-            utxoId:
-              'e25f0b9c1e68b5969931b0c9106ad23e40ea79b2e6a6f809034a91275e63a3760'
-          },
-          {
-            addressing: {
-              path: [2147485500, 2147485463, 2147483648, 1, 6],
-              startLevel: 1
-            },
-            amount: '537206659',
-            assets: [
-              {
-                amount: '2',
-                assetId:
-                  '4a8e145beaee9764aa956633a68ea3d2e69e75736f48ed9e82441097.54657374746f6b656e'
-              },
-              {
-                amount: '2',
-                assetId:
-                  '6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.'
-              }
-            ],
-            receiver:
-              '00a8fa65dae16002bed4e5a99cca63ad9094cfbc255115ce25bb076de3a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
-            txHash:
-              '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf',
-            txIndex: 1,
-            utxoId:
-              '11cdf58509c9602d902daea72756d9ab54be13a88e5b596261dcdec91f22c5cf1'
-          }
-        ]
-        const receiver =
-          '00d899507bde3a7ee733ab3a0cfb71ea202ad8e6e261f241ed4d7d374ff466c7a32c2e0f5cc362d2323efc1ef0d5cf93aaf377b9fc8c4f0e82'
-        const changeAddress = {
-          address:
-            '00811e763774f6ff59835619924f26cc99e1a2320b6edfe40d00ced1a6a8e3607cd614f2ee3a89c20bc161088260640e28503840467824bf29',
-          addressing: {
-            path: [2147485500, 2147485463, 2147483648, 1, 7],
-            startLevel: 1
-          }
-        } as AddressingAddress
-        const tokens = [
-          {
-            amount: new BigNumber(38484054),
-            shouldSendAll: sendAll,
-            token: {
-              identifier: '',
-              isDefault: true,
-              networkId: 300
-            }
-          }
-        ] as Array<SendToken>
-
-        const defaultToken = {
-          identifier: '',
-          networkId: 300,
-          isDefault: true
-        } as Token
-
-        return {
-          absSlotNumber,
-          utxos,
-          receiver,
-          changeAddress,
-          tokens,
-          config: cardanoConfig,
-          defaultToken
-        }
-      }
-
       it('should build and sign TX', async () => {
         const params = buildDummyTxParameters(false)
 
@@ -1262,6 +1261,43 @@ export const setupTests = (
 
         expect(unsignedWithdrawalTx.deregistrations.length).to.equal(1)
         expect(await unsignedWithdrawalTx.certificates.len()).to.equal(1)
+      })
+    })
+
+    describe('createUnsignedVotingTx', () => {
+      it('should build and sign voting request', async () => {
+        const changeAddr = {
+          address:
+            '001c589b0d01c11c98abc49533c30bae1ec665912c95c915a217d75234c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
+          addressing: {
+            path: [2147485500, 2147485463, 2147483648, 1, 407],
+            startLevel: 1
+          }
+        }
+
+        const params = buildDummyTxParameters(false)
+
+        const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
+          params.absSlotNumber,
+          params.utxos,
+          params.changeAddress,
+          params.config,
+          {},
+          '',
+          '',
+          '',
+          5,
+          (val: Uint8Array): string => {
+            return ''
+          }
+        )
+
+        await unsignedVotingTx.sign(
+          0,
+          '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+          new Set<string>([]),
+          []
+        )
       })
     })
 
