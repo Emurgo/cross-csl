@@ -121,3 +121,8 @@ export enum MetadataJsonSchema {
   BasicConversions = 1,
   DetailedSchema = 2
 }
+
+export enum CatalystLabels {
+  DATA = 61284,
+  SIG = 61285
+}

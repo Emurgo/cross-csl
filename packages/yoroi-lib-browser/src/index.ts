@@ -1,6 +1,10 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
 
-import { IYoroiLib, createYoroiLib, WasmContract } from '@emurgo/yoroi-lib-core'
+import {
+  IYoroiLib,
+  createYoroiLib,
+  WasmContract
+} from '../../yoroi-lib-core/src'
 const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 export const init = (): IYoroiLib => {
@@ -890,7 +894,7 @@ namespace Browser {
         new PrivateKey(WasmV4.PrivateKey.generate_ed25519())
       )
     }
-  
+
     static generateEd25519extended(): Promise<PrivateKey> {
       return Promise.resolve(
         new PrivateKey(WasmV4.PrivateKey.generate_ed25519extended())
@@ -1301,7 +1305,9 @@ namespace Browser {
     }
 
     static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
-      return Promise.resolve(new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes)))
+      return Promise.resolve(
+        new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes))
+      )
     }
 
     static new(): Promise<RewardAddresses> {
@@ -1338,7 +1344,9 @@ namespace Browser {
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
-      return Promise.resolve(new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes)))
+      return Promise.resolve(
+        new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes))
+      )
     }
   }
 
@@ -1997,11 +2005,4 @@ namespace Browser {
       return Promise.resolve(new PlutusScripts(WasmV4.PlutusScripts.new()))
     }
   }
-
-  export class MetadataJsonSchema extends Ptr<WasmV4.MetadataJsonSchema>
-  implements WasmContract.MetadataJsonSchema {
-    static NoConversions: number = WasmV4.MetadataJsonSchema.NoConversions
-    static BasicConversions: number = WasmV4.MetadataJsonSchema.BasicConversions
-    static DetailedSchema: number = WasmV4.MetadataJsonSchema.DetailedSchema
-   }
 }

@@ -96,7 +96,6 @@ export interface WasmModuleProxy {
   NativeScripts: typeof NativeScripts
   PlutusScript: typeof PlutusScript
   PlutusScripts: typeof PlutusScripts
-  MetadataJsonSchema: typeof MetadataJsonSchema
 }
 
 export abstract class _WasmProxy {
@@ -154,8 +153,8 @@ export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
 }
 
 export abstract class AsyncIteratablePtr<
-  T  extends { free: () => any },
-  TIteratable
+    T extends { free: () => any },
+    TIteratable
   >
   extends Ptr<T>
   implements AsyncIterable<TIteratable>
@@ -903,7 +902,11 @@ export abstract class RewardAddresses
   extends _Ptr
   implements AsyncIterable<RewardAddress>
 {
-  abstract [Symbol.asyncIterator](): AsyncIterator<RewardAddress, any, undefined>
+  abstract [Symbol.asyncIterator](): AsyncIterator<
+    RewardAddress,
+    any,
+    undefined
+  >
 
   abstract toBytes(): Promise<Uint8Array>
 
@@ -1329,10 +1332,4 @@ export abstract class PlutusScripts extends _Ptr {
   static new(): Promise<PlutusScripts> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
-}
-
-export abstract class MetadataJsonSchema extends _Ptr {
-  static NoConversions: number
-  static BasicConversions: number
-  static DetailedSchema: number
 }

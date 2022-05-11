@@ -839,7 +839,7 @@ namespace Mobile {
     static async generateEd25519(): Promise<PrivateKey> {
       throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
     }
-  
+
     static async generateEd25519extended(): Promise<PrivateKey> {
       throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
     }
