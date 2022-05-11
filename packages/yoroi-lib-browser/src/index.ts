@@ -4,7 +4,7 @@ import {
   IYoroiLib,
   createYoroiLib,
   WasmContract
-} from '../../yoroi-lib-core/src'
+} from '@emurgo/yoroi-lib-core'
 const { Ptr, WasmProxy, AsyncIteratablePtr } = WasmContract
 
 export const init = (): IYoroiLib => {
