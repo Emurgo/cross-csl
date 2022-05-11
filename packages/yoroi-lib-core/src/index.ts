@@ -47,7 +47,7 @@ import {
   minRequiredForChange
 } from './internals/utils/transactions'
 import * as WasmContract from './internals/wasm-contract'
-import { BigNum, RewardAddress } from './internals/wasm-contract'
+import { BigNum, PrivateKey, RewardAddress } from './internals/wasm-contract'
 
 export { AccountService } from './account'
 export { AccountChainProtocols, AccountStorage } from './account/models'
@@ -108,15 +108,13 @@ export interface IYoroiLib {
   ): Promise<UnsignedTx>
   createUnsignedVotingTx(
     absSlotNumber: BigNumber,
+    stakePrivateKey: PrivateKey,
+    catalystPrivateKey: PrivateKey,
     utxos: Array<CardanoAddressedUtxo>,
     changeAddr: AddressingAddress,
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
-    votingPublicKey: string,
-    stakingPublicKey: string,
-    rewardAddress: string,
     nonce: number,
-    signer: (a: Uint8Array) => string
   ): Promise<UnsignedTx>
 }
 
@@ -208,20 +206,33 @@ class YoroiLib implements IYoroiLib {
 
   async createUnsignedVotingTx(
     absSlotNumber: BigNumber,
+    stakePrivateKey: PrivateKey,
+    catalystPrivateKey: PrivateKey,
     utxos: Array<CardanoAddressedUtxo>,
     changeAddr: AddressingAddress,
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
-    votingPublicKey: string,
-    stakingPublicKey: string,
-    rewardAddress: string,
     nonce: number,
-    signer: (a: Uint8Array) => string
   ): Promise<UnsignedTx> {
+    const rewardAddress = this.Wasm.RewardAddress.new(
+      config.networkId,
+      await this.Wasm.StakeCredential.fromKeyhash(await stakePrivateKey.toPublic().then(x => x.hash())),
+    )
+
+    const catalystPrivateKeyHex = Buffer.from(await catalystPrivateKey
+      .toPublic()
+      .then(x => x.asBytes()))
+      .toString('hex')
+      
+    const stakingPublicKeyHex = Buffer.from(await stakePrivateKey
+      .toPublic()
+      .then(x => x.asBytes()))
+      .toString('hex')
+
     const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
       JSON.stringify({
-        '1': `0x${votingPublicKey}`,
-        '2': `0x${stakingPublicKey}`,
+        '1': `0x${catalystPrivateKeyHex}`,
+        '2': `0x${stakingPublicKeyHex}`,
         '3': `0x${rewardAddress}`,
         '4': `0x${nonce}`
       }),
@@ -240,11 +251,14 @@ class YoroiLib implements IYoroiLib {
     )
     const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
 
+    const signedHashedMetadata = await stakePrivateKey.sign(hashedMetadata)
+      .then(x => x.toHex())
+
     await generalMetadata.insert(
       await this.Wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
       await this.Wasm.encodeJsonStrToMetadatum(
         JSON.stringify({
-          '1': `0x${signer(hashedMetadata)}`
+          '1': `0x${signedHashedMetadata}`
         }),
         MetadataJsonSchema.BasicConversions
       )
