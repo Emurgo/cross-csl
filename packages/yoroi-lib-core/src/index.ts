@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
-import { string } from 'yargs'
+
 import {
   AssetOverflowError,
   BaseError,
