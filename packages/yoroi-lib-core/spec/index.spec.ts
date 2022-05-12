@@ -291,6 +291,9 @@ export const setupTests = (
         const stakingKeyWits = new Set<string>()
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])
+
+        expect(unsignedTx.outputs.length).to.equal(2)
+        expect(unsignedTx.change.length).to.equal(1)
       }).timeout(100000)
 
       it('should build and sign TX with native assets', async () => {
@@ -358,9 +361,36 @@ export const setupTests = (
         expect(unsignedTx.totalInput.values[0].identifier).to.equal('')
         expect(unsignedTx.totalInput.values[0].networkId).to.equal(300)
         expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
-          unsignedTx.fee.values[0].amount
-            .plus(new BigNumber('1481480'))
+          unsignedTx.totalOutput.values[0].amount
+            .plus(unsignedTx.fee.values[0].amount)
+            .minus(unsignedTx.change[0].values.values[0].amount)
             .toString()
+        )
+        expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
+          unsignedTx.inputs.reduce((prev, curr) => {
+            return prev.plus(curr.value.values[0].amount)
+          }, new BigNumber('0'))
+          .minus(unsignedTx.change[0].values.values[0].amount)
+          .toString()
+        )
+        expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
+          unsignedTx.outputs.reduce((prev, curr) => {
+            return prev.plus(curr.value.values[0].amount)
+          }, new BigNumber('0'))
+          .plus(unsignedTx.fee.values[0].amount)
+          .minus(unsignedTx.change[0].values.values[0].amount)
+          .toString()
+        )
+        expect(unsignedTx.totalOutput.values[0].amount.toString()).to.equal(
+          unsignedTx.outputs.reduce((prev, curr) => {
+            return prev.plus(curr.value.values[0].amount)
+          }, new BigNumber('0'))
+          .toString()
+        )
+        expect(unsignedTx.outputs[0].value.values[0].amount.toString()).to.equal(
+          unsignedTx.totalInput.values[0].amount
+          .minus(unsignedTx.fee.values[0].amount)
+          .toString()
         )
 
         expect(unsignedTx.totalInput.values[1].identifier).to.equal(
@@ -368,6 +398,9 @@ export const setupTests = (
         )
         expect(unsignedTx.totalInput.values[1].networkId).to.equal(300)
         expect(unsignedTx.totalInput.values[1].amount.toString()).to.equal('1')
+
+        expect(unsignedTx.outputs.length).to.equal(2)
+        expect(unsignedTx.change.length).to.equal(1)
 
         const keyLevel = 0
         const privateKey =
@@ -397,6 +430,9 @@ export const setupTests = (
         const stakingKeyWits = new Set<string>()
 
         await unsignedTx.sign(keyLevel, privateKey, stakingKeyWits, [])
+
+        expect(unsignedTx.outputs.length).to.equal(1)
+        expect(unsignedTx.change.length).to.equal(0)
       }).timeout(100000)
     })
 
