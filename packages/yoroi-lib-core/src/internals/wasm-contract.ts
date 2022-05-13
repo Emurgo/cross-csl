@@ -153,8 +153,8 @@ export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
 }
 
 export abstract class AsyncIteratablePtr<
-  T  extends { free: () => any },
-  TIteratable
+    T extends { free: () => any },
+    TIteratable
   >
   extends Ptr<T>
   implements AsyncIterable<TIteratable>
@@ -902,7 +902,11 @@ export abstract class RewardAddresses
   extends _Ptr
   implements AsyncIterable<RewardAddress>
 {
-  abstract [Symbol.asyncIterator](): AsyncIterator<RewardAddress, any, undefined>
+  abstract [Symbol.asyncIterator](): AsyncIterator<
+    RewardAddress,
+    any,
+    undefined
+  >
 
   abstract toBytes(): Promise<Uint8Array>
 

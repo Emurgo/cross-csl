@@ -886,7 +886,7 @@ namespace NodeJs {
         new PrivateKey(WasmV4.PrivateKey.generate_ed25519())
       )
     }
-  
+
     static generateEd25519extended(): Promise<PrivateKey> {
       return Promise.resolve(
         new PrivateKey(WasmV4.PrivateKey.generate_ed25519extended())
@@ -1297,7 +1297,9 @@ namespace NodeJs {
     }
 
     static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
-      return Promise.resolve(new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes)))
+      return Promise.resolve(
+        new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes))
+      )
     }
 
     static new(): Promise<RewardAddresses> {
@@ -1334,7 +1336,9 @@ namespace NodeJs {
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
-      return Promise.resolve(new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes)))
+      return Promise.resolve(
+        new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes))
+      )
     }
   }
 

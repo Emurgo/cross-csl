@@ -58,7 +58,10 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _withdrawals: WasmContract.Withdrawals
   private _deregistrations: ReadonlyArray<WasmContract.StakeDeregistration>
   private _ttl: number | undefined
-  private _neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> }
+  private _neededStakingKeyHashes: {
+    neededHashes: Set<string>
+    wits: Set<string>
+  }
   private _hash: WasmContract.TransactionHash
 
   private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
@@ -140,7 +143,10 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._ttl
   }
 
-  get neededStakingKeyHashes(): { neededHashes: Set<string>; wits: Set<string> } {
+  get neededStakingKeyHashes(): {
+    neededHashes: Set<string>
+    wits: Set<string>
+  } {
     return this._neededStakingKeyHashes
   }
 
@@ -213,7 +219,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     const deregistrations: WasmContract.StakeDeregistration[] = []
 
     if (certs.hasValue()) {
-      for (let i = 0; i < await certs.len(); i++) {
+      for (let i = 0; i < (await certs.len()); i++) {
         const cert = await certs.get(i)
         try {
           const dereg = await cert.asStakeDeregistration()
@@ -325,7 +331,11 @@ export class WasmUnsignedTx implements UnsignedTx {
     const fullMetadata = (this.metadata ?? []).concat(extraMetadata ?? [])
     const aux = await createMetadata(this._wasm, fullMetadata)
 
-    const signedTx = await this._wasm.Transaction.new(this._txBody, witnessSet, aux)
+    const signedTx = await this._wasm.Transaction.new(
+      this._txBody,
+      witnessSet,
+      aux
+    )
 
     const signedTxBody = await signedTx.body()
     const signedTxHash = await this._wasm.hashTransaction(signedTxBody)
@@ -410,7 +420,10 @@ export interface UnsignedTx {
   readonly withdrawals: WasmContract.Withdrawals
   readonly deregistrations: ReadonlyArray<WasmContract.StakeDeregistration>
   readonly ttl: number | undefined
-  readonly neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> }
+  readonly neededStakingKeyHashes: {
+    neededHashes: Set<string>
+    wits: Set<string>
+  }
   readonly encodedTx: string
   readonly hash: WasmContract.TransactionHash
   sign(

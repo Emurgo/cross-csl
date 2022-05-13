@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
+
 import {
   AssetOverflowError,
   BaseError,
@@ -14,7 +15,9 @@ import {
   AddressingAddress,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
+  CatalystLabels,
   Change,
+  MetadataJsonSchema,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
@@ -44,7 +47,7 @@ import {
   minRequiredForChange
 } from './internals/utils/transactions'
 import * as WasmContract from './internals/wasm-contract'
-import { BigNum, RewardAddress } from './internals/wasm-contract'
+import { BigNum, PrivateKey, RewardAddress } from './internals/wasm-contract'
 
 export { AccountService } from './account'
 export { AccountChainProtocols, AccountStorage } from './account/models'
@@ -102,6 +105,16 @@ export interface IYoroiLib {
     changeAddr: AddressingAddress,
     config: CardanoHaskellConfig,
     txOptions: TxOptions
+  ): Promise<UnsignedTx>
+  createUnsignedVotingTx(
+    absSlotNumber: BigNumber,
+    stakePrivateKey: PrivateKey,
+    catalystPrivateKey: PrivateKey,
+    utxos: Array<CardanoAddressedUtxo>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
+    txOptions: TxOptions,
+    nonce: number,
   ): Promise<UnsignedTx>
 }
 
@@ -191,6 +204,113 @@ class YoroiLib implements IYoroiLib {
     )
   }
 
+  async createUnsignedVotingTx(
+    absSlotNumber: BigNumber,
+    stakePrivateKey: PrivateKey,
+    catalystPrivateKey: PrivateKey,
+    utxos: Array<CardanoAddressedUtxo>,
+    changeAddr: AddressingAddress,
+    config: CardanoHaskellConfig,
+    txOptions: TxOptions,
+    nonce: number,
+  ): Promise<UnsignedTx> {
+    const rewardAddress = this.Wasm.RewardAddress.new(
+      config.networkId,
+      await this.Wasm.StakeCredential.fromKeyhash(await stakePrivateKey.toPublic().then(x => x.hash())),
+    )
+
+    const catalystPrivateKeyHex = Buffer.from(await catalystPrivateKey
+      .toPublic()
+      .then(x => x.asBytes()))
+      .toString('hex')
+      
+    const stakingPublicKeyHex = Buffer.from(await stakePrivateKey
+      .toPublic()
+      .then(x => x.asBytes()))
+      .toString('hex')
+
+    const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
+      JSON.stringify({
+        '1': `0x${catalystPrivateKeyHex}`,
+        '2': `0x${stakingPublicKeyHex}`,
+        '3': `0x${rewardAddress}`,
+        '4': `0x${nonce}`
+      }),
+      MetadataJsonSchema.BasicConversions
+    )
+
+    const generalMetadata = await this.Wasm.GeneralTransactionMetadata.new()
+    await generalMetadata.insert(
+      await this.Wasm.BigNum.fromStr(CatalystLabels.DATA.toString()),
+      registrationData
+    )
+
+    const hashedMetadataStr = await blake2b(
+      await generalMetadata.toBytes(),
+      256
+    )
+    const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
+
+    const signedHashedMetadata = await stakePrivateKey.sign(hashedMetadata)
+      .then(x => x.toHex())
+
+    await generalMetadata.insert(
+      await this.Wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
+      await this.Wasm.encodeJsonStrToMetadatum(
+        JSON.stringify({
+          '1': `0x${signedHashedMetadata}`
+        }),
+        MetadataJsonSchema.BasicConversions
+      )
+    )
+
+    const metadataList = await this.Wasm.MetadataList.new()
+    await metadataList.add(
+      await this.Wasm.TransactionMetadatum.fromBytes(
+        await generalMetadata.toBytes()
+      )
+    )
+    await metadataList.add(
+      await this.Wasm.TransactionMetadatum.newList(
+        await this.Wasm.MetadataList.new()
+      )
+    )
+
+    const auxData = await this.Wasm.AuxiliaryData.fromBytes(
+      await metadataList.toBytes()
+    )
+
+    const protocolParams = {
+      keyDeposit: await this._wasmV4.BigNum.fromStr(config.keyDeposit),
+      linearFee: await this._wasmV4.LinearFee.new(
+        await this._wasmV4.BigNum.fromStr(config.linearFee.coefficient),
+        await this._wasmV4.BigNum.fromStr(config.linearFee.constant)
+      ),
+      minimumUtxoVal: await this._wasmV4.BigNum.fromStr(config.minimumUtxoVal),
+      poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
+      networkId: config.networkId
+    }
+
+    const unsignedTx = await this.newAdaUnsignedTx(
+      [],
+      changeAddr,
+      utxos,
+      absSlotNumber,
+      protocolParams,
+      [],
+      [],
+      auxData,
+      {
+        neededHashes: new Set(),
+        wits: new Set()
+      },
+      txOptions,
+      false
+    )
+
+    return unsignedTx
+  }
+
   async createUnsignedWithdrawalTx(
     accountState: {
       [key: string]: null | AccountStatePart
@@ -205,7 +325,7 @@ class YoroiLib implements IYoroiLib {
     const certificates = []
     const neededKeys = {
       neededHashes: new Set<string>(),
-      wits: new Set<string>(),
+      wits: new Set<string>()
     }
     const requiredWits: Array<WasmContract.Ed25519KeyHash> = []
 
@@ -215,18 +335,26 @@ class YoroiLib implements IYoroiLib {
           Buffer.from(withdrawalRequest.rewardAddress, 'hex')
         )
       )
-      if (!wasmAddr.hasValue()) throw new Error(`createUnsignedWithdrawalTx: withdrawal not a reward address`)
+      if (!wasmAddr.hasValue())
+        throw new Error(
+          `createUnsignedWithdrawalTx: withdrawal not a reward address`
+        )
       const paymentCred = await wasmAddr.paymentCred()
 
       const keyHash = await paymentCred.toKeyhash()
-      if (!keyHash.hasValue()) throw new Error(`Unexpected: withdrawal from a script hash`)
+      if (!keyHash.hasValue())
+        throw new Error(`Unexpected: withdrawal from a script hash`)
       requiredWits.push(keyHash)
 
       if (withdrawalRequest.shouldDeregister) {
-        certificates.push(await this.Wasm.Certificate.newStakeDeregistration(
-          await this.Wasm.StakeDeregistration.new(paymentCred)
-        ))
-        neededKeys.neededHashes.add(Buffer.from(await paymentCred.toBytes()).toString('hex'))
+        certificates.push(
+          await this.Wasm.Certificate.newStakeDeregistration(
+            await this.Wasm.StakeDeregistration.new(paymentCred)
+          )
+        )
+        neededKeys.neededHashes.add(
+          Buffer.from(await paymentCred.toBytes()).toString('hex')
+        )
       }
     }
 
@@ -250,26 +378,33 @@ class YoroiLib implements IYoroiLib {
         }
 
         const rewardAddress = await this.Wasm.RewardAddress.fromAddress(
-          await this.Wasm.Address.fromBytes(
-            Buffer.from(address, 'hex')
-          )
+          await this.Wasm.Address.fromBytes(Buffer.from(address, 'hex'))
         )
         if (!rewardAddress.hasValue()) {
-          throw new Error(`createUnsignedWithdrawalTx: withdrawal not a reward address`)
+          throw new Error(
+            `createUnsignedWithdrawalTx: withdrawal not a reward address`
+          )
         }
         {
           const stakeCredential = await rewardAddress.paymentCred()
-          neededKeys.neededHashes.add(Buffer.from(await stakeCredential.toBytes()).toString('hex'))
+          neededKeys.neededHashes.add(
+            Buffer.from(await stakeCredential.toBytes()).toString('hex')
+          )
         }
         list.push({
           address: rewardAddress,
-          amount: await this.Wasm.BigNum.fromStr(rewardForAddress.remainingAmount)
+          amount: await this.Wasm.BigNum.fromStr(
+            rewardForAddress.remainingAmount
+          )
         })
         return list
-      }, Promise.resolve([] as {
-        address: RewardAddress,
-        amount: BigNum,
-      }[])
+      },
+      Promise.resolve(
+        [] as {
+          address: RewardAddress
+          amount: BigNum
+        }[]
+      )
     )
 
     if (finalWithdrawals.length === 0 && certificates.length === 0) {
@@ -282,9 +417,7 @@ class YoroiLib implements IYoroiLib {
         await this._wasmV4.BigNum.fromStr(config.linearFee.coefficient),
         await this._wasmV4.BigNum.fromStr(config.linearFee.constant)
       ),
-      minimumUtxoVal: await this._wasmV4.BigNum.fromStr(
-        config.minimumUtxoVal
-      ),
+      minimumUtxoVal: await this._wasmV4.BigNum.fromStr(config.minimumUtxoVal),
       poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
       networkId: config.networkId
     }
@@ -349,7 +482,7 @@ class YoroiLib implements IYoroiLib {
           txMetadata,
           {
             neededHashes: new Set([]),
-            wits: new Set([]),
+            wits: new Set([])
           },
           txOptions
         )
@@ -413,15 +546,12 @@ class YoroiLib implements IYoroiLib {
           txMetadata,
           {
             neededHashes: new Set([]),
-            wits: new Set([]),
+            wits: new Set([])
           },
           txOptions,
           false
         )
-        YoroiLib.logger.debug(
-          `createUnsignedTxForUtxos success`,
-          unsignedTx
-        )
+        YoroiLib.logger.debug(`createUnsignedTxForUtxos success`, unsignedTx)
         return unsignedTx
       }
     } catch (error) {
