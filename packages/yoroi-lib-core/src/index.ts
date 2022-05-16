@@ -134,7 +134,7 @@ export interface IYoroiLib {
     utxos: Array<CardanoAddressedUtxo>,
     stakingKey: PublicKey,
     registrationStatus: boolean,
-    poolRequest: void | string,
+    poolId: string | null,
     changeAddr: AddressingAddress,
     valueInAccount: MultiTokenValue,
     defaultToken: Token,
@@ -470,7 +470,7 @@ class YoroiLib implements IYoroiLib {
     utxos: Array<CardanoAddressedUtxo>,
     stakingKey: PublicKey,
     registrationStatus: boolean,
-    poolRequest: void | string,
+    poolId: string | null,
     changeAddr: AddressingAddress,
     valueInAccount: MultiTokenValue,
     defaultToken: Token,
@@ -495,7 +495,7 @@ class YoroiLib implements IYoroiLib {
         this._wasmV4,
         stakingKey,
         registrationStatus,
-        poolRequest
+        poolId
       )
 
       const unsignedTx = (await this.newAdaUnsignedTx(

@@ -211,12 +211,12 @@ export async function createDelegationCertificate(
   wasm: WasmContract.WasmModuleProxy,
   stakingKey: PublicKey,
   isRegistered: boolean,
-  poolRequest: void | string
+  poolId: string | null
 ): Promise<Array<Certificate>> {
   const credential = await wasm.StakeCredential.fromKeyhash(
     await stakingKey.hash()
   )
-  if (poolRequest == null) {
+  if (poolId === null) {
     if (isRegistered) {
       return [
         await wasm.Certificate.newStakeDeregistration(
@@ -239,7 +239,7 @@ export async function createDelegationCertificate(
     await wasm.Certificate.newStakeDelegation(
       await wasm.StakeDelegation.new(
         credential,
-        await wasm.Ed25519KeyHash.fromBytes(Buffer.from(poolRequest, 'hex'))
+        await wasm.Ed25519KeyHash.fromBytes(Buffer.from(poolId, 'hex'))
       )
     )
   )
