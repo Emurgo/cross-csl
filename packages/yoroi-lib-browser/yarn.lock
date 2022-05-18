@@ -890,10 +890,10 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-9.1.4.tgz#00aeeaac17de1a5b9b44d24794edc7a547883c6b"
   integrity sha512-W+bdbPx2RTZilMYGi5Bo8LmMBgWlGfNggRqdVlMRgk7jQbMa61P88f4C0CO3GMdzOOTKH2K0yXg0hr/9cuh7tA==
 
-"@emurgo/yoroi-lib-core@0.4.0-alpha.27":
-  version "0.4.0-alpha.27"
-  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.4.0-alpha.27.tgz#e473c91ba1e70a3df96291fadd52acf6ecf45ea4"
-  integrity sha512-QqyPKRj5OyBxETjJdXMpngQgd8havfUcOnCAd/uAWVI1BGZRjaXGaJqaEVRG8z/W87FvlZLTkGGqUUcg/fqo3A==
+"@emurgo/yoroi-lib-core@0.4.1-alpha.28":
+  version "0.4.1-alpha.28"
+  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.4.1-alpha.28.tgz#62196fcd27a5b924feccf08eb8b663af93e45291"
+  integrity sha512-jBz36hGdTrS36nskV00W6GiVNxpq8nojgqS37ySI2U12uYZ0v9imWDl64nyt5IBrG9uP+sK13RM+lrRZsLNFRQ==
   dependencies:
     axios "^0.24.0"
     bignumber.js "^9.0.1"
