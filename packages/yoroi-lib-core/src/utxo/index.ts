@@ -110,7 +110,7 @@ export class UtxoService {
         throw new Error(diffFromBestBlockNotFoundError)
 
       for (let i = indexOfDiffFromBestBlock; i < localDiff.length - 1; i++) {
-        const diffToRemove = localDiff[indexOfDiffFromBestBlock]
+        const diffToRemove = localDiff[i]
         await this._utxoStorage.removeDiffWithBestBlock(
           diffToRemove.lastBestBlockHash
         )
