@@ -57,6 +57,8 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _certificates: WasmContract.Certificates
   private _withdrawals: WasmContract.Withdrawals
   private _deregistrations: ReadonlyArray<WasmContract.StakeDeregistration>
+  private _delegations: ReadonlyArray<WasmContract.StakeDelegation>
+  private _registrations: ReadonlyArray<WasmContract.StakeRegistration>
   private _ttl: number | undefined
   private _neededStakingKeyHashes: {
     neededHashes: Set<string>
@@ -139,6 +141,14 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._deregistrations
   }
 
+  get delegations(): ReadonlyArray<WasmContract.StakeDelegation> {
+    return this._delegations
+  }
+
+  get registrations(): ReadonlyArray<WasmContract.StakeRegistration> {
+    return this._registrations
+  }
+
   get ttl(): number | undefined {
     return this._ttl
   }
@@ -173,6 +183,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     certificates: WasmContract.Certificates,
     withdrawals: WasmContract.Withdrawals,
     deregistrations: WasmContract.StakeDeregistration[],
+    delegations: WasmContract.StakeDelegation[],
+    registrations: WasmContract.StakeRegistration[],
     ttl: number | undefined,
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     encodedTx: string,
@@ -191,6 +203,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._certificates = certificates
     this._withdrawals = withdrawals
     this._deregistrations = deregistrations
+    this._delegations = delegations
+    this._registrations = registrations
     this._ttl = ttl
     this._neededStakingKeyHashes = neededStakingKeyHashes
     this._encodedTx = encodedTx
@@ -217,6 +231,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     const ttl = await txBody.ttl()
     const hash = await wasm.hashTransaction(txBody)
     const deregistrations: WasmContract.StakeDeregistration[] = []
+    const delegations: WasmContract.StakeDelegation[] = []
+    const registrations: WasmContract.StakeRegistration[] = []
 
     if (certs.hasValue()) {
       for (let i = 0; i < (await certs.len()); i++) {
@@ -224,7 +240,25 @@ export class WasmUnsignedTx implements UnsignedTx {
         try {
           const dereg = await cert.asStakeDeregistration()
           if (dereg.hasValue()) {
-            deregistrations.push(await cert.asStakeDeregistration())
+            deregistrations.push(dereg)
+          }
+        } catch {
+          // not a deregistration, ignore
+        }
+
+        try {
+          const del = await cert.asStakeDelegation()
+          if (del.hasValue()) {
+            deregistrations.push(del)
+          }
+        } catch {
+          // not a deregistration, ignore
+        }
+
+        try {
+          const reg = await cert.asStakeRegistration()
+          if (reg.hasValue()) {
+            registrations.push(reg)
           }
         } catch {
           // not a deregistration, ignore
@@ -246,6 +280,8 @@ export class WasmUnsignedTx implements UnsignedTx {
       certs,
       withdrawals,
       deregistrations,
+      delegations,
+      registrations,
       ttl,
       neededStakingKeyHashes,
       Buffer.from(txBytes).toString('hex'),
@@ -419,6 +455,8 @@ export interface UnsignedTx {
   readonly certificates: WasmContract.Certificates
   readonly withdrawals: WasmContract.Withdrawals
   readonly deregistrations: ReadonlyArray<WasmContract.StakeDeregistration>
+  readonly delegations: ReadonlyArray<WasmContract.StakeDelegation>
+  readonly registrations: ReadonlyArray<WasmContract.StakeRegistration>
   readonly ttl: number | undefined
   readonly neededStakingKeyHashes: {
     neededHashes: Set<string>
