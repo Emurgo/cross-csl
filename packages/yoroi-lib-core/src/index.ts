@@ -17,7 +17,9 @@ import {
   CardanoHaskellConfig,
   CatalystLabels,
   Change,
+  CreateDelegationTxResponse,
   MetadataJsonSchema,
+  MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   SendToken,
@@ -26,13 +28,17 @@ import {
   TxOutput,
   WithdrawalRequest
 } from './internals/models'
-import { genWasmUnsignedTx, UnsignedTx } from './internals/tx'
+import { MultiToken } from './internals/multi-token'
+import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx'
 import {
   AddInputResult,
   createMetadata,
   firstWithValue
 } from './internals/utils'
-import { normalizeToAddress } from './internals/utils/addresses'
+import {
+  filterAddressesByStakingKey,
+  normalizeToAddress
+} from './internals/utils/addresses'
 import {
   buildSendTokenList,
   cardanoValueFromMultiToken,
@@ -43,11 +49,18 @@ import {
 import {
   addUtxoInput,
   cardanoValueFromRemoteFormat,
+  createDelegationCertificate,
+  getDifferenceAfterTx,
   isBigNumZero,
   minRequiredForChange
 } from './internals/utils/transactions'
 import * as WasmContract from './internals/wasm-contract'
-import { BigNum, PrivateKey, RewardAddress } from './internals/wasm-contract'
+import {
+  BigNum,
+  PrivateKey,
+  PublicKey,
+  RewardAddress
+} from './internals/wasm-contract'
 
 export { AccountService } from './account'
 export { AccountChainProtocols, AccountStorage } from './account/models'
@@ -114,8 +127,20 @@ export interface IYoroiLib {
     changeAddr: AddressingAddress,
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
-    nonce: number,
+    nonce: number
   ): Promise<UnsignedTx>
+  createUnsignedDelegationTx(
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    stakingKey: PublicKey,
+    registrationStatus: boolean,
+    poolId: string | null,
+    changeAddr: AddressingAddress,
+    valueInAccount: MultiTokenValue,
+    defaultToken: Token,
+    txOptions: TxOptions,
+    config: CardanoHaskellConfig
+  ): Promise<CreateDelegationTxResponse>
 }
 
 class YoroiLib implements IYoroiLib {
@@ -212,22 +237,22 @@ class YoroiLib implements IYoroiLib {
     changeAddr: AddressingAddress,
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
-    nonce: number,
+    nonce: number
   ): Promise<UnsignedTx> {
     const rewardAddress = this.Wasm.RewardAddress.new(
       config.networkId,
-      await this.Wasm.StakeCredential.fromKeyhash(await stakePrivateKey.toPublic().then(x => x.hash())),
+      await this.Wasm.StakeCredential.fromKeyhash(
+        await stakePrivateKey.toPublic().then((x) => x.hash())
+      )
     )
 
-    const catalystPrivateKeyHex = Buffer.from(await catalystPrivateKey
-      .toPublic()
-      .then(x => x.asBytes()))
-      .toString('hex')
-      
-    const stakingPublicKeyHex = Buffer.from(await stakePrivateKey
-      .toPublic()
-      .then(x => x.asBytes()))
-      .toString('hex')
+    const catalystPrivateKeyHex = Buffer.from(
+      await catalystPrivateKey.toPublic().then((x) => x.asBytes())
+    ).toString('hex')
+
+    const stakingPublicKeyHex = Buffer.from(
+      await stakePrivateKey.toPublic().then((x) => x.asBytes())
+    ).toString('hex')
 
     const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
       JSON.stringify({
@@ -251,8 +276,9 @@ class YoroiLib implements IYoroiLib {
     )
     const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
 
-    const signedHashedMetadata = await stakePrivateKey.sign(hashedMetadata)
-      .then(x => x.toHex())
+    const signedHashedMetadata = await stakePrivateKey
+      .sign(hashedMetadata)
+      .then((x) => x.toHex())
 
     await generalMetadata.insert(
       await this.Wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
@@ -437,6 +463,94 @@ class YoroiLib implements IYoroiLib {
     )
 
     return unsignedTx
+  }
+
+  async createUnsignedDelegationTx(
+    absSlotNumber: BigNumber,
+    utxos: Array<CardanoAddressedUtxo>,
+    stakingKey: PublicKey,
+    registrationStatus: boolean,
+    poolId: string | null,
+    changeAddr: AddressingAddress,
+    valueInAccount: MultiTokenValue,
+    defaultToken: Token,
+    txOptions: TxOptions,
+    config: CardanoHaskellConfig
+  ): Promise<CreateDelegationTxResponse> {
+    try {
+      const protocolParams = {
+        keyDeposit: await this._wasmV4.BigNum.fromStr(config.keyDeposit),
+        linearFee: await this._wasmV4.LinearFee.new(
+          await this._wasmV4.BigNum.fromStr(config.linearFee.coefficient),
+          await this._wasmV4.BigNum.fromStr(config.linearFee.constant)
+        ),
+        minimumUtxoVal: await this._wasmV4.BigNum.fromStr(
+          config.minimumUtxoVal
+        ),
+        poolDeposit: await this._wasmV4.BigNum.fromStr(config.poolDeposit),
+        networkId: config.networkId
+      }
+
+      const stakeDelegationCerts = await createDelegationCertificate(
+        this._wasmV4,
+        stakingKey,
+        registrationStatus,
+        poolId
+      )
+
+      const unsignedTx = (await this.newAdaUnsignedTx(
+        [],
+        changeAddr,
+        utxos,
+        absSlotNumber,
+        protocolParams,
+        stakeDelegationCerts,
+        [],
+        undefined,
+        {
+          neededHashes: new Set<string>(),
+          wits: new Set<string>()
+        },
+        txOptions,
+        false
+      )) as WasmUnsignedTx
+
+      const allUtxosForKey = await filterAddressesByStakingKey(
+        this._wasmV4,
+        await this._wasmV4.StakeCredential.fromKeyhash(await stakingKey.hash()),
+        utxos,
+        false
+      )
+      const utxoSum = allUtxosForKey.reduce(
+        (sum, utxo) =>
+          sum.joinAddMutable(
+            multiTokenFromRemote(utxo, protocolParams.networkId)
+          ),
+        new MultiToken([], defaultToken)
+      )
+
+      const differenceAfterTx = await getDifferenceAfterTx(
+        this._wasmV4,
+        unsignedTx,
+        utxos,
+        stakingKey,
+        defaultToken
+      )
+
+      const totalAmountToDelegate = utxoSum
+        .joinAddCopy(differenceAfterTx) // subtract any part of the fee that comes from UTXO
+        .joinAddCopy(
+          new MultiToken(valueInAccount.values, valueInAccount.defaults)
+        ) // recall: rewards are compounding
+
+      return {
+        unsignedTx,
+        totalAmountToDelegate
+      }
+    } catch (error) {
+      YoroiLib.logger.error(`createDelegationTx error: ` + error)
+      throw new GenericError()
+    }
   }
 
   private async createUnsignedTxForUtxos(

@@ -1,4 +1,5 @@
 import * as WasmContract from '../wasm-contract'
+import { StakeCredential } from '../wasm-contract'
 
 export async function normalizeToAddress(
   wasm: WasmContract.WasmModuleProxy,
@@ -39,4 +40,56 @@ export async function toHexOrBase58(
     return Buffer.from(await address.toBytes()).toString('hex')
   }
   return await asByron.toBase58()
+}
+
+export async function filterAddressesByStakingKey<
+  T extends { receiver: string }
+>(
+  wasm: WasmContract.WasmModuleProxy,
+  stakingKey: StakeCredential,
+  utxos: ReadonlyArray<T>,
+  acceptTypeMismatch: boolean
+): Promise<ReadonlyArray<T>> {
+  const result = []
+  for (const utxo of utxos) {
+    if (
+      await addrContainsAccountKey(
+        wasm,
+        utxo.receiver,
+        stakingKey,
+        acceptTypeMismatch
+      )
+    ) {
+      result.push(utxo)
+    }
+  }
+  return result
+}
+
+export async function addrContainsAccountKey(
+  wasm: WasmContract.WasmModuleProxy,
+  address: string,
+  targetAccountKey: StakeCredential,
+  acceptTypeMismatch: boolean
+): Promise<boolean> {
+  const wasmAddr = await normalizeToAddress(wasm, address)
+  if (wasmAddr == null)
+    throw new Error(`addrContainsAccountKey invalid address ${address}`)
+
+  const accountKeyString = Buffer.from(
+    await targetAccountKey.toBytes()
+  ).toString('hex')
+
+  const baseAddress = await wasm.BaseAddress.fromAddress(wasmAddr)
+  const stakeCredBytes = await baseAddress.stakeCred().then((x) => x.toBytes())
+  if (baseAddress != null) {
+    if (Buffer.from(stakeCredBytes).toString('hex') === accountKeyString) {
+      return true
+    }
+  }
+  const asPointer = await wasm.PointerAddress.fromAddress(wasmAddr)
+  if (asPointer != null) {
+    // TODO
+  }
+  return acceptTypeMismatch
 }

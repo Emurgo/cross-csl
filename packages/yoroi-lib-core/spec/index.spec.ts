@@ -367,30 +367,35 @@ export const setupTests = (
             .toString()
         )
         expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
-          unsignedTx.inputs.reduce((prev, curr) => {
-            return prev.plus(curr.value.values[0].amount)
-          }, new BigNumber('0'))
-          .minus(unsignedTx.change[0].values.values[0].amount)
-          .toString()
+          unsignedTx.inputs
+            .reduce((prev, curr) => {
+              return prev.plus(curr.value.values[0].amount)
+            }, new BigNumber('0'))
+            .minus(unsignedTx.change[0].values.values[0].amount)
+            .toString()
         )
         expect(unsignedTx.totalInput.values[0].amount.toString()).to.equal(
-          unsignedTx.outputs.reduce((prev, curr) => {
-            return prev.plus(curr.value.values[0].amount)
-          }, new BigNumber('0'))
-          .plus(unsignedTx.fee.values[0].amount)
-          .minus(unsignedTx.change[0].values.values[0].amount)
-          .toString()
+          unsignedTx.outputs
+            .reduce((prev, curr) => {
+              return prev.plus(curr.value.values[0].amount)
+            }, new BigNumber('0'))
+            .plus(unsignedTx.fee.values[0].amount)
+            .minus(unsignedTx.change[0].values.values[0].amount)
+            .toString()
         )
         expect(unsignedTx.totalOutput.values[0].amount.toString()).to.equal(
-          unsignedTx.outputs.reduce((prev, curr) => {
-            return prev.plus(curr.value.values[0].amount)
-          }, new BigNumber('0'))
-          .toString()
+          unsignedTx.outputs
+            .reduce((prev, curr) => {
+              return prev.plus(curr.value.values[0].amount)
+            }, new BigNumber('0'))
+            .toString()
         )
-        expect(unsignedTx.outputs[0].value.values[0].amount.toString()).to.equal(
+        expect(
+          unsignedTx.outputs[0].value.values[0].amount.toString()
+        ).to.equal(
           unsignedTx.totalInput.values[0].amount
-          .minus(unsignedTx.fee.values[0].amount)
-          .toString()
+            .minus(unsignedTx.fee.values[0].amount)
+            .toString()
         )
 
         expect(unsignedTx.totalInput.values[1].identifier).to.equal(
@@ -436,7 +441,7 @@ export const setupTests = (
       }).timeout(100000)
     })
 
-    describe('createUnsignedWithdrawalTx', () => {
+    describe('delegation', () => {
       const utxos = [
         {
           amount: '10000000',
@@ -1235,20 +1240,6 @@ export const setupTests = (
         }
       }
 
-      const getWithdrawalRequest = (shouldDeregister: boolean) => {
-        return [
-          {
-            addressing: {
-              path: [2147485500, 2147485463, 2147483648, 2, 0],
-              startLevel: 1
-            },
-            rewardAddress:
-              'e0c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
-            shouldDeregister
-          }
-        ]
-      }
-
       const changeAddr = {
         address:
           '001c589b0d01c11c98abc49533c30bae1ec665912c95c915a217d75234c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
@@ -1258,46 +1249,117 @@ export const setupTests = (
         }
       }
 
-      it('should build and sign withdrawal request', async () => {
-        const unsignedWithdrawalTx = await yoroiLib.createUnsignedWithdrawalTx(
-          accountState,
-          absSlotNumber,
-          utxos,
-          getWithdrawalRequest(false),
-          changeAddr,
-          cardanoConfig,
-          {}
-        )
+      describe('createUnsignedWithdrawalTx', () => {
+        const getWithdrawalRequest = (shouldDeregister: boolean) => {
+          return [
+            {
+              addressing: {
+                path: [2147485500, 2147485463, 2147483648, 2, 0],
+                startLevel: 1
+              },
+              rewardAddress:
+                'e0c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
+              shouldDeregister
+            }
+          ]
+        }
 
-        await unsignedWithdrawalTx.sign(
-          0,
-          '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
-          new Set<string>([]),
-          []
-        )
-      }).timeout(100000)
+        it('should build and sign withdrawal request', async () => {
+          const unsignedWithdrawalTx =
+            await yoroiLib.createUnsignedWithdrawalTx(
+              accountState,
+              absSlotNumber,
+              utxos,
+              getWithdrawalRequest(false),
+              changeAddr,
+              cardanoConfig,
+              {}
+            )
 
-      it('should build and sign withdrawal request with deregistration', async () => {
-        const unsignedWithdrawalTx = await yoroiLib.createUnsignedWithdrawalTx(
-          accountState,
-          absSlotNumber,
-          utxos,
-          getWithdrawalRequest(true),
-          changeAddr,
-          cardanoConfig,
-          {}
-        )
+          await unsignedWithdrawalTx.sign(
+            0,
+            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+            new Set<string>([]),
+            []
+          )
+        }).timeout(100000)
 
-        await unsignedWithdrawalTx.sign(
-          0,
-          '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
-          new Set<string>([]),
-          []
-        )
+        it('should build and sign withdrawal request with deregistration', async () => {
+          const unsignedWithdrawalTx =
+            await yoroiLib.createUnsignedWithdrawalTx(
+              accountState,
+              absSlotNumber,
+              utxos,
+              getWithdrawalRequest(true),
+              changeAddr,
+              cardanoConfig,
+              {}
+            )
 
-        expect(unsignedWithdrawalTx.deregistrations.length).to.equal(1)
-        expect(await unsignedWithdrawalTx.certificates.len()).to.equal(1)
-      }).timeout(100000)
+          await unsignedWithdrawalTx.sign(
+            0,
+            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+            new Set<string>([]),
+            []
+          )
+
+          expect(unsignedWithdrawalTx.deregistrations.length).to.equal(1)
+          expect(await unsignedWithdrawalTx.certificates.len()).to.equal(1)
+        }).timeout(100000)
+      })
+
+      describe('createUnsignedDelegationTx', () => {
+        it('should build and sign delegation TX', async () => {
+          const privateKey = await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+            Buffer.from(
+              '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+              'hex'
+            )
+          )
+          const publicKey = await privateKey.toPublic()
+          const stakingKey = await publicKey
+            .derive(2)
+            .then((x) => x.derive(0))
+            .then((x) => x.toRawKey())
+
+          const response = await yoroiLib.createUnsignedDelegationTx(
+            absSlotNumber,
+            utxos,
+            stakingKey,
+            false,
+            '3921f4441153e5936910de57cb1982dfbaa781a57ba1ff97b3fd869e',
+            changeAddr,
+            {
+              defaults: {
+                isDefault: true,
+                identifier: '',
+                networkId: 300
+              },
+              values: [
+                {
+                  amount: new BigNumber('10000000'),
+                  identifier: '',
+                  networkId: 300
+                }
+              ]
+            },
+            {
+              isDefault: true,
+              identifier: '',
+              networkId: 300
+            },
+            {},
+            cardanoConfig
+          )
+
+          await response.unsignedTx.sign(
+            0,
+            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+            new Set<string>([]),
+            []
+          )
+        }).timeout(10000)
+      })
     })
 
     describe('createUnsignedVotingTx', () => {
@@ -1305,7 +1367,10 @@ export const setupTests = (
         const params = buildDummyTxParameters(false)
 
         const pk = await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
-          Buffer.from('780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367', 'hex')
+          Buffer.from(
+            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+            'hex'
+          )
         )
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
@@ -1316,7 +1381,7 @@ export const setupTests = (
           params.changeAddress,
           params.config,
           {},
-          5,
+          5
         )
 
         await unsignedVotingTx.sign(

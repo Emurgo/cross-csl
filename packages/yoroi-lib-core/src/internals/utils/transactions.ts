@@ -2,12 +2,20 @@ import * as WasmContract from '../wasm-contract'
 import {
   AddressingAddress,
   PRIMARY_ASSET_CONSTANTS,
-  RemoteUnspentOutput
+  RemoteUnspentOutput,
+  Token
 } from '../models'
-import { normalizeToAddress } from './addresses'
+import { addrContainsAccountKey, normalizeToAddress } from './addresses'
 import { AddInputResult } from './index'
-import { identifierToCardanoAsset, multiTokenFromCardanoValue } from './assets'
+import {
+  identifierToCardanoAsset,
+  multiTokenFromCardanoValue,
+  multiTokenFromRemote
+} from './assets'
 import { BigNumber } from 'bignumber.js'
+import { Certificate, PublicKey } from '../wasm-contract'
+import { MultiToken } from '../multi-token'
+import { WasmUnsignedTx } from '../tx'
 
 export async function minRequiredForChange(
   wasm: WasmContract.WasmModuleProxy,
@@ -197,4 +205,99 @@ export async function isBigNumZero(
   b: WasmContract.BigNum
 ): Promise<boolean> {
   return (await b.compare(await wasm.BigNum.fromStr('0'))) === 0
+}
+
+export async function createDelegationCertificate(
+  wasm: WasmContract.WasmModuleProxy,
+  stakingKey: PublicKey,
+  isRegistered: boolean,
+  poolId: string | null
+): Promise<Array<Certificate>> {
+  const credential = await wasm.StakeCredential.fromKeyhash(
+    await stakingKey.hash()
+  )
+  if (poolId === null) {
+    if (isRegistered) {
+      return [
+        await wasm.Certificate.newStakeDeregistration(
+          await wasm.StakeDeregistration.new(credential)
+        )
+      ]
+    }
+    return [] // no need to undelegate if no staking key registered
+  }
+  const result = []
+  if (!isRegistered) {
+    // if unregistered, need to register first
+    result.push(
+      await wasm.Certificate.newStakeRegistration(
+        await wasm.StakeRegistration.new(credential)
+      )
+    )
+  }
+  result.push(
+    await wasm.Certificate.newStakeDelegation(
+      await wasm.StakeDelegation.new(
+        credential,
+        await wasm.Ed25519KeyHash.fromBytes(Buffer.from(poolId, 'hex'))
+      )
+    )
+  )
+  return result
+}
+
+export async function getDifferenceAfterTx(
+  wasm: WasmContract.WasmModuleProxy,
+  unsignedTx: WasmUnsignedTx,
+  allUtxos: RemoteUnspentOutput[],
+  stakingKey: PublicKey,
+  defaultToken: Token
+): Promise<MultiToken> {
+  const stakeCredential = await wasm.StakeCredential.fromKeyhash(
+    await stakingKey.hash()
+  )
+
+  const sumInForKey = new MultiToken([], defaultToken)
+  {
+    // note senderUtxos.length is approximately 1
+    // since it's just to cover transaction fees
+    // so this for loop is faster than building a map
+    for (const senderUtxo of unsignedTx.senderUtxos) {
+      const match = allUtxos.find(
+        (utxo) =>
+          utxo.txHash === senderUtxo.txHash &&
+          utxo.txIndex === senderUtxo.txIndex
+      )
+      if (match == null) {
+        throw new Error(
+          `getDifferenceAfterTx utxo not found. Should not happen`
+        )
+      }
+      const address = match.receiver
+      if (await addrContainsAccountKey(wasm, address, stakeCredential, true)) {
+        sumInForKey.joinAddMutable(
+          multiTokenFromRemote(match, defaultToken.networkId)
+        )
+      }
+    }
+  }
+
+  const sumOutForKey = new MultiToken([], defaultToken)
+  {
+    const txBody = unsignedTx.txBody
+    const outputs = await txBody.outputs()
+    for (let i = 0; i < (await outputs.len()); i++) {
+      const output = await outputs.get(i)
+      const address = Buffer.from(
+        await output.address().then((x) => x.toBytes())
+      ).toString('hex')
+      if (await addrContainsAccountKey(wasm, address, stakeCredential, true)) {
+        sumOutForKey.joinAddMutable(
+          await multiTokenFromCardanoValue(await output.amount(), defaultToken)
+        )
+      }
+    }
+  }
+
+  return sumOutForKey.joinSubtractCopy(sumInForKey)
 }
