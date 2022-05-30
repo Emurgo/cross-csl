@@ -97,37 +97,37 @@ export class UtxoService {
         (d) => d.lastBestBlockHash === tipStatus.reference.lastFoundBestBlock
       )
 
-      const diffFromBestBlockNotFoundError =
-        'This should never happen, ' +
-        'as we send the lastBestBlockHash from all diffs ' +
-        'to the API, and it should always respond with at least one of them, ' +
-        'or throw an error which should be handled somewhere else.'
+      let indexOfDiffFromBestBlock;
+      if (diffFromBestBlock) {
+        indexOfDiffFromBestBlock = localDiff.indexOf(diffFromBestBlock) + 1
+      } else {
+        // `tipStatus.reference.lastFoundBestBlock` is not in `localDiff`
+        // the only possibility is that all txs in `localDiff` are reverted
+        // and `tipStatus.reference.lastFoundBestBlock` is current safe block hash
+        indexOfDiffFromBestBlock = 0;
+      }
 
-      if (!diffFromBestBlock) throw new Error(diffFromBestBlockNotFoundError)
-
-      const indexOfDiffFromBestBlock = localDiff.indexOf(diffFromBestBlock)
-      if (indexOfDiffFromBestBlock === -1)
-        throw new Error(diffFromBestBlockNotFoundError)
-
-      for (let i = indexOfDiffFromBestBlock; i < localDiff.length - 1; i++) {
+      for (let i = indexOfDiffFromBestBlock; i < localDiff.length; i++) {
         const diffToRemove = localDiff[i]
         await this._utxoStorage.removeDiffWithBestBlock(
           diffToRemove.lastBestBlockHash
         )
       }
 
-      const diffWhichIsNowSafe = localDiff.find(
-        (d) => d.lastBestBlockHash === tipStatus.reference.lastFoundSafeBlock
-      )
-
-      if (diffWhichIsNowSafe) {
-        await this.mergeDiffsIntoSafeUtxoSet(
-          safeUtxos,
-          localDiff,
-          diffWhichIsNowSafe,
-          tipStatus.reference.lastFoundSafeBlock
+      if (diffFromBestBlock) {
+        const diffWhichIsNowSafe = localDiff.find(
+          (d) => d.lastBestBlockHash === tipStatus.reference.lastFoundSafeBlock
         )
-      }
+
+        if (diffWhichIsNowSafe) {
+          await this.mergeDiffsIntoSafeUtxoSet(
+            safeUtxos,
+            localDiff,
+            diffWhichIsNowSafe,
+            tipStatus.reference.lastFoundSafeBlock
+          )
+        }
+      } // else no need to merge
     }
 
     await this._utxoStorage.appendUtxoDiffToBestBlock(diffToBestBlock)
