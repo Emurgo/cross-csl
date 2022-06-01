@@ -2,6 +2,31 @@ import { BigNumber } from 'bignumber.js'
 import { MultiToken } from './multi-token'
 import { UnsignedTx } from './tx'
 
+interface Bip44DerivationLevel {
+  level: number
+}
+
+export const Bip44DerivationLevels = {
+  ROOT: {
+    level: 0
+  } as Bip44DerivationLevel,
+  PURPOSE: {
+    level: 1
+  } as Bip44DerivationLevel,
+  COIN_TYPE: {
+    level: 2
+  } as Bip44DerivationLevel,
+  ACCOUNT: {
+    level: 3
+  } as Bip44DerivationLevel,
+  CHAIN: {
+    level: 4
+  } as Bip44DerivationLevel,
+  ADDRESS: {
+    level: 5
+  } as Bip44DerivationLevel
+}
+
 export const PRIMARY_ASSET_CONSTANTS = {
   Cardano: '',
   Ergo: '',
@@ -131,4 +156,9 @@ export enum MetadataJsonSchema {
 export enum CatalystLabels {
   DATA = 61284,
   SIG = 61285
+}
+
+export enum CoinType {
+  CARDANO = 2147485463, // HARD_DERIVATION_START + 1815;
+  ERGO = 2147484077, // HARD_DERIVATION_START + 429;
 }

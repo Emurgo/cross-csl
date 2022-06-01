@@ -12,6 +12,7 @@ import {
 import {
   AccountStatePart,
   Address,
+  Addressing,
   AddressingAddress,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
@@ -29,7 +30,7 @@ import {
   WithdrawalRequest
 } from './internals/models'
 import { MultiToken } from './internals/multi-token'
-import { genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx'
+import { CatalystRegistrationData, genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx'
 import {
   AddInputResult,
   createMetadata,
@@ -46,6 +47,7 @@ import {
   multiTokenFromCardanoValue,
   multiTokenFromRemote
 } from './internals/utils/assets'
+import { formatLedgerCertificates, formatLedgerWithdrawals, transformToLedgerInputs, transformToLedgerOutputs } from './internals/utils/ledger'
 import {
   addUtxoInput,
   cardanoValueFromRemoteFormat,
@@ -61,6 +63,15 @@ import {
   PublicKey,
   RewardAddress
 } from './internals/wasm-contract'
+import {
+  TxAuxiliaryDataType as LedgerTxAuxiliaryDataType,
+  AddressType as LedgerAddressType,
+  TxAuxiliaryData as LedgerTxAuxiliaryData,
+  SignTransactionRequest as LedgerSignTransactionRequest,
+  TransactionSigningMode as LedgerTransactionSigningMode,
+  Certificate as LedgerCertificate,
+  Withdrawal as LedgerWithdrawal,
+} from '@cardano-foundation/ledgerjs-hw-app-cardano'
 
 export { AccountService } from './account'
 export { AccountChainProtocols, AccountStorage } from './account/models'
@@ -122,6 +133,7 @@ export interface IYoroiLib {
   createUnsignedVotingTx(
     absSlotNumber: BigNumber,
     stakePrivateKey: PrivateKey,
+    stakingKeyPath: number[],
     catalystPrivateKey: PrivateKey,
     utxos: Array<CardanoAddressedUtxo>,
     changeAddr: AddressingAddress,
@@ -141,6 +153,12 @@ export interface IYoroiLib {
     txOptions: TxOptions,
     config: CardanoHaskellConfig
   ): Promise<CreateDelegationTxResponse>
+  buildLedgerPayload(
+    unsignedTx: UnsignedTx,
+    networkId: number,
+    byronNetworkMagic: number,
+    addressingMap: (addr: string) => Addressing
+  ): Promise<LedgerSignTransactionRequest>
 }
 
 class YoroiLib implements IYoroiLib {
@@ -232,6 +250,7 @@ class YoroiLib implements IYoroiLib {
   async createUnsignedVotingTx(
     absSlotNumber: BigNumber,
     stakePrivateKey: PrivateKey,
+    stakingKeyPath: number[],
     catalystPrivateKey: PrivateKey,
     utxos: Array<CardanoAddressedUtxo>,
     changeAddr: AddressingAddress,
@@ -239,10 +258,11 @@ class YoroiLib implements IYoroiLib {
     txOptions: TxOptions,
     nonce: number
   ): Promise<UnsignedTx> {
+    const stakePublicKey = await stakePrivateKey.toPublic()
     const rewardAddress = this.Wasm.RewardAddress.new(
       config.networkId,
       await this.Wasm.StakeCredential.fromKeyhash(
-        await stakePrivateKey.toPublic().then((x) => x.hash())
+        await stakePublicKey.hash()
       )
     )
 
@@ -331,7 +351,12 @@ class YoroiLib implements IYoroiLib {
         wits: new Set()
       },
       txOptions,
-      false
+      false,
+      {
+        nonce: nonce.toString(),
+        stakingKeyPath: stakingKeyPath,
+        votingPublicKey: Buffer.from(await stakePublicKey.asBytes()).toString('hex')
+      }
     )
 
     return unsignedTx
@@ -459,7 +484,8 @@ class YoroiLib implements IYoroiLib {
       undefined,
       neededKeys,
       txOptions,
-      false
+      false,
+      undefined
     )
 
     return unsignedTx
@@ -512,7 +538,8 @@ class YoroiLib implements IYoroiLib {
           wits: new Set<string>()
         },
         txOptions,
-        false
+        false,
+        undefined
       )) as WasmUnsignedTx
 
       const allUtxosForKey = await filterAddressesByStakingKey(
@@ -550,6 +577,96 @@ class YoroiLib implements IYoroiLib {
     } catch (error) {
       YoroiLib.logger.error(`createDelegationTx error: ` + error)
       throw new GenericError()
+    }
+  }
+
+  async buildLedgerPayload(
+    unsignedTx: UnsignedTx,
+    networkId: number,
+    byronNetworkMagic: number,
+    addressingMap: (addr: string) => Addressing
+  ): Promise<LedgerSignTransactionRequest> {
+    const ledgerInputs = transformToLedgerInputs([...unsignedTx.senderUtxos])
+    const ledgerOutputs = await transformToLedgerOutputs(
+      this.Wasm,
+      {
+        networkId: networkId,
+        txOutputs: await unsignedTx.txBody.outputs(),
+        addressingMap: addressingMap,
+        changeAddrs: [...unsignedTx.change]
+      }
+    )
+
+    const withdrawals = unsignedTx.withdrawals
+    const ledgerWithdrawal: LedgerWithdrawal[] = []
+    if (withdrawals != null && withdrawals.hasValue() && (await withdrawals.len()) > 0) {
+      const withs = await formatLedgerWithdrawals(
+        withdrawals,
+        addressingMap,
+      )
+      ledgerWithdrawal.push(...withs)
+    }
+
+    const certificates = unsignedTx.certificates
+
+    const ledgerCertificates: LedgerCertificate[] = []
+    if (certificates != null && certificates.hasValue() && (await certificates.len()) > 0) {
+      const certs = await formatLedgerCertificates(
+        this.Wasm,
+        networkId,
+        certificates,
+        addressingMap,
+      )
+      ledgerCertificates.push(...certs)
+    }
+
+    const ttl = unsignedTx.ttl
+
+    let auxiliaryData: LedgerTxAuxiliaryData | null = null
+    
+    if (unsignedTx.catalystRegistrationData) {
+      const { votingPublicKey, stakingKeyPath, nonce } = unsignedTx.catalystRegistrationData
+      auxiliaryData = {
+        type: LedgerTxAuxiliaryDataType.CATALYST_REGISTRATION,
+        params: {
+          votingPublicKeyHex: votingPublicKey.replace(/^0x/, ''),
+          stakingPath: stakingKeyPath,
+          rewardsDestination: {
+            type: LedgerAddressType.REWARD_KEY,
+            params: {
+              stakingPath: stakingKeyPath,
+            },
+          },
+          nonce,
+        }
+      }
+    } else if (unsignedTx.auxiliaryData && unsignedTx.auxiliaryData.hasValue()) {
+      const auxiliaryDataHash = await blake2b(await unsignedTx.auxiliaryData.toBytes(), 256)
+      auxiliaryData = {
+        type: LedgerTxAuxiliaryDataType.ARBITRARY_HASH,
+        params: {
+          hashHex: auxiliaryDataHash
+        }
+      }
+    }
+
+    return {
+      signingMode: LedgerTransactionSigningMode.ORDINARY_TRANSACTION,
+      tx: {
+        inputs: ledgerInputs,
+        outputs: ledgerOutputs,
+        ttl: ttl === undefined ? ttl : ttl.toString(),
+        fee: await unsignedTx.txBody.fee().then(x => x.toStr()),
+        network: {
+          networkId: networkId,
+          protocolMagic: byronNetworkMagic,
+        },
+        withdrawals: ledgerWithdrawal.length === 0 ? null : ledgerWithdrawal,
+        certificates: ledgerCertificates.length === 0 ? null : ledgerCertificates,
+        auxiliaryData,
+        validityIntervalStart: undefined,
+      },
+      additionalWitnessPaths: [],
     }
   }
 
@@ -663,7 +780,8 @@ class YoroiLib implements IYoroiLib {
             wits: new Set([])
           },
           txOptions,
-          false
+          false,
+          undefined
         )
         YoroiLib.logger.debug(`createUnsignedTxForUtxos success`, unsignedTx)
         return unsignedTx
@@ -739,7 +857,9 @@ class YoroiLib implements IYoroiLib {
       },
       protocolParams.networkId,
       neededStakingKeyHashes,
-      txOptions.metadata ?? []
+      txOptions.metadata ?? [],
+      auxData,
+      undefined
     )
   }
 
@@ -862,7 +982,8 @@ class YoroiLib implements IYoroiLib {
     auxData: WasmContract.AuxiliaryData | undefined,
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     txOptions: TxOptions,
-    allowNoOutputs: boolean
+    allowNoOutputs: boolean,
+    catalystRegistrationData: CatalystRegistrationData | undefined
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
     for (const utxo of allUtxos) {
@@ -913,7 +1034,9 @@ class YoroiLib implements IYoroiLib {
       },
       protocolParams.networkId,
       neededStakingKeyHashes,
-      txOptions.metadata ?? []
+      txOptions.metadata ?? [],
+      auxData,
+      catalystRegistrationData
     )
   }
 

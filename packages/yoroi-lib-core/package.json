@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-core",
-  "version": "0.4.3-alpha.30",
+  "version": "0.5.0-alpha.31",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -23,6 +23,7 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
     "axios": "^0.24.0",
     "bignumber.js": "^9.0.1",
     "hash-wasm": "^4.9.0"

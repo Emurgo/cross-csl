@@ -10,7 +10,6 @@ import {
 } from '../src'
 import {
   GeneralTransactionMetadata,
-  RewardAddress
 } from '../src/internals/wasm-contract'
 
 /*
@@ -1376,6 +1375,7 @@ export const setupTests = (
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
           await pk.toRawKey(),
+          [2147485500, 2147485463, 2147483648, 0, 3],
           await pk.toRawKey(),
           params.utxos,
           params.changeAddress,
@@ -1393,64 +1393,39 @@ export const setupTests = (
       }).timeout(100000)
     })
 
-    describe('Iteratables', () => {
-      it('should iterate over RewardAddresses', async () => {
-        const getRewardAddress = async () => {
-          const mainnet = await yoroiLib.Wasm.NetworkInfo.mainnet()
+    describe('Ledger', () => {
+      it('should build Ledger payload for signing TX', async () => {
+        const params = buildDummyTxParameters(false)
 
-          const privKey =
-            await yoroiLib.Wasm.Bip32PrivateKey.generateEd25519Bip32()
-          const pubKey = await privKey.toPublic()
-          const stakeCredential =
-            await yoroiLib.Wasm.StakeCredential.fromKeyhash(
-              await pubKey.toRawKey().then((x) => x.hash())
-            )
-          const rewardAddress = yoroiLib.Wasm.RewardAddress.new(
-            await mainnet.networkId(),
-            stakeCredential
+        const pk = await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+          Buffer.from(
+            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
+            'hex'
           )
-
-          return rewardAddress
-        }
-
-        const rewardAddresses = await yoroiLib.Wasm.RewardAddresses.new()
-        rewardAddresses.add(await getRewardAddress())
-        rewardAddresses.add(await getRewardAddress())
-        rewardAddresses.add(await getRewardAddress())
-
-        const rewardAddressesArray = [] as RewardAddress[]
-        for await (const rewardAddress of rewardAddresses) {
-          rewardAddressesArray.push(rewardAddress)
-        }
-
-        expect(rewardAddressesArray.length).to.equal(
-          await rewardAddresses.len()
         )
-        expect(
-          await rewardAddressesArray[0].toAddress().then((a) => a.toBech32())
-        ).to.equal(
-          await rewardAddresses
-            .get(0)
-            .then((a) => a.toAddress())
-            .then((a) => a.toBech32())
+
+        const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
+          params.absSlotNumber,
+          await pk.toRawKey(),
+          [2147485500, 2147485463, 2147483648, 0, 3],
+          await pk.toRawKey(),
+          params.utxos,
+          params.changeAddress,
+          params.config,
+          {},
+          5
         )
-        expect(
-          await rewardAddressesArray[1].toAddress().then((a) => a.toBech32())
-        ).to.equal(
-          await rewardAddresses
-            .get(1)
-            .then((a) => a.toAddress())
-            .then((a) => a.toBech32())
+
+        await yoroiLib.buildLedgerPayload(
+          unsignedVotingTx,
+          cardanoConfig.networkId,
+          2,
+          (_) => ({
+            path: [2147485500, 2147485463, 2147483648, 0, 3],
+            startLevel: 0
+          })
         )
-        expect(
-          await rewardAddressesArray[2].toAddress().then((a) => a.toBech32())
-        ).to.equal(
-          await rewardAddresses
-            .get(2)
-            .then((a) => a.toAddress())
-            .then((a) => a.toBech32())
-        )
-      }).timeout(100000)
+      })
     })
   })
 }
