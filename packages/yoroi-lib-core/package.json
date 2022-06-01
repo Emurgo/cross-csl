@@ -23,6 +23,7 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
     "axios": "^0.24.0",
     "bignumber.js": "^9.0.1",
     "hash-wasm": "^4.9.0"

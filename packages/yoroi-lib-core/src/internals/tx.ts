@@ -7,7 +7,8 @@ import {
   Token,
   MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
-  TxMetadata
+  TxMetadata,
+  Bip44DerivationLevels
 } from './models'
 import { createMetadata } from './utils'
 import { normalizeToAddress } from './utils/addresses'
@@ -21,31 +22,6 @@ import {
 } from './utils/assets'
 import { MultiToken } from './multi-token'
 
-interface Bip44DerivationLevel {
-  level: number
-}
-
-const Bip44DerivationLevels = {
-  ROOT: {
-    level: 0
-  } as Bip44DerivationLevel,
-  PURPOSE: {
-    level: 1
-  } as Bip44DerivationLevel,
-  COIN_TYPE: {
-    level: 2
-  } as Bip44DerivationLevel,
-  ACCOUNT: {
-    level: 3
-  } as Bip44DerivationLevel,
-  CHAIN: {
-    level: 4
-  } as Bip44DerivationLevel,
-  ADDRESS: {
-    level: 5
-  } as Bip44DerivationLevel
-}
-
 export interface SignedTx {
   id: string
   encodedTx: Uint8Array
@@ -54,6 +30,7 @@ export interface SignedTx {
 export class WasmUnsignedTx implements UnsignedTx {
   private _wasm: WasmContract.WasmModuleProxy
   private _txBody: WasmContract.TransactionBody
+  private _txBuilder: WasmContract.TransactionBuilder
   private _certificates: WasmContract.Certificates
   private _withdrawals: WasmContract.Withdrawals
   private _deregistrations: ReadonlyArray<WasmContract.StakeDeregistration>
@@ -65,6 +42,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     wits: Set<string>
   }
   private _hash: WasmContract.TransactionHash
+  private _auxiliaryData?: WasmContract.AuxiliaryData
+  private _catalystRegistrationData?: CatalystRegistrationData
 
   private _senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
   private _inputs: ReadonlyArray<{
@@ -88,6 +67,10 @@ export class WasmUnsignedTx implements UnsignedTx {
 
   get txBody(): WasmContract.TransactionBody {
     return this._txBody
+  }
+
+  get txBuilder(): WasmContract.TransactionBuilder {
+    return this._txBuilder
   }
 
   get senderUtxos(): ReadonlyArray<CardanoAddressedUtxo> {
@@ -164,6 +147,14 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._hash
   }
 
+  get auxiliaryData(): WasmContract.AuxiliaryData | undefined {
+    return this._auxiliaryData
+  }
+
+  get catalystRegistrationData(): CatalystRegistrationData | undefined {
+    return this._catalystRegistrationData
+  }
+
   /**
    * Initializes the class with the specific wasm types, outputs and change.
    * Even though this class can be instantiated directly, you should probably be getting
@@ -172,6 +163,7 @@ export class WasmUnsignedTx implements UnsignedTx {
   protected constructor(
     wasm: WasmContract.WasmModuleProxy,
     txBody: WasmContract.TransactionBody,
+    txBuilder: WasmContract.TransactionBuilder,
     senderUtxos: CardanoAddressedUtxo[],
     inputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
     totalInput: MultiTokenValue,
@@ -188,10 +180,13 @@ export class WasmUnsignedTx implements UnsignedTx {
     ttl: number | undefined,
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     encodedTx: string,
-    hash: WasmContract.TransactionHash
+    hash: WasmContract.TransactionHash,
+    auxiliaryData: WasmContract.AuxiliaryData | undefined,
+    catalystRegistrationData: CatalystRegistrationData | undefined
   ) {
     this._wasm = wasm
     this._txBody = txBody
+    this._txBuilder = txBuilder
     this._senderUtxos = senderUtxos
     this._inputs = inputs
     this._totalInput = totalInput
@@ -209,6 +204,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._neededStakingKeyHashes = neededStakingKeyHashes
     this._encodedTx = encodedTx
     this._hash = hash
+    this._auxiliaryData = auxiliaryData
+    this._catalystRegistrationData = catalystRegistrationData
   }
 
   static async new(
@@ -222,7 +219,9 @@ export class WasmUnsignedTx implements UnsignedTx {
     fee: MultiTokenValue,
     change: ReadonlyArray<Change>,
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
-    metadata: ReadonlyArray<TxMetadata>
+    metadata: ReadonlyArray<TxMetadata>,
+    auxiliaryData: WasmContract.AuxiliaryData | undefined,
+    catalystRegistrationData: CatalystRegistrationData | undefined
   ): Promise<WasmUnsignedTx> {
     const txBody = await txBuilder.build()
     const txBytes = await txBody.toBytes()
@@ -269,6 +268,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     return new WasmUnsignedTx(
       wasm,
       txBody,
+      txBuilder,
       senderUtxos,
       inputs,
       totalInput,
@@ -285,7 +285,9 @@ export class WasmUnsignedTx implements UnsignedTx {
       ttl,
       neededStakingKeyHashes,
       Buffer.from(txBytes).toString('hex'),
-      hash
+      hash,
+      auxiliaryData,
+      catalystRegistrationData
     )
   }
 
@@ -437,8 +439,16 @@ export class WasmUnsignedTx implements UnsignedTx {
   }
 }
 
+export type CatalystRegistrationData = {
+  votingPublicKey: string,
+  stakingKeyPath: number[],
+  nonce: string
+}
+
 export interface UnsignedTx {
   readonly senderUtxos: ReadonlyArray<CardanoAddressedUtxo>
+  readonly txBody: WasmContract.TransactionBody
+  readonly txBuilder: WasmContract.TransactionBuilder
   readonly inputs: ReadonlyArray<{
     address: string
     value: MultiTokenValue
@@ -464,6 +474,8 @@ export interface UnsignedTx {
   }
   readonly encodedTx: string
   readonly hash: WasmContract.TransactionHash
+  readonly auxiliaryData?: WasmContract.AuxiliaryData
+  readonly catalystRegistrationData?: CatalystRegistrationData
   sign(
     keyLevel: number,
     privateKey: string,
@@ -480,7 +492,9 @@ export async function genWasmUnsignedTx(
   defaults: Token,
   networkId: number,
   neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
-  metadata: ReadonlyArray<TxMetadata>
+  metadata: ReadonlyArray<TxMetadata>,
+  auxiliaryData: WasmContract.AuxiliaryData | undefined,
+  catalystRegistrationData: CatalystRegistrationData | undefined
 ): Promise<WasmUnsignedTx> {
   return await WasmUnsignedTx.new(
     wasm,
@@ -493,7 +507,9 @@ export async function genWasmUnsignedTx(
     await genWasmUnsignedTxFee(txBuilder, defaults, networkId),
     change,
     neededStakingKeyHashes,
-    metadata
+    metadata,
+    auxiliaryData,
+    catalystRegistrationData
   )
 }
 

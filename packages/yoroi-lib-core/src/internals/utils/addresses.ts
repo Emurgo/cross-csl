@@ -36,7 +36,7 @@ export async function toHexOrBase58(
   address: WasmContract.Address
 ): Promise<string> {
   const asByron = await wasm.ByronAddress.fromAddress(address)
-  if (asByron == null) {
+  if (asByron === null || !asByron.hasValue()) {
     return Buffer.from(await address.toBytes()).toString('hex')
   }
   return await asByron.toBase58()
