@@ -1374,14 +1374,15 @@ export const setupTests = (
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
-          await pk.toRawKey(),
+          await pk.toPublic().then(p => p.toRawKey()),
           [2147485500, 2147485463, 2147483648, 0, 3],
-          await pk.toRawKey(),
+          await pk.toPublic().then(p => p.toRawKey()),
           params.utxos,
           params.changeAddress,
           params.config,
           {},
-          5
+          5,
+          (hashedMeta) => pk.toRawKey().then(k => k.sign(hashedMeta)).then(x => x.toHex())
         )
 
         await unsignedVotingTx.sign(
@@ -1406,14 +1407,15 @@ export const setupTests = (
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
-          await pk.toRawKey(),
+          await pk.toPublic().then(p => p.toRawKey()),
           [2147485500, 2147485463, 2147483648, 0, 3],
-          await pk.toRawKey(),
+          await pk.toPublic().then(p => p.toRawKey()),
           params.utxos,
           params.changeAddress,
           params.config,
           {},
-          5
+          5,
+          (hashedMeta) => pk.toRawKey().then(k => k.sign(hashedMeta)).then(x => x.toHex())
         )
 
         await yoroiLib.buildLedgerPayload(

@@ -8,6 +8,7 @@
     "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
+    "bech32": "^2.0.0",
     "bignumber.js": "^9.0.1",
     "yargs": "^17.2.1"
   },
