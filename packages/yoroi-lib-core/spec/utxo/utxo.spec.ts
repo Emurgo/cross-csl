@@ -302,6 +302,107 @@ describe('UTxO', () => {
         )
       )
     })
+
+    it('should handle rollback to safe block', async () => {
+      // arrange
+      const addresses = [await randomFakeAddress()]
+
+      const storedSafeBlock = await randomBlock()
+
+      const safeUtxos = [
+        await randomUtxo(addresses[0]),
+        await randomUtxo(addresses[0]),
+        await randomUtxo(addresses[0])
+      ]
+
+      const localSafePoint: UtxoAtSafePoint = {
+        lastSafeBlockHash: storedSafeBlock.hash,
+        utxos: safeUtxos
+      }
+
+      utxoStorage.getUtxoAtSafePoint.returns(Promise.resolve(localSafePoint))
+
+      const storedBestBlock = await randomBlockAfter(storedSafeBlock, 10)
+      const localDiff1: UtxoDiffToBestBlock = {
+        lastBestBlockHash: storedBestBlock.hash,
+        spentUtxoIds: [safeUtxos[1].utxoId],
+        newUtxos: [(await randomUtxoDiffOutput(addresses[0])).utxo]
+      }
+
+      const localDiff2: UtxoDiffToBestBlock = {
+        lastBestBlockHash: storedBestBlock.hash,
+        spentUtxoIds: [],
+        newUtxos: [(await randomUtxoDiffOutput(addresses[0])).utxo]
+      }
+
+      const localDiff3: UtxoDiffToBestBlock = {
+        lastBestBlockHash: storedBestBlock.hash,
+        spentUtxoIds: [],
+        newUtxos: [(await randomUtxoDiffOutput(addresses[0])).utxo]
+      }
+
+      utxoStorage.getUtxoDiffToBestBlock.returns(
+        Promise.resolve([localDiff1, localDiff2, localDiff3])
+      )
+
+      // rollback to the safe block
+      api.getBestBlock.returns(Promise.resolve(storedSafeBlock.hash))
+
+      api.getTipStatusWithReference
+        .withArgs([
+          storedSafeBlock.hash,
+          localDiff1.lastBestBlockHash,
+          localDiff2.lastBestBlockHash,
+          localDiff3.lastBestBlockHash
+        ])
+        .returns(
+          Promise.resolve({
+            result: UtxoApiResult.SUCCESS,
+            value: {
+              reference: {
+                lastFoundBestBlock: storedSafeBlock.hash,
+                lastFoundSafeBlock: storedSafeBlock.hash
+              }
+            }
+          })
+        )
+
+      api.getUtxoDiffSincePoint
+        .withArgs({
+          addresses: addresses,
+          afterBestBlock: storedSafeBlock.hash,
+          untilBlockHash: storedSafeBlock.hash
+        })
+        .returns(
+          Promise.resolve({
+            result: UtxoApiResult.SUCCESS,
+            value: {
+              diffItems: []
+            }
+          })
+        )
+
+      // act
+      const sut = new UtxoService(api, utxoStorage)
+      await sut.syncUtxoState(addresses)
+
+      // assert
+      sinon.default.assert.called(
+        utxoStorage.removeDiffWithBestBlock.withArgs(
+          localDiff1.lastBestBlockHash
+        )
+      )
+      sinon.default.assert.called(
+        utxoStorage.removeDiffWithBestBlock.withArgs(
+          localDiff2.lastBestBlockHash
+        )
+      )
+      sinon.default.assert.called(
+        utxoStorage.removeDiffWithBestBlock.withArgs(
+          localDiff3.lastBestBlockHash
+        )
+      )
+    })
   })
 
   describe('handle error responses', () => {
