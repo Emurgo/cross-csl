@@ -19,6 +19,12 @@ import {
   testing of the WASM proxies
 */
 
+const defaultToken = {
+  identifier: '',
+  networkId: 300,
+  isDefault: true
+} as Token
+
 const absSlotNumber = new BigNumber(38484054)
 const cardanoConfig = {
   keyDeposit: '2000000',
@@ -110,12 +116,6 @@ const buildDummyTxParameters = (sendAll: boolean) => {
       }
     }
   ] as Array<SendToken>
-
-  const defaultToken = {
-    identifier: '',
-    networkId: 300,
-    isDefault: true
-  } as Token
 
   return {
     absSlotNumber,
@@ -1267,6 +1267,7 @@ export const setupTests = (
           const unsignedWithdrawalTx =
             await yoroiLib.createUnsignedWithdrawalTx(
               accountState,
+              defaultToken,
               absSlotNumber,
               utxos,
               getWithdrawalRequest(false),
@@ -1287,6 +1288,7 @@ export const setupTests = (
           const unsignedWithdrawalTx =
             await yoroiLib.createUnsignedWithdrawalTx(
               accountState,
+              defaultToken,
               absSlotNumber,
               utxos,
               getWithdrawalRequest(true),
@@ -1374,6 +1376,7 @@ export const setupTests = (
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
+          defaultToken,
           await pk.toPublic().then(p => p.toRawKey()),
           [2147485500, 2147485463, 2147483648, 0, 3],
           await pk.toPublic().then(p => p.toRawKey()),
@@ -1407,6 +1410,7 @@ export const setupTests = (
 
         const unsignedVotingTx = await yoroiLib.createUnsignedVotingTx(
           params.absSlotNumber,
+          defaultToken,
           await pk.toPublic().then(p => p.toRawKey()),
           [2147485500, 2147485463, 2147483648, 0, 3],
           await pk.toPublic().then(p => p.toRawKey()),
