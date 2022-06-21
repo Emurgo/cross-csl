@@ -19,7 +19,6 @@ import {
   CardanoHaskellConfig,
   CatalystLabels,
   Change,
-  CreateDelegationTxResponse,
   MetadataJsonSchema,
   MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
@@ -30,7 +29,6 @@ import {
   TxOutput,
   WithdrawalRequest
 } from './internals/models'
-import { MultiToken } from './internals/multi-token'
 import { CatalystRegistrationData, genWasmUnsignedTx, UnsignedTx, WasmUnsignedTx } from './internals/tx'
 import {
   AddInputResult,
@@ -38,7 +36,6 @@ import {
   firstWithValue
 } from './internals/utils'
 import {
-  filterAddressesByStakingKey,
   normalizeToAddress
 } from './internals/utils/addresses'
 import {
@@ -53,7 +50,6 @@ import {
   addUtxoInput,
   cardanoValueFromRemoteFormat,
   createDelegationCertificate,
-  getDifferenceAfterTx,
   isBigNumZero,
   minRequiredForChange
 } from './internals/utils/transactions'
@@ -184,7 +180,7 @@ export interface IYoroiLib {
     defaultToken: Token,
     txOptions: TxOptions,
     config: CardanoHaskellConfig
-  ): Promise<CreateDelegationTxResponse>
+  ): Promise<UnsignedTx>
   buildLedgerPayload(
     unsignedTx: UnsignedTx,
     networkId: number,
@@ -542,7 +538,7 @@ class YoroiLib implements IYoroiLib {
     defaultToken: Token,
     txOptions: TxOptions,
     config: CardanoHaskellConfig
-  ): Promise<CreateDelegationTxResponse> {
+  ): Promise<UnsignedTx> {
     try {
       const protocolParams = {
         keyDeposit: await this._wasmV4.BigNum.fromStr(config.keyDeposit),
@@ -585,39 +581,7 @@ class YoroiLib implements IYoroiLib {
         valueInAccount
       )) as WasmUnsignedTx
 
-      const allUtxosForKey = await filterAddressesByStakingKey(
-        this._wasmV4,
-        await this._wasmV4.StakeCredential.fromKeyhash(await stakingKey.hash()),
-        utxos,
-        false
-      )
-      const utxoSum = allUtxosForKey.reduce(
-        (sum, utxo) =>
-          sum.joinAddMutable(
-            multiTokenFromRemote(utxo, protocolParams.networkId)
-          ),
-        new MultiToken([], defaultToken)
-      )
-
-      const differenceAfterTx = await getDifferenceAfterTx(
-        this._wasmV4,
-        [...unsignedTx.senderUtxos],
-        unsignedTx.txBody,
-        utxos,
-        stakingKey,
-        defaultToken
-      )
-
-      const totalAmountToDelegate = utxoSum
-        .joinAddCopy(differenceAfterTx) // subtract any part of the fee that comes from UTXO
-        .joinAddCopy(
-          new MultiToken(valueInAccount.values, valueInAccount.defaults)
-        ) // recall: rewards are compounding
-
-      return {
-        unsignedTx,
-        totalAmountToDelegate
-      }
+      return unsignedTx
     } catch (error) {
       YoroiLib.logger.error(`createDelegationTx error: ` + error)
       throw new GenericError()
