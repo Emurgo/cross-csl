@@ -1323,7 +1323,7 @@ export const setupTests = (
             .then((x) => x.derive(0))
             .then((x) => x.toRawKey())
 
-          const response = await yoroiLib.createUnsignedDelegationTx(
+          const unsignedTx = await yoroiLib.createUnsignedDelegationTx(
             absSlotNumber,
             utxos,
             stakingKey,
@@ -1353,7 +1353,7 @@ export const setupTests = (
             cardanoConfig
           )
 
-          await response.unsignedTx.sign(
+          await unsignedTx.sign(
             0,
             '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
             new Set<string>([]),
