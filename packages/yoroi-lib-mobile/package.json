@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-mobile",
-  "version": "0.5.1-alpha.32",
+  "version": "0.6.0-alpha.33",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/react-native-haskell-shelley": "3.1.3",
-    "@emurgo/yoroi-lib-core": "0.5.1-alpha.32"
+    "@emurgo/yoroi-lib-core": "0.6.0-alpha.33"
   },
   "devDependencies": {
     "typescript": "^4.4.4"
