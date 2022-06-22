@@ -1,6 +1,7 @@
 import * as WasmContract from '../wasm-contract'
 import {
   AddressingAddress,
+  CardanoAddressedUtxo,
   PRIMARY_ASSET_CONSTANTS,
   RemoteUnspentOutput,
   Token
@@ -15,7 +16,6 @@ import {
 import { BigNumber } from 'bignumber.js'
 import { Certificate, PublicKey } from '../wasm-contract'
 import { MultiToken } from '../multi-token'
-import { WasmUnsignedTx } from '../tx'
 
 export async function minRequiredForChange(
   wasm: WasmContract.WasmModuleProxy,
@@ -248,7 +248,8 @@ export async function createDelegationCertificate(
 
 export async function getDifferenceAfterTx(
   wasm: WasmContract.WasmModuleProxy,
-  unsignedTx: WasmUnsignedTx,
+  senderUtxos: CardanoAddressedUtxo[],
+  txBody: WasmContract.TransactionBody,
   allUtxos: RemoteUnspentOutput[],
   stakingKey: PublicKey,
   defaultToken: Token
@@ -262,7 +263,7 @@ export async function getDifferenceAfterTx(
     // note senderUtxos.length is approximately 1
     // since it's just to cover transaction fees
     // so this for loop is faster than building a map
-    for (const senderUtxo of unsignedTx.senderUtxos) {
+    for (const senderUtxo of senderUtxos) {
       const match = allUtxos.find(
         (utxo) =>
           utxo.txHash === senderUtxo.txHash &&
@@ -284,7 +285,6 @@ export async function getDifferenceAfterTx(
 
   const sumOutForKey = new MultiToken([], defaultToken)
   {
-    const txBody = unsignedTx.txBody
     const outputs = await txBody.outputs()
     for (let i = 0; i < (await outputs.len()); i++) {
       const output = await outputs.get(i)

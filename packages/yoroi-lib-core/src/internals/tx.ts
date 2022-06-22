@@ -11,7 +11,7 @@ import {
   Bip44DerivationLevels
 } from './models'
 import { createMetadata } from './utils'
-import { normalizeToAddress } from './utils/addresses'
+import { filterAddressesByStakingKey, normalizeToAddress } from './utils/addresses'
 import {
   getCardanoSpendingKeyHash,
   derivePrivateByAddressing
@@ -21,6 +21,7 @@ import {
   multiTokenFromRemote
 } from './utils/assets'
 import { MultiToken } from './multi-token'
+import { getDifferenceAfterTx } from './utils/transactions'
 
 export interface SignedTx {
   id: string
@@ -56,6 +57,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     value: MultiTokenValue
   }>
   private _totalOutput: MultiTokenValue
+  private _totalAmountToDelegate: MultiTokenValue | undefined
   private _fee: MultiTokenValue
   private _change: ReadonlyArray<Change>
   private _metadata: ReadonlyArray<TxMetadata>
@@ -83,6 +85,10 @@ export class WasmUnsignedTx implements UnsignedTx {
 
   get totalInput(): MultiTokenValue {
     return this._totalInput
+  }
+
+  get totalAmountToDelegate(): MultiTokenValue | undefined {
+    return this._totalAmountToDelegate
   }
 
   get outputs(): ReadonlyArray<{
@@ -182,7 +188,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     encodedTx: string,
     hash: WasmContract.TransactionHash,
     auxiliaryData: WasmContract.AuxiliaryData | undefined,
-    catalystRegistrationData: CatalystRegistrationData | undefined
+    catalystRegistrationData: CatalystRegistrationData | undefined,
+    totalAmountToDelegate: MultiTokenValue | undefined
   ) {
     this._wasm = wasm
     this._txBody = txBody
@@ -190,6 +197,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._senderUtxos = senderUtxos
     this._inputs = inputs
     this._totalInput = totalInput
+    this._totalAmountToDelegate = totalAmountToDelegate
     this._outputs = outputs
     this._totalOutput = totalOutput
     this._fee = fee
@@ -210,8 +218,11 @@ export class WasmUnsignedTx implements UnsignedTx {
 
   static async new(
     wasm: WasmContract.WasmModuleProxy,
+    networkId: number,
+    defaultToken: Token,
     txBuilder: WasmContract.TransactionBuilder,
     senderUtxos: CardanoAddressedUtxo[],
+    allUtxos: CardanoAddressedUtxo[],
     inputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
     totalInput: MultiTokenValue,
     outputs: ReadonlyArray<{ address: string; value: MultiTokenValue }>,
@@ -221,7 +232,9 @@ export class WasmUnsignedTx implements UnsignedTx {
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     metadata: ReadonlyArray<TxMetadata>,
     auxiliaryData: WasmContract.AuxiliaryData | undefined,
-    catalystRegistrationData: CatalystRegistrationData | undefined
+    catalystRegistrationData: CatalystRegistrationData | undefined,
+    stakingKey: WasmContract.PublicKey | undefined,
+    valueInAccount: MultiTokenValue | undefined
   ): Promise<WasmUnsignedTx> {
     const txBody = await txBuilder.build()
     const txBytes = await txBody.toBytes()
@@ -265,6 +278,43 @@ export class WasmUnsignedTx implements UnsignedTx {
       }
     }
 
+    let totalAmountToDelegate: MultiTokenValue | undefined
+    if (stakingKey && valueInAccount) {
+      const allUtxosForKey = await filterAddressesByStakingKey(
+        wasm,
+        await wasm.StakeCredential.fromKeyhash(await stakingKey.hash()),
+        allUtxos,
+        false
+      )
+      const utxoSum = allUtxosForKey.reduce(
+        (sum, utxo) =>
+          sum.joinAddMutable(
+            multiTokenFromRemote(utxo, networkId)
+          ),
+        new MultiToken([], defaultToken)
+      )
+  
+      const differenceAfterTx = await getDifferenceAfterTx(
+        wasm,
+        senderUtxos,
+        txBody,
+        allUtxos,
+        stakingKey,
+        defaultToken
+      )
+  
+      const totalAmountToDelegateMt = utxoSum
+        .joinAddCopy(differenceAfterTx) // subtract any part of the fee that comes from UTXO
+        .joinAddCopy(
+          new MultiToken(valueInAccount.values, valueInAccount.defaults)
+        ) // recall: rewards are compounding
+
+      totalAmountToDelegate = {
+        defaults: totalAmountToDelegateMt.defaults,
+        values: totalAmountToDelegateMt.values
+      }
+    }
+
     return new WasmUnsignedTx(
       wasm,
       txBody,
@@ -287,7 +337,8 @@ export class WasmUnsignedTx implements UnsignedTx {
       Buffer.from(txBytes).toString('hex'),
       hash,
       auxiliaryData,
-      catalystRegistrationData
+      catalystRegistrationData,
+      totalAmountToDelegate
     )
   }
 
@@ -454,6 +505,7 @@ export interface UnsignedTx {
     value: MultiTokenValue
   }>
   readonly totalInput: MultiTokenValue
+  readonly totalAmountToDelegate?: MultiTokenValue
   readonly outputs: ReadonlyArray<{
     address: string
     value: MultiTokenValue
@@ -486,20 +538,27 @@ export interface UnsignedTx {
 
 export async function genWasmUnsignedTx(
   wasm: WasmContract.WasmModuleProxy,
+  defaultToken: Token,
   txBuilder: WasmContract.TransactionBuilder,
   senderUtxos: CardanoAddressedUtxo[],
+  allUtxos: CardanoAddressedUtxo[],
   change: ReadonlyArray<Change>,
   defaults: Token,
   networkId: number,
   neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
   metadata: ReadonlyArray<TxMetadata>,
   auxiliaryData: WasmContract.AuxiliaryData | undefined,
-  catalystRegistrationData: CatalystRegistrationData | undefined
+  catalystRegistrationData: CatalystRegistrationData | undefined,
+  stakingKey: WasmContract.PublicKey | undefined,
+  valueInAccount: MultiTokenValue | undefined
 ): Promise<WasmUnsignedTx> {
   return await WasmUnsignedTx.new(
     wasm,
+    networkId,
+    defaultToken,
     txBuilder,
     senderUtxos,
+    allUtxos,
     await genWasmUnsignedTxInputs(txBuilder, senderUtxos, networkId),
     await genWasmUnsignedTxTotalInput(txBuilder, change, defaults),
     await genWasmUnsignedTxOutputs(txBuilder, networkId),
@@ -509,7 +568,9 @@ export async function genWasmUnsignedTx(
     neededStakingKeyHashes,
     metadata,
     auxiliaryData,
-    catalystRegistrationData
+    catalystRegistrationData,
+    stakingKey,
+    valueInAccount
   )
 }
 

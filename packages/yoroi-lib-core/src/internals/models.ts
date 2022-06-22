@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js'
 import { MultiToken } from './multi-token'
-import { UnsignedTx } from './tx'
 
 interface Bip44DerivationLevel {
   level: number
@@ -31,11 +30,6 @@ export const PRIMARY_ASSET_CONSTANTS = {
   Cardano: '',
   Ergo: '',
   Jormungandr: ''
-}
-
-export type CreateDelegationTxResponse = {
-  unsignedTx: UnsignedTx
-  totalAmountToDelegate: MultiTokenValue
 }
 
 export type AccountStatePart = {
