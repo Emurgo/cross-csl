@@ -3,6 +3,7 @@ import {
   AddressingAddress,
   CardanoAddressedUtxo,
   PRIMARY_ASSET_CONSTANTS,
+  RegistrationStatus,
   RemoteUnspentOutput,
   Token
 } from '../models'
@@ -210,14 +211,14 @@ export async function isBigNumZero(
 export async function createDelegationCertificate(
   wasm: WasmContract.WasmModuleProxy,
   stakingKey: PublicKey,
-  isRegistered: boolean,
+  registrationStatus: RegistrationStatus,
   poolId: string | null
 ): Promise<Array<Certificate>> {
   const credential = await wasm.StakeCredential.fromKeyhash(
     await stakingKey.hash()
   )
   if (poolId === null) {
-    if (isRegistered) {
+    if (registrationStatus === RegistrationStatus.Deregister) {
       return [
         await wasm.Certificate.newStakeDeregistration(
           await wasm.StakeDeregistration.new(credential)
@@ -227,7 +228,7 @@ export async function createDelegationCertificate(
     return [] // no need to undelegate if no staking key registered
   }
   const result = []
-  if (!isRegistered) {
+  if (registrationStatus === RegistrationStatus.RegisterAndDelegate) {
     // if unregistered, need to register first
     result.push(
       await wasm.Certificate.newStakeRegistration(
