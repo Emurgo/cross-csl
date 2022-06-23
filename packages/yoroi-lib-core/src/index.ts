@@ -22,6 +22,7 @@ import {
   MetadataJsonSchema,
   MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
+  RegistrationStatus,
   RemoteUnspentOutput,
   SendToken,
   Token,
@@ -173,8 +174,7 @@ export interface IYoroiLib {
     absSlotNumber: BigNumber,
     utxos: Array<CardanoAddressedUtxo>,
     stakingKey: PublicKey,
-    isRegistered: boolean,
-    shouldDeregister: boolean,
+    registrationStatus: RegistrationStatus,
     poolId: string | null,
     changeAddr: AddressingAddress,
     valueInAccount: MultiTokenValue,
@@ -532,8 +532,7 @@ class YoroiLib implements IYoroiLib {
     absSlotNumber: BigNumber,
     utxos: Array<CardanoAddressedUtxo>,
     stakingKey: PublicKey,
-    isRegistered: boolean,
-    shouldDeregister: boolean,
+    registrationStatus: RegistrationStatus,
     poolId: string | null,
     changeAddr: AddressingAddress,
     valueInAccount: MultiTokenValue,
@@ -558,8 +557,7 @@ class YoroiLib implements IYoroiLib {
       const stakeDelegationCerts = await createDelegationCertificate(
         this._wasmV4,
         stakingKey,
-        isRegistered,
-        shouldDeregister,
+        registrationStatus,
         poolId
       )
 

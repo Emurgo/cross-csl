@@ -5,6 +5,12 @@ interface Bip44DerivationLevel {
   level: number
 }
 
+export enum RegistrationStatus {
+  DelegateOnly,
+  RegisterAndDelegate,
+  Deregister
+}
+
 export const Bip44DerivationLevels = {
   ROOT: {
     level: 0
