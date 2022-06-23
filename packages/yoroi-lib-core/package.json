@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/yoroi-lib-core",
-  "version": "0.6.0-alpha.33",
+  "version": "0.7.0-alpha.35",
   "description": "",
   "main": "dist/index.js",
   "files": [

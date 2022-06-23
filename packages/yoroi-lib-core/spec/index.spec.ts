@@ -6,7 +6,8 @@ import {
   CardanoHaskellConfig,
   Token,
   IYoroiLib,
-  SendToken
+  SendToken,
+  RegistrationStatus
 } from '../src'
 import {
   GeneralTransactionMetadata,
@@ -1327,7 +1328,7 @@ export const setupTests = (
             absSlotNumber,
             utxos,
             stakingKey,
-            false,
+            RegistrationStatus.RegisterAndDelegate,
             '3921f4441153e5936910de57cb1982dfbaa781a57ba1ff97b3fd869e',
             changeAddr,
             {
