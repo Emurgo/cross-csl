@@ -261,7 +261,7 @@ export class WasmUnsignedTx implements UnsignedTx {
         try {
           const del = await cert.asStakeDelegation()
           if (del.hasValue()) {
-            deregistrations.push(del)
+            delegations.push(del)
           }
         } catch {
           // not a deregistration, ignore
