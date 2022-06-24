@@ -5,6 +5,12 @@ interface Bip44DerivationLevel {
   level: number
 }
 
+export type AmountWithReceiver = {
+  receiver: string
+  amount: string
+}
+export type StakingKeyBalances = {[key: string]: bigint}
+
 export enum RegistrationStatus {
   DelegateOnly,
   RegisterAndDelegate,

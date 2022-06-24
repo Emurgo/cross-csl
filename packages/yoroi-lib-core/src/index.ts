@@ -15,6 +15,7 @@ import {
   Address,
   Addressing,
   AddressingAddress,
+  AmountWithReceiver,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
   CatalystLabels,
@@ -25,6 +26,7 @@ import {
   RegistrationStatus,
   RemoteUnspentOutput,
   SendToken,
+  StakingKeyBalances,
   Token,
   TxOptions,
   TxOutput,
@@ -188,6 +190,7 @@ export interface IYoroiLib {
     byronNetworkMagic: number,
     addressingMap: (addr: string) => Addressing
   ): Promise<LedgerSignTransactionRequest>
+  getBalanceForStakingCredentials(utxos: AmountWithReceiver[]): Promise<StakingKeyBalances>
 }
 
 class YoroiLib implements IYoroiLib {
@@ -688,6 +691,45 @@ class YoroiLib implements IYoroiLib {
       },
       additionalWitnessPaths: [],
     }
+  }
+
+  async getBalanceForStakingCredentials(utxos: AmountWithReceiver[]) {
+    const isHex = (h: string) => {
+      const x = parseInt(h, 16)
+      return x.toString(16).toLowerCase() === h.toLowerCase()
+    }
+    const bech32ToHex = (bech: string) => {
+      const decoded = bech32.decodeUnsafe(bech, 1000)
+      if (!decoded) return undefined
+      return Buffer.from(
+        bech32.fromWords(decoded.words)
+      ).toString('hex')
+    }
+    const balances = utxos.reduce(async (prevPromise, curr) => {
+      const prev = await prevPromise
+      const hex = isHex(curr.receiver)
+        ? curr.receiver
+        : bech32ToHex(curr.receiver)
+
+      if (!hex) return prev
+      if (!hex.match(/^[0-3]/)) return prev
+
+      try {
+        const baseAddress = await this._wasmV4.BaseAddress.fromAddress(
+          await this._wasmV4.Address.fromBytes(Buffer.from(hex, 'hex'))
+        )
+        const stakeCred = await baseAddress.stakeCred()
+        const stakeCredHex = Buffer.from(await stakeCred.toBytes()).toString('hex')
+        if (!prev[stakeCredHex]) {
+          prev[stakeCredHex] = BigInt(0)
+        }
+
+        prev[stakeCredHex] += BigInt(curr.amount)
+      } catch { /** */ }
+
+      return prev
+    }, Promise.resolve({} as {[key: string]: bigint}))
+    return balances
   }
 
   private async createUnsignedTxForUtxos(
