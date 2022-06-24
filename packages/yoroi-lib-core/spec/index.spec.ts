@@ -1416,8 +1416,8 @@ export const setupTests = (
         ])
 
         expect(balances).to.eql({
-          '8200581cb59b26cea2affc3e61bf65fc02fbc843f53f545e92ad63dae857f6a6': BigInt('20000'),
-          '8200581cb0eeb38f2cb54c5f9ab1592a4e8b2300631b79d81163c24d4ee8da49': BigInt('3000')
+          '8200581cb59b26cea2affc3e61bf65fc02fbc843f53f545e92ad63dae857f6a6': '20000',
+          '8200581cb0eeb38f2cb54c5f9ab1592a4e8b2300631b79d81163c24d4ee8da49': '3000'
         })
       })
     })

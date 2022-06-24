@@ -721,14 +721,14 @@ class YoroiLib implements IYoroiLib {
         const stakeCred = await baseAddress.stakeCred()
         const stakeCredHex = Buffer.from(await stakeCred.toBytes()).toString('hex')
         if (!prev[stakeCredHex]) {
-          prev[stakeCredHex] = BigInt(0)
+          prev[stakeCredHex] = '0'
         }
 
-        prev[stakeCredHex] += BigInt(curr.amount)
+        prev[stakeCredHex] = (BigInt(prev[stakeCredHex]) + BigInt(curr.amount)).toString()
       } catch { /** */ }
 
       return prev
-    }, Promise.resolve({} as {[key: string]: bigint}))
+    }, Promise.resolve({} as {[key: string]: string}))
     return balances
   }
 

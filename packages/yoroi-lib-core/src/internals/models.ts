@@ -9,7 +9,7 @@ export type AmountWithReceiver = {
   receiver: string
   amount: string
 }
-export type StakingKeyBalances = {[key: string]: bigint}
+export type StakingKeyBalances = {[key: string]: string}
 
 export enum RegistrationStatus {
   DelegateOnly,
