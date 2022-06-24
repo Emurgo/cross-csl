@@ -1398,6 +1398,30 @@ export const setupTests = (
       }).timeout(100000)
     })
 
+    describe('getBalanceForStakingCredentials', () => {
+      it('should group utxos amount by stake credential', async () => {
+        const balances = await yoroiLib.getBalanceForStakingCredentials([
+          {
+            amount: '5000',
+            receiver: 'addr1qxsnezdjclcc03e5znpt470n405l9ryczupedg6e7h84gz94nvnvag40lslxr0m9lsp0hjzr75l4gh5j443a46zh76nqvrydcj'
+          },
+          {
+            amount: '15000',
+            receiver: 'addr1q8vxu0jgdruwameanq7sfnc7yuxpjgy7scnqfcd2x85al894nvnvag40lslxr0m9lsp0hjzr75l4gh5j443a46zh76nqfh7w8s'
+          },
+          {
+            amount: '3000',
+            receiver: 'addr1q87nccqqfxfl6fcde3c47peskx3hjv7arewvjd5ghxkypcdsa6ec7t94f30e4v2e9f8gkgcqvvdhnkq3v0py6nhgmfys7q62ze'
+          }
+        ])
+
+        expect(balances).to.eql({
+          '8200581cb59b26cea2affc3e61bf65fc02fbc843f53f545e92ad63dae857f6a6': '20000',
+          '8200581cb0eeb38f2cb54c5f9ab1592a4e8b2300631b79d81163c24d4ee8da49': '3000'
+        })
+      })
+    })
+
     describe('Ledger', () => {
       it('should build Ledger payload for signing TX', async () => {
         const params = buildDummyTxParameters(false)
