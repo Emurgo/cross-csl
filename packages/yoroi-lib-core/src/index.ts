@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { blake2b } from 'hash-wasm'
-import * as bech32 from 'bech32'
+import { bech32 } from 'bech32'
 
 import {
   AssetOverflowError,
