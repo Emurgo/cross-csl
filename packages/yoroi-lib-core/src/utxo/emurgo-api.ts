@@ -52,8 +52,12 @@ export type TipStatusResponse = {
 }
 
 export type GetTipStatusResponse = {
-  safeBlock: string
-  bestBlock: string
+  safeBlock: {
+    hash: string
+  }
+  bestBlock: {
+    hash: string
+  }
 }
 
 const handleReferencePointErrors = <T>(err: any): UtxoApiResponse<T> => {
@@ -189,13 +193,13 @@ export class EmurgoUtxoApi implements UtxoApiContract {
   async getSafeBlock(): Promise<string> {
     const url = `${this._apiUrl}v2/tipStatus`
     const resp = await this._axios.get<GetTipStatusResponse>(url)
-    return resp.data.safeBlock
+    return resp.data.safeBlock.hash
   }
 
   async getBestBlock(): Promise<string> {
     const url = `${this._apiUrl}v2/tipStatus`
     const resp = await this._axios.get<GetTipStatusResponse>(url)
-    return resp.data.bestBlock
+    return resp.data.bestBlock.hash
   }
 
   async getTipStatusWithReference(
