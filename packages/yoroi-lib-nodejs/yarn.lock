@@ -31,13 +31,14 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-9.1.4.tgz#802396562ee35312003713e3a48f0dfef7ee1bd6"
   integrity sha512-zDYQ4E5CAz89OuXCPV7k3v5kLWkwUS5Jg7QZ5m/4vPkeuZolOXyqo84p6AYf0qZ14xkgxnvHIRY+heJKNs7Ddw==
 
-"@emurgo/yoroi-lib-core@^0.7.1-alpha.36":
-  version "0.7.1-alpha.36"
-  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.7.1-alpha.36.tgz#b577ebaa6372a50ed1d2e2d12d2914312b94b427"
-  integrity sha512-beaejVtzCNgezuxU4mXqBiwO4A/1tCzLoMe6VnqbvQZJn4D+WTA31gQ84wcUGfy87A2LaadVz6nEPeyvojJK9g==
+"@emurgo/yoroi-lib-core@^0.7.2-alpha.37":
+  version "0.7.2-alpha.37"
+  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.7.2-alpha.37.tgz#0df06f1622ce7498ba2c99e247c1ab80f9f1b44a"
+  integrity sha512-NHLtYa9Xk99fk/5aayZcM9s3LM3gj1AKWiCJDCcgT1GO8wZLszbg16r3ahNvmm1xFIuWsqlJKBvkvjXSo9Pz0Q==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     axios "^0.24.0"
+    bech32 "^2.0.0"
     bignumber.js "^9.0.1"
     hash-wasm "^4.9.0"
 
@@ -240,6 +241,11 @@ bech32@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-1.1.4.tgz#e38c9f37bf179b8eb16ae3a772b40c356d4832e9"
   integrity sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==
+
+bech32@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
+  integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
 
 bignumber.js@^9.0.1:
   version "9.0.2"
