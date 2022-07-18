@@ -8,7 +8,8 @@ import {
   MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
   TxMetadata,
-  Bip44DerivationLevels
+  Bip44DerivationLevels,
+  WithdrawalRequest
 } from './models'
 import { createMetadata } from './utils'
 import { filterAddressesByStakingKey, normalizeToAddress } from './utils/addresses'
@@ -234,7 +235,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     auxiliaryData: WasmContract.AuxiliaryData | undefined,
     catalystRegistrationData: CatalystRegistrationData | undefined,
     stakingKey: WasmContract.PublicKey | undefined,
-    valueInAccount: MultiTokenValue | undefined
+    valueInAccount: MultiTokenValue | undefined,
+    withdrawalRequests: Array<WithdrawalRequest>
   ): Promise<WasmUnsignedTx> {
     const txBody = await txBuilder.build()
     const txBytes = await txBody.toBytes()
@@ -312,6 +314,20 @@ export class WasmUnsignedTx implements UnsignedTx {
       totalAmountToDelegate = {
         defaults: totalAmountToDelegateMt.defaults,
         values: totalAmountToDelegateMt.values
+      }
+    }
+
+    for (const withdrawalRequest of withdrawalRequests) {
+      if (withdrawalRequest.stakingPrivateKey) {
+        const vkeyWitness = await wasm.makeVkeyWitness(
+          await wasm.hashTransaction(txBody),
+          withdrawalRequest.stakingPrivateKey
+        )
+        neededStakingKeyHashes.wits.add(
+          Buffer.from(
+            await vkeyWitness.toBytes()
+          ).toString('hex')
+        )
       }
     }
 
@@ -407,7 +423,7 @@ export class WasmUnsignedTx implements UnsignedTx {
         continue
       }
       stakingKeySigSet.add(witness)
-      vkeyWits.add(
+      await vkeyWits.add(
         await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
       )
     }
@@ -550,7 +566,8 @@ export async function genWasmUnsignedTx(
   auxiliaryData: WasmContract.AuxiliaryData | undefined,
   catalystRegistrationData: CatalystRegistrationData | undefined,
   stakingKey: WasmContract.PublicKey | undefined,
-  valueInAccount: MultiTokenValue | undefined
+  valueInAccount: MultiTokenValue | undefined,
+  withdrawalRequests: Array<WithdrawalRequest>
 ): Promise<WasmUnsignedTx> {
   return await WasmUnsignedTx.new(
     wasm,
@@ -570,7 +587,8 @@ export async function genWasmUnsignedTx(
     auxiliaryData,
     catalystRegistrationData,
     stakingKey,
-    valueInAccount
+    valueInAccount,
+    withdrawalRequests
   )
 }
 
