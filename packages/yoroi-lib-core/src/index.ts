@@ -277,7 +277,8 @@ class YoroiLib implements IYoroiLib {
       config,
       txOptions,
       undefined,
-      undefined
+      undefined,
+      []
     )
   }
 
@@ -392,7 +393,8 @@ class YoroiLib implements IYoroiLib {
         votingPublicKey: Buffer.from(await stakingPublicKey.asBytes()).toString('hex')
       },
       stakingPublicKey,
-      undefined
+      undefined,
+      []
     )
 
     return unsignedTx
@@ -525,7 +527,8 @@ class YoroiLib implements IYoroiLib {
       false,
       undefined,
       undefined,
-      undefined
+      undefined,
+      withdrawalRequests
     )
 
     return unsignedTx
@@ -582,7 +585,8 @@ class YoroiLib implements IYoroiLib {
         false,
         undefined,
         stakingKey,
-        valueInAccount
+        valueInAccount,
+        []
       )) as WasmUnsignedTx
 
       return unsignedTx
@@ -741,7 +745,8 @@ class YoroiLib implements IYoroiLib {
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
     stakingKey: WasmContract.PublicKey | undefined,
-    valueInAccount: MultiTokenValue | undefined
+    valueInAccount: MultiTokenValue | undefined,
+    withdrawalRequests: Array<WithdrawalRequest>
   ): Promise<UnsignedTx> {
     try {
       const protocolParams = {
@@ -782,7 +787,8 @@ class YoroiLib implements IYoroiLib {
           },
           txOptions,
           stakingKey,
-          valueInAccount
+          valueInAccount,
+          withdrawalRequests
         )
       } else {
         const changeAddresses = receivers.reduce((arr, next) => {
@@ -851,7 +857,8 @@ class YoroiLib implements IYoroiLib {
           false,
           undefined,
           undefined,
-          undefined
+          undefined,
+          withdrawalRequests
         )
         YoroiLib.logger.debug(`createUnsignedTxForUtxos success`, unsignedTx)
         return unsignedTx
@@ -879,7 +886,8 @@ class YoroiLib implements IYoroiLib {
     neededStakingKeyHashes: { neededHashes: Set<string>; wits: Set<string> },
     txOptions: TxOptions,
     stakingKey: WasmContract.PublicKey | undefined,
-    valueInAccount: MultiTokenValue | undefined
+    valueInAccount: MultiTokenValue | undefined,
+    withdrawalRequests: Array<WithdrawalRequest>
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
     for (const utxo of allUtxos) {
@@ -936,7 +944,8 @@ class YoroiLib implements IYoroiLib {
       auxData,
       undefined,
       stakingKey,
-      valueInAccount
+      valueInAccount,
+      withdrawalRequests
     )
   }
 
@@ -1063,7 +1072,8 @@ class YoroiLib implements IYoroiLib {
     allowNoOutputs: boolean,
     catalystRegistrationData: CatalystRegistrationData | undefined,
     stakingKey: WasmContract.PublicKey | undefined,
-    valueInAccount: MultiTokenValue | undefined
+    valueInAccount: MultiTokenValue | undefined,
+    withdrawalRequests: Array<WithdrawalRequest>
   ): Promise<UnsignedTx> {
     const addressingMap = new Map<RemoteUnspentOutput, CardanoAddressedUtxo>()
     for (const utxo of allUtxos) {
@@ -1121,6 +1131,7 @@ class YoroiLib implements IYoroiLib {
       catalystRegistrationData,
       stakingKey,
       valueInAccount,
+      withdrawalRequests
     )
   }
 

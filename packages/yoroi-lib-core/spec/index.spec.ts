@@ -1229,17 +1229,6 @@ export const setupTests = (
         }
       ]
 
-      const accountState = {
-        e0c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e: {
-          remainingAmount: '250916',
-          remainingNonSpendableAmount: '0',
-          rewards: '9511672',
-          withdrawals: '9260756',
-          poolOperator: null,
-          isRewardsOff: true
-        }
-      }
-
       const changeAddr = {
         address:
           '001c589b0d01c11c98abc49533c30bae1ec665912c95c915a217d75234c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
@@ -1248,67 +1237,6 @@ export const setupTests = (
           startLevel: 1
         }
       }
-
-      describe('createUnsignedWithdrawalTx', () => {
-        const getWithdrawalRequest = (shouldDeregister: boolean) => {
-          return [
-            {
-              addressing: {
-                path: [2147485500, 2147485463, 2147483648, 2, 0],
-                startLevel: 1
-              },
-              rewardAddress:
-                'e0c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e',
-              shouldDeregister
-            }
-          ]
-        }
-
-        it('should build and sign withdrawal request', async () => {
-          const unsignedWithdrawalTx =
-            await yoroiLib.createUnsignedWithdrawalTx(
-              accountState,
-              defaultToken,
-              absSlotNumber,
-              utxos,
-              getWithdrawalRequest(false),
-              changeAddr,
-              cardanoConfig,
-              {}
-            )
-
-          await unsignedWithdrawalTx.sign(
-            0,
-            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
-            new Set<string>([]),
-            []
-          )
-        }).timeout(100000)
-
-        it('should build and sign withdrawal request with deregistration', async () => {
-          const unsignedWithdrawalTx =
-            await yoroiLib.createUnsignedWithdrawalTx(
-              accountState,
-              defaultToken,
-              absSlotNumber,
-              utxos,
-              getWithdrawalRequest(true),
-              changeAddr,
-              cardanoConfig,
-              {}
-            )
-
-          await unsignedWithdrawalTx.sign(
-            0,
-            '780de6f67db8e048fe17df60d1fff06dd700cc54b10fc4bcf30f59444d46204c0b890d7dce4c8142d4a4e8e26beac26d6f3c191a80d7b79cc5952968ad7ffbb7d43e76aa8d9b5ad9d91d48479ecd8ef6d00e8df8874e8658ece0cdef94c42367',
-            new Set<string>([]),
-            []
-          )
-
-          expect(unsignedWithdrawalTx.deregistrations.length).to.equal(1)
-          expect(await unsignedWithdrawalTx.certificates.len()).to.equal(1)
-        }).timeout(100000)
-      })
 
       describe('createUnsignedDelegationTx', () => {
         it('should build and sign delegation TX', async () => {
@@ -1396,6 +1324,1005 @@ export const setupTests = (
           []
         )
       }).timeout(100000)
+    })
+
+    describe('withdrawal', () => {
+      it('should work', async () => {
+        const accountPrivateKey = "408a1cb637d615c49e8696c30dd54883302a20a7b9b8a9d1c307d2ed3cd50758c9402acd000461a8fc0f25728666e6d3b86d031b8eea8d2f69b21e8aa6ba2b153e3ec212cc8a36ed9860579dfe1e3ef4d6de778c5dbdd981623b48727cd96247"
+
+        const accountState = {
+          e0acab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae: {
+            remainingAmount: '8653580',
+            remainingNonSpendableAmount: '0',
+            rewards: '16929809',
+            withdrawals: '8276229',
+            poolOperator: null,
+            isRewardsOff: true,
+          },
+        }
+
+        const defaultAsset = {
+          networkId: 300,
+          identifier: '',
+          isDefault: true,
+          metadata: {
+            type: 'Cardano',
+            policyId: '',
+            assetName: '',
+            ticker: 'TADA',
+            longName: null,
+            numberOfDecimals: 6,
+            maxSupply: '45000000000000000',
+          },
+        }
+
+        const withdrawalInfo = [
+          {
+            addressing: {
+              path: [2147485500, 2147485463, 2147483648, 2, 0],
+              startLevel: 1,
+            },
+            rewardAddress: 'e0acab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae',
+            shouldDeregister: true,
+            stakingPrivateKey: await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+              Buffer.from(accountPrivateKey, 'hex')
+            ).then(x => x.derive(2147485500))
+            .then(x => x.derive(2147485463))
+            .then(x => x.derive(0))
+            .then(x => x.derive(2))
+            .then(x => x.derive(0))
+            .then(x => x.toRawKey())
+          },
+        ]
+
+        const changeAddr = {
+          address: "0032d20674eb8b0d47b256898890f75140aeaed1c48bad05e34fbcc32cacab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae",
+          addressing: {
+            path: [147485500, 2147485463, 2147483648, 1, 239], 
+            startLevel: 1
+          }
+        }
+
+        const addressedUtxos = [
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                233
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 3,
+            "txHash": "8628eb1595bec18f4140570d2444b13d72bf5a295d3ea87f5ebf4505bfe70138",
+            "amount": "1000000",
+            "receiver": "addr_test1qp4n0gtr3hu5em259hjjmdtum8vq6v28qaq3g4gm0mccqv9v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhq8y4gnj",
+            "utxoId": "8628eb1595bec18f4140570d2444b13d72bf5a295d3ea87f5ebf4505bfe70138:3",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                233
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 5,
+            "txHash": "8628eb1595bec18f4140570d2444b13d72bf5a295d3ea87f5ebf4505bfe70138",
+            "amount": "1000000",
+            "receiver": "addr_test1qp4n0gtr3hu5em259hjjmdtum8vq6v28qaq3g4gm0mccqv9v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhq8y4gnj",
+            "utxoId": "8628eb1595bec18f4140570d2444b13d72bf5a295d3ea87f5ebf4505bfe70138:5",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                234
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "2cb3ed44ad07d41c2c2b1dd0a98faacf60d8e3a8fa4ae5e069db94a9edb52c2a",
+            "amount": "11413542",
+            "receiver": "addr_test1qpur47kwfqprlmns2wrekamc2d4qkmgqjr3pzunkf7hlkv4v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqacm7rx",
+            "utxoId": "2cb3ed44ad07d41c2c2b1dd0a98faacf60d8e3a8fa4ae5e069db94a9edb52c2a:2",
+            "assets": [
+              {
+                "assetId": "08d91ec4e6c743a92de97d2fde5ca0d81493555c535894a3097061f7.c8b0",
+                "policyId": "08d91ec4e6c743a92de97d2fde5ca0d81493555c535894a3097061f7",
+                "name": "c8b0",
+                "amount": "148"
+              },
+              {
+                "assetId": "16af70780a170994e8e5e575f4401b1d89bddf7d1a11d6264e0b0c85.74426967546f6b656e4e616d653132",
+                "policyId": "16af70780a170994e8e5e575f4401b1d89bddf7d1a11d6264e0b0c85",
+                "name": "74426967546f6b656e4e616d653132",
+                "amount": "1149"
+              },
+              {
+                "assetId": "17eb5925c69a2b88cada90d7e07eb3fcf19c2f41b66697820fc77231.74426967546f6b656e4e616d653135",
+                "policyId": "17eb5925c69a2b88cada90d7e07eb3fcf19c2f41b66697820fc77231",
+                "name": "74426967546f6b656e4e616d653135",
+                "amount": "1149"
+              },
+              {
+                "assetId": "1ca1fc0c880d25850cb00303788dfb51bdf2f902f6dce47d1ad09d5b.44",
+                "policyId": "1ca1fc0c880d25850cb00303788dfb51bdf2f902f6dce47d1ad09d5b",
+                "name": "44",
+                "amount": "2463889379"
+              },
+              {
+                "assetId": "1d129dc9c03f95a863489883914f05a52e13135994a32f0cbeacc65f.74484f444c52",
+                "policyId": "1d129dc9c03f95a863489883914f05a52e13135994a32f0cbeacc65f",
+                "name": "74484f444c52",
+                "amount": "5"
+              },
+              {
+                "assetId": "238c008ef8ead5ec20bab5733f765f897bb405c0ccb9f752d2194c0a.74426967546f6b656e4e616d653136",
+                "policyId": "238c008ef8ead5ec20bab5733f765f897bb405c0ccb9f752d2194c0a",
+                "name": "74426967546f6b656e4e616d653136",
+                "amount": "1149"
+              },
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e",
+                "amount": "215410"
+              },
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "179"
+              },
+              {
+                "assetId": "3eb82f197734954a140faa953203e2454421832c4b00aff63a62459d.53544b",
+                "policyId": "3eb82f197734954a140faa953203e2454421832c4b00aff63a62459d",
+                "name": "53544b",
+                "amount": "94"
+              },
+              {
+                "assetId": "48664e8d76f2b15606677bd117a3eac9929c378ac547ed295518dfd5.74426967546f6b656e4e616d653032",
+                "policyId": "48664e8d76f2b15606677bd117a3eac9929c378ac547ed295518dfd5",
+                "name": "74426967546f6b656e4e616d653032",
+                "amount": "1149"
+              },
+              {
+                "assetId": "52366a9f74840bb47d0509393c18343f376250de1a01e0a43619e471.74426967546f6b656e4e616d653038",
+                "policyId": "52366a9f74840bb47d0509393c18343f376250de1a01e0a43619e471",
+                "name": "74426967546f6b656e4e616d653038",
+                "amount": "1149"
+              },
+              {
+                "assetId": "540fc78fe3097c41590b696a23844f8d0c9cf2a46328bb7b77b1c7a6.74426967546f6b656e4e616d653031",
+                "policyId": "540fc78fe3097c41590b696a23844f8d0c9cf2a46328bb7b77b1c7a6",
+                "name": "74426967546f6b656e4e616d653031",
+                "amount": "1149"
+              },
+              {
+                "assetId": "57575a1b17e61ade154b325dceca4c3cfe26b6f98f9b186d08583ada.66697368546f6b656e",
+                "policyId": "57575a1b17e61ade154b325dceca4c3cfe26b6f98f9b186d08583ada",
+                "name": "66697368546f6b656e",
+                "amount": "133"
+              },
+              {
+                "assetId": "57fca08abbaddee36da742a839f7d83a7e1d2419f1507fcbf3916522.4d494e54",
+                "policyId": "57fca08abbaddee36da742a839f7d83a7e1d2419f1507fcbf3916522",
+                "name": "4d494e54",
+                "amount": "10840562"
+              },
+              {
+                "assetId": "57fca08abbaddee36da742a839f7d83a7e1d2419f1507fcbf3916522.534245525259",
+                "policyId": "57fca08abbaddee36da742a839f7d83a7e1d2419f1507fcbf3916522",
+                "name": "534245525259",
+                "amount": "3422266"
+              },
+              {
+                "assetId": "6090278d9171cd5762f24e0a63f85fabb3db950fe9944f396ffa51a1.74426967546f6b656e4e616d653230",
+                "policyId": "6090278d9171cd5762f24e0a63f85fabb3db950fe9944f396ffa51a1",
+                "name": "74426967546f6b656e4e616d653230",
+                "amount": "1149"
+              },
+              {
+                "assetId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198.77425443",
+                "policyId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198",
+                "name": "77425443",
+                "amount": "10000"
+              },
+              {
+                "assetId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198.77444f4745",
+                "policyId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198",
+                "name": "77444f4745",
+                "amount": "5300000"
+              },
+              {
+                "assetId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198.77455448",
+                "policyId": "648823ffdad1610b4162f4dbc87bd47f6f9cf45d772ddef661eff198",
+                "name": "77455448",
+                "amount": "3260000"
+              },
+              {
+                "assetId": "67ea41e56ef3f2c19765b8740c297a73048bc1615e5c537f0889d4a1.74426967546f6b656e4e616d653134",
+                "policyId": "67ea41e56ef3f2c19765b8740c297a73048bc1615e5c537f0889d4a1",
+                "name": "74426967546f6b656e4e616d653134",
+                "amount": "1149"
+              },
+              {
+                "assetId": "698a6ea0ca99f315034072af31eaac6ec11fe8558d3f48e9775aab9d.7444524950",
+                "policyId": "698a6ea0ca99f315034072af31eaac6ec11fe8558d3f48e9775aab9d",
+                "name": "7444524950",
+                "amount": "51579527"
+              },
+              {
+                "assetId": "6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7.",
+                "policyId": "6b8d07d69639e9413dd637a1a815a7323c69c86abbafb66dbfdb1aa7",
+                "name": "",
+                "amount": "3"
+              },
+              {
+                "assetId": "6d01f1c6f5ced9070db252fbf1fbd517f67e9e8966326205d4f0e5ea.74426967546f6b656e4e616d653131",
+                "policyId": "6d01f1c6f5ced9070db252fbf1fbd517f67e9e8966326205d4f0e5ea",
+                "name": "74426967546f6b656e4e616d653131",
+                "amount": "1149"
+              },
+              {
+                "assetId": "7312879acbb97007b89619c711749d4bbc51e365682daaa4f18d0759.4d696c6b6f6d656461466f6f626172",
+                "policyId": "7312879acbb97007b89619c711749d4bbc51e365682daaa4f18d0759",
+                "name": "4d696c6b6f6d656461466f6f626172",
+                "amount": "5000009"
+              },
+              {
+                "assetId": "783c70029a88a1575459215b648ab11d182bb1acc7d709aaabc02756.74426967546f6b656e4e616d653139",
+                "policyId": "783c70029a88a1575459215b648ab11d182bb1acc7d709aaabc02756",
+                "name": "74426967546f6b656e4e616d653139",
+                "amount": "1149"
+              },
+              {
+                "assetId": "819de34b4f37b6ae3743e37f16887cacf634a4e61f40d7f0b81e2017.74426967546f6b656e4e616d653039",
+                "policyId": "819de34b4f37b6ae3743e37f16887cacf634a4e61f40d7f0b81e2017",
+                "name": "74426967546f6b656e4e616d653039",
+                "amount": "1149"
+              },
+              {
+                "assetId": "8538fdebcdb68ecbf1fcfd8f2dcb478e04007e32a76047fdd86406da.74426967546f6b656e4e616d653137",
+                "policyId": "8538fdebcdb68ecbf1fcfd8f2dcb478e04007e32a76047fdd86406da",
+                "name": "74426967546f6b656e4e616d653137",
+                "amount": "1149"
+              },
+              {
+                "assetId": "8c4662efcb7fd069c9e4003192b430e9e153e5c3e11099e3dab29772.4d4152454b",
+                "policyId": "8c4662efcb7fd069c9e4003192b430e9e153e5c3e11099e3dab29772",
+                "name": "4d4152454b",
+                "amount": "633"
+              },
+              {
+                "assetId": "9a7646844194fb7f71b72fe5310e26a0ae013b3916bb1a24e7066a5d.7441444f",
+                "policyId": "9a7646844194fb7f71b72fe5310e26a0ae013b3916bb1a24e7066a5d",
+                "name": "7441444f",
+                "amount": "1000005"
+              },
+              {
+                "assetId": "9e5f43a9e77e4ba2e5c5db37daee3ee0a78bc87cdea3c34f7f78523c.546f6b656e3131",
+                "policyId": "9e5f43a9e77e4ba2e5c5db37daee3ee0a78bc87cdea3c34f7f78523c",
+                "name": "546f6b656e3131",
+                "amount": "1"
+              },
+              {
+                "assetId": "a465391790543ecd0f9f769ea24afbfde07007baa782724735e085a8.74426967546f6b656e4e616d653036",
+                "policyId": "a465391790543ecd0f9f769ea24afbfde07007baa782724735e085a8",
+                "name": "74426967546f6b656e4e616d653036",
+                "amount": "1149"
+              },
+              {
+                "assetId": "a8eb0d5a1126e6e60bbe532f13a3e4a2d5a7618dcae7946fcb74f4d0.563432",
+                "policyId": "a8eb0d5a1126e6e60bbe532f13a3e4a2d5a7618dcae7946fcb74f4d0",
+                "name": "563432",
+                "amount": "12"
+              },
+              {
+                "assetId": "b940743438a9217ea9d673362f708e5080dcd7b597988ae962782e10.a121efa4cd9e6800567961ead9bbb8a1dee6412b0603441179f463ce915a9bd7",
+                "policyId": "b940743438a9217ea9d673362f708e5080dcd7b597988ae962782e10",
+                "name": "a121efa4cd9e6800567961ead9bbb8a1dee6412b0603441179f463ce915a9bd7",
+                "amount": "16160784"
+              },
+              {
+                "assetId": "bdbdd5dfd883c6c00765652910091a650a21dddb3758365831bb1771.74426967546f6b656e4e616d653138",
+                "policyId": "bdbdd5dfd883c6c00765652910091a650a21dddb3758365831bb1771",
+                "name": "74426967546f6b656e4e616d653138",
+                "amount": "1149"
+              },
+              {
+                "assetId": "c85f714f2187021c7bab53741f659d0c5b1a6e7529d32b7794ff051c.474f4c44",
+                "policyId": "c85f714f2187021c7bab53741f659d0c5b1a6e7529d32b7794ff051c",
+                "name": "474f4c44",
+                "amount": "2418889379"
+              },
+              {
+                "assetId": "c868cdb63090661d815bac251aad5fcffaef94cf099e6cd81df33490.474f4c44",
+                "policyId": "c868cdb63090661d815bac251aad5fcffaef94cf099e6cd81df33490",
+                "name": "474f4c44",
+                "amount": "2463889378"
+              },
+              {
+                "assetId": "ca757ea0352f38978a0c3737ca85f885eae4b8051cea1434a3b07f5b.74426967546f6b656e4e616d653133",
+                "policyId": "ca757ea0352f38978a0c3737ca85f885eae4b8051cea1434a3b07f5b",
+                "name": "74426967546f6b656e4e616d653133",
+                "amount": "1149"
+              },
+              {
+                "assetId": "ce3c3f372d4b277c3a583421bda2799a62b5b5105076b03d1e28b07b.53544b443130",
+                "policyId": "ce3c3f372d4b277c3a583421bda2799a62b5b5105076b03d1e28b07b",
+                "name": "53544b443130",
+                "amount": "100"
+              },
+              {
+                "assetId": "cfc398182e8197a6b39cf2db07a207866074dca9165c3c61c7972f5e.74426967546f6b656e4e616d653035",
+                "policyId": "cfc398182e8197a6b39cf2db07a207866074dca9165c3c61c7972f5e",
+                "name": "74426967546f6b656e4e616d653035",
+                "amount": "1149"
+              },
+              {
+                "assetId": "cfdff341e1f47450c9f3a347c6d6be2f2029c891a289fc041e8f956e.74426967546f6b656e4e616d653037",
+                "policyId": "cfdff341e1f47450c9f3a347c6d6be2f2029c891a289fc041e8f956e",
+                "name": "74426967546f6b656e4e616d653037",
+                "amount": "1149"
+              },
+              {
+                "assetId": "d27197682d71905c087c5c3b61b10e6d746db0b9bef351014d75bb26.6e69636f696e",
+                "policyId": "d27197682d71905c087c5c3b61b10e6d746db0b9bef351014d75bb26",
+                "name": "6e69636f696e",
+                "amount": "30499999987788"
+              },
+              {
+                "assetId": "d2e5d6dd927372b34b5da66cc7bee5dffd01351a49ac007efc9cea2d.74426967546f6b656e4e616d653034",
+                "policyId": "d2e5d6dd927372b34b5da66cc7bee5dffd01351a49ac007efc9cea2d",
+                "name": "74426967546f6b656e4e616d653034",
+                "amount": "1149"
+              },
+              {
+                "assetId": "d40ebd57f674645d5b1826bbbe3528280463cae8f82982586faa4592.74426967546f6b656e4e616d653130",
+                "policyId": "d40ebd57f674645d5b1826bbbe3528280463cae8f82982586faa4592",
+                "name": "74426967546f6b656e4e616d653130",
+                "amount": "1149"
+              },
+              {
+                "assetId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86.438bb31d1920ad7fff1e0e93cab8a887eaa0b0c6754f578631f13389c3cdb0cd",
+                "policyId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86",
+                "name": "438bb31d1920ad7fff1e0e93cab8a887eaa0b0c6754f578631f13389c3cdb0cd",
+                "amount": "25867"
+              },
+              {
+                "assetId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86.60a585ee984a47140f7c201f238d48f89585d1a9f42687750626db3a906b050a",
+                "policyId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86",
+                "name": "60a585ee984a47140f7c201f238d48f89585d1a9f42687750626db3a906b050a",
+                "amount": "416592"
+              },
+              {
+                "assetId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86.86e90c911f058c3ebeb95a120eedd311caff3bb49d5b29ff8a9bad42005b041f",
+                "policyId": "e4214b7cce62ac6fbba385d164df48e157eae5863521b4b67ca71d86",
+                "name": "86e90c911f058c3ebeb95a120eedd311caff3bb49d5b29ff8a9bad42005b041f",
+                "amount": "8613"
+              },
+              {
+                "assetId": "e64e887a5311dccc5a20438415fdbfe4071277a4c2ad6d3d08f13da0.74426967546f6b656e4e616d653033",
+                "policyId": "e64e887a5311dccc5a20438415fdbfe4071277a4c2ad6d3d08f13da0",
+                "name": "74426967546f6b656e4e616d653033",
+                "amount": "1149"
+              },
+              {
+                "assetId": "ecd07b4ef62f37a68d145de8efd60c53d288dd5ffc641215120cc3db.",
+                "policyId": "ecd07b4ef62f37a68d145de8efd60c53d288dd5ffc641215120cc3db",
+                "name": "",
+                "amount": "9"
+              },
+              {
+                "assetId": "f0a74eb0e8ff819e4b15d30dac7d70ea05c639e33b285c7689bfe4a4.796f726f69546f6b656e",
+                "policyId": "f0a74eb0e8ff819e4b15d30dac7d70ea05c639e33b285c7689bfe4a4",
+                "name": "796f726f69546f6b656e",
+                "amount": "50"
+              },
+              {
+                "assetId": "f79b4211eef3839741ae9bf02ac75b112597510907bfaa100058e878.6d79546f6b656e",
+                "policyId": "f79b4211eef3839741ae9bf02ac75b112597510907bfaa100058e878",
+                "name": "6d79546f6b656e",
+                "amount": "1"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                234
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 3,
+            "txHash": "2cb3ed44ad07d41c2c2b1dd0a98faacf60d8e3a8fa4ae5e069db94a9edb52c2a",
+            "amount": "965246553",
+            "receiver": "addr_test1qpur47kwfqprlmns2wrekamc2d4qkmgqjr3pzunkf7hlkv4v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqacm7rx",
+            "utxoId": "2cb3ed44ad07d41c2c2b1dd0a98faacf60d8e3a8fa4ae5e069db94a9edb52c2a:3",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                235
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "0ade895c9c3629ab55e312a42cd85a081cd1012a514c7928b2a51a697a0cf2a4",
+            "amount": "10653342762",
+            "receiver": "addr_test1qq8qdvjzuaa4eua33fmheqkq2lswwjz4a665wh470r333aav4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqr7k383",
+            "utxoId": "0ade895c9c3629ab55e312a42cd85a081cd1012a514c7928b2a51a697a0cf2a4:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                236
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "0371411f325d45b64b41f744ffa8462eb14d634a5d595cc836c066df82a627e4",
+            "amount": "1309377",
+            "receiver": "addr_test1qrgtn2h4g5mcqg4sr003gezr8d8vuzadsm0e44jpmlnsr74v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhq544upe",
+            "utxoId": "0371411f325d45b64b41f744ffa8462eb14d634a5d595cc836c066df82a627e4:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                237
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "1db9a594ccad11549eb738f256eb5ccf1d8b7aeb744a77ecce438c8e725bbc7d",
+            "amount": "2949746",
+            "receiver": "addr_test1qzx03feqg6lpgjzfqmglvwmz7sfssh79d920srq3583v8d9v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqk2y7hs",
+            "utxoId": "1db9a594ccad11549eb738f256eb5ccf1d8b7aeb744a77ecce438c8e725bbc7d:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                1,
+                238
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "77e90131f07c0b78e352e4c7326cba796698f6ff0720956551044fbabb6baaf5",
+            "amount": "12315952",
+            "receiver": "addr_test1qzz7kzhgfwr496lv7w86mh75yh2p8r27w4hftnv7efqtzaav4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqy9uwxd",
+            "utxoId": "77e90131f07c0b78e352e4c7326cba796698f6ff0720956551044fbabb6baaf5:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "f38a0bcb4e0383b7a8462d97a2211c11cb08617031b60b9c9f2a06fb08a736aa",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "f38a0bcb4e0383b7a8462d97a2211c11cb08617031b60b9c9f2a06fb08a736aa:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "2860425"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "7b52de3a2c8de63e65bbae1efe7cc40430b99b043664f2da8d5bab9b5c8f491b",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "7b52de3a2c8de63e65bbae1efe7cc40430b99b043664f2da8d5bab9b5c8f491b:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e",
+                "amount": "191454"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "7398874faf30fec854f0061ca0ae6ba6477f89e0892a12408d5afef77a3a4438",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "7398874faf30fec854f0061ca0ae6ba6477f89e0892a12408d5afef77a3a4438:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "5717541"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "31929812d9c6d935254479840328e127811e747c9347beee45c548b93b00664a",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "31929812d9c6d935254479840328e127811e747c9347beee45c548b93b00664a:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6288046"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "a095cbee12fb64bfcd6bf788eb540a331ea9de0f7774d37ea9434c131e06684a",
+            "amount": "11000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "a095cbee12fb64bfcd6bf788eb540a331ea9de0f7774d37ea9434c131e06684a:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "6884b58cbd60488094f29e51be0b0d91dc73a614ae6390ffbc1579b486c57f50",
+            "amount": "9997831507",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "6884b58cbd60488094f29e51be0b0d91dc73a614ae6390ffbc1579b486c57f50:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "f550bfbd8f21b870b0061599449af29652df0ea26b9bacc7a298e6b45bdc5e79",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "f550bfbd8f21b870b0061599449af29652df0ea26b9bacc7a298e6b45bdc5e79:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e",
+                "amount": "209090"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 6,
+            "txHash": "486d2404817dc9002957f3fb80f1bd0588314c0135d75624026289676e0581c5",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "486d2404817dc9002957f3fb80f1bd0588314c0135d75624026289676e0581c5:6",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6201468"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "b352002b3f95aba3fbfdaed7e336b4bbf1ce13412ad878cb827a5980f662bde9",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "b352002b3f95aba3fbfdaed7e336b4bbf1ce13412ad878cb827a5980f662bde9:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6054234"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "5a093fe48f8eaf1b6390ab292fe9d381c997b6dc0214642ba6617e887c9e49b1",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "5a093fe48f8eaf1b6390ab292fe9d381c997b6dc0214642ba6617e887c9e49b1:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e",
+                "amount": "383015"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "c73421fc01cc0708fa3dd781a8eb3216f1a953a0e5d35a638e677e16cbbf20f8",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "c73421fc01cc0708fa3dd781a8eb3216f1a953a0e5d35a638e677e16cbbf20f8:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6288685"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "35df8fac27554fca191b195febbf4503f5ceab0cba7f271009b034298250b755",
+            "amount": "11000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "35df8fac27554fca191b195febbf4503f5ceab0cba7f271009b034298250b755:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 1,
+            "txHash": "35df8fac27554fca191b195febbf4503f5ceab0cba7f271009b034298250b755",
+            "amount": "86663630",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "35df8fac27554fca191b195febbf4503f5ceab0cba7f271009b034298250b755:1",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 2,
+            "txHash": "bd1460fd5ba0e84b86f2c4508ce5932da7064c681eb0e07fd06e01b2eec77e3c",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "bd1460fd5ba0e84b86f2c4508ce5932da7064c681eb0e07fd06e01b2eec77e3c:2",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6287408"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                0
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 3,
+            "txHash": "5e55e3374b2d98cedf6d45faa9c61f5bac7ceb8e5da90e46c0ff2fe8dc82db3e",
+            "amount": "2000000",
+            "receiver": "addr_test1qrgpjmyy8zk9nuza24a0f4e7mgp9gd6h3uayp0rqnjnkl54v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqzp57km",
+            "utxoId": "5e55e3374b2d98cedf6d45faa9c61f5bac7ceb8e5da90e46c0ff2fe8dc82db3e:3",
+            "assets": [
+              {
+                "assetId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6.4d494e74",
+                "policyId": "29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c6",
+                "name": "4d494e74",
+                "amount": "6229118"
+              }
+            ]
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                63
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "0d2325fe434cfacc8570f607b52cf09accfdae7760c77f7124d3dd33cb39f3f9",
+            "amount": "11000000",
+            "receiver": "addr_test1qpjflvxuawyl0k0j8hxluk63uex4xgy8au4fwk8ylytftwav4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqpfnnnx",
+            "utxoId": "0d2325fe434cfacc8570f607b52cf09accfdae7760c77f7124d3dd33cb39f3f9:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                64
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "0ade895c9c3629ab55e312a42cd85a081cd1012a514c7928b2a51a697a0cf2a4",
+            "amount": "1000000",
+            "receiver": "addr_test1qqwjt3wyk0gn9y9cnwa47zvpadrz3am5hezj5arquedkfxdv4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqytft6k",
+            "utxoId": "0ade895c9c3629ab55e312a42cd85a081cd1012a514c7928b2a51a697a0cf2a4:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                65
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "0371411f325d45b64b41f744ffa8462eb14d634a5d595cc836c066df82a627e4",
+            "amount": "1000000",
+            "receiver": "addr_test1qrl4qa94l8e8l7vt97xhzsqhl3vylvf7zyz4g2gmxlq7m7av4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqnp7ehp",
+            "utxoId": "0371411f325d45b64b41f744ffa8462eb14d634a5d595cc836c066df82a627e4:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                66
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "1db9a594ccad11549eb738f256eb5ccf1d8b7aeb744a77ecce438c8e725bbc7d",
+            "amount": "1000000",
+            "receiver": "addr_test1qrj93x789krrzs854yywtfrfxx8tfucp9dupn6th3fa0qtdv4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhq8qhs9p",
+            "utxoId": "1db9a594ccad11549eb738f256eb5ccf1d8b7aeb744a77ecce438c8e725bbc7d:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                67
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "77e90131f07c0b78e352e4c7326cba796698f6ff0720956551044fbabb6baaf5",
+            "amount": "1000000",
+            "receiver": "addr_test1qrgjclmz59nexx4hl4w3rcn8ezv3ut8n48etr30yydj2zk9v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhqyqh0jq",
+            "utxoId": "77e90131f07c0b78e352e4c7326cba796698f6ff0720956551044fbabb6baaf5:0",
+            "assets": []
+          },
+          {
+            "addressing": {
+              "path": [
+                2147485500,
+                2147485463,
+                2147483648,
+                0,
+                68
+              ],
+              "startLevel": 1
+            },
+            "txIndex": 0,
+            "txHash": "fd44257032d9af9b4614c1782466467f15527ec4f54e1d0b203eb56960355dd4",
+            "amount": "1000000000",
+            "receiver": "addr_test1qqcgvgcq7aktk6dzec70txey8aan2frvw9esukjec6ur6g9v4dlyj0kwfs0x4e38a7047lymzp37tx0y42glslcdtzhq6aq7qs",
+            "utxoId": "fd44257032d9af9b4614c1782466467f15527ec4f54e1d0b203eb56960355dd4:0",
+            "assets": []
+          }
+        ]
+
+        const txOptions = {metadata: undefined}
+
+        const config = {
+          "linearFee": {
+            "coefficient": "44",
+            "constant": "155381"
+          },
+          "minimumUtxoVal": "1000000",
+          "poolDeposit": "500000000",
+          "keyDeposit": "2000000",
+          "networkId": 300
+        }
+
+        const unsignedTx = await yoroiLib.createUnsignedWithdrawalTx(
+          accountState,
+          defaultAsset,
+          new BigNumber('63546344'),
+          addressedUtxos,
+          withdrawalInfo,
+          changeAddr,
+          config,
+          txOptions
+        )
+
+        const keyLevel = 3
+
+        await unsignedTx.sign(
+          keyLevel,
+          accountPrivateKey,
+          unsignedTx.neededStakingKeyHashes.wits,
+          []
+        )
+
+        expect([...unsignedTx.neededStakingKeyHashes.wits].length)
+          .to
+          .equal(1)
+      })
     })
 
     describe('getBalanceForStakingCredentials', () => {
