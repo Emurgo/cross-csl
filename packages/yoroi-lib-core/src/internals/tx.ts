@@ -63,6 +63,7 @@ export class WasmUnsignedTx implements UnsignedTx {
   private _change: ReadonlyArray<Change>
   private _metadata: ReadonlyArray<TxMetadata>
   private _encodedTx: string
+  private _withdrawalRequests: Array<WithdrawalRequest>
 
   get wasm(): WasmContract.WasmModuleProxy {
     return this._wasm
@@ -162,6 +163,10 @@ export class WasmUnsignedTx implements UnsignedTx {
     return this._catalystRegistrationData
   }
 
+  get withdrawalRequests(): Array<WithdrawalRequest> {
+    return this._withdrawalRequests
+  }
+
   /**
    * Initializes the class with the specific wasm types, outputs and change.
    * Even though this class can be instantiated directly, you should probably be getting
@@ -190,7 +195,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     hash: WasmContract.TransactionHash,
     auxiliaryData: WasmContract.AuxiliaryData | undefined,
     catalystRegistrationData: CatalystRegistrationData | undefined,
-    totalAmountToDelegate: MultiTokenValue | undefined
+    totalAmountToDelegate: MultiTokenValue | undefined,
+    withdrawalRequests: Array<WithdrawalRequest>
   ) {
     this._wasm = wasm
     this._txBody = txBody
@@ -215,6 +221,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     this._hash = hash
     this._auxiliaryData = auxiliaryData
     this._catalystRegistrationData = catalystRegistrationData
+    this._withdrawalRequests = withdrawalRequests
   }
 
   static async new(
@@ -317,20 +324,6 @@ export class WasmUnsignedTx implements UnsignedTx {
       }
     }
 
-    for (const withdrawalRequest of withdrawalRequests) {
-      if (withdrawalRequest.stakingPrivateKey) {
-        const vkeyWitness = await wasm.makeVkeyWitness(
-          await wasm.hashTransaction(txBody),
-          withdrawalRequest.stakingPrivateKey
-        )
-        neededStakingKeyHashes.wits.add(
-          Buffer.from(
-            await vkeyWitness.toBytes()
-          ).toString('hex')
-        )
-      }
-    }
-
     return new WasmUnsignedTx(
       wasm,
       txBody,
@@ -354,7 +347,8 @@ export class WasmUnsignedTx implements UnsignedTx {
       hash,
       auxiliaryData,
       catalystRegistrationData,
-      totalAmountToDelegate
+      totalAmountToDelegate,
+      withdrawalRequests
     )
   }
 
@@ -362,7 +356,11 @@ export class WasmUnsignedTx implements UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    extraMetadata: TxMetadata[]
+    extraMetadata: TxMetadata[],
+    stakingKeys: {
+      rewardAddress: string,
+      privateKey: WasmContract.PrivateKey
+    }[] = []
   ): Promise<SignedTx> {
     const signingKey = await this._wasm.Bip32PrivateKey.fromBytes(
       Buffer.from(privateKey, 'hex')
@@ -426,6 +424,23 @@ export class WasmUnsignedTx implements UnsignedTx {
       await vkeyWits.add(
         await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
       )
+    }
+
+    for (const withdrawalRequest of this.withdrawalRequests) {
+      const stakingKey = stakingKeys.find(s => s.rewardAddress === withdrawalRequest.rewardAddress)
+      if (stakingKey) {
+        const vkeyWitness = await this._wasm.makeVkeyWitness(
+          await this._wasm.hashTransaction(this.txBody),
+          stakingKey.privateKey
+        )
+        const witness = Buffer.from(
+          await vkeyWitness.toBytes()
+        ).toString('hex')
+        stakingKeySigSet.add(witness)
+        await vkeyWits.add(
+          await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
+        )
+      }
     }
 
     const witnessSet = await this._wasm.TransactionWitnessSet.new()
@@ -544,11 +559,16 @@ export interface UnsignedTx {
   readonly hash: WasmContract.TransactionHash
   readonly auxiliaryData?: WasmContract.AuxiliaryData
   readonly catalystRegistrationData?: CatalystRegistrationData
+  readonly withdrawalRequests: Array<WithdrawalRequest>
   sign(
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: ReadonlyArray<TxMetadata>
+    metadata: ReadonlyArray<TxMetadata>,
+    stakingKeys?: {
+      rewardAddress: string,
+      privateKey: WasmContract.PrivateKey
+    }[]
   ): Promise<SignedTx>
 }
 

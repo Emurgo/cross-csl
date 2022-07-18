@@ -1731,6 +1731,10 @@ namespace Mobile {
       return await this.wasm.set_vkeys(vkeywitnesses.wasm)
     }
 
+    async vkeys(): Promise<Vkeywitnesses> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
+    }
+
     static async new(): Promise<TransactionWitnessSet> {
       return new TransactionWitnessSet(await WasmV4.TransactionWitnessSet.new())
     }
@@ -1742,6 +1746,14 @@ namespace Mobile {
   {
     async body(): Promise<TransactionBody> {
       return new TransactionBody(await this.wasm.body())
+    }
+
+    witnessSet(): Promise<TransactionWitnessSet> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
+    }
+
+    isValid(): Promise<boolean> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED)
     }
 
     async toBytes(): Promise<Uint8Array> {
