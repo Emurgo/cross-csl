@@ -2312,16 +2312,32 @@ export const setupTests = (
 
         const keyLevel = 3
 
-        await unsignedTx.sign(
+        const signedTx = await unsignedTx.sign(
           keyLevel,
           accountPrivateKey,
           unsignedTx.neededStakingKeyHashes.wits,
-          []
+          [],
+          [{
+            rewardAddress: 'e0acab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae',
+            privateKey: await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+              Buffer.from(accountPrivateKey, 'hex')
+            ).then(x => x.derive(2147485500))
+            .then(x => x.derive(2147485463))
+            .then(x => x.derive(0))
+            .then(x => x.derive(2))
+            .then(x => x.derive(0))
+            .then(x => x.toRawKey())
+          }]
         )
 
-        expect([...unsignedTx.neededStakingKeyHashes.wits].length)
-          .to
-          .equal(1)
+        const tx = await yoroiLib.Wasm.Transaction.fromBytes(
+          Buffer.from(signedTx.encodedTx)
+        )
+
+        expect(await tx.isValid())
+          .to.be.true
+        expect(await tx.witnessSet().then(x => x.vkeys()).then(x => x.len()))
+          .to.equal(2) // one for the UTxO and one for the staking key
       })
     })
 

@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js'
 import { MultiToken } from './multi-token'
-import { PrivateKey } from './wasm-contract'
 
 interface Bip44DerivationLevel {
   level: number
@@ -55,7 +54,6 @@ export type WithdrawalRequest = {
   addressing: Addressing
   rewardAddress: string
   shouldDeregister: boolean
-  stakingPrivateKey: PrivateKey
 }
 
 export type Transaction = {

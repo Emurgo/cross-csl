@@ -31,10 +31,10 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-9.1.4.tgz#802396562ee35312003713e3a48f0dfef7ee1bd6"
   integrity sha512-zDYQ4E5CAz89OuXCPV7k3v5kLWkwUS5Jg7QZ5m/4vPkeuZolOXyqo84p6AYf0qZ14xkgxnvHIRY+heJKNs7Ddw==
 
-"@emurgo/yoroi-lib-core@^0.7.6-alpha.41":
-  version "0.7.6-alpha.41"
-  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.7.6-alpha.41.tgz#81778a2b499be1b8776e66da8c560babd32bb584"
-  integrity sha512-T6KV7Enr2B44w5GUty3lBdvOujB2dJesq+RfBqOg8bJYRBDLEr9kHMJLZ9tF5bBvHDeDP14Zrn+b4PdDZ4OjZg==
+"@emurgo/yoroi-lib-core@^0.8.0-alpha.42":
+  version "0.8.0-alpha.42"
+  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.8.0-alpha.42.tgz#0bd8b19bb470bc4502266cf4301ef2e023711055"
+  integrity sha512-J32PDzjkTbfK43riqONWCQtgelIMhsvApCZ1H1xRoWcJ2VkJ8QfQn9P4QB72Py5j+OrymtNYquBRfZvY8KtXgg==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     axios "^0.24.0"

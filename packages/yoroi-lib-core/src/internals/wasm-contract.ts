@@ -1193,6 +1193,8 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
   abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>
 
+  abstract vkeys(): Promise<Vkeywitnesses>
+
   static new(): Promise<TransactionWitnessSet> {
     throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
   }
@@ -1200,6 +1202,10 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
 export abstract class Transaction extends _Ptr {
   abstract body(): Promise<TransactionBody>
+
+  abstract witnessSet(): Promise<TransactionWitnessSet>
+
+  abstract isValid(): Promise<boolean>
 
   abstract toBytes(): Promise<Uint8Array>
 

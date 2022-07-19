@@ -1804,6 +1804,10 @@ namespace Browser {
       return Promise.resolve(this.wasm.set_vkeys(vkeywitnesses.wasm))
     }
 
+    vkeys(): Promise<Vkeywitnesses> {
+      return Promise.resolve(new Vkeywitnesses(this.wasm.vkeys()))
+    }
+
     static new(): Promise<TransactionWitnessSet> {
       return Promise.resolve(
         new TransactionWitnessSet(WasmV4.TransactionWitnessSet.new())
@@ -1817,6 +1821,14 @@ namespace Browser {
   {
     body(): Promise<TransactionBody> {
       return Promise.resolve(new TransactionBody(this.wasm.body()))
+    }
+
+    witnessSet(): Promise<TransactionWitnessSet> {
+      return Promise.resolve(new TransactionWitnessSet(this.wasm.witness_set()))
+    }
+
+    isValid(): Promise<boolean> {
+      return Promise.resolve(this.wasm.is_valid())
     }
 
     toBytes(): Promise<Uint8Array> {
