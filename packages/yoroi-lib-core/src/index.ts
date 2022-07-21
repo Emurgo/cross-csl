@@ -578,7 +578,11 @@ class YoroiLib implements IYoroiLib {
         [],
         undefined,
         {
-          neededHashes: new Set<string>(),
+          neededHashes: new Set<string>([
+            Buffer.from(await this.Wasm.StakeCredential.fromKeyhash(
+              await stakingKey.hash()
+            ).then(x => x.toBytes())).toString('hex')
+          ]),
           wits: new Set<string>()
         },
         txOptions,

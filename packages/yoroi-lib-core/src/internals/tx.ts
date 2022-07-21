@@ -355,10 +355,7 @@ export class WasmUnsignedTx implements UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    stakingKeys: {
-      rewardAddress: string,
-      privateKey: WasmContract.PrivateKey
-    }[] = []
+    stakingKeys?: WasmContract.PrivateKey[]
   ): Promise<SignedTx> {
     const signingKey = await this._wasm.Bip32PrivateKey.fromBytes(
       Buffer.from(privateKey, 'hex')
@@ -424,20 +421,21 @@ export class WasmUnsignedTx implements UnsignedTx {
       )
     }
 
-    for (const withdrawalRequest of this.withdrawalRequests) {
-      const stakingKey = stakingKeys.find(s => s.rewardAddress === withdrawalRequest.rewardAddress)
-      if (stakingKey) {
-        const vkeyWitness = await this._wasm.makeVkeyWitness(
-          await this._wasm.hashTransaction(this.txBody),
-          stakingKey.privateKey
-        )
-        const witness = Buffer.from(
-          await vkeyWitness.toBytes()
-        ).toString('hex')
-        stakingKeySigSet.add(witness)
-        await vkeyWits.add(
-          await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
-        )
+    if (stakingKeys) {
+      for (const stakingKey of stakingKeys) {
+        if (stakingKey && stakingKey.hasValue()) {
+          const vkeyWitness = await this._wasm.makeVkeyWitness(
+            await this._wasm.hashTransaction(this.txBody),
+            stakingKey
+          )
+          const witness = Buffer.from(
+            await vkeyWitness.toBytes()
+          ).toString('hex')
+          stakingKeySigSet.add(witness)
+          await vkeyWits.add(
+            await this._wasm.Vkeywitness.fromBytes(Buffer.from(witness, 'hex'))
+          )
+        }
       }
     }
 
@@ -445,6 +443,8 @@ export class WasmUnsignedTx implements UnsignedTx {
     if ((await bootstrapWits.len()) > 0)
       await witnessSet.setBootstraps(bootstrapWits)
     if ((await vkeyWits.len()) > 0) await witnessSet.setVkeys(vkeyWits)
+
+    console.log(await vkeyWits.len())
 
     const signedTx = await this._wasm.Transaction.new(
       this._txBody,
@@ -561,10 +561,7 @@ export interface UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    stakingKeys?: {
-      rewardAddress: string,
-      privateKey: WasmContract.PrivateKey
-    }[]
+    stakingKeys?: WasmContract.PrivateKey[]
   ): Promise<SignedTx>
 }
 
