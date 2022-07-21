@@ -11,7 +11,6 @@ import {
   Bip44DerivationLevels,
   WithdrawalRequest
 } from './models'
-import { createMetadata } from './utils'
 import { filterAddressesByStakingKey, normalizeToAddress } from './utils/addresses'
 import {
   getCardanoSpendingKeyHash,
@@ -356,7 +355,6 @@ export class WasmUnsignedTx implements UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    extraMetadata: TxMetadata[],
     stakingKeys: {
       rewardAddress: string,
       privateKey: WasmContract.PrivateKey
@@ -448,13 +446,12 @@ export class WasmUnsignedTx implements UnsignedTx {
       await witnessSet.setBootstraps(bootstrapWits)
     if ((await vkeyWits.len()) > 0) await witnessSet.setVkeys(vkeyWits)
 
-    const fullMetadata = (this.metadata ?? []).concat(extraMetadata ?? [])
-    const aux = await createMetadata(this._wasm, fullMetadata)
-
     const signedTx = await this._wasm.Transaction.new(
       this._txBody,
       witnessSet,
-      aux
+      this.auxiliaryData && this._auxiliaryData?.hasValue()
+          ? this.auxiliaryData
+          : await this.wasm.AuxiliaryData.empty()
     )
 
     const signedTxBody = await signedTx.body()
@@ -564,7 +561,6 @@ export interface UnsignedTx {
     keyLevel: number,
     privateKey: string,
     stakingKeyWits: Set<string>,
-    metadata: ReadonlyArray<TxMetadata>,
     stakingKeys?: {
       rewardAddress: string,
       privateKey: WasmContract.PrivateKey
