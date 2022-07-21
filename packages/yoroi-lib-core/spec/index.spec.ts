@@ -2316,17 +2316,14 @@ export const setupTests = (
           keyLevel,
           accountPrivateKey,
           unsignedTx.neededStakingKeyHashes.wits,
-          [{
-            rewardAddress: 'e0acab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae',
-            privateKey: await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
-              Buffer.from(accountPrivateKey, 'hex')
-            ).then(x => x.derive(2147485500))
-            .then(x => x.derive(2147485463))
-            .then(x => x.derive(0))
-            .then(x => x.derive(2))
-            .then(x => x.derive(0))
-            .then(x => x.toRawKey())
-          }]
+          [await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
+            Buffer.from(accountPrivateKey, 'hex')
+          ).then(x => x.derive(2147485500))
+          .then(x => x.derive(2147485463))
+          .then(x => x.derive(0))
+          .then(x => x.derive(2))
+          .then(x => x.derive(0))
+          .then(x => x.toRawKey())]
         )
 
         const tx = await yoroiLib.Wasm.Transaction.fromBytes(
