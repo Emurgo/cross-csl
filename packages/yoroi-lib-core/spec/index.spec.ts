@@ -2316,7 +2316,6 @@ export const setupTests = (
           keyLevel,
           accountPrivateKey,
           unsignedTx.neededStakingKeyHashes.wits,
-          [],
           [{
             rewardAddress: 'e0acab7e493ece4c1e6ae627ef9f5f7c9b1063e599e4aa91f87f0d58ae',
             privateKey: await yoroiLib.Wasm.Bip32PrivateKey.fromBytes(
