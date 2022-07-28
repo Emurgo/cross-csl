@@ -93,7 +93,7 @@ const areAddressesTheSame = async (
       hex = Buffer.from(await wasm.ByronAddress.fromBase58(addr)
         .then(b => b.toAddress())
         .then(a => a.toBytes())).toString('hex')
-    } else if (parseInt(addr, 16).toString(16).toLocaleLowerCase() === addr.toLocaleLowerCase()) {
+    } else if (/^[0-9a-f]+$/i.test(addr.toLowerCase())) {
       hex = addr
     } else {
       throw new Error('compareAddresses::addrToHex: unexpected address format - should be either hex, base58 (Byron) or bech32')
