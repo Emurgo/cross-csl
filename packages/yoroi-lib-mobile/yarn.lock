@@ -21,10 +21,10 @@
   dependencies:
     base-64 "0.1.0"
 
-"@emurgo/yoroi-lib-core@0.8.2-alpha.44":
-  version "0.8.2-alpha.44"
-  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.8.2-alpha.44.tgz#9704d96627d2a7a4d8390441a7fdbdda658f9ff1"
-  integrity sha512-J6kQY6P1iEz0cVBREF5lvEi0C2jajzFDgR18U03OslYrPah2sk0T1hHXcloECou2iKt+1zv8YOGaVjYnxa33Qw==
+"@emurgo/yoroi-lib-core@0.8.3-alpha.45":
+  version "0.8.3-alpha.45"
+  resolved "https://registry.yarnpkg.com/@emurgo/yoroi-lib-core/-/yoroi-lib-core-0.8.3-alpha.45.tgz#644a81331a7d18f7529e4ff0767fa93782375b67"
+  integrity sha512-ud0niV+7LYs1s9SK4xlcSw7ZMN8Eg2SNEymS1wgvX7G5+GducdI0/AnKE1wGqWWCEWzVG0DmsoYBvDYUuGED1A==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     axios "^0.24.0"
