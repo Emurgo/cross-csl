@@ -233,14 +233,14 @@ export abstract class BigNum extends _Ptr {
    * @returns {BigNum}
    */
   static fromBytes(bytes: Uint8Array): Promise<BigNum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
   /**
    * @param {string} string
    * @returns {BigNum}
    */
   static fromStr(string: string): Promise<BigNum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -261,7 +261,7 @@ export abstract class LinearFee extends _Ptr {
    * @returns {Promise<LinearFee>}
    */
   static new(coefficient: BigNum, constant: BigNum): Promise<LinearFee> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -280,11 +280,11 @@ export abstract class GeneralTransactionMetadata extends _Ptr {
   abstract keys(): Promise<TransactionMetadatumLabels>
 
   static new(): Promise<GeneralTransactionMetadata> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<GeneralTransactionMetadata> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -298,11 +298,11 @@ export abstract class TransactionMetadatumLabels extends _Ptr {
   abstract add(elem: BigNum): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatumLabels> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(): Promise<TransactionMetadatumLabels> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -339,11 +339,11 @@ export abstract class MetadataMap extends _Ptr {
   abstract keys(): Promise<MetadataList>
 
   static fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(): Promise<MetadataMap> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -357,15 +357,15 @@ export abstract class Int extends _Ptr {
   abstract asI32(): Promise<number | undefined>
 
   static new(x: BigNum): Promise<Int> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newNegative(x: BigNum): Promise<Int> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newI32(x: number): Promise<Int> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -385,27 +385,27 @@ export abstract class TransactionMetadatum extends _Ptr {
   abstract asText(): Promise<string>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newMap(map: MetadataMap): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newList(list: MetadataList): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newInt(int: Int): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newText(text: string): Promise<TransactionMetadatum> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -425,15 +425,15 @@ export abstract class AuxiliaryData extends _Ptr {
   abstract setPlutusScripts(plutus_scripts: PlutusScripts): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static empty(): Promise<AuxiliaryData> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -442,10 +442,10 @@ export abstract class AssetName extends _Ptr {
   abstract name(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<AssetName> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
   static new(name: Uint8Array): Promise<AssetName> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -455,7 +455,7 @@ export abstract class AssetNames extends _Ptr {
   abstract add(item: AssetName): Promise<void>
 
   static new(): Promise<AssetNames> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -466,14 +466,14 @@ export abstract class Assets extends _Ptr {
   abstract keys(): Promise<AssetNames>
 
   static new(): Promise<Assets> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
 export abstract class ScriptHash extends _WasmProxy {
   abstract toBytes(): Promise<Uint8Array>
   static fromBytes(bytes: Uint8Array): Promise<ScriptHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -484,10 +484,10 @@ export abstract class ScriptHashes extends _WasmProxy {
   abstract add(item: ScriptHash): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<ScriptHashes> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
   static new(): Promise<ScriptHashes> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -503,7 +503,7 @@ export abstract class MultiAsset extends _Ptr {
   abstract sub(rhs: MultiAsset): Promise<MultiAsset>
 
   static new(): Promise<MultiAsset> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -511,7 +511,7 @@ export abstract class Ed25519KeyHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -519,7 +519,7 @@ export abstract class TransactionHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -534,11 +534,11 @@ export abstract class TransactionInput extends _Ptr {
     transactionId: TransactionHash,
     index: number
   ): Promise<TransactionInput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionInput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -560,7 +560,7 @@ export abstract class Value extends _Ptr {
   abstract compare(rhs: Value): Promise<number | undefined>
 
   static new(coin: BigNum): Promise<Value> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -572,11 +572,11 @@ export abstract class Address extends _Ptr {
   abstract networkId(): Promise<number>
 
   static fromBytes(bytes: Uint8Array): Promise<Address> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBech32(string: string): Promise<Address> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -588,11 +588,11 @@ export abstract class PublicKey extends _Ptr {
   abstract hash(): Promise<Ed25519KeyHash>
 
   static fromBech32(bech32_str: string): Promise<PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -630,11 +630,11 @@ export abstract class Bip32PublicKey extends _Ptr {
   abstract chaincode(): Promise<Uint8Array>
 
   static fromBech32(bech32_str: string): Promise<Bip32PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Bip32PublicKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -648,19 +648,19 @@ export abstract class PrivateKey extends _Ptr {
   abstract sign(message: Uint8Array): Promise<Ed25519Signature>
 
   static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static generateEd25519(): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static generateEd25519extended(): Promise<PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -701,19 +701,19 @@ export abstract class Bip32PrivateKey extends _Ptr {
     entropy: Uint8Array,
     password: Uint8Array
   ): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -730,19 +730,19 @@ export abstract class ByronAddress extends _Ptr {
     key: Bip32PublicKey,
     protocolMagic: number
   ): Promise<ByronAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBase58(string: string): Promise<ByronAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static isValid(string: string): Promise<boolean> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromAddress(addr: Address): Promise<ByronAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -754,11 +754,11 @@ export abstract class TransactionOutput extends _Ptr {
   abstract amount(): Promise<Value>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(address: Address, amount: Value): Promise<TransactionOutput> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -772,15 +772,15 @@ export abstract class StakeCredential extends _Ptr {
   abstract kind(): Promise<number>
 
   static fromBytes(bytes: Uint8Array): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromKeyhash(hash: Ed25519KeyHash): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromScripthash(hash: ScriptHash): Promise<StakeCredential> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -790,11 +790,11 @@ export abstract class StakeRegistration extends _Ptr {
   abstract stakeCredential(): Promise<StakeCredential>
 
   static new(stakeCredential: StakeCredential): Promise<StakeRegistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeRegistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -804,11 +804,11 @@ export abstract class StakeDeregistration extends _Ptr {
   abstract stakeCredential(): Promise<StakeCredential>
 
   static new(stakeCredential: StakeCredential): Promise<StakeDeregistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeDeregistration> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -823,11 +823,11 @@ export abstract class StakeDelegation extends _Ptr {
     stakeCredential: StakeCredential,
     poolKeyHash: Ed25519KeyHash
   ): Promise<StakeDelegation> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<StakeDelegation> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -841,25 +841,25 @@ export abstract class Certificate extends _Ptr {
   abstract asStakeDelegation(): Promise<StakeDelegation>
 
   static fromBytes(bytes: Uint8Array): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newStakeRegistration(
     stakeRegistration: StakeRegistration
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newStakeDeregistration(
     stakeDeregistration: StakeDeregistration
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static newStakeDelegation(
     stakeDelegation: StakeDelegation
   ): Promise<Certificate> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -873,11 +873,11 @@ export abstract class Certificates extends _Ptr {
   abstract add(item: Certificate): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<Certificates> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(): Promise<Certificates> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -887,14 +887,14 @@ export abstract class RewardAddress extends _Ptr {
   abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<RewardAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(
     network: number,
     payment: StakeCredential
   ): Promise<RewardAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -917,11 +917,11 @@ export abstract class RewardAddresses
   abstract add(item: RewardAddress): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(): Promise<RewardAddresses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -937,11 +937,11 @@ export abstract class Withdrawals extends _Ptr {
   abstract keys(): Promise<RewardAddresses>
 
   static new(): Promise<Withdrawals> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -975,7 +975,7 @@ export abstract class TransactionBody extends _Ptr {
   abstract withdrawals(): Promise<Withdrawals>
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1044,7 +1044,7 @@ export abstract class TransactionBuilder extends _Ptr {
     poolDeposit: BigNum,
     keyDeposit: BigNum
   ): Promise<TransactionBuilder> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1056,7 +1056,7 @@ export abstract class BaseAddress extends _Ptr {
   abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<BaseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(
@@ -1064,7 +1064,7 @@ export abstract class BaseAddress extends _Ptr {
     payment: StakeCredential,
     stake: StakeCredential
   ): Promise<BaseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1076,7 +1076,7 @@ export abstract class PointerAddress extends _Ptr {
   abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<PointerAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(
@@ -1084,7 +1084,7 @@ export abstract class PointerAddress extends _Ptr {
     payment: StakeCredential,
     stake: Pointer
   ): Promise<PointerAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1094,14 +1094,14 @@ export abstract class EnterpriseAddress extends _Ptr {
   abstract toAddress(): Promise<Address>
 
   static fromAddress(addr: Address): Promise<EnterpriseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(
     network: number,
     payment: StakeCredential
   ): Promise<EnterpriseAddress> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1117,13 +1117,13 @@ export abstract class Pointer extends _Ptr {
     txIndex: number,
     certIndex: number
   ): Promise<Pointer> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
 export abstract class Vkey extends _Ptr {
   static new(pk: PublicKey): Promise<Vkey> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1133,7 +1133,7 @@ export abstract class Ed25519Signature extends _Ptr {
   abstract toHex(): Promise<string>
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1143,11 +1143,11 @@ export abstract class Vkeywitness extends _Ptr {
   abstract signature(): Promise<Ed25519Signature>
 
   static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1157,7 +1157,7 @@ export abstract class Vkeywitnesses extends _Ptr {
   abstract add(item: Vkeywitness): Promise<void>
 
   static new(): Promise<Vkeywitnesses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1165,7 +1165,7 @@ export abstract class BootstrapWitness extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(
@@ -1174,7 +1174,7 @@ export abstract class BootstrapWitness extends _Ptr {
     chainCode: Uint8Array,
     attributes: Uint8Array
   ): Promise<BootstrapWitness> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1184,7 +1184,7 @@ export abstract class BootstrapWitnesses extends _Ptr {
   abstract add(item: BootstrapWitness): Promise<void>
 
   static new(): Promise<BootstrapWitnesses> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1196,7 +1196,7 @@ export abstract class TransactionWitnessSet extends _Ptr {
   abstract vkeys(): Promise<Vkeywitnesses>
 
   static new(): Promise<TransactionWitnessSet> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1214,11 +1214,11 @@ export abstract class Transaction extends _Ptr {
     witnessSet: TransactionWitnessSet,
     auxiliary: AuxiliaryData
   ): Promise<Transaction> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Transaction> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1228,25 +1228,25 @@ export abstract class NetworkInfo extends _Ptr {
   abstract protocolMagic(): Promise<number>
 
   static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static testnet(): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static mainnet(): Promise<NetworkInfo> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
 export abstract class MetadataList extends _Ptr {
   static new(): Promise<MetadataList> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static fromBytes(bytes: Uint8Array): Promise<MetadataList> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   abstract len(): Promise<number>
@@ -1279,7 +1279,7 @@ export abstract class NativeScript extends _Ptr {
   // abstract as_timelock_expiry(): TimelockExpiry | undefined
 
   static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   // ToDo: uncomment these functions. For now we need this only for AuxiliaryData
@@ -1304,7 +1304,7 @@ export abstract class NativeScripts extends _Ptr {
   abstract add(elem: NativeScript): Promise<void>
 
   static new(): Promise<NativeScripts> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1314,11 +1314,11 @@ export abstract class PlutusScript extends _Ptr {
   abstract bytes(): Promise<Uint8Array>
 
   static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(bytes: Uint8Array): Promise<PlutusScript> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
 
@@ -1332,10 +1332,10 @@ export abstract class PlutusScripts extends _Ptr {
   abstract add(elem: PlutusScript): Promise<void>
 
   static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 
   static new(): Promise<PlutusScripts> {
-    throw EXCEPTIONS.SHOULD_BE_OVERWRITTEN
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
 }
