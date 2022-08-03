@@ -1212,7 +1212,7 @@ export abstract class Transaction extends _Ptr {
   static new(
     body: TransactionBody,
     witnessSet: TransactionWitnessSet,
-    auxiliary: AuxiliaryData
+    auxiliary?: AuxiliaryData
   ): Promise<Transaction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN)
   }
