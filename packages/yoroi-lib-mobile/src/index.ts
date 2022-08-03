@@ -1764,13 +1764,13 @@ namespace Mobile {
     static async new(
       body: TransactionBody,
       witnessSet: TransactionWitnessSet,
-      auxiliary: AuxiliaryData
+      auxiliary?: AuxiliaryData
     ): Promise<Transaction> {
       return new Transaction(
         await WasmV4.Transaction.new(
           body.wasm,
           witnessSet.wasm,
-          auxiliary.internalWasm
+          auxiliary?.internalWasm
         )
       )
     }

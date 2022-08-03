@@ -1838,14 +1838,14 @@ namespace Browser {
     static new(
       body: TransactionBody,
       witnessSet: TransactionWitnessSet,
-      auxiliary: AuxiliaryData
+      auxiliary?: AuxiliaryData
     ): Promise<Transaction> {
       return Promise.resolve(
         new Transaction(
           WasmV4.Transaction.new(
             body.wasm,
             witnessSet.wasm,
-            auxiliary.internalWasm
+            auxiliary?.internalWasm
           )
         )
       )
