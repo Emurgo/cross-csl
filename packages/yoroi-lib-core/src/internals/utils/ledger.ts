@@ -1,5 +1,5 @@
 import { Addressing, AddressingAddress, Bip44DerivationLevels, CardanoAddressedUtxo } from "../models"
-import { Address, Certificates, MultiAsset, TransactionOutputs, StakeCredential, Withdrawals } from "../wasm-contract"
+import { Address, Certificates, MultiAsset, TransactionOutputs, Withdrawals } from "../wasm-contract"
 import { toHexOrBase58 } from "./addresses"
 import * as WasmContract from '../wasm-contract'
 
@@ -36,7 +36,7 @@ export const transformToLedgerOutputs = async (
     networkId: number,
     txOutputs: TransactionOutputs,
     changeAddrs: Array<AddressingAddress>,
-    addressingMap: (x: string) => (null | Addressing),
+    stakingDerivationPath?: number[],
   }
 ): Promise<Array<LedgerTxOutput>> => {
   const result = []
@@ -53,7 +53,7 @@ export const transformToLedgerOutputs = async (
         networkId: request.networkId,
         address,
         path: changeAddr.addressing.path,
-        addressingMap: request.addressingMap,
+        stakingDerivationPath: request.stakingDerivationPath,
       })
       const ledgerOutput: LedgerTxOutput = {
         amount: await output.amount().then(x => x.coin()).then(x => x.toStr()),
@@ -99,7 +99,7 @@ export const toLedgerAddressParameters = async (
     networkId: number,
     address: Address,
     path: Array<number>,
-    addressingMap: (x: string) => (null | Addressing),
+    stakingDerivationPath?: number[],
   }
 ): Promise<LedgerDeviceOwnedAddress> => {
   {
@@ -116,14 +116,7 @@ export const toLedgerAddressParameters = async (
   {
     const baseAddr = await wasm.BaseAddress.fromAddress(request.address)
     if (baseAddr.hasValue()) {
-      const rewardAddr = await wasm.RewardAddress.new(
-        request.networkId,
-        await baseAddr.stakeCred()
-      )
-      const addressPayload = Buffer.from(await rewardAddr.toAddress().then(x => x.toBytes())).toString('hex')
-      const addressing = request.addressingMap(addressPayload)
-
-      if (!addressing) {
+      if (!request.stakingDerivationPath) {
         const stakeCred = await baseAddr.stakeCred()
         const wasmHash = (await stakeCred.toKeyhash()) ?? (await stakeCred.toScripthash())
         if (!wasmHash.hasValue()) {
@@ -145,7 +138,7 @@ export const toLedgerAddressParameters = async (
         type: LedgerAddressType.BASE_PAYMENT_KEY_STAKE_KEY,
         params: {
           spendingPath: request.path,
-          stakingPath: addressing.path,
+          stakingPath: request.stakingDerivationPath,
         },
       }
     }
@@ -249,26 +242,9 @@ export const compareCborKey = (hex1: string, hex2: string): number => {
 }
 
 export const formatLedgerCertificates = async (
-  wasm: WasmContract.WasmModuleProxy,
-  networkId: number,
   certificates: Certificates,
-  addressingMap: (x: string) => (null | Addressing),
+  stakingDerivationPath: number[],
 ): Promise<Array<LedgerCertificate>> => {
-  const getPath = async (
-    stakeCredential: StakeCredential
-  ): Promise<Array<number>> => {
-    const rewardAddr = await wasm.RewardAddress.new(
-      networkId,
-      stakeCredential
-    )
-    const addressPayload = Buffer.from(await rewardAddr.toAddress().then(x => x.toBytes())).toString('hex')
-    const addressing = addressingMap(addressPayload)
-    if (addressing == null) {
-      throw new Error(`getPath Ledger only supports certificates from own address ${addressPayload}`)
-    }
-    return addressing.path
-  }
-
   const result: Array<LedgerCertificate> = []
   for (let i = 0; i < (await certificates.len()); i++) {
     const cert = await certificates.get(i)
@@ -280,7 +256,7 @@ export const formatLedgerCertificates = async (
         params: {
           stakeCredential: {
             type: LedgerStakeCredentialParamsType.KEY_PATH,
-            keyPath: await getPath(await registrationCert.stakeCredential()),
+            keyPath: stakingDerivationPath,
           },
         }
       })
@@ -293,7 +269,7 @@ export const formatLedgerCertificates = async (
         params: {
           stakeCredential: {
             type: LedgerStakeCredentialParamsType.KEY_PATH,
-            keyPath: await getPath(await deregistrationCert.stakeCredential()),
+            keyPath: stakingDerivationPath,
           },
         },
       })
@@ -306,7 +282,7 @@ export const formatLedgerCertificates = async (
         params: {
           stakeCredential: {
             type: LedgerStakeCredentialParamsType.KEY_PATH,
-            keyPath: await getPath(await delegationCert.stakeCredential()),
+            keyPath: stakingDerivationPath,
           },
           poolKeyHashHex: Buffer.from(await delegationCert.poolKeyhash().then(x => x.toBytes())).toString('hex'),
         },
@@ -320,7 +296,7 @@ export const formatLedgerCertificates = async (
 
 export const formatLedgerWithdrawals = async (
   withdrawals: Withdrawals,
-  addressingMap: (x: string) => (null | Addressing),
+  stakingDerivationPath: number[],
 ): Promise<Array<LedgerWithdrawal>> => {
   const result: Array<LedgerWithdrawal> = []
 
@@ -332,16 +308,11 @@ export const formatLedgerWithdrawals = async (
       throw new Error(`formatLedgerWithdrawals should never happen`)
     }
 
-    const rewardAddressPayload = Buffer.from(await rewardAddress.toAddress().then(x => x.toBytes())).toString('hex')
-    const addressing = addressingMap(rewardAddressPayload)
-    if (addressing === null) {
-      throw new Error(`formatLedgerWithdrawals Ledger can only withdraw from own address ${rewardAddressPayload}`)
-    }
     result.push({
       amount: await withdrawalAmount.toStr(),
       stakeCredential: {
         type: LedgerStakeCredentialParamsType.KEY_PATH,
-        keyPath: addressing.path,
+        keyPath: stakingDerivationPath,
       },
     })
   }
