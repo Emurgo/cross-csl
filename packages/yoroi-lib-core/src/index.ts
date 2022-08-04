@@ -13,7 +13,6 @@ import {
 import {
   AccountStatePart,
   Address,
-  Addressing,
   AddressingAddress,
   AmountWithReceiver,
   CardanoAddressedUtxo,
@@ -78,35 +77,6 @@ export * from './internals/models'
 export * from './internals/tx'
 export * as WasmContract from './internals/wasm-contract'
 export { init as initUtxo, UtxoService, UtxoStorage } from './utxo'
-
-const areAddressesTheSame = async (
-  wasm: WasmContract.WasmModuleProxy,
-  addr1: string,
-  addr2: string
-) => {
-  const addrToHex = async (addr: string) => {
-    const addrBech32 = bech32.decodeUnsafe(addr, addr.length)
-    let hex: string
-    if (addrBech32) {
-      hex = Buffer.from(bech32.fromWords(addrBech32.words)).toString('hex')
-    } else if (await wasm.ByronAddress.isValid(addr)) {
-      hex = Buffer.from(await wasm.ByronAddress.fromBase58(addr)
-        .then(b => b.toAddress())
-        .then(a => a.toBytes())).toString('hex')
-    } else if (/^[0-9a-f]+$/i.test(addr.toLowerCase())) {
-      hex = addr
-    } else {
-      throw new Error('compareAddresses::addrToHex: unexpected address format - should be either hex, base58 (Byron) or bech32')
-    }
-
-    return hex.toLowerCase()
-  }
-
-  const addr1Hex = await addrToHex(addr1)
-  const addr2Hex = await addrToHex(addr2)
-
-  return addr1Hex === addr2Hex
-}
 
 /**
  * Currently, the @emurgo/react-native-haskell-shelley lib defines some variables as the type `u32`, which have a max value of `4294967295`.
@@ -188,7 +158,7 @@ export interface IYoroiLib {
     unsignedTx: UnsignedTx,
     networkId: number,
     byronNetworkMagic: number,
-    addressingMap: (addr: string) => Addressing
+    stakingDerivationPath?: number[],
   ): Promise<LedgerSignTransactionRequest>
   getBalanceForStakingCredentials(utxos: AmountWithReceiver[]): Promise<StakingKeyBalances>
 }
@@ -603,27 +573,16 @@ class YoroiLib implements IYoroiLib {
   async buildLedgerPayload(
     unsignedTx: UnsignedTx,
     networkId: number,
-    byronNetworkMagic: number
+    byronNetworkMagic: number,
+    stakingDerivationPath?: number[],
   ): Promise<LedgerSignTransactionRequest> {
-    const addressingMap = (addr: string): Addressing | null => {
-      const allAddresses = unsignedTx.senderUtxos.map(u => ({
-        address: u.receiver,
-        addressing: u.addressing
-      })).concat(unsignedTx.change.map(c => ({
-        address: c.address,
-        addressing: c.addressing
-      })))
-      const item = allAddresses.find(async (a) => areAddressesTheSame(this.Wasm, a.address, addr))
-      return item?.addressing ?? null
-    }
-
     const ledgerInputs = transformToLedgerInputs([...unsignedTx.senderUtxos])
     const ledgerOutputs = await transformToLedgerOutputs(
       this.Wasm,
       {
         networkId: networkId,
         txOutputs: await unsignedTx.txBody.outputs(),
-        addressingMap: addressingMap,
+        stakingDerivationPath: stakingDerivationPath,
         changeAddrs: [...unsignedTx.change]
       }
     )
@@ -631,9 +590,11 @@ class YoroiLib implements IYoroiLib {
     const withdrawals = unsignedTx.withdrawals
     const ledgerWithdrawal: LedgerWithdrawal[] = []
     if (withdrawals != null && withdrawals.hasValue() && (await withdrawals.len()) > 0) {
+      if (!stakingDerivationPath)
+        throw new Error('stakingDerivationPath should have value for withdrawals')
       const withs = await formatLedgerWithdrawals(
         withdrawals,
-        addressingMap,
+        stakingDerivationPath,
       )
       ledgerWithdrawal.push(...withs)
     }
@@ -642,11 +603,11 @@ class YoroiLib implements IYoroiLib {
 
     const ledgerCertificates: LedgerCertificate[] = []
     if (certificates != null && certificates.hasValue() && (await certificates.len()) > 0) {
+      if (!stakingDerivationPath)
+        throw new Error('stakingDerivationPath should have value for certificates')
       const certs = await formatLedgerCertificates(
-        this.Wasm,
-        networkId,
         certificates,
-        addressingMap,
+        stakingDerivationPath,
       )
       ledgerCertificates.push(...certs)
     }
