@@ -444,8 +444,6 @@ export class WasmUnsignedTx implements UnsignedTx {
       await witnessSet.setBootstraps(bootstrapWits)
     if ((await vkeyWits.len()) > 0) await witnessSet.setVkeys(vkeyWits)
 
-    console.log(await vkeyWits.len())
-
     const signedTx = await this._wasm.Transaction.new(
       this._txBody,
       witnessSet,
