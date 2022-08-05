@@ -2390,10 +2390,7 @@ export const setupTests = (
           unsignedVotingTx,
           cardanoConfig.networkId,
           2,
-          (_) => ({
-            path: [2147485500, 2147485463, 2147483648, 0, 3],
-            startLevel: 0
-          })
+          [2147485500, 2147485463, 2147483648, 0, 3]
         )
       })
     })

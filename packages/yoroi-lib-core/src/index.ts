@@ -265,7 +265,7 @@ class YoroiLib implements IYoroiLib {
     nonce: number,
     signer: (hashedMetadata: Buffer) => Promise<string>
   ): Promise<UnsignedTx> {
-    const rewardAddress = this.Wasm.RewardAddress.new(
+    const rewardAddress = await this.Wasm.RewardAddress.new(
       config.networkId,
       await this.Wasm.StakeCredential.fromKeyhash(
         await stakingPublicKey.hash()
@@ -280,11 +280,15 @@ class YoroiLib implements IYoroiLib {
       await stakingPublicKey.asBytes()
     ).toString('hex')
 
+    const rewardAddressHex = Buffer.from(
+      await rewardAddress.toAddress().then(x => x.toBytes())
+    ).toString('hex')
+
     const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
       JSON.stringify({
         '1': `0x${votingPublicKeyHex}`,
         '2': `0x${stakingPublicKeyHex}`,
-        '3': `0x${rewardAddress}`,
+        '3': `0x${rewardAddressHex}`,
         '4': `0x${nonce}`
       }),
       MetadataJsonSchema.BasicConversions
