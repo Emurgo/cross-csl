@@ -916,12 +916,10 @@ namespace Mobile {
     }
 
     static async icarusFromKey(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       key: Bip32PublicKey,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       protocolMagic: number
     ): Promise<ByronAddress> {
-      throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED
+      return ByronAddress.icarusFromKey(key, protocolMagic)
     }
 
     static async fromBase58(string: string): Promise<ByronAddress> {
