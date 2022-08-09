@@ -17,9 +17,7 @@ import {
   AmountWithReceiver,
   CardanoAddressedUtxo,
   CardanoHaskellConfig,
-  CatalystLabels,
   Change,
-  MetadataJsonSchema,
   MultiTokenValue,
   PRIMARY_ASSET_CONSTANTS,
   RegistrationStatus,
@@ -38,6 +36,7 @@ import {
   firstWithValue
 } from './internals/utils'
 import {
+  derivePublicByAddressing,
   normalizeToAddress
 } from './internals/utils/addresses'
 import {
@@ -47,19 +46,22 @@ import {
   multiTokenFromCardanoValue,
   multiTokenFromRemote
 } from './internals/utils/assets'
-import { formatLedgerCertificates, formatLedgerWithdrawals, transformToLedgerInputs, transformToLedgerOutputs } from './internals/utils/ledger'
+import { formatLedgerCertificates, formatLedgerWithdrawals, transformToLedgerInputs, transformToLedgerOutputs, verifyFromBip44Root } from './internals/utils/ledger'
 import {
   addUtxoInput,
   cardanoValueFromRemoteFormat,
   createDelegationCertificate,
+  generateRegistrationMetadata,
   isBigNumZero,
   minRequiredForChange
 } from './internals/utils/transactions'
 import * as WasmContract from './internals/wasm-contract'
 import {
   BigNum,
+  BootstrapWitness,
   PublicKey,
-  RewardAddress
+  RewardAddress,
+  Vkeywitness
 } from './internals/wasm-contract'
 import {
   TxAuxiliaryDataType as LedgerTxAuxiliaryDataType,
@@ -69,6 +71,7 @@ import {
   TransactionSigningMode as LedgerTransactionSigningMode,
   Certificate as LedgerCertificate,
   Withdrawal as LedgerWithdrawal,
+  SignTransactionResponse,
 } from '@cardano-foundation/ledgerjs-hw-app-cardano'
 
 export { AccountService } from './account'
@@ -160,6 +163,15 @@ export interface IYoroiLib {
     byronNetworkMagic: number,
     stakingDerivationPath?: number[],
   ): Promise<LedgerSignTransactionRequest>
+  buildLedgerSignedTx(
+    unsignedTx: UnsignedTx,
+    signedLedgerTx: SignTransactionResponse,
+    purpose: number,
+    publicKeyHex: string,
+  ): Promise<{
+    id: string,
+    encodedTx: Uint8Array
+  }>
   getBalanceForStakingCredentials(utxos: AmountWithReceiver[]): Promise<StakingKeyBalances>
 }
 
@@ -275,63 +287,22 @@ class YoroiLib implements IYoroiLib {
     const votingPublicKeyHex = Buffer.from(
       await votingPublicKey.asBytes()
     ).toString('hex')
-
+  
     const stakingPublicKeyHex = Buffer.from(
       await stakingPublicKey.asBytes()
     ).toString('hex')
-
+  
     const rewardAddressHex = Buffer.from(
       await rewardAddress.toAddress().then(x => x.toBytes())
     ).toString('hex')
 
-    const registrationData = await this.Wasm.encodeJsonStrToMetadatum(
-      JSON.stringify({
-        '1': `0x${votingPublicKeyHex}`,
-        '2': `0x${stakingPublicKeyHex}`,
-        '3': `0x${rewardAddressHex}`,
-        '4': `0x${nonce}`
-      }),
-      MetadataJsonSchema.BasicConversions
-    )
-
-    const generalMetadata = await this.Wasm.GeneralTransactionMetadata.new()
-    await generalMetadata.insert(
-      await this.Wasm.BigNum.fromStr(CatalystLabels.DATA.toString()),
-      registrationData
-    )
-
-    const hashedMetadataStr = await blake2b(
-      await generalMetadata.toBytes(),
-      256
-    )
-    const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
-
-    const signedHashedMetadata = await signer(hashedMetadata)
-
-    await generalMetadata.insert(
-      await this.Wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
-      await this.Wasm.encodeJsonStrToMetadatum(
-        JSON.stringify({
-          '1': `0x${signedHashedMetadata}`
-        }),
-        MetadataJsonSchema.BasicConversions
-      )
-    )
-
-    const metadataList = await this.Wasm.MetadataList.new()
-    await metadataList.add(
-      await this.Wasm.TransactionMetadatum.fromBytes(
-        await generalMetadata.toBytes()
-      )
-    )
-    await metadataList.add(
-      await this.Wasm.TransactionMetadatum.newList(
-        await this.Wasm.MetadataList.new()
-      )
-    )
-
-    const auxData = await this.Wasm.AuxiliaryData.fromBytes(
-      await metadataList.toBytes()
+    const auxData = await generateRegistrationMetadata(
+      this.Wasm,
+      votingPublicKeyHex,
+      stakingPublicKeyHex,
+      rewardAddressHex,
+      nonce.toString(),
+      signer
     )
 
     const protocolParams = {
@@ -364,7 +335,9 @@ class YoroiLib implements IYoroiLib {
       {
         nonce: nonce.toString(),
         stakingKeyPath: stakingKeyPath,
-        votingPublicKey: Buffer.from(await stakingPublicKey.asBytes()).toString('hex')
+        votingPublicKeyHex,
+        stakingPublicKeyHex,
+        rewardAddressHex,
       },
       stakingPublicKey,
       undefined,
@@ -621,11 +594,11 @@ class YoroiLib implements IYoroiLib {
     let auxiliaryData: LedgerTxAuxiliaryData | null = null
     
     if (unsignedTx.catalystRegistrationData) {
-      const { votingPublicKey, stakingKeyPath, nonce } = unsignedTx.catalystRegistrationData
+      const { votingPublicKeyHex, stakingKeyPath, nonce } = unsignedTx.catalystRegistrationData
       auxiliaryData = {
         type: LedgerTxAuxiliaryDataType.CATALYST_REGISTRATION,
         params: {
-          votingPublicKeyHex: votingPublicKey.replace(/^0x/, ''),
+          votingPublicKeyHex: votingPublicKeyHex.replace(/^0x/, ''),
           stakingPath: stakingKeyPath,
           rewardsDestination: {
             type: LedgerAddressType.REWARD_KEY,
@@ -663,6 +636,172 @@ class YoroiLib implements IYoroiLib {
         validityIntervalStart: undefined,
       },
       additionalWitnessPaths: [],
+    }
+  }
+
+  async buildLedgerSignedTx(
+    unsignedTx: UnsignedTx,
+    signedLedgerTx: SignTransactionResponse,
+    purpose: number,
+    publicKeyHex: string,
+  ) {
+    const key = await this.Wasm.Bip32PublicKey.fromBytes(Buffer.from(publicKeyHex, 'hex'))
+    const addressing = {
+      path: [
+        purpose,
+        2147485463, // CARDANO
+        2147483648,
+      ],
+      startLevel: 1,
+    }
+
+    const isSameArray = (array1: Array<number>, array2: Array<number>) =>
+      array1.length === array2.length && array1.every((value, index) => value === array2[index])
+
+    const findWitness = (path: Array<number>) => {
+      for (const witness of signedLedgerTx.witnesses) {
+        if (isSameArray(witness.path, path)) {
+          return witness.witnessSignatureHex
+        }
+      }
+
+      throw new Error(`buildSignedTransaction no witness for ${JSON.stringify(path)}`)
+    }
+
+    const keyLevel = addressing.startLevel + addressing.path.length - 1
+    const witSet = await this.Wasm.TransactionWitnessSet.new()
+    const bootstrapWitnesses: Array<BootstrapWitness> = []
+    const vkeys: Array<Vkeywitness> = []
+
+    // Note: Ledger removes duplicate witnesses
+    // but there may be a one-to-many relationship
+    // ex: same witness is used in both a bootstrap witness and a vkey witness
+    const seenVKeyWit = new Set<string>()
+    const seenBootstrapWit = new Set<string>()
+    for (const utxo of unsignedTx.senderUtxos) {
+      verifyFromBip44Root(utxo.addressing)
+      const witness = findWitness(utxo.addressing.path)
+      const addressKey = await derivePublicByAddressing(
+        utxo.addressing,
+        {
+          level: keyLevel,
+          key,
+        },
+      )
+
+      if (await this.Wasm.ByronAddress.isValid(utxo.receiver)) {
+        const byronAddr = await this.Wasm.ByronAddress.fromBase58(utxo.receiver)
+        const bootstrapWit = await BootstrapWitness.new(
+          await this.Wasm.Vkey.new(await addressKey.toRawKey()),
+          await this.Wasm.Ed25519Signature.fromBytes(Buffer.from(witness, 'hex')),
+          await addressKey.chaincode(),
+          await byronAddr.attributes(),
+        )
+        const asString = Buffer.from(await bootstrapWit.toBytes()).toString('hex')
+
+        if (seenBootstrapWit.has(asString)) {
+          continue
+        }
+
+        seenBootstrapWit.add(asString)
+        bootstrapWitnesses.push(bootstrapWit)
+        continue
+      }
+
+      const vkeyWit = await Vkeywitness.new(
+        await this.Wasm.Vkey.new(await addressKey.toRawKey()),
+        await this.Wasm.Ed25519Signature.fromBytes(Buffer.from(witness, 'hex')),
+      )
+      const asString = Buffer.from(await vkeyWit.toBytes()).toString('hex')
+
+      if (seenVKeyWit.has(asString)) {
+        continue
+      }
+
+      seenVKeyWit.add(asString)
+      vkeys.push(vkeyWit)
+    }
+
+    // add any staking key needed
+    for (const witness of signedLedgerTx.witnesses) {
+      const addressing = {
+        path: witness.path,
+        startLevel: 1,
+      }
+      verifyFromBip44Root(addressing)
+
+      if (witness.path[3] === 2) {
+        const stakingKey = await derivePublicByAddressing(
+          addressing,
+          {
+            level: keyLevel,
+            key,
+          },
+        )
+        const vkeyWit = await Vkeywitness.new(
+          await this.Wasm.Vkey.new(await stakingKey.toRawKey()),
+          await this.Wasm.Ed25519Signature.fromBytes(Buffer.from(witness.witnessSignatureHex, 'hex')),
+        )
+        const asString = Buffer.from(await vkeyWit.toBytes()).toString('hex')
+
+        if (seenVKeyWit.has(asString)) {
+          continue
+        }
+
+        seenVKeyWit.add(asString)
+        vkeys.push(vkeyWit)
+      }
+    }
+
+    if (bootstrapWitnesses.length > 0) {
+      const bootstrapWitWasm = await this.Wasm.BootstrapWitnesses.new()
+
+      for (const bootstrapWit of bootstrapWitnesses) {
+        await bootstrapWitWasm.add(bootstrapWit)
+      }
+
+      await witSet.setBootstraps(bootstrapWitWasm)
+    }
+
+    if (vkeys.length > 0) {
+      const vkeyWitWasm = await this.Wasm.Vkeywitnesses.new()
+
+      for (const vkey of vkeys) {
+        await vkeyWitWasm.add(vkey)
+      }
+
+      await witSet.setVkeys(vkeyWitWasm)
+    }
+
+    let auxData = unsignedTx.auxiliaryData
+    if (unsignedTx.catalystRegistrationData) {
+      auxData = await generateRegistrationMetadata(
+        this.Wasm,
+        unsignedTx.catalystRegistrationData.votingPublicKeyHex,
+        unsignedTx.catalystRegistrationData.stakingPublicKeyHex,
+        unsignedTx.catalystRegistrationData.rewardAddressHex,
+        unsignedTx.catalystRegistrationData.nonce,
+        async () => signedLedgerTx.auxiliaryDataSupplement?.catalystRegistrationSignatureHex ?? ''
+      )
+    }
+
+    // TODO: handle script witnesses
+    const signedTx = await this.Wasm.Transaction.new(
+      unsignedTx.txBody,
+      witSet,
+      auxData,
+    )
+
+    const id = await signedTx
+      .body()
+      .then((txBody) => this.Wasm.hashTransaction(txBody))
+      .then((hash) => hash.toBytes())
+      .then((bytes) => Buffer.from(bytes).toString('hex'))
+    const encodedTx = await signedTx.toBytes()
+
+    return {
+      id,
+      encodedTx,
     }
   }
 

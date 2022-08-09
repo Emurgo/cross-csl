@@ -1,5 +1,6 @@
+import { Addressing } from '../models'
 import * as WasmContract from '../wasm-contract'
-import { StakeCredential } from '../wasm-contract'
+import { Bip32PublicKey, StakeCredential } from '../wasm-contract'
 
 export async function normalizeToAddress(
   wasm: WasmContract.WasmModuleProxy,
@@ -92,4 +93,27 @@ export async function addrContainsAccountKey(
     // TODO
   }
   return acceptTypeMismatch
+}
+
+export const derivePublicByAddressing = async (
+  addressing: Addressing,
+  startingFrom: {
+    key: Bip32PublicKey
+    level: number
+  }) => {
+  if (startingFrom.level + 1 < addressing.startLevel) {
+    throw new Error('derivePublicByAddressing: keyLevel < startLevel')
+  }
+
+  let derivedKey = startingFrom.key
+
+  for (
+    let i = startingFrom.level - addressing.startLevel + 1;
+    i < addressing.path.length;
+    i++
+  ) {
+    derivedKey = await derivedKey.derive(addressing.path[i])
+  }
+
+  return derivedKey
 }

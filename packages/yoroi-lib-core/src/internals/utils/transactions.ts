@@ -2,6 +2,8 @@ import * as WasmContract from '../wasm-contract'
 import {
   AddressingAddress,
   CardanoAddressedUtxo,
+  CatalystLabels,
+  MetadataJsonSchema,
   PRIMARY_ASSET_CONSTANTS,
   RegistrationStatus,
   RemoteUnspentOutput,
@@ -17,6 +19,7 @@ import {
 import { BigNumber } from 'bignumber.js'
 import { Certificate, PublicKey } from '../wasm-contract'
 import { MultiToken } from '../multi-token'
+import { blake2b } from 'hash-wasm'
 
 export async function minRequiredForChange(
   wasm: WasmContract.WasmModuleProxy,
@@ -301,4 +304,67 @@ export async function getDifferenceAfterTx(
   }
 
   return sumOutForKey.joinSubtractCopy(sumInForKey)
+}
+
+export const generateRegistrationMetadata = async (
+  wasm: WasmContract.WasmModuleProxy,
+  votingPublicKeyHex: string,
+  stakingPublicKeyHex: string,
+  rewardAddressHex: string,
+  nonce: string,
+  signer: (hashedMetadata: Buffer) => Promise<string>
+) => {
+  
+
+  const registrationData = await wasm.encodeJsonStrToMetadatum(
+    JSON.stringify({
+      '1': `0x${votingPublicKeyHex}`,
+      '2': `0x${stakingPublicKeyHex}`,
+      '3': `0x${rewardAddressHex}`,
+      '4': `0x${nonce}`
+    }),
+    MetadataJsonSchema.BasicConversions
+  )
+
+  const generalMetadata = await wasm.GeneralTransactionMetadata.new()
+  await generalMetadata.insert(
+    await wasm.BigNum.fromStr(CatalystLabels.DATA.toString()),
+    registrationData
+  )
+
+  const hashedMetadataStr = await blake2b(
+    await generalMetadata.toBytes(),
+    256
+  )
+  const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
+
+  const signedHashedMetadata = await signer(hashedMetadata)
+
+  await generalMetadata.insert(
+    await wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
+    await wasm.encodeJsonStrToMetadatum(
+      JSON.stringify({
+        '1': `0x${signedHashedMetadata}`
+      }),
+      MetadataJsonSchema.BasicConversions
+    )
+  )
+
+  const metadataList = await wasm.MetadataList.new()
+  await metadataList.add(
+    await wasm.TransactionMetadatum.fromBytes(
+      await generalMetadata.toBytes()
+    )
+  )
+  await metadataList.add(
+    await wasm.TransactionMetadatum.newList(
+      await wasm.MetadataList.new()
+    )
+  )
+
+  const auxData = await wasm.AuxiliaryData.fromBytes(
+    await metadataList.toBytes()
+  )
+
+  return auxData
 }
