@@ -2,6 +2,7 @@ import { Addressing, AddressingAddress, Bip44DerivationLevels, CardanoAddressedU
 import { Address, Certificates, MultiAsset, TransactionOutputs, Withdrawals } from "../wasm-contract"
 import { toHexOrBase58 } from "./addresses"
 import * as WasmContract from '../wasm-contract'
+// import { bech32 } from 'bech32'
 
 import {
   Certificate as LedgerCertificate,
@@ -29,6 +30,32 @@ export const transformToLedgerInputs = (
     path: input.addressing.path,
   }))
 }
+
+// const areAddressesTheSame = async (
+//   wasm: WasmContract.WasmModuleProxy,
+//   addr1: string,
+//   addr2: string
+// ) => {
+//   const addrToHex = async (addr: string) => {
+//     const addrBech32 = bech32.decodeUnsafe(addr, addr.length)
+//     let hex: string
+//     if (addrBech32) {
+//       hex = Buffer.from(bech32.fromWords(addrBech32.words)).toString('hex')
+//     } else if (await wasm.ByronAddress.isValid(addr)) {
+//       hex = Buffer.from(await wasm.ByronAddress.fromBase58(addr)
+//         .then(b => b.toAddress())
+//         .then(a => a.toBytes())).toString('hex')
+//     } else if (/^[0-9a-f]+$/i.test(addr.toLowerCase())) {
+//       hex = addr
+//     } else {
+//       throw new Error('compareAddresses::addrToHex: unexpected address format - should be either hex, base58 (Byron) or bech32')
+//     }
+//     return hex.toLowerCase()
+//   }
+//   const addr1Hex = await addrToHex(addr1)
+//   const addr2Hex = await addrToHex(addr2)
+//   return addr1Hex === addr2Hex
+// }
 
 export const transformToLedgerOutputs = async (
   wasm: WasmContract.WasmModuleProxy,

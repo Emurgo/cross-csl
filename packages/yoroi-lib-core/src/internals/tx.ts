@@ -517,7 +517,9 @@ export class WasmUnsignedTx implements UnsignedTx {
 }
 
 export type CatalystRegistrationData = {
-  votingPublicKey: string,
+  votingPublicKeyHex: string,
+  stakingPublicKeyHex: string,
+  rewardAddressHex: string,
   stakingKeyPath: number[],
   nonce: string
 }
