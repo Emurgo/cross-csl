@@ -919,7 +919,12 @@ namespace Mobile {
       key: Bip32PublicKey,
       protocolMagic: number
     ): Promise<ByronAddress> {
-      return ByronAddress.icarusFromKey(key, protocolMagic)
+      return new ByronAddress(
+        await WasmV4.ByronAddress.icarus_from_key(
+          key.wasm,
+          protocolMagic
+        )
+      )
     }
 
     static async fromBase58(string: string): Promise<ByronAddress> {
