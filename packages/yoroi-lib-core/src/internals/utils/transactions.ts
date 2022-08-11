@@ -19,7 +19,9 @@ import {
 import { BigNumber } from 'bignumber.js'
 import { Certificate, PublicKey } from '../wasm-contract'
 import { MultiToken } from '../multi-token'
-import { blake2b } from 'hash-wasm'
+// import { blake2b } from 'hash-wasm'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const blake2b = require('blake2b')
 
 export async function minRequiredForChange(
   wasm: WasmContract.WasmModuleProxy,
@@ -311,17 +313,15 @@ export const generateRegistrationMetadata = async (
   votingPublicKeyHex: string,
   stakingPublicKeyHex: string,
   rewardAddressHex: string,
-  nonce: string,
+  nonce: number,
   signer: (hashedMetadata: Buffer) => Promise<string>
 ) => {
-  
-
   const registrationData = await wasm.encodeJsonStrToMetadatum(
     JSON.stringify({
       '1': `0x${votingPublicKeyHex}`,
       '2': `0x${stakingPublicKeyHex}`,
       '3': `0x${rewardAddressHex}`,
-      '4': `0x${nonce}`
+      '4': nonce
     }),
     MetadataJsonSchema.BasicConversions
   )
@@ -332,23 +332,29 @@ export const generateRegistrationMetadata = async (
     registrationData
   )
 
-  const hashedMetadataStr = await blake2b(
-    await generalMetadata.toBytes(),
-    256
-  )
-  const hashedMetadata = Buffer.from(hashedMetadataStr, 'hex')
+  // const hashedMetadataStr = await blake2b(
+  //   await generalMetadata.toBytes(),
+  //   256
+  // )
 
-  const signedHashedMetadata = await signer(hashedMetadata)
+  const hashedMetadata = blake2b(256 / 8).update(
+    await generalMetadata.toBytes()
+  ).digest('binary')
+
+  const signedMetadata = await signer(hashedMetadata)
 
   await generalMetadata.insert(
     await wasm.BigNum.fromStr(CatalystLabels.SIG.toString()),
     await wasm.encodeJsonStrToMetadatum(
       JSON.stringify({
-        '1': `0x${signedHashedMetadata}`
+        '1': `0x${signedMetadata}`
       }),
       MetadataJsonSchema.BasicConversions
     )
   )
+  console.log('CATALYST_SIG', {
+    '1': `0x${signedMetadata}`
+  })
 
   const metadataList = await wasm.MetadataList.new()
   await metadataList.add(
@@ -365,6 +371,12 @@ export const generateRegistrationMetadata = async (
   const auxData = await wasm.AuxiliaryData.fromBytes(
     await metadataList.toBytes()
   )
+
+  const hashedAuxData = blake2b(256 / 8).update(
+    await auxData.toBytes()
+  ).digest('binary')
+
+  console.log('hashedAuxData', Buffer.from(hashedAuxData).toString('hex'))
 
   return auxData
 }

@@ -521,7 +521,7 @@ export type CatalystRegistrationData = {
   stakingPublicKeyHex: string,
   rewardAddressHex: string,
   stakingKeyPath: number[],
-  nonce: string
+  nonce: number
 }
 
 export interface UnsignedTx {
