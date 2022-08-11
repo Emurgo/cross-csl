@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ledger-tx": "ts-node ./ledger-tx.ts"
   },
   "dependencies": {
-    "@emurgo/yoroi-lib-core": "file:../packages/yoroi-lib-core",
-    "@emurgo/yoroi-lib-nodejs": "file:../packages/yoroi-lib-nodejs",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
+    "@emurgo/yoroi-lib-core": "^0.9.2-alpha.54",
+    "@emurgo/yoroi-lib-nodejs": "^0.9.2-alpha.54",
+    "@ledgerhq/hw-transport-node-hid": "^6.27.2",
     "bip39": "^3.0.4"
   },
   "author": "",
