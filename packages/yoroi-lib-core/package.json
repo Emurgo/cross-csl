@@ -27,6 +27,7 @@
     "axios": "^0.24.0",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.0.1",
+    "blake2b": "^2.1.4",
     "hash-wasm": "^4.9.0"
   },
   "devDependencies": {

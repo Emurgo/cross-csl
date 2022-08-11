@@ -143,7 +143,8 @@ export interface IYoroiLib {
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
     nonce: number,
-    signer: (hashedMetadata: Buffer) => Promise<string>
+    networkId: number,
+    signer: (hashedMetadata: Uint8Array) => Promise<string>
   ): Promise<UnsignedTx>
   createUnsignedDelegationTx(
     absSlotNumber: BigNumber,
@@ -275,15 +276,9 @@ class YoroiLib implements IYoroiLib {
     config: CardanoHaskellConfig,
     txOptions: TxOptions,
     nonce: number,
-    signer: (hashedMetadata: Buffer) => Promise<string>
+    networkId: number,
+    signer: (hashedMetadata: Uint8Array) => Promise<string>
   ): Promise<UnsignedTx> {
-    const rewardAddress = await this.Wasm.RewardAddress.new(
-      config.networkId,
-      await this.Wasm.StakeCredential.fromKeyhash(
-        await stakingPublicKey.hash()
-      )
-    )
-
     const votingPublicKeyHex = Buffer.from(
       await votingPublicKey.asBytes()
     ).toString('hex')
@@ -291,17 +286,25 @@ class YoroiLib implements IYoroiLib {
     const stakingPublicKeyHex = Buffer.from(
       await stakingPublicKey.asBytes()
     ).toString('hex')
-  
-    const rewardAddressHex = Buffer.from(
-      await rewardAddress.toAddress().then(x => x.toBytes())
-    ).toString('hex')
+
+    const rewardAddress = await this.Wasm.RewardAddress.new(
+      networkId,
+      await this.Wasm.StakeCredential.fromKeyhash(
+        await stakingPublicKey.hash()
+      )
+    )
+
+    const rewardAddressHex = await rewardAddress
+      .toAddress()
+      .then(a => a.toBytes())
+      .then(b => Buffer.from(b).toString('hex'))
 
     const auxData = await generateRegistrationMetadata(
       this.Wasm,
       votingPublicKeyHex,
       stakingPublicKeyHex,
       rewardAddressHex,
-      nonce.toString(),
+      nonce,
       signer
     )
 
@@ -333,7 +336,7 @@ class YoroiLib implements IYoroiLib {
       txOptions,
       false,
       {
-        nonce: nonce.toString(),
+        nonce: nonce,
         stakingKeyPath: stakingKeyPath,
         votingPublicKeyHex,
         stakingPublicKeyHex,
@@ -654,7 +657,6 @@ class YoroiLib implements IYoroiLib {
       ],
       startLevel: 1,
     }
-
     const isSameArray = (array1: Array<number>, array2: Array<number>) =>
       array1.length === array2.length && array1.every((value, index) => value === array2[index])
 
@@ -667,7 +669,6 @@ class YoroiLib implements IYoroiLib {
 
       throw new Error(`buildSignedTransaction no witness for ${JSON.stringify(path)}`)
     }
-
     const keyLevel = addressing.startLevel + addressing.path.length - 1
     const witSet = await this.Wasm.TransactionWitnessSet.new()
     const bootstrapWitnesses: Array<BootstrapWitness> = []
@@ -708,7 +709,7 @@ class YoroiLib implements IYoroiLib {
         continue
       }
 
-      const vkeyWit = await Vkeywitness.new(
+      const vkeyWit = await this.Wasm.Vkeywitness.new(
         await this.Wasm.Vkey.new(await addressKey.toRawKey()),
         await this.Wasm.Ed25519Signature.fromBytes(Buffer.from(witness, 'hex')),
       )
@@ -738,7 +739,7 @@ class YoroiLib implements IYoroiLib {
             key,
           },
         )
-        const vkeyWit = await Vkeywitness.new(
+        const vkeyWit = await this.Wasm.Vkeywitness.new(
           await this.Wasm.Vkey.new(await stakingKey.toRawKey()),
           await this.Wasm.Ed25519Signature.fromBytes(Buffer.from(witness.witnessSignatureHex, 'hex')),
         )
@@ -785,9 +786,15 @@ class YoroiLib implements IYoroiLib {
       )
     }
 
+    if (auxData) {
+      unsignedTx.txBuilder.setAuxiliaryData(auxData)
+    }
+
+    const newTx = await unsignedTx.txBuilder.build()
+
     // TODO: handle script witnesses
     const signedTx = await this.Wasm.Transaction.new(
-      unsignedTx.txBody,
+      newTx,
       witSet,
       auxData,
     )
@@ -1087,6 +1094,7 @@ class YoroiLib implements IYoroiLib {
       protocolParams.poolDeposit,
       protocolParams.keyDeposit
     )
+
     await txBuilder.setTtl(absSlotNumber.plus(defaultTtlOffset).toNumber())
 
     for (const input of allUtxos) {
