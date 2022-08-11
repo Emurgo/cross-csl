@@ -352,9 +352,6 @@ export const generateRegistrationMetadata = async (
       MetadataJsonSchema.BasicConversions
     )
   )
-  console.log('CATALYST_SIG', {
-    '1': `0x${signedMetadata}`
-  })
 
   const metadataList = await wasm.MetadataList.new()
   await metadataList.add(
@@ -371,12 +368,6 @@ export const generateRegistrationMetadata = async (
   const auxData = await wasm.AuxiliaryData.fromBytes(
     await metadataList.toBytes()
   )
-
-  const hashedAuxData = blake2b(256 / 8).update(
-    await auxData.toBytes()
-  ).digest('binary')
-
-  console.log('hashedAuxData', Buffer.from(hashedAuxData).toString('hex'))
 
   return auxData
 }
