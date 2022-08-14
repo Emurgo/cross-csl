@@ -80,15 +80,15 @@ web-build/
 # @end expo-cli
 
 # dists
-packages/yoroi-lib-core/dist
-packages/yoroi-lib-nodejs/dist
-packages/yoroi-lib-browser/dist
-packages/yoroi-lib-mobile/dist
+packages/cross-csl-core/dist
+packages/cross-csl-nodejs/dist
+packages/cross-csl-browser/dist
+packages/cross-csl-mobile/dist
 
 # packaged tgzs
-**/emurgo-yoroi-lib-*.tgz
+**/emurgo-cross-csl-*.tgz
 
 # Browser package Karma coverage
-packages/yoroi-lib-browser/coverage
+packages/cross-csl-browser/coverage
 
 __storage__

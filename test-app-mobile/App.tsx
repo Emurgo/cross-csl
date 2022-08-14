@@ -6,17 +6,17 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { setupTests } from '../packages/yoroi-lib-core/spec/index.spec'
-import { init } from '../packages/yoroi-lib-mobile/src'
+import { setupTests } from '../packages/cross-csl-core/spec/index.spec'
+import { init } from '../packages/cross-csl-mobile/src'
 import { MochaYoroiReporter } from './MochaYoroiReporter'
 
 export default function App() {
   useEffect(() => {
-    const yoroiLib = init();
+    const wasm = init();
 
     mocha.setup('bdd');
 
-    const suite = setupTests(yoroiLib, 'Yoroi Lib Mobile');
+    const suite = setupTests(wasm, 'Cross CSL Mobile');
     const runner = new Mocha.Runner(suite);
     const reporter = new MochaYoroiReporter(runner);
 
