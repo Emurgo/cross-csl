@@ -682,8 +682,6 @@ export abstract class Bip32PrivateKey extends _Ptr {
   }
 }
 
-/* TODO: Tested up to here (Remove) */
-
 export abstract class ByronAddress extends _Ptr {
   abstract toBase58(): Promise<string>;
 
@@ -938,6 +936,8 @@ export abstract class TransactionBody extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
+
+/* TODO: Tested up to here (Remove) */
 
 export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
