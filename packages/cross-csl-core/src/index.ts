@@ -460,8 +460,6 @@ export type PolicyID = ScriptHash;
 
 export type PolicyIDs = ScriptHashes;
 
-/* TODO: Tested up to here (Remove) */
-
 export abstract class MultiAsset extends _Ptr {
   abstract len(): Promise<number>;
   abstract insert(key: PolicyID, value: Assets): Promise<Assets>;
@@ -683,6 +681,8 @@ export abstract class Bip32PrivateKey extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
+
+/* TODO: Tested up to here (Remove) */
 
 export abstract class ByronAddress extends _Ptr {
   abstract toBase58(): Promise<string>;
