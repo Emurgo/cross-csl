@@ -374,6 +374,8 @@ export abstract class TransactionMetadatum extends _Ptr {
   }
 }
 
+/* TODO: Tested up to here (Remove) */
+
 export abstract class AuxiliaryData extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
