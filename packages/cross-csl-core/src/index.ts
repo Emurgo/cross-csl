@@ -937,8 +937,6 @@ export abstract class TransactionBody extends _Ptr {
   }
 }
 
-/* TODO: Tested up to here (Remove) */
-
 export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
     hash: Ed25519KeyHash,
