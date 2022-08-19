@@ -374,8 +374,6 @@ export abstract class TransactionMetadatum extends _Ptr {
   }
 }
 
-/* TODO: Tested up to here (Remove) */
-
 export abstract class AuxiliaryData extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
@@ -461,6 +459,8 @@ export abstract class ScriptHashes extends _WasmProxy {
 export type PolicyID = ScriptHash;
 
 export type PolicyIDs = ScriptHashes;
+
+/* TODO: Tested up to here (Remove) */
 
 export abstract class MultiAsset extends _Ptr {
   abstract len(): Promise<number>;
