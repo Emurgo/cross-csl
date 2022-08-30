@@ -8,6 +8,7 @@
   },
   "exclude": [
     "dist",
+    "spec",
     "node_modules"
   ]
 }
