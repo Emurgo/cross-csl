@@ -1733,6 +1733,10 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.add(item.wasm));
     }
 
+    get(index: number): Promise<Vkeywitness> {
+      return Promise.resolve(new Vkeywitness(this.wasm.get(index)));
+    }
+
     static new(): Promise<Vkeywitnesses> {
       return Promise.resolve(new Vkeywitnesses(WasmV4.Vkeywitnesses.new()));
     }
