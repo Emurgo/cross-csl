@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/cross-csl-browser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "test": "yarn karma start",
-    "build": "yarn install && node_modules/typescript/bin/tsc",
+    "build": "yarn install && node_modules/typescript/bin/tsc --project tsconfig.build.json",
     "clean": "rm -rf ./dist",
     "gen-flow-defs": "node ../../generate-flow.js",
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "9.1.4",
-    "@emurgo/cross-csl-core": "1.0.0"
+    "@emurgo/cross-csl-core": "1.0.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",

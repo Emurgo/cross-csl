@@ -1,13 +1,13 @@
 {
   "name": "@emurgo/cross-csl-mobile",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "yarn install && node_modules/typescript/bin/tsc",
+    "build": "yarn install && node_modules/typescript/bin/tsc --project tsconfig.json",
     "clean": "rm -rf ./dist",
     "gen-flow-defs": "node ../../generate-flow.js",
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/react-native-haskell-shelley": "3.1.4",
-    "@emurgo/cross-csl-core": "1.0.0"
+    "@emurgo/cross-csl-core": "1.0.1"
   },
   "devDependencies": {
     "typescript": "^4.4.4"
