@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "ES2020",
+    "module": "ES6",
     "target": "ES6",
     "declaration": true,
     "strict": true,
@@ -9,6 +9,7 @@
   },
   "exclude": [
     "dist",
+    "spec",
     "node_modules"
   ]
 }

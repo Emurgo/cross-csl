@@ -1114,6 +1114,8 @@ export abstract class Vkeywitnesses extends _Ptr {
 
   abstract add(item: Vkeywitness): Promise<void>;
 
+  abstract get(index: number): Promise<Vkeywitness>;
+
   static new(): Promise<Vkeywitnesses> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }

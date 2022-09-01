@@ -1669,6 +1669,11 @@ namespace Mobile {
       return await this.wasm.add(item.wasm);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    get(index: number): Promise<Vkeywitness> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
     static async new(): Promise<Vkeywitnesses> {
       return new Vkeywitnesses(await WasmV4.Vkeywitnesses.new());
     }
