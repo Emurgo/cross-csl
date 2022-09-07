@@ -1769,6 +1769,10 @@ namespace Mobile {
       return await anyWasm.to_bytes();
     }
 
+    auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
     static async new(
       body: TransactionBody,
       witnessSet: TransactionWitnessSet,

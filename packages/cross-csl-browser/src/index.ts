@@ -1837,6 +1837,10 @@ namespace Browser {
       return Promise.resolve(this.wasm.to_bytes());
     }
 
+    auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
+      return Promise.resolve(new AuxiliaryData(this.wasm.auxiliary_data()));
+    }
+
     static new(
       body: TransactionBody,
       witnessSet: TransactionWitnessSet,

@@ -14,10 +14,10 @@
     blake2 "^4.0.2"
     int64-buffer "^1.0.1"
 
-"@emurgo/cross-csl-core@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-1.0.1.tgz#7c1cdeb72b61857f7f909aeabd7641cbb9a58fb0"
-  integrity sha512-CMd4gx+xbe14e4baWfrT94m24eIcYlKl0R9x9iEokuCcrYTYyJNXIdJMYzkCPM3bTgvvEaQqkjOp2JnLyVV3ZA==
+"@emurgo/cross-csl-core@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-1.0.2.tgz#008f13310a827c54ba78ef009773dc0c34f54dd0"
+  integrity sha512-EZnxT9Ay1TAg7l8TlFQh7tKnjK9uEzvhQ8hF8r8oMXwAUP6KomhXX+as95FDqJjhZhMnbum6Obfcf0kXyDHdEw==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     "@types/mocha" "^9.1.1"

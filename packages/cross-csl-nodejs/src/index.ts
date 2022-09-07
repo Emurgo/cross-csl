@@ -1833,6 +1833,10 @@ namespace NodeJs {
       return Promise.resolve(this.wasm.is_valid());
     }
 
+    auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
+      return Promise.resolve(new AuxiliaryData(this.wasm.auxiliary_data()));
+    }
+
     toBytes(): Promise<Uint8Array> {
       return Promise.resolve(this.wasm.to_bytes());
     }
