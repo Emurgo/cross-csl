@@ -1169,6 +1169,8 @@ export abstract class Transaction extends _Ptr {
 
   abstract toBytes(): Promise<Uint8Array>;
 
+  abstract auxiliaryData(): Promise<AuxiliaryData>;
+
   static new(
     body: TransactionBody,
     witnessSet: TransactionWitnessSet,
