@@ -7,9 +7,9 @@
     "dist/**"
   ],
   "scripts": {
-    "test": "mocha",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "test:watch": "mocha --watch",
-    "build": "yarn install && node_modules/typescript/bin/tsc --project tsconfig.build.json",
+    "build": "yarn install && node_modules/typescript/bin/tsc tsconfig.build.json",
     "clean": "rm -rf ./dist",
     "gen-flow-defs": "node ../../generate-flow.js",
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
@@ -40,7 +40,7 @@
     "prettier": "^2.4.1",
     "sinon": "^11.1.2",
     "ts-mocha": "^10.0.0",
-    "ts-node": "^10.2.1",
+    "ts-node": "^10.9.1",
     "ts-sinon": "^2.0.2",
     "typescript": "^4.4.3"
   }
