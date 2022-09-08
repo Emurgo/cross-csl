@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { WasmModuleProxy } from '../src/index';
 import { expect } from 'chai';
 
@@ -86,7 +85,6 @@ export const setupTests = (
     });
 
     describe('LinearFee', () => {
-
       it('new()', async () => {
         const coefficient = await wasm.BigNum.fromStr('100000');
         const constant = await wasm.BigNum.fromStr('1000');
@@ -113,7 +111,6 @@ export const setupTests = (
     });
 
     describe('GeneralTransactionMetadata', () => {
-
       it('new()', async () => {
         const g = await wasm.GeneralTransactionMetadata.new();
         expect(g.hasValue()).to.be.true;
@@ -172,7 +169,6 @@ export const setupTests = (
     });
 
     describe('TransactionMetadatumLabels', () => {
-
       it('new()', async () => {
         const t = await wasm.TransactionMetadatumLabels.new();
         expect(t.hasValue()).to.be.true;
@@ -206,7 +202,6 @@ export const setupTests = (
     });
 
     describe('MetadataMap', () => {
-
       const detailedSchema = {
         map: [
           {
@@ -374,15 +369,14 @@ export const setupTests = (
     });
 
     describe('TransactionMetadatum', () => {
-
       it('newMap()', async () => {
         const value = await wasm.MetadataMap.new();
         const t = await wasm.TransactionMetadatum.newMap(value);
         expect(t.hasValue()).to.be.true;
       });
       it('newList()', async () => {
-        const value = await wasm.MetadataMap.new();
-        const t = await wasm.TransactionMetadatum.newMap(value);
+        const value = await wasm.MetadataList.new();
+        const t = await wasm.TransactionMetadatum.newList(value);
         expect(t.hasValue()).to.be.true;
       });
       it('newInt()', async () => {
@@ -595,7 +589,7 @@ export const setupTests = (
         const s = await wasm.ScriptHashes.new();
         const scriptHash = await wasm.ScriptHash.fromBytes(Buffer.from(Array.from(Array(28).keys()).fill(0)));
         await s.add(scriptHash);
-        expect(await (await s.len()).toString()).to.be.equal('1');
+        expect((await s.len()).toString()).to.be.equal('1');
       });
       it('.toBytes()', async () => {
         const s = await wasm.ScriptHashes.new();
@@ -629,7 +623,7 @@ export const setupTests = (
         const key = await wasm.ScriptHash.fromBytes(Buffer.from(Array.from(Array(28).keys()).fill(0)));
         const value = await wasm.Assets.new();
         await m.insert(key, value);
-        expect(await (await m.len()).toString()).to.be.equal('1');
+        expect((await m.len()).toString()).to.be.equal('1');
       });
       it('.keys()', async () => {
         const m = await wasm.MultiAsset.new();
@@ -643,7 +637,7 @@ export const setupTests = (
 
     describe('Ed25519KeyHash', () => {
       it('.toBytes()', async () => {
-        const e =await wasm.Ed25519KeyHash.fromBytes(Buffer.from(Array.from(Array(28).keys()).fill(0))).then(x => x.toBytes());
+        const e = await wasm.Ed25519KeyHash.fromBytes(Buffer.from(Array.from(Array(28).keys()).fill(0))).then(x => x.toBytes());
         expect(e).to.be.instanceOf(Uint8Array);
       });
       it('.fromBytes()', async () => {
@@ -677,7 +671,7 @@ export const setupTests = (
       it('.index()', async () => {
         const thash = await wasm.TransactionHash.fromBytes(Buffer.from(Array.from(Array(32).keys()).fill(0)));
         const t = await wasm.TransactionInput.new(thash, 0);
-        expect(await (await t.index()).toString()).to.be.equal('0');
+        expect((await t.index()).toString()).to.be.equal('0');
       });
       it('.toBytes()', async () => {
         const t = await wasm.TransactionInput.new(await wasm.TransactionHash.fromBytes(Buffer.from(Array.from(Array(32).keys()).fill(0))), 0).then(x => x.toBytes());
@@ -704,7 +698,7 @@ export const setupTests = (
       it('.setCoin()', async () => {
         const value = await wasm.BigNum.fromStr('0');
         const v = await wasm.Value.new(value);
-        v.setCoin(await wasm.BigNum.fromStr('1'));
+        await v.setCoin(await wasm.BigNum.fromStr('1'));
         expect(await v.coin().then(x => x.toStr())).to.be.equal('1');
       });
       it('.multiasset()', async () => {
@@ -716,7 +710,7 @@ export const setupTests = (
         const value = await wasm.BigNum.fromStr('0');
         const v = await wasm.Value.new(value);
         const multiAsset = await wasm.MultiAsset.new();
-        v.setMultiasset(multiAsset);
+        await v.setMultiasset(multiAsset);
         expect(await v.multiasset().then(x => x.keys.length.toString())).to.be.equal(multiAsset.keys.length.toString());
       });
       it('.checkedAdd()', async () => {
@@ -724,7 +718,7 @@ export const setupTests = (
         const v = await wasm.Value.new(value);
         const value2 = await wasm.BigNum.fromStr('0');
         const v2 = await wasm.Value.new(value2);
-        v.checkedAdd(v2);
+        await v.checkedAdd(v2);
         expect(await v.coin().then(x => x.toStr())).to.be.equal('0');
       });
       it('.checkedSub()', async () => {
@@ -732,7 +726,7 @@ export const setupTests = (
         const v = await wasm.Value.new(value);
         const value2 = await wasm.BigNum.fromStr('0');
         const v2 = await wasm.Value.new(value2);
-        v.checkedSub(v2);
+        await v.checkedSub(v2);
         expect(await v.coin().then(x => x.toStr())).to.be.equal('0');
       });
       it('.clampedSub()', async () => {
@@ -740,7 +734,7 @@ export const setupTests = (
         const v = await wasm.Value.new(value);
         const value2 = await wasm.BigNum.fromStr('0');
         const v2 = await wasm.Value.new(value2);
-        v.clampedSub(v2);
+        await v.clampedSub(v2);
         expect(await v.coin().then(x => x.toStr())).to.be.equal('0');
       });
       it('.compare()', async () => {
@@ -908,22 +902,22 @@ export const setupTests = (
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
         const numValue = await wasm.BigNum.fromStr("0");
         const value = await wasm.Value.new(numValue);
-        const t = wasm.TransactionOutput.new(address, value);
-        expect(await (await t).toBytes()).to.be.instanceOf(Uint8Array);
+        const t = await wasm.TransactionOutput.new(address, value);
+        expect(await t.toBytes()).to.be.instanceOf(Uint8Array);
       });
       it('.address()', async () => {
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
         const numValue = await wasm.BigNum.fromStr("0");
         const value = await wasm.Value.new(numValue);
-        const t = wasm.TransactionOutput.new(address, value);
-        expect(await (await t).address()).to.be.instanceOf(wasm.Address);
+        const t = await wasm.TransactionOutput.new(address, value);
+        expect(await t.address()).to.be.instanceOf(wasm.Address);
       });
       it('.amount()', async () => {
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
         const numValue = await wasm.BigNum.fromStr("0");
         const value = await wasm.Value.new(numValue);
-        const t = wasm.TransactionOutput.new(address, value);
-        expect(await (await t).amount()).to.be.instanceOf(wasm.Value);
+        const t = await wasm.TransactionOutput.new(address, value);
+        expect(await t.amount()).to.be.instanceOf(wasm.Value);
       });
       it('.new()', async () => {
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
@@ -946,25 +940,25 @@ export const setupTests = (
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then(x => x.hash());
         const s = await wasm.StakeCredential.fromKeyhash(hash);
-        expect(await (await s).toBytes()).to.be.instanceOf(Uint8Array);
+        expect(await s.toBytes()).to.be.instanceOf(Uint8Array);
       });
       it('.toKeyhash()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then(x => x.hash());
         const s = await wasm.StakeCredential.fromKeyhash(hash);
-        expect(await (await s).toKeyhash()).to.be.instanceOf(wasm.Ed25519KeyHash);
+        expect(await s.toKeyhash()).to.be.instanceOf(wasm.Ed25519KeyHash);
       });
       it('.toScripthash()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then(x => x.hash());
         const s = await wasm.StakeCredential.fromKeyhash(hash);
-        expect(await (await s).toScripthash()).to.be.instanceOf(wasm.ScriptHash);
+        expect(await s.toScripthash()).to.be.instanceOf(wasm.ScriptHash);
       });
       it('.kind()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then(x => x.hash());
         const s = await wasm.StakeCredential.fromKeyhash(hash);
-        expect(await (await s).kind()).to.be.equal(0);
+        expect(await s.kind()).to.be.equal(0);
       });
       it('.fromBytes()', async () => {
         const key = await stakePrivateKey;
@@ -1443,7 +1437,7 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        tBuilder.setFee(await wasm.BigNum.fromStr('0'));
+        await tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
         expect(t.hasValue()).to.be.true;
@@ -1472,12 +1466,12 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(await wasm.BigNum.fromStr('0'));
+        await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(Buffer.from(ED25519KEYHASH, 'hex'));
         const input = await wasm.TransactionInput.fromBytes(txBytes);
         const amount = await wasm.Value.new(await wasm.BigNum.fromStr('0'));
-        t.addKeyInput(hash, input, amount);
-        expect(t.getImplicitInput()).to.not.be.undefined;
+        await t.addKeyInput(hash, input, amount);
+        expect(await t.getImplicitInput()).to.be.instanceOf(wasm.Value);
       });
       it('.addBootstrapInput()', async () => {
         const transactionHash = await wasm.TransactionHash.fromBytes(Buffer.from(Array.from(Array(32).keys()).fill(0)));
@@ -1490,12 +1484,12 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(await wasm.BigNum.fromStr('0'));
+        await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(Buffer.from(ED25519KEYHASH, 'hex'));
         const input = await wasm.TransactionInput.fromBytes(tBytes);
         const amount = await wasm.Value.new(await wasm.BigNum.fromStr('0'));
-        t.addKeyInput(hash, input, amount);
-        expect(t.getImplicitInput()).to.not.be.undefined;
+        await t.addKeyInput(hash, input, amount);
+        expect(await t.getImplicitInput()).to.be.instanceOf(wasm.Value);
       });
       it('.addInput()', async () => {
         const transactionHash = await wasm.TransactionHash.fromBytes(Buffer.from(Array.from(Array(32).keys()).fill(0)));
@@ -1508,12 +1502,12 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(await wasm.BigNum.fromStr('0'));
+        await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(Buffer.from(ED25519KEYHASH, 'hex'));
         const input = await wasm.TransactionInput.fromBytes(tBytes);
         const amount = await wasm.Value.new(await wasm.BigNum.fromStr('0'));
-        t.addKeyInput(hash, input, amount);
-        expect(t.getImplicitInput()).to.not.be.undefined;
+        await t.addKeyInput(hash, input, amount);
+        expect(await t.getImplicitInput()).to.be.instanceOf(wasm.Value);
       });
       it('.feeForInput()', async () => {
         const transactionHash = await wasm.TransactionHash.fromBytes(Buffer.from(Array.from(Array(32).keys()).fill(0)));
@@ -1543,8 +1537,8 @@ export const setupTests = (
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
         const value = await wasm.Value.new(bigNum);
         const toBytes = await wasm.TransactionOutput.new(address, value).then(x => x.toBytes());
-        t.addOutput(await wasm.TransactionOutput.fromBytes(toBytes));
-        expect(t.getExplicitOutput()).to.not.be.undefined;
+        await t.addOutput(await wasm.TransactionOutput.fromBytes(toBytes));
+        expect(await t.getExplicitOutput()).to.be.instanceOf(wasm.Value);
       });
       it('.feeForOutput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
@@ -1569,7 +1563,7 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(bigNum);
+        await t.setFee(bigNum);
         expect(t.hasValue()).to.be.true;
       });
       it('.setTtl()', async () => {
@@ -1581,8 +1575,8 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(bigNum);
-        t.setTtl(0);
+        await t.setFee(bigNum);
+        await t.setTtl(0);
         expect(t.hasValue()).to.be.true;
       });
       it('.setValidityStartInterval()', async () => {
@@ -1594,7 +1588,7 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setValidityStartInterval(0);
+        await t.setValidityStartInterval(0);
         expect(t.hasValue()).to.be.true;
       });
       it('.setCerts()', async () => {
@@ -1608,7 +1602,7 @@ export const setupTests = (
         );
         const cBytes = await wasm.Certificates.new().then(x => x.toBytes());
         const certificates = await wasm.Certificates.fromBytes(cBytes);
-        t.setCerts(certificates);
+        await t.setCerts(certificates);
         expect(t.hasValue()).to.be.true;
       });
       it('.setWithdrawals()', async () => {
@@ -1622,7 +1616,7 @@ export const setupTests = (
         );
         const rBytes = await wasm.Withdrawals.new().then(x => x.toBytes());
         const withdrawals = await wasm.Withdrawals.fromBytes(rBytes);
-        t.setWithdrawals(withdrawals);
+        await t.setWithdrawals(withdrawals);
         expect(t.hasValue()).to.be.true;
       });
       it('.setAuxiliaryData()', async () => {
@@ -1637,7 +1631,7 @@ export const setupTests = (
         const generalTransactionMetadata = await wasm.GeneralTransactionMetadata.new();
         const aBytes = await wasm.AuxiliaryData.new(generalTransactionMetadata).then(x => x.toBytes());
         const auxiliaryData = await wasm.AuxiliaryData.fromBytes(aBytes);
-        t.setAuxiliaryData(auxiliaryData);
+        await t.setAuxiliaryData(auxiliaryData);
         expect(t.hasValue()).to.be.true;
       });
 
@@ -1716,7 +1710,7 @@ export const setupTests = (
           bigNum,
           bigNum,
         );
-        t.setFee(bigNum);
+        await t.setFee(bigNum);
         expect(await t.build()).to.be.instanceOf(wasm.TransactionBody);
       });
       it('.minFee()', async () => {
@@ -1947,7 +1941,7 @@ export const setupTests = (
       it('.add()', async () => {
         const pkey = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, "hex"));
         const e = await wasm.Ed25519Signature.fromBytes(Buffer.from(Array(64).fill(0)));
-        const vkey = await wasm.Vkey.new(pkey, e);
+        const vkey = await wasm.Vkey.new(pkey);
         const v = await wasm.Vkeywitnesses.new();
         v.add(await wasm.Vkeywitness.new(vkey, e));
         expect(await v.len().then(x => x.toString())).to.be.equal('1');
@@ -1957,7 +1951,7 @@ export const setupTests = (
       it('.new()', async () => {
         const pkey = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, "hex"));
         const e = await wasm.Ed25519Signature.fromBytes(Buffer.from(Array(64).fill(0)));
-        const vkey = await wasm.Vkey.new(pkey, e);
+        const vkey = await wasm.Vkey.new(pkey);
         const b = await wasm.BootstrapWitness.new(
           vkey,
           e,
@@ -1969,7 +1963,7 @@ export const setupTests = (
       it('.toBytes()', async () => {
         const pkey = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, "hex"));
         const e = await wasm.Ed25519Signature.fromBytes(Buffer.from(Array(64).fill(0)));
-        const vkey = await wasm.Vkey.new(pkey, e);
+        const vkey = await wasm.Vkey.new(pkey);
         const b = await wasm.BootstrapWitness.new(
           vkey,
           e,
@@ -1981,7 +1975,7 @@ export const setupTests = (
       it('.fromBytes()', async () => {
         const pkey = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, "hex"));
         const e = await wasm.Ed25519Signature.fromBytes(Buffer.from(Array(64).fill(0)));
-        const vkey = await wasm.Vkey.new(pkey, e);
+        const vkey = await wasm.Vkey.new(pkey);
         const bootstrapWitness = await wasm.BootstrapWitness.new(
           vkey,
           e,
@@ -2004,7 +1998,7 @@ export const setupTests = (
       it('.add()', async () => {
         const pkey = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, "hex"));
         const e = await wasm.Ed25519Signature.fromBytes(Buffer.from(Array(64).fill(0)));
-        const vkey = await wasm.Vkey.new(pkey, e);
+        const vkey = await wasm.Vkey.new(pkey);
         const b = await wasm.BootstrapWitnesses.new();
         b.add(await wasm.BootstrapWitness.new(
           vkey,
@@ -2187,7 +2181,7 @@ export const setupTests = (
         const m = await wasm.MetadataList.new();
         const TransactionMetadatum = await wasm.TransactionMetadatum.fromBytes(Buffer.from([0]));
         await m.add(TransactionMetadatum);
-        expect(await (await m.len()).toString()).to.be.equal('1');
+        expect((await m.len()).toString()).to.be.equal('1');
       });
       it('.toBytes()', async () => {
         const m = await wasm.MetadataList.new();
@@ -2214,7 +2208,7 @@ export const setupTests = (
       });
       it('.fromBytes()', async () => {
         const n = await wasm.NativeScript.fromBytes(Buffer.from(NATIVE_SCRIPT, "hex"));
-        expect(await n.hasValue()).to.be.true;
+        expect(n.hasValue()).to.be.true;
       });
     });
     describe('NativeScripts', () => {
