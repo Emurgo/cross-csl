@@ -132,39 +132,91 @@ namespace Browser {
     implements WasmContract.BigNum
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     toStr(): Promise<string> {
-      return Promise.resolve(this.wasm.to_str());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_str());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     checkedMul(other: BigNum): Promise<BigNum> {
-      const wasmBigNum = this.wasm.checked_mul(other.wasm);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasmBigNum = this.wasm.checked_mul(other.wasm);
+          resolve(new BigNum(wasmBigNum));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     checkedAdd(other: BigNum): Promise<BigNum> {
-      const wasmBigNum = this.wasm.checked_add(other.wasm);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasmBigNum = this.wasm.checked_add(other.wasm);
+          resolve(new BigNum(wasmBigNum));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     checkedSub(other: BigNum): Promise<BigNum> {
-      const wasmBigNum = this.wasm.checked_sub(other.wasm);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasmBigNum = this.wasm.checked_sub(other.wasm);
+          resolve(new BigNum(wasmBigNum));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     clampedSub(other: BigNum): Promise<BigNum> {
-      const wasmBigNum = this.wasm.clamped_sub(other.wasm);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasmBigNum = this.wasm.clamped_sub(other.wasm);
+          resolve(new BigNum(wasmBigNum));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     compare(rhs_value: BigNum): Promise<number> {
-      return Promise.resolve(this.wasm.compare(rhs_value.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.compare(rhs_value.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
-    static async fromBytes(bytes: Uint8Array): Promise<BigNum> {
-      const wasmBigNum = WasmV4.BigNum.from_bytes(bytes);
-      return Promise.resolve(new BigNum(wasmBigNum));
+    static fromBytes(bytes: Uint8Array): Promise<BigNum> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(WasmV4.BigNum.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromStr(string: string): Promise<BigNum> {
-      const wasmBigNum = WasmV4.BigNum.from_str(string);
-      return Promise.resolve(new BigNum(wasmBigNum));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(WasmV4.BigNum.from_str(string)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -172,21 +224,36 @@ namespace Browser {
     extends Ptr<WasmV4.LinearFee>
     implements WasmContract.LinearFee
   {
-    free(): Promise<void> {
-      return Promise.resolve(this.wasm.free());
-    }
     constant(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.constant()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.constant()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     coefficient(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.coefficient()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.coefficient()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
     static new(coefficient: BigNum, constant: BigNum): Promise<LinearFee> {
-      const wasmLinearFee = WasmV4.LinearFee.new(
-        coefficient.wasm,
-        constant.wasm
-      );
-      return Promise.resolve(new LinearFee(wasmLinearFee));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasmLinearFee = WasmV4.LinearFee.new(
+            coefficient.wasm,
+            constant.wasm
+          );
+          resolve(new LinearFee(wasmLinearFee));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -195,38 +262,76 @@ namespace Browser {
     implements WasmContract.GeneralTransactionMetadata
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insert(
       key: BigNum,
       value: TransactionMetadatum
     ): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(this.wasm.insert(key.wasm, value.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.insert(key.wasm, value.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(key: BigNum): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.get(key.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.get(key.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     keys(): Promise<TransactionMetadatumLabels> {
-      return Promise.resolve(new TransactionMetadatumLabels(this.wasm.keys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatumLabels(this.wasm.keys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<GeneralTransactionMetadata> {
-      const wasm = WasmV4.GeneralTransactionMetadata.new();
-      return Promise.resolve(new GeneralTransactionMetadata(wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new GeneralTransactionMetadata(WasmV4.GeneralTransactionMetadata.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<GeneralTransactionMetadata> {
-      const wasm = WasmV4.GeneralTransactionMetadata.from_bytes(bytes);
-      return Promise.resolve(new GeneralTransactionMetadata(wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new GeneralTransactionMetadata(WasmV4.GeneralTransactionMetadata.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -235,33 +340,63 @@ namespace Browser {
     implements WasmContract.TransactionMetadatumLabels
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(elem: BigNum): Promise<void> {
-      return Promise.resolve(this.wasm.add(elem.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(elem.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatumLabels> {
-      return Promise.resolve(
-        new TransactionMetadatumLabels(
-          WasmV4.TransactionMetadatumLabels.from_bytes(bytes)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatumLabels(WasmV4.TransactionMetadatumLabels.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<TransactionMetadatumLabels> {
-      return Promise.resolve(
-        new TransactionMetadatumLabels(WasmV4.TransactionMetadatumLabels.new())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatumLabels(WasmV4.TransactionMetadatumLabels.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -270,117 +405,234 @@ namespace Browser {
     implements WasmContract.MetadataMap
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insert(
       key: TransactionMetadatum,
       value: TransactionMetadatum
     ): Promise<TransactionMetadatum | undefined> {
-      const wasm = this.wasm.insert(key.wasm, value.wasm);
-      if (wasm) {
-        return Promise.resolve(new TransactionMetadatum(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.insert(key.wasm, value.wasm);
+          if (wasm) {
+            resolve(new TransactionMetadatum(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insertStr(
       key: string,
       value: TransactionMetadatum
     ): Promise<TransactionMetadatum | undefined> {
-      const wasm = this.wasm.insert_str(key, value.wasm);
-      if (wasm) {
-        return Promise.resolve(new TransactionMetadatum(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.insert_str(key, value.wasm);
+          if (wasm) {
+            resolve(new TransactionMetadatum(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insertI32(
       key: number,
       value: TransactionMetadatum
     ): Promise<TransactionMetadatum | undefined> {
-      const wasm = this.wasm.insert_i32(key, value.wasm);
-      if (wasm) {
-        return Promise.resolve(new TransactionMetadatum(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.insert_i32(key, value.wasm);
+          if (wasm) {
+            resolve(new TransactionMetadatum(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(key: TransactionMetadatum): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.get(key.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.get(key.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getStr(key: string): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.get_str(key)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.get_str(key)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getI32(key: number): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.get_i32(key)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.get_i32(key)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     has(key: TransactionMetadatum): Promise<boolean> {
-      return Promise.resolve(this.wasm.has(key.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.has(key.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     keys(): Promise<MetadataList> {
-      return Promise.resolve(new MetadataList(this.wasm.keys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataList(this.wasm.keys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
-      return Promise.resolve(
-        new MetadataMap(WasmV4.MetadataMap.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataMap(WasmV4.MetadataMap.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<MetadataMap> {
-      return Promise.resolve(new MetadataMap(WasmV4.MetadataMap.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataMap(WasmV4.MetadataMap.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
   export class Int extends Ptr<WasmV4.Int> implements WasmContract.Int {
     isPositive(): Promise<boolean> {
-      return Promise.resolve(this.wasm.is_positive());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.is_positive());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asPositive(): Promise<BigNum | undefined> {
-      const wasm = this.wasm.as_positive();
-      if (wasm) {
-        return Promise.resolve(new BigNum(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.as_positive();
+          if (wasm) {
+            resolve(new BigNum(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asNegative(): Promise<BigNum | undefined> {
-      const wasm = this.wasm.as_negative();
-      if (wasm) {
-        return Promise.resolve(new BigNum(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.as_negative();
+          if (wasm) {
+            resolve(new BigNum(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asI32(): Promise<number | undefined> {
-      return Promise.resolve(this.wasm.as_i32());
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.as_i32();
+          if (wasm) {
+            resolve(wasm);
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(x: BigNum): Promise<Int> {
-      return Promise.resolve(new Int(WasmV4.Int.new(x.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Int(WasmV4.Int.new(x.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newNegative(x: BigNum): Promise<Int> {
-      return Promise.resolve(new Int(WasmV4.Int.new_negative(x.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Int(WasmV4.Int.new_negative(x.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newI32(x: number): Promise<Int> {
-      return Promise.resolve(new Int(WasmV4.Int.new_i32(x)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Int(WasmV4.Int.new_i32(x)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -389,69 +641,135 @@ namespace Browser {
     implements WasmContract.TransactionMetadatum
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     kind(): Promise<number> {
-      return Promise.resolve(this.wasm.kind());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.kind());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asMap(): Promise<MetadataMap> {
-      return Promise.resolve(new MetadataMap(this.wasm.as_map()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataMap(this.wasm.as_map()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asList(): Promise<MetadataList> {
-      return Promise.resolve(new MetadataList(this.wasm.as_list()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataList(this.wasm.as_list()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asInt(): Promise<Int> {
-      return Promise.resolve(new Int(this.wasm.as_int()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Int(this.wasm.as_int()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asText(): Promise<string> {
-      return Promise.resolve(this.wasm.as_text());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_text());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(WasmV4.TransactionMetadatum.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(WasmV4.TransactionMetadatum.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newMap(map: MetadataMap): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_map(map.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(WasmV4.TransactionMetadatum.new_map(map.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newList(list: MetadataList): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(
-          WasmV4.TransactionMetadatum.new_list(list.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(
+            WasmV4.TransactionMetadatum.new_list(list.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newInt(int: Int): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_int(int.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(WasmV4.TransactionMetadatum.new_int(int.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(WasmV4.TransactionMetadatum.new_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newText(text: string): Promise<TransactionMetadatum> {
-      return Promise.resolve(
-        new TransactionMetadatum(WasmV4.TransactionMetadatum.new_text(text))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(WasmV4.TransactionMetadatum.new_text(text)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -460,58 +778,115 @@ namespace Browser {
     implements WasmContract.AuxiliaryData
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     metadata(): Promise<GeneralTransactionMetadata> {
-      const wasm = this.wasm.metadata();
-      return Promise.resolve(new GeneralTransactionMetadata(wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new GeneralTransactionMetadata(this.wasm.metadata()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setMetadata(metadata: GeneralTransactionMetadata): Promise<void> {
-      return Promise.resolve(this.wasm.set_metadata(metadata.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_metadata(metadata.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     nativeScripts(): Promise<NativeScripts | undefined> {
-      const wasm = this.wasm.native_scripts();
-      if (wasm) {
-        return Promise.resolve(new NativeScripts(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.native_scripts();
+          if (wasm) {
+            resolve(new NativeScripts(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setNativeScripts(native_scripts: NativeScripts): Promise<void> {
-      return Promise.resolve(this.wasm.set_native_scripts(native_scripts.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_native_scripts(native_scripts.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     plutusScripts(): Promise<PlutusScripts | undefined> {
-      const wasm = this.wasm.plutus_scripts();
-      if (wasm) {
-        return Promise.resolve(new PlutusScripts(wasm));
-      } else {
-        return Promise.resolve(undefined);
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.plutus_scripts();
+          if (wasm) {
+            resolve(new PlutusScripts(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setPlutusScripts(plutus_scripts: PlutusScripts): Promise<void> {
-      return Promise.resolve(this.wasm.set_plutus_scripts(plutus_scripts.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_plutus_scripts(plutus_scripts.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
-      return Promise.resolve(
-        new AuxiliaryData(WasmV4.AuxiliaryData.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AuxiliaryData(WasmV4.AuxiliaryData.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
-      const wasm = WasmV4.AuxiliaryData.new();
-      wasm.set_metadata(metadata.wasm);
-      return Promise.resolve(new AuxiliaryData(wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = WasmV4.AuxiliaryData.new();
+          wasm.set_metadata(metadata.wasm);
+          resolve(new AuxiliaryData(wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static empty(): Promise<AuxiliaryData> {
-      return Promise.resolve(new AuxiliaryData(undefined));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AuxiliaryData(undefined));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -520,18 +895,43 @@ namespace Browser {
     implements WasmContract.AssetName
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
+
     name(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.name());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.name());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<AssetName> {
-      return Promise.resolve(new AssetName(WasmV4.AssetName.from_bytes(bytes)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AssetName(WasmV4.AssetName.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(name: Uint8Array): Promise<AssetName> {
-      return Promise.resolve(new AssetName(WasmV4.AssetName.new(name)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AssetName(WasmV4.AssetName.new(name)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -540,19 +940,43 @@ namespace Browser {
     implements WasmContract.AssetNames
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<AssetName> {
-      return Promise.resolve(new AssetName(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AssetName(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
-    async add(item: AssetName): Promise<void> {
-      this.wasm.add(item.wasm);
+    add(item: AssetName): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<AssetNames> {
-      return Promise.resolve(new AssetNames(WasmV4.AssetNames.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AssetNames(WasmV4.AssetNames.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -561,23 +985,53 @@ namespace Browser {
     implements WasmContract.Assets
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insert(key: AssetName, value: BigNum): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(key: AssetName): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.get(key.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.get(key.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     keys(): Promise<AssetNames> {
-      return Promise.resolve(new AssetNames(this.wasm.keys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AssetNames(this.wasm.keys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<Assets> {
-      return Promise.resolve(new Assets(WasmV4.Assets.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Assets(WasmV4.Assets.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -586,13 +1040,23 @@ namespace Browser {
     implements WasmContract.ScriptHash
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<ScriptHash> {
-      return Promise.resolve(
-        new ScriptHash(WasmV4.ScriptHash.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHash(WasmV4.ScriptHash.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -601,29 +1065,63 @@ namespace Browser {
     implements WasmContract.ScriptHashes
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<ScriptHash> {
-      return Promise.resolve(new ScriptHash(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHash(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
-    async add(item: ScriptHash): Promise<void> {
-      this.wasm.add(item.wasm);
+    add(item: ScriptHash): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<ScriptHashes> {
-      return Promise.resolve(
-        new ScriptHashes(WasmV4.ScriptHashes.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHashes(WasmV4.ScriptHashes.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<ScriptHashes> {
-      return Promise.resolve(new ScriptHashes(WasmV4.ScriptHashes.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHashes(WasmV4.ScriptHashes.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -636,27 +1134,63 @@ namespace Browser {
     implements WasmContract.MultiAsset
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insert(key: PolicyID, value: Assets): Promise<Assets> {
-      return Promise.resolve(new Assets(this.wasm.insert(key.wasm, value.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Assets(this.wasm.insert(key.wasm, value.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(key: PolicyID): Promise<Assets> {
-      return Promise.resolve(new Assets(this.wasm.get(key.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Assets(this.wasm.get(key.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     keys(): Promise<PolicyIDs> {
-      return Promise.resolve(new ScriptHashes(this.wasm.keys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHashes(this.wasm.keys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     sub(rhs: MultiAsset): Promise<MultiAsset> {
-      return Promise.resolve(new MultiAsset(this.wasm.sub(rhs.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MultiAsset(this.wasm.sub(rhs.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<MultiAsset> {
-      return Promise.resolve(new MultiAsset(WasmV4.MultiAsset.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MultiAsset(WasmV4.MultiAsset.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -665,13 +1199,23 @@ namespace Browser {
     implements WasmContract.Ed25519KeyHash
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
-      return Promise.resolve(
-        new Ed25519KeyHash(WasmV4.Ed25519KeyHash.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519KeyHash(WasmV4.Ed25519KeyHash.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -680,13 +1224,24 @@ namespace Browser {
     implements WasmContract.TransactionHash
   {
     toBytes(): Promise<Uint8Array> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
       return Promise.resolve(this.wasm.to_bytes());
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
-      return Promise.resolve(
-        new TransactionHash(WasmV4.TransactionHash.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionHash(WasmV4.TransactionHash.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -695,70 +1250,155 @@ namespace Browser {
     implements WasmContract.TransactionInput
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     transactionId(): Promise<TransactionHash> {
-      return Promise.resolve(new TransactionHash(this.wasm.transaction_id()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionHash(this.wasm.transaction_id()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     index(): Promise<number> {
-      return Promise.resolve(this.wasm.index());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.index());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
       transactionId: TransactionHash,
       index: number
     ): Promise<TransactionInput> {
-      return Promise.resolve(
-        new TransactionInput(
-          WasmV4.TransactionInput.new(transactionId.wasm, index)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionInput(
+            WasmV4.TransactionInput.new(transactionId.wasm, index)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionInput> {
-      return Promise.resolve(
-        new TransactionInput(WasmV4.TransactionInput.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionInput(WasmV4.TransactionInput.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
   export class Value extends Ptr<WasmV4.Value> implements WasmContract.Value {
     coin(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.coin()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.coin()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setCoin(coin: BigNum): Promise<void> {
-      return Promise.resolve(this.wasm.set_coin(coin.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_coin(coin.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     multiasset(): Promise<MultiAsset> {
-      return Promise.resolve(new MultiAsset(this.wasm.multiasset()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MultiAsset(this.wasm.multiasset()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setMultiasset(multiasset: MultiAsset): Promise<void> {
-      return Promise.resolve(this.wasm.set_multiasset(multiasset.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_multiasset(multiasset.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     checkedAdd(rhs: Value): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.checked_add(rhs.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.checked_add(rhs.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     checkedSub(rhs: Value): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.checked_sub(rhs.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.checked_sub(rhs.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     clampedSub(rhs: Value): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.clamped_sub(rhs.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.clamped_sub(rhs.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     compare(rhs: Value): Promise<number | undefined> {
-      return Promise.resolve(this.wasm.compare(rhs.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.compare(rhs.wasm);
+          if (wasm || wasm === 0) {
+            resolve(wasm);
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(coin: BigNum): Promise<Value> {
-      return Promise.resolve(new Value(WasmV4.Value.new(coin.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(WasmV4.Value.new(coin.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -767,23 +1407,53 @@ namespace Browser {
     implements WasmContract.Address
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toBech32(prefix?: string): Promise<string> {
-      return Promise.resolve(this.wasm.to_bech32(prefix));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bech32(prefix));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     networkId(): Promise<number> {
-      return Promise.resolve(this.wasm.network_id());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.network_id());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Address> {
-      return Promise.resolve(new Address(WasmV4.Address.from_bytes(bytes)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(WasmV4.Address.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBech32(string: string): Promise<Address> {
-      return Promise.resolve(new Address(WasmV4.Address.from_bech32(string)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(WasmV4.Address.from_bech32(string)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -792,25 +1462,53 @@ namespace Browser {
     implements WasmContract.PublicKey
   {
     toBech32(): Promise<string> {
-      return Promise.resolve(this.wasm.to_bech32());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bech32());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.as_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     hash(): Promise<Ed25519KeyHash> {
-      return Promise.resolve(new Ed25519KeyHash(this.wasm.hash()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519KeyHash(this.wasm.hash()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBech32(bech32_str: string): Promise<PublicKey> {
-      return Promise.resolve(
-        new PublicKey(WasmV4.PublicKey.from_bech32(bech32_str))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PublicKey(WasmV4.PublicKey.from_bech32(bech32_str)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<PublicKey> {
-      return Promise.resolve(new PublicKey(WasmV4.PublicKey.from_bytes(bytes)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PublicKey(WasmV4.PublicKey.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -819,35 +1517,73 @@ namespace Browser {
     implements WasmContract.Bip32PublicKey
   {
     derive(index: number): Promise<Bip32PublicKey> {
-      return Promise.resolve(new Bip32PublicKey(this.wasm.derive(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PublicKey(this.wasm.derive(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toRawKey(): Promise<PublicKey> {
-      return Promise.resolve(new PublicKey(this.wasm.to_raw_key()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PublicKey(this.wasm.to_raw_key()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.as_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toBech32(): Promise<string> {
-      return Promise.resolve(this.wasm.to_bech32());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bech32());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     chaincode(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.chaincode());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.chaincode());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBech32(bech32_str: string): Promise<Bip32PublicKey> {
-      return Promise.resolve(
-        new Bip32PublicKey(WasmV4.Bip32PublicKey.from_bech32(bech32_str))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PublicKey(WasmV4.Bip32PublicKey.from_bech32(bech32_str)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Bip32PublicKey> {
-      return Promise.resolve(
-        new Bip32PublicKey(WasmV4.Bip32PublicKey.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PublicKey(WasmV4.Bip32PublicKey.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -856,43 +1592,83 @@ namespace Browser {
     implements WasmContract.PrivateKey
   {
     toPublic(): Promise<PublicKey> {
-      return Promise.resolve(new PublicKey(this.wasm.to_public()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PublicKey(this.wasm.to_public()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toBech32(): Promise<string> {
-      return Promise.resolve(this.wasm.to_bech32());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bech32());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.as_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     sign(message: Uint8Array): Promise<Ed25519Signature> {
-      return Promise.resolve(new Ed25519Signature(this.wasm.sign(message)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519Signature(this.wasm.sign(message)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
-      return Promise.resolve(
-        new PrivateKey(WasmV4.PrivateKey.from_extended_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PrivateKey(WasmV4.PrivateKey.from_extended_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
-      return Promise.resolve(
-        new PrivateKey(WasmV4.PrivateKey.from_normal_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PrivateKey(WasmV4.PrivateKey.from_normal_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static generateEd25519(): Promise<PrivateKey> {
-      return Promise.resolve(
-        new PrivateKey(WasmV4.PrivateKey.generate_ed25519())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PrivateKey(WasmV4.PrivateKey.generate_ed25519()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static generateEd25519extended(): Promise<PrivateKey> {
-      return Promise.resolve(
-        new PrivateKey(WasmV4.PrivateKey.generate_ed25519extended())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PrivateKey(WasmV4.PrivateKey.generate_ed25519extended()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -901,52 +1677,98 @@ namespace Browser {
     implements WasmContract.Bip32PrivateKey
   {
     derive(index: number): Promise<Bip32PrivateKey> {
-      return Promise.resolve(new Bip32PrivateKey(this.wasm.derive(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PrivateKey(this.wasm.derive(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toRawKey(): Promise<PrivateKey> {
-      return Promise.resolve(new PrivateKey(this.wasm.to_raw_key()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PrivateKey(this.wasm.to_raw_key()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toPublic(): Promise<Bip32PublicKey> {
-      return Promise.resolve(new Bip32PublicKey(this.wasm.to_public()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PublicKey(this.wasm.to_public()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.as_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.as_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toBech32(): Promise<string> {
-      return Promise.resolve(this.wasm.to_bech32());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bech32());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBip39Entropy(
       entropy: Uint8Array,
       password: Uint8Array
     ): Promise<Bip32PrivateKey> {
-      return Promise.resolve(
-        new Bip32PrivateKey(
-          WasmV4.Bip32PrivateKey.from_bip39_entropy(entropy, password)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PrivateKey(
+            WasmV4.Bip32PrivateKey.from_bip39_entropy(entropy, password)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
-      return Promise.resolve(
-        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bech32(bech32Str))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bech32(bech32Str)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
-      return Promise.resolve(
-        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PrivateKey(WasmV4.Bip32PrivateKey.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
-      return Promise.resolve(
-        new Bip32PrivateKey(WasmV4.Bip32PrivateKey.generate_ed25519_bip32())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Bip32PrivateKey(WasmV4.Bip32PrivateKey.generate_ed25519_bip32()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -955,46 +1777,88 @@ namespace Browser {
     implements WasmContract.ByronAddress
   {
     toBase58(): Promise<string> {
-      return Promise.resolve(this.wasm.to_base58());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_base58());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toAddress(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.to_address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.to_address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     byronProtocolMagic(): Promise<number> {
-      return Promise.resolve(this.wasm.byron_protocol_magic());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.byron_protocol_magic());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     attributes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.attributes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.attributes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static icarusFromKey(
       key: Bip32PublicKey,
       protocolMagic: number
     ): Promise<ByronAddress> {
-      return Promise.resolve(
-        new ByronAddress(
-          WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ByronAddress(
+            WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBase58(string: string): Promise<ByronAddress> {
-      return Promise.resolve(
-        new ByronAddress(WasmV4.ByronAddress.from_base58(string))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ByronAddress(WasmV4.ByronAddress.from_base58(string)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static isValid(string: string): Promise<boolean> {
-      return Promise.resolve(WasmV4.ByronAddress.is_valid(string));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(WasmV4.ByronAddress.is_valid(string));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromAddress(addr: Address): Promise<ByronAddress> {
-      return Promise.resolve(
-        new ByronAddress(WasmV4.ByronAddress.from_address(addr.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ByronAddress(WasmV4.ByronAddress.from_address(addr.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1003,29 +1867,55 @@ namespace Browser {
     implements WasmContract.TransactionOutput
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     address(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     amount(): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.amount()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.amount()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-      return Promise.resolve(
-        new TransactionOutput(WasmV4.TransactionOutput.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionOutput(WasmV4.TransactionOutput.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(address: Address, amount: Value): Promise<TransactionOutput> {
-      return Promise.resolve(
-        new TransactionOutput(
-          WasmV4.TransactionOutput.new(address.wasm, amount.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionOutput(
+            WasmV4.TransactionOutput.new(address.wasm, amount.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1034,37 +1924,73 @@ namespace Browser {
     implements WasmContract.StakeCredential
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toKeyhash(): Promise<Ed25519KeyHash> {
-      return Promise.resolve(new Ed25519KeyHash(this.wasm.to_keyhash()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519KeyHash(this.wasm.to_keyhash()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toScripthash(): Promise<ScriptHash> {
-      return Promise.resolve(new ScriptHash(this.wasm.to_scripthash()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new ScriptHash(this.wasm.to_scripthash()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     kind(): Promise<number> {
-      return Promise.resolve(this.wasm.kind());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.kind());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<StakeCredential> {
-      return Promise.resolve(
-        new StakeCredential(WasmV4.StakeCredential.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(WasmV4.StakeCredential.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromKeyhash(hash: Ed25519KeyHash): Promise<StakeCredential> {
-      return Promise.resolve(
-        new StakeCredential(WasmV4.StakeCredential.from_keyhash(hash.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(WasmV4.StakeCredential.from_keyhash(hash.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromScripthash(hash: ScriptHash): Promise<StakeCredential> {
-      return Promise.resolve(
-        new StakeCredential(WasmV4.StakeCredential.from_scripthash(hash.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(WasmV4.StakeCredential.from_scripthash(hash.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1073,25 +1999,45 @@ namespace Browser {
     implements WasmContract.StakeRegistration
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     stakeCredential(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.stake_credential()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.stake_credential()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(stakeCredential: StakeCredential): Promise<StakeRegistration> {
-      return Promise.resolve(
-        new StakeRegistration(
-          WasmV4.StakeRegistration.new(stakeCredential.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeRegistration(
+            WasmV4.StakeRegistration.new(stakeCredential.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<StakeRegistration> {
-      return Promise.resolve(
-        new StakeRegistration(WasmV4.StakeRegistration.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeRegistration(WasmV4.StakeRegistration.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1100,25 +2046,45 @@ namespace Browser {
     implements WasmContract.StakeDeregistration
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     stakeCredential(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.stake_credential()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.stake_credential()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(stakeCredential: StakeCredential): Promise<StakeDeregistration> {
-      return Promise.resolve(
-        new StakeDeregistration(
-          WasmV4.StakeDeregistration.new(stakeCredential.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDeregistration(
+            WasmV4.StakeDeregistration.new(stakeCredential.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<StakeDeregistration> {
-      return Promise.resolve(
-        new StakeDeregistration(WasmV4.StakeDeregistration.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDeregistration(WasmV4.StakeDeregistration.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1127,32 +2093,58 @@ namespace Browser {
     implements WasmContract.StakeDelegation
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     stakeCredential(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.stake_credential()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.stake_credential()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     poolKeyhash(): Promise<Ed25519KeyHash> {
-      return Promise.resolve(new Ed25519KeyHash(this.wasm.pool_keyhash()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519KeyHash(this.wasm.pool_keyhash()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
       stakeCredential: StakeCredential,
       poolKeyHash: Ed25519KeyHash
     ): Promise<StakeDelegation> {
-      return Promise.resolve(
-        new StakeDelegation(
-          WasmV4.StakeDelegation.new(stakeCredential.wasm, poolKeyHash.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDelegation(
+            WasmV4.StakeDelegation.new(stakeCredential.wasm, poolKeyHash.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<StakeDelegation> {
-      return Promise.resolve(
-        new StakeDelegation(WasmV4.StakeDelegation.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDelegation(WasmV4.StakeDelegation.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1161,61 +2153,95 @@ namespace Browser {
     implements WasmContract.Certificate
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asStakeRegistration(): Promise<StakeRegistration> {
-      return Promise.resolve(
-        new StakeRegistration(this.wasm.as_stake_registration())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeRegistration(this.wasm.as_stake_registration()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asStakeDeregistration(): Promise<StakeDeregistration> {
-      return Promise.resolve(
-        new StakeDeregistration(this.wasm.as_stake_deregistration())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDeregistration(this.wasm.as_stake_deregistration()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     asStakeDelegation(): Promise<StakeDelegation> {
-      return Promise.resolve(
-        new StakeDelegation(this.wasm.as_stake_delegation())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeDelegation(this.wasm.as_stake_delegation()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Certificate> {
-      return Promise.resolve(
-        new Certificate(WasmV4.Certificate.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificate(WasmV4.Certificate.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newStakeRegistration(
       stakeRegistration: StakeRegistration
     ): Promise<Certificate> {
-      return Promise.resolve(
-        new Certificate(
-          WasmV4.Certificate.new_stake_registration(stakeRegistration.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificate(
+            WasmV4.Certificate.new_stake_registration(stakeRegistration.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newStakeDeregistration(
       stakeDeregistration: StakeDeregistration
     ): Promise<Certificate> {
-      return Promise.resolve(
-        new Certificate(
-          WasmV4.Certificate.new_stake_deregistration(stakeDeregistration.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificate(
+            WasmV4.Certificate.new_stake_deregistration(stakeDeregistration.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static newStakeDelegation(
       stakeDelegation: StakeDelegation
     ): Promise<Certificate> {
-      return Promise.resolve(
-        new Certificate(
-          WasmV4.Certificate.new_stake_delegation(stakeDelegation.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificate(
+            WasmV4.Certificate.new_stake_delegation(stakeDelegation.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1224,29 +2250,63 @@ namespace Browser {
     implements WasmContract.Certificates
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<Certificate> {
-      return Promise.resolve(new Certificate(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificate(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(item: Certificate): Promise<void> {
-      return Promise.resolve(this.wasm.add(item.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Certificates> {
-      return Promise.resolve(
-        new Certificates(WasmV4.Certificates.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificates(WasmV4.Certificates.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<Certificates> {
-      return Promise.resolve(new Certificates(WasmV4.Certificates.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificates(WasmV4.Certificates.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1255,26 +2315,46 @@ namespace Browser {
     implements WasmContract.RewardAddress
   {
     paymentCred(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.payment_cred()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toAddress(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.to_address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.to_address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromAddress(addr: Address): Promise<RewardAddress> {
-      return Promise.resolve(
-        new RewardAddress(WasmV4.RewardAddress.from_address(addr.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddress(WasmV4.RewardAddress.from_address(addr.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
       network: number,
       payment: StakeCredential
     ): Promise<RewardAddress> {
-      return Promise.resolve(
-        new RewardAddress(WasmV4.RewardAddress.new(network, payment.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddress(WasmV4.RewardAddress.new(network, payment.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1283,29 +2363,63 @@ namespace Browser {
     implements WasmContract.RewardAddresses
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<RewardAddress> {
-      return Promise.resolve(new RewardAddress(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddress(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(item: RewardAddress): Promise<void> {
-      return Promise.resolve(this.wasm.add(item.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
-      return Promise.resolve(
-        new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddresses(WasmV4.RewardAddresses.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<RewardAddresses> {
-      return Promise.resolve(new RewardAddresses(WasmV4.RewardAddresses.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddresses(WasmV4.RewardAddresses.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1314,33 +2428,73 @@ namespace Browser {
     implements WasmContract.Withdrawals
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     insert(key: RewardAddress, value: BigNum): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.insert(key.wasm, value.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(key: RewardAddress): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.get(key.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.get(key.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     keys(): Promise<RewardAddresses> {
-      return Promise.resolve(new RewardAddresses(this.wasm.keys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new RewardAddresses(this.wasm.keys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<Withdrawals> {
-      return Promise.resolve(new Withdrawals(WasmV4.Withdrawals.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Withdrawals(WasmV4.Withdrawals.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
-      return Promise.resolve(
-        new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Withdrawals(WasmV4.Withdrawals.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1349,11 +2503,23 @@ namespace Browser {
     implements WasmContract.TransactionInputs
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<TransactionInput> {
-      return Promise.resolve(new TransactionInput(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionInput(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1362,11 +2528,23 @@ namespace Browser {
     implements WasmContract.TransactionOutputs
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<TransactionOutput> {
-      return Promise.resolve(new TransactionOutput(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionOutput(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1377,37 +2555,88 @@ namespace Browser {
     implements WasmContract.TransactionBody
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     inputs(): Promise<TransactionInputs> {
-      return Promise.resolve(new TransactionInputs(this.wasm.inputs()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionInputs(this.wasm.inputs()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     outputs(): Promise<TransactionOutputs> {
-      return Promise.resolve(new TransactionOutputs(this.wasm.outputs()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionOutputs(this.wasm.outputs()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     fee(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.fee()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.fee()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     ttl(): Promise<Optional<number | undefined>> {
-      return Promise.resolve(this.wasm.ttl());
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.ttl();
+          if (wasm) {
+            resolve(wasm);
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     certs(): Promise<Certificates> {
-      return Promise.resolve(new Certificates(this.wasm.certs()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Certificates(this.wasm.certs()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     withdrawals(): Promise<Withdrawals> {
-      return Promise.resolve(new Withdrawals(this.wasm.withdrawals()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Withdrawals(this.wasm.withdrawals()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
-      return Promise.resolve(
-        new TransactionBody(WasmV4.TransactionBody.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionBody(WasmV4.TransactionBody.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1420,9 +2649,13 @@ namespace Browser {
       input: TransactionInput,
       amount: Value
     ): Promise<void> {
-      return Promise.resolve(
-        this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm)
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     addBootstrapInput(
@@ -1430,9 +2663,13 @@ namespace Browser {
       input: TransactionInput,
       amount: Value
     ): Promise<void> {
-      return Promise.resolve(
-        this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm)
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     addInput(
@@ -1440,9 +2677,13 @@ namespace Browser {
       input: TransactionInput,
       amount: Value
     ): Promise<void> {
-      return Promise.resolve(
-        this.wasm.add_input(address.wasm, input.wasm, amount.wasm)
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_input(address.wasm, input.wasm, amount.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     feeForInput(
@@ -1450,77 +2691,175 @@ namespace Browser {
       input: TransactionInput,
       amount: Value
     ): Promise<BigNum> {
-      return Promise.resolve(
-        new BigNum(
-          this.wasm.fee_for_input(address.wasm, input.wasm, amount.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(
+            this.wasm.fee_for_input(address.wasm, input.wasm, amount.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     addOutput(output: TransactionOutput): Promise<void> {
-      return Promise.resolve(this.wasm.add_output(output.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_output(output.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     feeForOutput(output: TransactionOutput): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.fee_for_output(output.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.fee_for_output(output.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setFee(fee: BigNum): Promise<void> {
-      return Promise.resolve(this.wasm.set_fee(fee.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_fee(fee.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setTtl(ttl: number): Promise<void> {
-      return Promise.resolve(this.wasm.set_ttl(ttl));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_ttl(ttl));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setValidityStartInterval(validityStartInterval: number): Promise<void> {
-      return Promise.resolve(
-        this.wasm.set_validity_start_interval(validityStartInterval)
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_validity_start_interval(validityStartInterval));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setCerts(certs: Certificates): Promise<void> {
-      return Promise.resolve(this.wasm.set_certs(certs.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_certs(certs.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setWithdrawals(withdrawals: Withdrawals): Promise<void> {
-      return Promise.resolve(this.wasm.set_withdrawals(withdrawals.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_withdrawals(withdrawals.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setAuxiliaryData(auxiliary: AuxiliaryData): Promise<void> {
-      return Promise.resolve(this.wasm.set_auxiliary_data(auxiliary.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_auxiliary_data(auxiliary.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getExplicitInput(): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.get_explicit_input()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.get_explicit_input()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getImplicitInput(): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.get_implicit_input()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.get_implicit_input()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getExplicitOutput(): Promise<Value> {
-      return Promise.resolve(new Value(this.wasm.get_explicit_output()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.get_explicit_output()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getDeposit(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.get_deposit()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.get_deposit()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     getFeeIfSet(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.get_fee_if_set()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.get_fee_if_set()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     addChangeIfNeeded(address: Address): Promise<boolean> {
-      return Promise.resolve(this.wasm.add_change_if_needed(address.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_change_if_needed(address.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     build(): Promise<TransactionBody> {
-      return Promise.resolve(new TransactionBody(this.wasm.build()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionBody(this.wasm.build()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     minFee(): Promise<BigNum> {
-      return Promise.resolve(new BigNum(this.wasm.min_fee()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BigNum(this.wasm.min_fee()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1529,18 +2868,22 @@ namespace Browser {
       poolDeposit: BigNum,
       keyDeposit: BigNum
     ): Promise<TransactionBuilder> {
-      return Promise.resolve(
-        new TransactionBuilder(
-          WasmV4.TransactionBuilder.new(
-            linearFee.wasm,
-            minimumUtxoVal.wasm,
-            poolDeposit.wasm,
-            keyDeposit.wasm,
-            5000,
-            16384
-          )
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionBuilder(
+            WasmV4.TransactionBuilder.new(
+              linearFee.wasm,
+              minimumUtxoVal.wasm,
+              poolDeposit.wasm,
+              keyDeposit.wasm,
+              5000,
+              16384
+            )
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1549,21 +2892,43 @@ namespace Browser {
     implements WasmContract.BaseAddress
   {
     paymentCred(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.payment_cred()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     stakeCred(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.stake_cred()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.stake_cred()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toAddress(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.to_address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.to_address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromAddress(addr: Address): Promise<BaseAddress> {
-      return Promise.resolve(
-        new BaseAddress(WasmV4.BaseAddress.from_address(addr.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BaseAddress(WasmV4.BaseAddress.from_address(addr.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1571,11 +2936,15 @@ namespace Browser {
       payment: StakeCredential,
       stake: StakeCredential
     ): Promise<BaseAddress> {
-      return Promise.resolve(
-        new BaseAddress(
-          WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BaseAddress(
+            WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1584,21 +2953,43 @@ namespace Browser {
     implements WasmContract.PointerAddress
   {
     paymentCred(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.payment_cred()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     stakePointer(): Promise<Pointer> {
-      return Promise.resolve(new Pointer(this.wasm.stake_pointer()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Pointer(this.wasm.stake_pointer()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toAddress(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.to_address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.to_address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromAddress(addr: Address): Promise<PointerAddress> {
-      return Promise.resolve(
-        new PointerAddress(WasmV4.PointerAddress.from_address(addr.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PointerAddress(WasmV4.PointerAddress.from_address(addr.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1606,11 +2997,15 @@ namespace Browser {
       payment: StakeCredential,
       stake: Pointer
     ): Promise<PointerAddress> {
-      return Promise.resolve(
-        new PointerAddress(
-          WasmV4.PointerAddress.new(network, payment.wasm, stake.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PointerAddress(
+            WasmV4.PointerAddress.new(network, payment.wasm, stake.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1619,28 +3014,48 @@ namespace Browser {
     implements WasmContract.EnterpriseAddress
   {
     paymentCred(): Promise<StakeCredential> {
-      return Promise.resolve(new StakeCredential(this.wasm.payment_cred()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new StakeCredential(this.wasm.payment_cred()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toAddress(): Promise<Address> {
-      return Promise.resolve(new Address(this.wasm.to_address()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Address(this.wasm.to_address()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromAddress(addr: Address): Promise<EnterpriseAddress> {
-      return Promise.resolve(
-        new EnterpriseAddress(WasmV4.EnterpriseAddress.from_address(addr.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new EnterpriseAddress(WasmV4.EnterpriseAddress.from_address(addr.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
       network: number,
       payment: StakeCredential
     ): Promise<EnterpriseAddress> {
-      return Promise.resolve(
-        new EnterpriseAddress(
-          WasmV4.EnterpriseAddress.new(network, payment.wasm)
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new EnterpriseAddress(
+            WasmV4.EnterpriseAddress.new(network, payment.wasm)
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1649,15 +3064,33 @@ namespace Browser {
     implements WasmContract.Pointer
   {
     slot(): Promise<number> {
-      return Promise.resolve(this.wasm.slot());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.slot());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     txIndex(): Promise<number> {
-      return Promise.resolve(this.wasm.tx_index());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.tx_index());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     certIndex(): Promise<number> {
-      return Promise.resolve(this.wasm.cert_index());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.cert_index());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1665,15 +3098,25 @@ namespace Browser {
       txIndex: number,
       certIndex: number
     ): Promise<Pointer> {
-      return Promise.resolve(
-        new Pointer(WasmV4.Pointer.new(slot, txIndex, certIndex))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Pointer(WasmV4.Pointer.new(slot, txIndex, certIndex)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
   export class Vkey extends Ptr<WasmV4.Vkey> implements WasmContract.Vkey {
     static new(pk: PublicKey): Promise<Vkey> {
-      return Promise.resolve(new Vkey(WasmV4.Vkey.new(pk.wasm)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkey(WasmV4.Vkey.new(pk.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1682,17 +3125,33 @@ namespace Browser {
     implements WasmContract.Ed25519Signature
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toHex(): Promise<string> {
-      return Promise.resolve(this.wasm.to_hex());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_hex());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
-      return Promise.resolve(
-        new Ed25519Signature(WasmV4.Ed25519Signature.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519Signature(WasmV4.Ed25519Signature.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1701,23 +3160,43 @@ namespace Browser {
     implements WasmContract.Vkeywitness
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     signature(): Promise<Ed25519Signature> {
-      return Promise.resolve(new Ed25519Signature(this.wasm.signature()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519Signature(this.wasm.signature()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
-      return Promise.resolve(
-        new Vkeywitness(WasmV4.Vkeywitness.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkeywitness(WasmV4.Vkeywitness.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
-      return Promise.resolve(
-        new Vkeywitness(WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkeywitness(WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1726,19 +3205,43 @@ namespace Browser {
     implements WasmContract.Vkeywitnesses
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(item: Vkeywitness): Promise<void> {
-      return Promise.resolve(this.wasm.add(item.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<Vkeywitness> {
-      return Promise.resolve(new Vkeywitness(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkeywitness(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<Vkeywitnesses> {
-      return Promise.resolve(new Vkeywitnesses(WasmV4.Vkeywitnesses.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkeywitnesses(WasmV4.Vkeywitnesses.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1747,13 +3250,23 @@ namespace Browser {
     implements WasmContract.BootstrapWitness
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
-      return Promise.resolve(
-        new BootstrapWitness(WasmV4.BootstrapWitness.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BootstrapWitness(WasmV4.BootstrapWitness.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1762,16 +3275,20 @@ namespace Browser {
       chainCode: Uint8Array,
       attributes: Uint8Array
     ): Promise<BootstrapWitness> {
-      return Promise.resolve(
-        new BootstrapWitness(
-          WasmV4.BootstrapWitness.new(
-            vkey.wasm,
-            signature.wasm,
-            chainCode,
-            attributes
-          )
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BootstrapWitness(
+            WasmV4.BootstrapWitness.new(
+              vkey.wasm,
+              signature.wasm,
+              chainCode,
+              attributes
+            )
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1780,17 +3297,33 @@ namespace Browser {
     implements WasmContract.BootstrapWitnesses
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(item: BootstrapWitness): Promise<void> {
-      return Promise.resolve(this.wasm.add(item.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<BootstrapWitnesses> {
-      return Promise.resolve(
-        new BootstrapWitnesses(WasmV4.BootstrapWitnesses.new())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BootstrapWitnesses(WasmV4.BootstrapWitnesses.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1799,21 +3332,43 @@ namespace Browser {
     implements WasmContract.TransactionWitnessSet
   {
     setBootstraps(bootstraps: BootstrapWitnesses): Promise<void> {
-      return Promise.resolve(this.wasm.set_bootstraps(bootstraps.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_bootstraps(bootstraps.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void> {
-      return Promise.resolve(this.wasm.set_vkeys(vkeywitnesses.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_vkeys(vkeywitnesses.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     vkeys(): Promise<Vkeywitnesses> {
-      return Promise.resolve(new Vkeywitnesses(this.wasm.vkeys()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Vkeywitnesses(this.wasm.vkeys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<TransactionWitnessSet> {
-      return Promise.resolve(
-        new TransactionWitnessSet(WasmV4.TransactionWitnessSet.new())
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionWitnessSet(WasmV4.TransactionWitnessSet.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1822,23 +3377,53 @@ namespace Browser {
     implements WasmContract.Transaction
   {
     body(): Promise<TransactionBody> {
-      return Promise.resolve(new TransactionBody(this.wasm.body()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionBody(this.wasm.body()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     witnessSet(): Promise<TransactionWitnessSet> {
-      return Promise.resolve(new TransactionWitnessSet(this.wasm.witness_set()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionWitnessSet(this.wasm.witness_set()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     isValid(): Promise<boolean> {
-      return Promise.resolve(this.wasm.is_valid());
-    }
-
-    toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.is_valid());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
-      return Promise.resolve(new AuxiliaryData(this.wasm.auxiliary_data()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new AuxiliaryData(this.wasm.auxiliary_data()));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    toBytes(): Promise<Uint8Array> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(
@@ -1846,21 +3431,29 @@ namespace Browser {
       witnessSet: TransactionWitnessSet,
       auxiliary?: AuxiliaryData
     ): Promise<Transaction> {
-      return Promise.resolve(
-        new Transaction(
-          WasmV4.Transaction.new(
-            body.wasm,
-            witnessSet.wasm,
-            auxiliary?.internalWasm
-          )
-        )
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Transaction(
+            WasmV4.Transaction.new(
+              body.wasm,
+              witnessSet.wasm,
+              auxiliary?.internalWasm
+            )
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<Transaction> {
-      return Promise.resolve(
-        new Transaction(WasmV4.Transaction.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Transaction(WasmV4.Transaction.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1869,25 +3462,53 @@ namespace Browser {
     implements WasmContract.NetworkInfo
   {
     networkId(): Promise<number> {
-      return Promise.resolve(this.wasm.network_id());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.network_id());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     protocolMagic(): Promise<number> {
-      return Promise.resolve(this.wasm.protocol_magic());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.protocol_magic());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
-      return Promise.resolve(
-        new NetworkInfo(WasmV4.NetworkInfo.new(networkId, protocolMagic))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NetworkInfo(WasmV4.NetworkInfo.new(networkId, protocolMagic)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static testnet(): Promise<NetworkInfo> {
-      return Promise.resolve(new NetworkInfo(WasmV4.NetworkInfo.testnet()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NetworkInfo(WasmV4.NetworkInfo.testnet()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static mainnet(): Promise<NetworkInfo> {
-      return Promise.resolve(new NetworkInfo(WasmV4.NetworkInfo.mainnet()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NetworkInfo(WasmV4.NetworkInfo.mainnet()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1896,29 +3517,63 @@ namespace Browser {
     implements WasmContract.MetadataList
   {
     static new(): Promise<MetadataList> {
-      return Promise.resolve(new MetadataList(WasmV4.MetadataList.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataList(WasmV4.MetadataList.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<MetadataList> {
-      return Promise.resolve(
-        new MetadataList(WasmV4.MetadataList.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new MetadataList(WasmV4.MetadataList.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<TransactionMetadatum> {
-      return Promise.resolve(new TransactionMetadatum(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TransactionMetadatum(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(item: TransactionMetadatum): Promise<void> {
-      return Promise.resolve(this.wasm.add(item.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(item.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1927,21 +3582,43 @@ namespace Browser {
     implements WasmContract.NativeScript
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     hash(namespace: number): Promise<Ed25519KeyHash> {
-      return Promise.resolve(new Ed25519KeyHash(this.wasm.hash(namespace)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Ed25519KeyHash(this.wasm.hash(namespace)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     kind(): Promise<number> {
-      return Promise.resolve(this.wasm.kind());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.kind());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
-      return Promise.resolve(
-        new NativeScript(WasmV4.NativeScript.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NativeScript(WasmV4.NativeScript.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1950,19 +3627,43 @@ namespace Browser {
     implements WasmContract.NativeScripts
   {
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<NativeScript> {
-      return Promise.resolve(new NativeScript(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NativeScript(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(elem: NativeScript): Promise<void> {
-      return Promise.resolve(this.wasm.add(elem.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(elem.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<NativeScripts> {
-      return Promise.resolve(new NativeScripts(WasmV4.NativeScripts.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new NativeScripts(WasmV4.NativeScripts.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1971,21 +3672,43 @@ namespace Browser {
     implements WasmContract.PlutusScript
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     bytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
-      return Promise.resolve(
-        new PlutusScript(WasmV4.PlutusScript.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PlutusScript(WasmV4.PlutusScript.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(bytes: Uint8Array): Promise<PlutusScript> {
-      return Promise.resolve(new PlutusScript(WasmV4.PlutusScript.new(bytes)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PlutusScript(WasmV4.PlutusScript.new(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 
@@ -1994,29 +3717,63 @@ namespace Browser {
     implements WasmContract.PlutusScripts
   {
     toBytes(): Promise<Uint8Array> {
-      return Promise.resolve(this.wasm.to_bytes());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.to_bytes());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     len(): Promise<number> {
-      return Promise.resolve(this.wasm.len());
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.len());
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     get(index: number): Promise<PlutusScript> {
-      return Promise.resolve(new PlutusScript(this.wasm.get(index)));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PlutusScript(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     add(elem: PlutusScript): Promise<void> {
-      return Promise.resolve(this.wasm.add(elem.wasm));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add(elem.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
-      return Promise.resolve(
-        new PlutusScripts(WasmV4.PlutusScripts.from_bytes(bytes))
-      );
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PlutusScripts(WasmV4.PlutusScripts.from_bytes(bytes)));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
     static new(): Promise<PlutusScripts> {
-      return Promise.resolve(new PlutusScripts(WasmV4.PlutusScripts.new()));
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new PlutusScripts(WasmV4.PlutusScripts.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
   }
 }
