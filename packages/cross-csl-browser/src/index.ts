@@ -3316,6 +3316,16 @@ namespace Browser {
       });
     }
 
+    get(index: number): Promise<WasmContract.BootstrapWitness> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BootstrapWitness(this.wasm.get(index)));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
     static new(): Promise<BootstrapWitnesses> {
       return new Promise((resolve, reject) => {
         try {
@@ -3355,6 +3365,16 @@ namespace Browser {
       return new Promise((resolve, reject) => {
         try {
           resolve(new Vkeywitnesses(this.wasm.vkeys()));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new BootstrapWitnesses(this.wasm.bootstraps()));
         } catch (e) {
           reject(e);
         }

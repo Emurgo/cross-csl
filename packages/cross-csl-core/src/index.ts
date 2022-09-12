@@ -1144,6 +1144,8 @@ export abstract class BootstrapWitnesses extends _Ptr {
 
   abstract add(item: BootstrapWitness): Promise<void>;
 
+  abstract get(index: number): Promise<BootstrapWitness>;
+
   static new(): Promise<BootstrapWitnesses> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -1155,6 +1157,8 @@ export abstract class TransactionWitnessSet extends _Ptr {
   abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>;
 
   abstract vkeys(): Promise<Vkeywitnesses>;
+
+  abstract bootstraps(): Promise<BootstrapWitnesses>;
 
   static new(): Promise<TransactionWitnessSet> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
