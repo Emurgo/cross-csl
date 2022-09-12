@@ -1722,6 +1722,11 @@ namespace Mobile {
       return await this.wasm.add(item.wasm);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async get(index: number): Promise<WasmContract.BootstrapWitness> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
     static async new(): Promise<BootstrapWitnesses> {
       return new BootstrapWitnesses(await WasmV4.BootstrapWitnesses.new());
     }
@@ -1740,6 +1745,10 @@ namespace Mobile {
     }
 
     async vkeys(): Promise<Vkeywitnesses> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    async bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
     }
 
