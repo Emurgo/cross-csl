@@ -25,7 +25,7 @@ export interface WasmModuleProxy {
     json: string,
     schema: number
   ): Promise<TransactionMetadatum>
-  minAdaRequired(value: Value, minimumUtxoVal: BigNum): Promise<BigNum>
+  minAdaRequired(value: Value, hasDataHash: boolean, coinsPerUtxoWord: BigNum): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   makeVkeyWitness(
     txBodyHash: TransactionHash,
@@ -1001,7 +1001,8 @@ export abstract class TransactionBuilder extends _Ptr {
     linearFee: LinearFee,
     minimumUtxoVal: BigNum,
     poolDeposit: BigNum,
-    keyDeposit: BigNum
+    keyDeposit: BigNum,
+    coinsPerUtxoWord: BigNum,
   ): Promise<TransactionBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -1228,7 +1229,7 @@ export abstract class MetadataList extends _Ptr {
 export abstract class NativeScript extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract hash(namespace: number): Promise<Ed25519KeyHash>;
+  abstract hash(): Promise<Ed25519KeyHash>;
 
   abstract kind(): Promise<number>;
 

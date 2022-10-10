@@ -15,10 +15,11 @@ export const init = (): WasmContract.WasmModuleProxy => {
     },
     minAdaRequired: async (
       value: Mobile.Value,
-      minimumUtxoVal: Mobile.BigNum
+      hasDataHash: boolean,
+      coinsPerUtxoWord: Mobile.BigNum,
     ) => {
       return new Mobile.BigNum(
-        await WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+        await WasmV4.min_ada_required(value.wasm, coinsPerUtxoWord.wasm)
       );
     },
     hashTransaction: async (txBody: Mobile.TransactionBody) => {
@@ -1886,7 +1887,7 @@ namespace Mobile {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    hash(namespace: number): Promise<Ed25519KeyHash> {
+    hash(): Promise<Ed25519KeyHash> {
       throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
     }
 
