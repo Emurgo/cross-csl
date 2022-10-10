@@ -22,10 +22,14 @@ export const init = (): WasmContract.WasmModuleProxy => {
       const wasm = WasmV4.encode_json_str_to_metadatum(json, schema);
       return Promise.resolve(new Browser.TransactionMetadatum(wasm));
     },
-    minAdaRequired: (value: Browser.Value, minimumUtxoVal: Browser.BigNum) => {
+    minAdaRequired: (
+      value: Browser.Value,
+      hasDataHash: boolean,
+      coinsPerUtxoWord: Browser.BigNum,
+    ) => {
       return Promise.resolve(
         new Browser.BigNum(
-          WasmV4.min_ada_required(value.wasm, minimumUtxoVal.wasm)
+          WasmV4.min_ada_required(value.wasm, hasDataHash, coinsPerUtxoWord.wasm)
         )
       );
     },
@@ -2866,18 +2870,32 @@ namespace Browser {
       linearFee: LinearFee,
       minimumUtxoVal: BigNum,
       poolDeposit: BigNum,
-      keyDeposit: BigNum
+      keyDeposit: BigNum,
+      coinsPerUtxoWord: BigNum,
     ): Promise<TransactionBuilder> {
       return new Promise((resolve, reject) => {
         try {
           resolve(new TransactionBuilder(
             WasmV4.TransactionBuilder.new(
-              linearFee.wasm,
-              minimumUtxoVal.wasm,
-              poolDeposit.wasm,
-              keyDeposit.wasm,
-              5000,
-              16384
+              WasmV4.TransactionBuilderConfigBuilder.new()
+                .fee_algo(linearFee.wasm)
+                .pool_deposit(poolDeposit.wasm)
+                .key_deposit(keyDeposit.wasm)
+                .coins_per_utxo_word(coinsPerUtxoWord.wasm)
+                .max_value_size(5000)
+                .max_tx_size(16384)
+                .ex_unit_prices(WasmV4.ExUnitPrices.new(
+                  WasmV4.UnitInterval.new(
+                    WasmV4.BigNum.from_str('577'),
+                    WasmV4.BigNum.from_str('10000'),
+                  ),
+                  WasmV4.UnitInterval.new(
+                    WasmV4.BigNum.from_str('721'),
+                    WasmV4.BigNum.from_str('10000000'),
+                  ),
+                ))
+                .prefer_pure_change(true)
+                .build()
             )
           ));
         } catch (e) {
@@ -3611,10 +3629,10 @@ namespace Browser {
       });
     }
 
-    hash(namespace: number): Promise<Ed25519KeyHash> {
+    hash(): Promise<Ed25519KeyHash> {
       return new Promise((resolve, reject) => {
         try {
-          resolve(new Ed25519KeyHash(this.wasm.hash(namespace)));
+          resolve(new Ed25519KeyHash(this.wasm.hash()));
         } catch (e) {
           reject(e);
         }
