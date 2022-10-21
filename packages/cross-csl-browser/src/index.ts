@@ -3023,7 +3023,6 @@ namespace Browser {
 
     static new(
       linearFee: LinearFee,
-      minimumUtxoVal: BigNum,
       poolDeposit: BigNum,
       keyDeposit: BigNum,
       coinsPerUtxoWord: BigNum,

@@ -109,7 +109,8 @@ export const init = (): WasmContract.WasmModuleProxy => {
     NativeScript: Mobile.NativeScript,
     NativeScripts: Mobile.NativeScripts,
     PlutusScript: Mobile.PlutusScript,
-    PlutusScripts: Mobile.PlutusScripts
+    PlutusScripts: Mobile.PlutusScripts,
+    TxInputsBuilder: {} as any,
   };
 };
 
@@ -971,6 +972,11 @@ namespace Mobile {
         await WasmV4.TransactionOutput.new(address.wasm, amount.wasm)
       );
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setDataHash(dataHashHex: string): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
   }
 
   export class StakeCredential
@@ -1421,6 +1427,14 @@ namespace Mobile {
       return new Value(await this.wasm.get_explicit_output());
     }
 
+    getTotalOutput(): Promise<Value> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    getTotalInput(): Promise<Value> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
     async getDeposit(): Promise<BigNum> {
       return new BigNum(await this.wasm.get_deposit());
     }
@@ -1431,6 +1445,67 @@ namespace Mobile {
 
     async addChangeIfNeeded(address: Address): Promise<boolean> {
       return await this.wasm.add_change_if_needed(address.wasm);
+    }
+
+    addMintAsset(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      mintScript: NativeScript,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      mintName: AssetName,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      amount: Int
+    ): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addJsonMetadatum(key: BigNum, value: string): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    getAuxiliaryData(): Promise<AuxiliaryData | void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addRequiredSigner(requiredSigner: Ed25519KeyHash): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    addNativeScriptInput(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      nativeScript: NativeScript,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      input: TransactionInput,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      amount: Value,
+    ): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    addPlutusScriptInput(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      plutusScript: PlutusScript,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      datum: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      redeemer: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      input: TransactionInput,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      amount: Value,
+    ): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setCollateral(txInputsBuilder: any): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+    }
+  
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void> {
+      throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
     }
 
     async build(): Promise<TransactionBody> {
