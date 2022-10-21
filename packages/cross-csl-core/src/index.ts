@@ -96,6 +96,7 @@ export interface WasmModuleProxy {
   NativeScripts: typeof NativeScripts
   PlutusScript: typeof PlutusScript
   PlutusScripts: typeof PlutusScripts
+  TxInputsBuilder: typeof TxInputsBuilder
 }
 
 export abstract class _WasmProxy {
@@ -394,7 +395,7 @@ export abstract class AuxiliaryData extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
+  static new(metadata?: GeneralTransactionMetadata): Promise<AuxiliaryData> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -726,6 +727,8 @@ export abstract class TransactionOutput extends _Ptr {
   static new(address: Address, amount: Value): Promise<TransactionOutput> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  abstract setDataHash(dataHashHex: string): Promise<void>;
 }
 
 export abstract class StakeCredential extends _Ptr {
@@ -987,7 +990,11 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract getExplicitOutput(): Promise<Value>;
 
-  abstract getDeposit(): Promise<BigNum>;
+  abstract getTotalInput(): Promise<Value>;
+
+  abstract getTotalOutput(): Promise<Value>;
+
+abstract getDeposit(): Promise<BigNum>;
 
   abstract getFeeIfSet(): Promise<BigNum>;
 
@@ -997,9 +1004,38 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract minFee(): Promise<BigNum>;
 
+  abstract addMintAsset(
+    mintScript: NativeScript,
+    mintName: AssetName,
+    amount: Int,
+  ): Promise<void>;
+
+  abstract addJsonMetadatum(key: BigNum, value: string): Promise<void>;
+
+  abstract getAuxiliaryData(): Promise<AuxiliaryData | void>;
+
+  abstract addRequiredSigner(requiredSigner: Ed25519KeyHash): Promise<void>;
+
+  abstract addNativeScriptInput(
+    nativeScript: NativeScript,
+    input: TransactionInput,
+    amount: Value,
+  ): Promise<void>;
+
+  abstract addPlutusScriptInput(
+    plutusScript: PlutusScript,
+    datum: string,
+    redeemer: string,
+    input: TransactionInput,
+    amount: Value,
+  ): Promise<void>;
+
+  abstract setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void>;
+  
+  abstract calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void>;
+
   static new(
     linearFee: LinearFee,
-    minimumUtxoVal: BigNum,
     poolDeposit: BigNum,
     keyDeposit: BigNum,
     coinsPerUtxoWord: BigNum,
@@ -1304,6 +1340,18 @@ export abstract class PlutusScripts extends _Ptr {
   }
 
   static new(): Promise<PlutusScripts> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class TxInputsBuilder extends _Ptr {
+  abstract addInput(
+    address: Address,
+    input: TransactionInput,
+    amount: Value
+  ): Promise<void>;
+
+  static new(): Promise<TxInputsBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }

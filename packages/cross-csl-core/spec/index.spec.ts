@@ -1265,7 +1265,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1278,7 +1277,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1304,7 +1302,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1317,7 +1314,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1342,7 +1338,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1354,7 +1349,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1372,7 +1366,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1384,7 +1377,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1402,7 +1394,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1414,7 +1405,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1432,7 +1422,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then(x => x.toBytes());
@@ -1444,7 +1433,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1464,7 +1452,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         expect(t.hasValue()).to.be.true;
       });
@@ -1475,7 +1462,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1497,7 +1483,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(Buffer.from(ED25519KEYHASH, 'hex'));
@@ -1513,7 +1498,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1535,7 +1519,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         const input = await wasm.TransactionInput.fromBytes(tBytes);
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
@@ -1547,7 +1530,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1566,7 +1548,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         const address = await wasm.Address.fromBytes(Buffer.from(Array.from(Array(57).keys()).fill(0)));
         const value = await wasm.Value.new(bigNum);
@@ -1581,7 +1562,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         await t.setFee(bigNum);
         expect(t.hasValue()).to.be.true;
@@ -1591,7 +1571,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1608,7 +1587,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         await t.setValidityStartInterval(0);
         expect(t.hasValue()).to.be.true;
@@ -1618,7 +1596,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1636,7 +1613,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         const rBytes = await wasm.Withdrawals.new().then(x => x.toBytes());
         const withdrawals = await wasm.Withdrawals.fromBytes(rBytes);
@@ -1648,7 +1624,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1668,7 +1643,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         expect(await t.getExplicitInput()).to.be.instanceOf(wasm.Value);
       });
@@ -1677,7 +1651,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1692,7 +1665,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         expect(await t.getExplicitOutput()).to.be.instanceOf(wasm.Value);
       });
@@ -1701,7 +1673,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1716,7 +1687,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         expect(await t.getFeeIfSet()).to.be.instanceOf(wasm.BigNum);
       });
@@ -1725,7 +1695,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -1740,7 +1709,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         await t.setFee(bigNum);
         expect(await t.build()).to.be.instanceOf(wasm.TransactionBody);
@@ -1750,7 +1718,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const t = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -2071,7 +2038,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
@@ -2087,7 +2053,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -2110,7 +2075,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
@@ -2126,7 +2090,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,
@@ -2148,7 +2111,6 @@ export const setupTests = (
           bigNum,
           bigNum,
           bigNum,
-          bigNum,
         );
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
@@ -2164,7 +2126,6 @@ export const setupTests = (
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
         const tBuilder = await wasm.TransactionBuilder.new(
           linearFee,
-          bigNum,
           bigNum,
           bigNum,
           bigNum,

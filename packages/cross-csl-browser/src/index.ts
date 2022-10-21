@@ -126,7 +126,8 @@ export const init = (): WasmContract.WasmModuleProxy => {
     NativeScript: Browser.NativeScript,
     NativeScripts: Browser.NativeScripts,
     PlutusScript: Browser.PlutusScript,
-    PlutusScripts: Browser.PlutusScripts
+    PlutusScripts: Browser.PlutusScripts,
+    TxInputsBuilder: Browser.TxInputsBuilder,
   };
 };
 
@@ -871,11 +872,13 @@ namespace Browser {
       });
     }
 
-    static new(metadata: GeneralTransactionMetadata): Promise<AuxiliaryData> {
+    static new(metadata?: GeneralTransactionMetadata): Promise<AuxiliaryData> {
       return new Promise((resolve, reject) => {
         try {
           const wasm = WasmV4.AuxiliaryData.new();
-          wasm.set_metadata(metadata.wasm);
+          if (metadata) {
+            wasm.set_metadata(metadata.wasm);
+          }
           resolve(new AuxiliaryData(wasm));
         } catch (e) {
           reject(e);
@@ -1921,6 +1924,18 @@ namespace Browser {
         }
       });
     }
+
+    setDataHash(dataHashHex: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_data_hash(
+            WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex'))
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
   }
 
   export class StakeCredential
@@ -2816,6 +2831,26 @@ namespace Browser {
       });
     }
 
+    getTotalOutput(): Promise<Value> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.get_total_output()));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    getTotalInput(): Promise<Value> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new Value(this.wasm.get_total_input()));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
     getDeposit(): Promise<BigNum> {
       return new Promise((resolve, reject) => {
         try {
@@ -2846,6 +2881,126 @@ namespace Browser {
       });
     }
 
+    addMintAsset(
+      mintScript: NativeScript,
+      mintName: AssetName,
+      amount: Int
+    ): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_mint_asset(
+            mintScript.wasm,
+            mintName.wasm,
+            amount.wasm
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    addJsonMetadatum(key: BigNum, value: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_json_metadatum(key.wasm, value));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    getAuxiliaryData(): Promise<AuxiliaryData | void> {
+      return new Promise((resolve, reject) => {
+        try {
+          const wasm = this.wasm.get_auxiliary_data();
+          if (wasm) {
+            resolve(new AuxiliaryData(wasm));
+          } else {
+            resolve(undefined);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    addRequiredSigner(requiredSigner: Ed25519KeyHash): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_required_signer(requiredSigner.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+ 
+    addNativeScriptInput(
+      nativeScript: NativeScript,
+      input: TransactionInput,
+      amount: Value,
+    ): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_native_script_input(
+            nativeScript.wasm,
+            input.wasm,
+            amount.wasm,
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    addPlutusScriptInput(
+      plutusScript: PlutusScript,
+      datum: string,
+      redeemer: string,
+      input: TransactionInput,
+      amount: Value,
+    ): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          const plutusWitness = WasmV4.PlutusWitness.new(
+            plutusScript.wasm,
+            WasmV4.PlutusData.from_bytes(Buffer.from(datum, 'hex')),
+            WasmV4.Redeemer.from_bytes(Buffer.from(redeemer, 'hex'))
+          );
+          resolve(this.wasm.add_plutus_script_input(
+            plutusWitness,
+            input.wasm,
+            amount.wasm,
+          ));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.set_collateral(txInputsBuilder.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+  
+    calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void> {
+      const wasmCostModel = costModel === 'vasil' ?
+        WasmV4.TxBuilderConstants.plutus_vasil_cost_models() :
+        WasmV4.TxBuilderConstants.plutus_default_cost_models();
+
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.calc_script_data_hash(wasmCostModel));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
     build(): Promise<TransactionBody> {
       return new Promise((resolve, reject) => {
         try {
@@ -2868,7 +3023,6 @@ namespace Browser {
 
     static new(
       linearFee: LinearFee,
-      minimumUtxoVal: BigNum,
       poolDeposit: BigNum,
       keyDeposit: BigNum,
       coinsPerUtxoWord: BigNum,
@@ -3808,6 +3962,35 @@ namespace Browser {
       return new Promise((resolve, reject) => {
         try {
           resolve(new PlutusScripts(WasmV4.PlutusScripts.new()));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+  }
+
+  export class TxInputsBuilder
+    extends Ptr<WasmV4.TxInputsBuilder>
+    implements WasmContract.TxInputsBuilder
+  {
+    addInput(
+      address: Address,
+      input: TransactionInput,
+      amount: Value
+    ): Promise<void> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.wasm.add_input(address.wasm, input.wasm, amount.wasm));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }
+
+    static new(): Promise<TxInputsBuilder> {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(new TxInputsBuilder(WasmV4.TxInputsBuilder.new()));
         } catch (e) {
           reject(e);
         }
