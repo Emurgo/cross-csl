@@ -100,9 +100,15 @@ export interface WasmModuleProxy {
 }
 
 export abstract class _WasmProxy {
+  public _wasm: any | undefined;
+  get wasm(): any {
+    if (this._wasm) return this._wasm;
+    throw new Error('Trying to access undefined WASM object');
+  }
+
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined) {}
+  constructor(wasm: any | undefined, ctx: string) {}
 
   abstract hasValue(): boolean;
 }
@@ -119,7 +125,7 @@ export abstract class WasmProxy<T> implements _WasmProxy {
     throw new Error('Trying to access undefined WASM object');
   }
 
-  constructor(wasm: T | undefined) {
+  constructor(wasm: T | undefined, ctx: string) {
     this._wasm = wasm;
   }
 
@@ -134,7 +140,7 @@ export abstract class WasmProxy<T> implements _WasmProxy {
 
 export abstract class _Ptr extends _WasmProxy {
   constructor(wasm: any | undefined, ctx: string) {
-    super(wasm);
+    super(wasm, ctx);
   }
   /**
    * Frees the pointer
@@ -145,7 +151,7 @@ export abstract class _Ptr extends _WasmProxy {
 
 export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
   constructor(wasm: T | undefined, ctx: string) {
-    super(wasm);
+    super(wasm, ctx);
   }
 
   free(): Promise<void> {
