@@ -108,7 +108,7 @@ export abstract class _WasmProxy {
 }
 
 export abstract class WasmProxy<T> implements _WasmProxy {
-  private _wasm: T | undefined;
+  public _wasm: T | undefined;
 
   get internalWasm(): T | undefined {
     return this._wasm;
@@ -133,7 +133,7 @@ export abstract class WasmProxy<T> implements _WasmProxy {
 }
 
 export abstract class _Ptr extends _WasmProxy {
-  constructor(wasm: any | undefined) {
+  constructor(wasm: any | undefined, ctx: string) {
     super(wasm);
   }
   /**
@@ -144,7 +144,7 @@ export abstract class _Ptr extends _WasmProxy {
 }
 
 export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
-  constructor(wasm: T | undefined) {
+  constructor(wasm: T | undefined, ctx: string) {
     super(wasm);
   }
 
