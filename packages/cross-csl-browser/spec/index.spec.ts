@@ -8,6 +8,6 @@ describe('Startup', () => {
   it('should bootstrap', async () => {
     const { init } = await import('../src');
 
-    setupTests(init() as any, 'Cross CSL Browser');
+    setupTests(init('global') as any, 'Cross CSL Browser');
   });
 });
