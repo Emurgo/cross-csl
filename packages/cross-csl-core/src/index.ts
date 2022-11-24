@@ -99,6 +99,20 @@ export interface WasmModuleProxy {
   TxInputsBuilder: typeof TxInputsBuilder
 }
 
+const pointers: Record<string, any[]> = {};
+
+export const freeContext = async (context: string) => {
+  if (pointers[context]) {
+
+    for (const pointer of pointers[context]) {
+      if (pointer.free) {
+        await pointer.free();
+      }
+    }
+    delete pointers[context];
+  };
+}
+
 export abstract class _WasmProxy {
   public _wasm: any | undefined;
   get wasm(): any {
@@ -108,7 +122,7 @@ export abstract class _WasmProxy {
 
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) {}
+  constructor(wasm: any | undefined, ctx: string) { }
 
   abstract hasValue(): boolean;
 }
@@ -126,6 +140,14 @@ export abstract class WasmProxy<T> implements _WasmProxy {
   }
 
   constructor(wasm: T | undefined, ctx: string) {
+    if (wasm) {
+      if (!pointers[ctx]) {
+        pointers[ctx] = [];
+      }
+
+      pointers[ctx].push(wasm);
+    }
+
     this._wasm = wasm;
   }
 
@@ -874,8 +896,7 @@ export abstract class RewardAddress extends _Ptr {
 }
 
 export abstract class RewardAddresses
-  extends _Ptr
-{
+  extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
   abstract len(): Promise<number>;
@@ -1000,7 +1021,7 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract getTotalOutput(): Promise<Value>;
 
-abstract getDeposit(): Promise<BigNum>;
+  abstract getDeposit(): Promise<BigNum>;
 
   abstract getFeeIfSet(): Promise<BigNum>;
 
@@ -1037,7 +1058,7 @@ abstract getDeposit(): Promise<BigNum>;
   ): Promise<void>;
 
   abstract setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void>;
-  
+
   abstract calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void>;
 
   static new(
