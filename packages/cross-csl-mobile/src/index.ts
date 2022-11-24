@@ -1753,8 +1753,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   // ToDo: add docs to core lib mentioning this class is not available on the mobile implementation
   public PointerAddress = (() => {
-    const $outer = this;
-
     class PointerAddress
       extends Ptr<any>
       implements WasmContract.PointerAddress {
@@ -1801,8 +1799,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   // ToDo: add docs to core lib mentioning this class can be instantiated on mobile, but none of the other methods is implemented
   public EnterpriseAddress = (() => {
-    const $outer = this;
-
     class EnterpriseAddress
       extends Ptr<WasmV4.EnterpriseAddress>
       implements WasmContract.EnterpriseAddress {
@@ -1836,8 +1832,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   // ToDo: add docs to core lib mentioning this class is not available on the mobile implementation
   public Pointer = (() => {
-    const $outer = this;
-
     class Pointer
       extends Ptr<any>
       implements WasmContract.Pointer {
@@ -2207,8 +2201,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public NativeScript = (() => {
-    const $outer = this;
-
     /**
     * WARNING! This type is here to comply with the exported interface, but it is not implemented
     */
@@ -2238,8 +2230,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public NativeScripts = (() => {
-    const $outer = this;
-
     /**
     * WARNING! This type is here to comply with the exported interface, but it is not implemented
     */
@@ -2269,8 +2259,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public PlutusScript = (() => {
-    const $outer = this;
-
     /**
     * WARNING! This type is here to comply with the exported interface, but it is not implemented
     */
@@ -2300,8 +2288,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public PlutusScripts = (() => {
-    const $outer = this;
-
     /**
     * WARNING! This type is here to comply with the exported interface, but it is not implemented
     */
@@ -2343,14 +2329,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   * WARNING! This type is here to comply with the exported interface, but it is not implemented
   */
   public TxInputsBuilder = (() => {
-    const $outer = this;
-
     class TxInputsBuilder
       extends Ptr<any>
       implements WasmContract.TxInputsBuilder {
       addInput(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         address: WasmContract.Address,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         input: WasmContract.TransactionInput,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         amount: WasmContract.Value
       ): Promise<void> {
         throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
