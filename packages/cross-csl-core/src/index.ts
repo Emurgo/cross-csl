@@ -110,8 +110,8 @@ export const freeContext = async (context: string) => {
       }
     }
     delete pointers[context];
-  };
-}
+  }
+};
 
 export abstract class _WasmProxy {
   public _wasm: any | undefined;
