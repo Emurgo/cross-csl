@@ -113,7 +113,7 @@ export const freeContext = async (context: string) => {
   }
 };
 
-export const switchContexts = async (from: string, to: string) => { 
+export const switchContext = async (from: string, to: string) => { 
   if (pointers[from]) {
     if (!pointers[to]) {
       pointers[to] = [];
@@ -121,7 +121,7 @@ export const switchContexts = async (from: string, to: string) => {
     pointers[to] = pointers[to].concat(pointers[from]);
     delete pointers[from];
   }
-}
+};
 
 export abstract class _WasmProxy {
   public _wasm: any | undefined;
