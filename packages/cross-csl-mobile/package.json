@@ -20,7 +20,7 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
-    "@emurgo/react-native-haskell-shelley": "3.1.4",
+    "@emurgo/react-native-haskell-shelley": "git+https://github.com/emurgo/react-native-haskell-shelley.git#evgenii/csl_codegen",
     "@emurgo/cross-csl-core": "2.1.1"
   },
   "devDependencies": {

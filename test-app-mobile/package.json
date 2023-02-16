@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@emurgo/react-native-haskell-shelley": "3.1.3",
+    "@emurgo/react-native-haskell-shelley": "git+https://github.com/emurgo/react-native-haskell-shelley.git#evgenii/csl_codegen",
     "@tradle/react-native-http": "^2.0.1",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
