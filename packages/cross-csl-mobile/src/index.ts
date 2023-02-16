@@ -34,7 +34,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     hasDataHash: boolean,
     coinsPerUtxoWord: WasmContract.BigNum) {
     return new this.BigNum(
-      await WasmV4.min_ada_required(value.wasm, coinsPerUtxoWord.wasm),
+      await WasmV4.min_ada_required(value.wasm, hasDataHash, coinsPerUtxoWord.wasm),
       this._ctx);
   }
 
@@ -479,7 +479,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async new(
         metadata: WasmContract.GeneralTransactionMetadata
       ): Promise<AuxiliaryData> {
-        const wasm = await WasmV4.AuxiliaryData.new(metadata.wasm);
+        const wasm = await WasmV4.AuxiliaryData.new();
+        if(metadata) {
+         await wasm.set_metadata(metadata.wasm);
+        }
         return new AuxiliaryData(wasm, $outer._ctx);
       }
 
@@ -1692,20 +1695,33 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async new(
-        linearFee: WasmContract.LinearFee,
-        minimumUtxoVal: WasmContract.BigNum,
-        poolDeposit: WasmContract.BigNum,
-        keyDeposit: WasmContract.BigNum
+          linearFee: WasmContract.LinearFee,
+          poolDeposit: WasmContract.BigNum,
+          keyDeposit: WasmContract.BigNum,
+          coinsPerUtxoWord: WasmContract.BigNum,
       ): Promise<TransactionBuilder> {
+        let cfgBuilder = await WasmV4.TransactionBuilderConfigBuilder.new();
+        cfgBuilder = await cfgBuilder.fee_algo(linearFee.wasm);
+        cfgBuilder = await cfgBuilder.pool_deposit(poolDeposit.wasm);
+        cfgBuilder = await cfgBuilder.key_deposit(keyDeposit.wasm);
+        cfgBuilder = await cfgBuilder.coins_per_utxo_word(coinsPerUtxoWord.wasm);
+        cfgBuilder = await cfgBuilder.max_value_size(5000);
+        cfgBuilder = await cfgBuilder.max_tx_size(16384);
+        cfgBuilder = await cfgBuilder.ex_unit_prices(await WasmV4.ExUnitPrices.new(
+            await WasmV4.UnitInterval.new(
+                await WasmV4.BigNum.from_str('577'),
+                await WasmV4.BigNum.from_str('10000'),
+            ),
+            await WasmV4.UnitInterval.new(
+                await WasmV4.BigNum.from_str('721'),
+                await WasmV4.BigNum.from_str('10000000'),
+            ),
+        ));
+        cfgBuilder = await cfgBuilder.prefer_pure_change(true);
+        const cfg = await cfgBuilder.build();
+
         return new TransactionBuilder(
-          await WasmV4.TransactionBuilder.new(
-            linearFee.wasm,
-            minimumUtxoVal.wasm,
-            poolDeposit.wasm,
-            keyDeposit.wasm,
-            5000,
-            16384
-          ),
+          await WasmV4.TransactionBuilder.new(cfg),
           $outer._ctx
         );
       }
