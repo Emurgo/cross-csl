@@ -3,8 +3,6 @@ import * as WasmContract from '@emurgo/cross-csl-core';
 
 const { Ptr, WasmProxy } = WasmContract;
 
-const EXCEPTIONS = WasmContract.EXCEPTIONS;
-
 export const init = (ctx: string): WasmContract.WasmModuleProxy => {
   return new MobileWasmModuleProxy(ctx);
 };
@@ -83,47 +81,50 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     class BigNum
       extends Ptr<WasmV4.BigNum>
       implements WasmContract.BigNum {
+
       toBytes(): Promise<Uint8Array> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return this.wasm.to_bytes();
       }
+
       toStr(): Promise<string> {
         return this.wasm.to_str();
       }
-      // ToDo: implement once we have this function available in the react-native implementation of serilib
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      checkedMul(other: BigNum): Promise<BigNum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+
+      async checkedMul(other: BigNum): Promise<BigNum> {
+        const wasmBigNum = await this.wasm.checked_mul(other.wasm);
+        return new BigNum(wasmBigNum, $outer._ctx);
       }
+
       async checkedAdd(other: BigNum): Promise<BigNum> {
         const wasmBigNum = await this.wasm.checked_add(other.wasm);
         return new BigNum(wasmBigNum, $outer._ctx);
       }
+
       async checkedSub(other: BigNum): Promise<BigNum> {
         const wasmBigNum = await this.wasm.checked_sub(other.wasm);
         return new BigNum(wasmBigNum, $outer._ctx);
       }
+
       async clampedSub(other: BigNum): Promise<BigNum> {
         const wasmBigNum = await this.wasm.clamped_sub(other.wasm);
         return new BigNum(wasmBigNum, $outer._ctx);
       }
+
       compare(rhs_value: BigNum): Promise<number> {
         return this.wasm.compare(rhs_value.wasm);
       }
 
-      // ToDo: implement once we have this function available in the react-native implementation of serilib
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<BigNum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+      static async fromBytes(bytes: Uint8Array): Promise<BigNum> {
+        return new BigNum(await WasmV4.BigNum.from_bytes(bytes), $outer._ctx);
       }
 
       static async fromStr(string: string): Promise<BigNum> {
-        const wasmBigNum = await WasmV4.BigNum.from_str(string);
-        return new BigNum(wasmBigNum, $outer._ctx);
+        return new BigNum(await WasmV4.BigNum.from_str(string), $outer._ctx);
       }
     }
+    
     return BigNum;
-  }
-  )();
+  })();
 
   public LinearFee = (() => {
     const $outer = this;
@@ -248,11 +249,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class MetadataMap
-      extends Ptr<WasmV4.MetadataMap>
-      implements WasmContract.MetadataMap {
-      async toBytes(): Promise<Uint8Array> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
-      }
+        extends Ptr<WasmV4.MetadataMap>
+        implements WasmContract.MetadataMap {
+     async toBytes(): Promise<Uint8Array> {
+       return await this.wasm.to_bytes();
+     }
 
       len(): Promise<number> {
         return Promise.resolve(this.wasm.len());
@@ -271,73 +272,87 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async insertStr(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        key: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        value: WasmContract.TransactionMetadatum
+          key: string,
+          value: WasmContract.TransactionMetadatum
       ): Promise<WasmContract.TransactionMetadatum | undefined> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        const wasm = await this.wasm.insert_str(key, value.wasm);
+        if (wasm) {
+          return new $outer.TransactionMetadatum(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       async insertI32(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        key: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        value: WasmContract.TransactionMetadatum
+          key: number,
+          value: WasmContract.TransactionMetadatum
       ): Promise<WasmContract.TransactionMetadatum | undefined> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        const wasm = await this.wasm.insert_i32(key, value.wasm);
+        if (wasm) {
+          return new $outer.TransactionMetadatum(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       async get(key: WasmContract.TransactionMetadatum): Promise<WasmContract.TransactionMetadatum> {
         return new $outer.TransactionMetadatum(await this.wasm.get(key.wasm), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async getStr(key: string): Promise<WasmContract.TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new $outer.TransactionMetadatum(await this.wasm.get_str(key), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async getI32(key: number): Promise<WasmContract.TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new $outer.TransactionMetadatum(await this.wasm.get_i32(key), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async has(key: WasmContract.TransactionMetadatum): Promise<boolean> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return await this.wasm.has(key.wasm);
       }
 
       async keys(): Promise<WasmContract.MetadataList> {
         return new $outer.MetadataList(await this.wasm.keys(), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new MetadataMap(await WasmV4.MetadataMap.from_bytes(bytes), $outer._ctx);
       }
 
       static async new(): Promise<MetadataMap> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new MetadataMap(await WasmV4.MetadataMap.new(), $outer._ctx);
       }
     }
+
     return MetadataMap;
-  }
-  )();
+  })();
 
   public Int = (() => {
     const $outer = this;
 
-    class Int extends Ptr<WasmV4.Int> implements WasmContract.Int {
-      async isPositive(): Promise<boolean> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+    class Int
+        extends Ptr<WasmV4.Int>
+        implements WasmContract.Int {
+      isPositive(): Promise<boolean> {
+        return this.wasm.is_positive();
       }
 
       async asPositive(): Promise<WasmContract.BigNum | undefined> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        const wasm = await this.wasm.as_positive();
+        if (wasm) {
+          return new $outer.BigNum(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       async asNegative(): Promise<WasmContract.BigNum | undefined> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        const wasm = await this.wasm.as_negative();
+        if (wasm) {
+          return new $outer.BigNum(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       async asI32(): Promise<number | undefined> {
@@ -348,19 +363,17 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Int(await WasmV4.Int.new(x.wasm), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newNegative(x: WasmContract.BigNum): Promise<Int> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new Int(await WasmV4.Int.new_negative(x.wasm), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newI32(x: number): Promise<Int> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new Int(await WasmV4.Int.new_i32(x), $outer._ctx);
       }
     }
+
     return Int;
-  }
-  )();
+  })();
 
   public TransactionMetadatum = (() => {
     const $outer = this;
@@ -373,19 +386,19 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async kind(): Promise<number> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return await this.wasm.kind();
       }
 
       async asMap(): Promise<WasmContract.MetadataMap> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new $outer.MetadataMap(await this.wasm.as_map(), $outer._ctx);
       }
 
       async asList(): Promise<WasmContract.MetadataList> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new $outer.MetadataList(await this.wasm.as_list(), $outer._ctx);
       }
 
       async asInt(): Promise<WasmContract.Int> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new $outer.Int(await this.wasm.as_int(), $outer._ctx);
       }
 
       async asBytes(): Promise<Uint8Array> {
@@ -393,7 +406,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async asText(): Promise<string> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return await this.wasm.as_text();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
@@ -403,9 +416,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newMap(map: WasmContract.MetadataMap): Promise<TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new TransactionMetadatum(await WasmV4.TransactionMetadatum.new_map(map.wasm), $outer._ctx);
       }
 
       static async newList(list: WasmContract.MetadataList): Promise<TransactionMetadatum> {
@@ -415,19 +427,16 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newInt(int: WasmContract.Int): Promise<TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new TransactionMetadatum(await WasmV4.TransactionMetadatum.new_int(int.wasm), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new TransactionMetadatum(await WasmV4.TransactionMetadatum.new_bytes(bytes), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       static async newText(text: string): Promise<TransactionMetadatum> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new TransactionMetadatum(await WasmV4.TransactionMetadatum.new_text(text), $outer._ctx);
       }
     }
     return TransactionMetadatum;
@@ -449,27 +458,34 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.GeneralTransactionMetadata(wasm, $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      async setMetadata(metadata: WasmContract.GeneralTransactionMetadata): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      setMetadata(metadata: WasmContract.GeneralTransactionMetadata): Promise<void> {
+        return this.wasm.set_metadata(metadata.wasm);
       }
 
-      nativeScripts(): Promise<WasmContract.NativeScripts | undefined> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async nativeScripts(): Promise<WasmContract.NativeScripts | undefined> {
+        const wasm = await this.wasm.native_scripts();
+        if (wasm) {
+          return new $outer.NativeScripts(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setNativeScripts(native_scripts: WasmContract.NativeScripts): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+     async setNativeScripts(native_scripts: WasmContract.NativeScripts): Promise<void> {
+       return await this.wasm.set_native_scripts(native_scripts.wasm);
+     }
+
+      async plutusScripts(): Promise<WasmContract.PlutusScripts | undefined> {
+        const wasm = await this.wasm.plutus_scripts();
+        if (wasm) {
+          return new $outer.PlutusScripts(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
-      plutusScripts(): Promise<WasmContract.PlutusScripts | undefined> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setPlutusScripts(plutus_scripts: WasmContract.PlutusScripts): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async setPlutusScripts(plutus_scripts: WasmContract.PlutusScripts): Promise<void> {
+        return await this.wasm.set_plutus_scripts(plutus_scripts.wasm);
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
@@ -892,7 +908,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async toBech32(): Promise<string> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return await this.wasm.to_bech32();
       }
 
       async asBytes(): Promise<Uint8Array> {
@@ -918,11 +934,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async generateEd25519(): Promise<PrivateKey> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new PrivateKey(await WasmV4.PrivateKey.generate_ed25519(), $outer._ctx);
       }
 
       static async generateEd25519extended(): Promise<PrivateKey> {
-        throw WasmContract.EXCEPTIONS.NOT_IMPLEMENTED;
+        return new PrivateKey(await WasmV4.PrivateKey.generate_ed25519extended(), $outer._ctx);
       }
     }
     return PrivateKey;
@@ -1060,24 +1076,24 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
         return new TransactionOutput(
-          await WasmV4.TransactionOutput.from_bytes(bytes),
-          $outer._ctx
+            await WasmV4.TransactionOutput.from_bytes(bytes),
+            $outer._ctx
         );
       }
 
       static async new(
-        address: WasmContract.Address,
-        amount: WasmContract.Value
+          address: WasmContract.Address,
+          amount: WasmContract.Value
       ): Promise<TransactionOutput> {
         return new TransactionOutput(
-          await WasmV4.TransactionOutput.new(address.wasm, amount.wasm),
-          $outer._ctx
+            await WasmV4.TransactionOutput.new(address.wasm, amount.wasm),
+            $outer._ctx
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setDataHash(dataHashHex: string): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async setDataHash(dataHashHex: string): Promise<void> {
+        return this.wasm.set_data_hash(
+            await WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex')));
       }
     }
     return TransactionOutput;
@@ -1367,8 +1383,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     class RewardAddresses
       extends Ptr<WasmV4.RewardAddresses>
       implements WasmContract.RewardAddresses {
-      toBytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
       }
 
       async len(): Promise<number> {
@@ -1387,9 +1403,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new RewardAddresses(await WasmV4.RewardAddresses.new(), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
+        return new RewardAddresses(await WasmV4.RewardAddresses.from_bytes(bytes), $outer._ctx);
       }
     }
     return RewardAddresses;
@@ -1400,10 +1415,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class Withdrawals
-      extends Ptr<WasmV4.Withdrawals>
-      implements WasmContract.Withdrawals {
+        extends Ptr<WasmV4.Withdrawals>
+        implements WasmContract.Withdrawals {
       async toBytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return await this.wasm.to_bytes();
       }
 
       async len(): Promise<number> {
@@ -1427,8 +1442,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
+        return new Withdrawals(await WasmV4.Withdrawals.from_bytes(bytes), $outer._ctx);
       }
     }
     return Withdrawals;
@@ -1523,41 +1538,41 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.TransactionBuilder>
       implements WasmContract.TransactionBuilder {
       async addKeyInput(
-        hash: WasmContract.Ed25519KeyHash,
-        input: WasmContract.TransactionInput,
-        amount: WasmContract.Value
+          hash: WasmContract.Ed25519KeyHash,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value
       ): Promise<void> {
         return await this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       async addBootstrapInput(
-        hash: WasmContract.ByronAddress,
-        input: WasmContract.TransactionInput,
-        amount: WasmContract.Value
+          hash: WasmContract.ByronAddress,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value
       ): Promise<void> {
         return await this.wasm.add_bootstrap_input(
-          hash.wasm,
-          input.wasm,
-          amount.wasm
+            hash.wasm,
+            input.wasm,
+            amount.wasm
         );
       }
 
       async addInput(
-        address: WasmContract.Address,
-        input: WasmContract.TransactionInput,
-        amount: WasmContract.Value
+          address: WasmContract.Address,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value
       ): Promise<void> {
         return await this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
       }
 
       async feeForInput(
-        address: WasmContract.Address,
-        input: WasmContract.TransactionInput,
-        amount: WasmContract.Value
+          address: WasmContract.Address,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value
       ): Promise<WasmContract.BigNum> {
         return new $outer.BigNum(
-          await this.wasm.fee_for_input(address.wasm, input.wasm, amount.wasm),
-          $outer._ctx
+            await this.wasm.fee_for_input(address.wasm, input.wasm, amount.wasm),
+            $outer._ctx
         );
       }
 
@@ -1605,12 +1620,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Value(await this.wasm.get_explicit_output(), $outer._ctx);
       }
 
-      getTotalOutput(): Promise<WasmContract.Value> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async getTotalOutput(): Promise<WasmContract.Value> {
+        return new $outer.Value(await this.wasm.get_total_output(), $outer._ctx);
       }
 
-      getTotalInput(): Promise<WasmContract.Value> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async getTotalInput(): Promise<WasmContract.Value> {
+        return new $outer.Value(await this.wasm.get_total_input(), $outer._ctx);
       }
 
       async getDeposit(): Promise<WasmContract.BigNum> {
@@ -1625,65 +1640,74 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.add_change_if_needed(address.wasm);
       }
 
-      addMintAsset(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        mintScript: WasmContract.NativeScript,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        mintName: WasmContract.AssetName,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        amount: WasmContract.Int
+      async addMintAsset(
+          mintScript: WasmContract.NativeScript,
+          mintName: WasmContract.AssetName,
+          amount: WasmContract.Int
       ): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return await this.wasm.add_mint_asset(
+            mintScript.wasm,
+            mintName.wasm,
+            amount.wasm
+        );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      addJsonMetadatum(key: WasmContract.BigNum, value: string): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async addJsonMetadatum(key: WasmContract.BigNum, value: string): Promise<void> {
+        return await this.wasm.add_json_metadatum(key.wasm, value);
       }
 
-      getAuxiliaryData(): Promise<WasmContract.AuxiliaryData | void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async getAuxiliaryData(): Promise<WasmContract.AuxiliaryData | void> {
+        const wasm = await this.wasm.get_auxiliary_data();
+        if (wasm) {
+          return new $outer.AuxiliaryData(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      addRequiredSigner(requiredSigner: WasmContract.Ed25519KeyHash): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async addRequiredSigner(requiredSigner: WasmContract.Ed25519KeyHash): Promise<void> {
+        return await this.wasm.add_required_signer(requiredSigner.wasm);
       }
 
-      addNativeScriptInput(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        nativeScript: WasmContract.NativeScript,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        input: WasmContract.TransactionInput,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        amount: WasmContract.Value,
+      async addNativeScriptInput(
+          nativeScript: WasmContract.NativeScript,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value,
       ): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return await this.wasm.add_native_script_input(
+            nativeScript.wasm,
+            input.wasm,
+            amount.wasm,
+        );
       }
 
-      addPlutusScriptInput(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        plutusScript: WasmContract.PlutusScript,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        datum: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        redeemer: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        input: WasmContract.TransactionInput,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        amount: WasmContract.Value,
+      async addPlutusScriptInput(
+          plutusScript: WasmContract.PlutusScript,
+          datum: string,
+          redeemer: string,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value,
       ): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        const plutusWitness = await WasmV4.PlutusWitness.new(
+            plutusScript.wasm,
+            await WasmV4.PlutusData.from_bytes(Buffer.from(datum, 'hex')),
+            await WasmV4.Redeemer.from_bytes(Buffer.from(redeemer, 'hex'))
+        );
+        return await this.wasm.add_plutus_script_input(
+            plutusWitness,
+            input.wasm,
+            amount.wasm);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setCollateral(txInputsBuilder: any): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async setCollateral(txInputsBuilder: WasmContract.TxInputsBuilder): Promise<void> {
+        return await this.wasm.set_collateral(txInputsBuilder.wasm);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void> {
+        const wasmCostModel = costModel === 'vasil' ?
+            await WasmV4.TxBuilderConstants.plutus_vasil_cost_models() :
+            await WasmV4.TxBuilderConstants.plutus_default_cost_models();
+        return await this.wasm.calc_script_data_hash(wasmCostModel);
       }
 
       async build(): Promise<WasmContract.TransactionBody> {
@@ -1721,8 +1745,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         const cfg = await cfgBuilder.build();
 
         return new TransactionBuilder(
-          await WasmV4.TransactionBuilder.new(cfg),
-          $outer._ctx
+            await WasmV4.TransactionBuilder.new(cfg),
+            $outer._ctx
         );
       }
     }
@@ -1767,121 +1791,95 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   }
   )();
 
-  // ToDo: add docs to core lib mentioning this class is not available on the mobile implementation
   public PointerAddress = (() => {
+    const $outer = this;
+
     class PointerAddress
-      extends Ptr<any>
-      implements WasmContract.PointerAddress {
-
-      free(): Promise<void> {
-        throw new Error('Method not implemented.');
+        extends Ptr<WasmV4.PointerAddress>
+        implements WasmContract.PointerAddress {
+      async paymentCred(): Promise<WasmContract.StakeCredential> {
+        return new $outer.StakeCredential(await this.wasm.payment_cred(), $outer._ctx);
       }
 
-      hasValue(): boolean {
-        throw new Error('Method not implemented.');
+      async stakePointer(): Promise<WasmContract.Pointer> {
+        return new $outer.Pointer(await this.wasm.stake_pointer(), $outer._ctx);
       }
 
-      paymentCred(): Promise<WasmContract.StakeCredential> {
-        throw new Error('Method not implemented.');
+      async toAddress(): Promise<WasmContract.Address> {
+        return new $outer.Address(await this.wasm.to_address(), $outer._ctx);
       }
 
-      stakePointer(): Promise<WasmContract.Pointer> {
-        throw new Error('Method not implemented.');
+      static async fromAddress(addr: WasmContract.Address): Promise<PointerAddress> {
+        return new PointerAddress(await WasmV4.PointerAddress.from_address(addr.wasm), $outer._ctx);
       }
 
-      toAddress(): Promise<WasmContract.Address> {
-        throw new Error('Method not implemented.');
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromAddress(addr: WasmContract.Address): Promise<PointerAddress> {
-        throw new Error('Method not implemented.');
-      }
-
-      static new(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        network: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        payment: WasmContract.StakeCredential,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        stake: WasmContract.Pointer
+      static async new(
+          network: number,
+          payment: WasmContract.StakeCredential,
+          stake: WasmContract.Pointer
       ): Promise<PointerAddress> {
-        throw new Error('Method not implemented.');
+        return new PointerAddress(
+            await WasmV4.PointerAddress.new(network, payment.wasm, stake.wasm), $outer._ctx);
       }
     }
     return PointerAddress;
   }
   )();
 
-  // ToDo: add docs to core lib mentioning this class can be instantiated on mobile, but none of the other methods is implemented
   public EnterpriseAddress = (() => {
+    const $outer = this;
+
     class EnterpriseAddress
-      extends Ptr<WasmV4.EnterpriseAddress>
-      implements WasmContract.EnterpriseAddress {
-
-      paymentCred(): Promise<WasmContract.StakeCredential> {
-        throw new Error('Method not implemented.');
+        extends Ptr<WasmV4.EnterpriseAddress>
+        implements WasmContract.EnterpriseAddress {
+      async paymentCred(): Promise<WasmContract.StakeCredential> {
+        return new $outer.StakeCredential(await this.wasm.payment_cred(), $outer._ctx);
       }
 
-      toAddress(): Promise<WasmContract.Address> {
-        throw new Error('Method not implemented.');
+      async toAddress(): Promise<WasmContract.Address> {
+        return new $outer.Address(await this.wasm.to_address(), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromAddress(addr: WasmContract.Address): Promise<EnterpriseAddress> {
-        throw new Error('Method not implemented.');
+      static async fromAddress(addr: WasmContract.Address): Promise<EnterpriseAddress> {
+        return new EnterpriseAddress(await WasmV4.EnterpriseAddress.from_address(addr.wasm), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static new(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        network: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        payment: WasmContract.StakeCredential
+      static async new(
+          network: number,
+          payment: WasmContract.StakeCredential
       ): Promise<EnterpriseAddress> {
-        throw new Error('Method not implemented.');
+        return new EnterpriseAddress(
+            await WasmV4.EnterpriseAddress.new(network, payment.wasm), $outer._ctx);
       }
     }
+
     return EnterpriseAddress;
-  }
-  )();
+  })();
 
-  // ToDo: add docs to core lib mentioning this class is not available on the mobile implementation
   public Pointer = (() => {
+    const $outer = this;
+
     class Pointer
-      extends Ptr<any>
-      implements WasmContract.Pointer {
-
-      free(): Promise<void> {
-        throw new Error('Method not implemented.');
+        extends Ptr<WasmV4.Pointer>
+        implements WasmContract.Pointer {
+      async slot(): Promise<number> {
+        return await this.wasm.slot();
       }
 
-      hasValue(): boolean {
-        throw new Error('Method not implemented.');
+      async txIndex(): Promise<number> {
+        return await this.wasm.tx_index();
       }
 
-      slot(): Promise<number> {
-        throw new Error('Method not implemented.');
+      async certIndex(): Promise<number> {
+        return await this.wasm.cert_index();
       }
 
-      txIndex(): Promise<number> {
-        throw new Error('Method not implemented.');
-      }
-
-      certIndex(): Promise<number> {
-        throw new Error('Method not implemented.');
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static new(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        slot: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        txIndex: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        certIndex: number
+      static async new(
+          slot: number,
+          txIndex: number,
+          certIndex: number
       ): Promise<Pointer> {
-        throw new Error('Method not implemented.');
+        return new Pointer(await WasmV4.Pointer.new(slot, txIndex, certIndex), $outer._ctx);
       }
     }
     return Pointer;
@@ -1973,9 +1971,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.add(item.wasm);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      get(index: number): Promise<WasmContract.Vkeywitness> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async get(index: number): Promise<WasmContract.Vkeywitness> {
+        return new $outer.Vkeywitness(await this.wasm.get(index), $outer._ctx);
       }
 
       static async new(): Promise<Vkeywitnesses> {
@@ -2039,9 +2036,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.add(item.wasm);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async get(index: number): Promise<WasmContract.BootstrapWitness> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return new $outer.BootstrapWitness(await this.wasm.get(index), $outer._ctx);
       }
 
       static async new(): Promise<BootstrapWitnesses> {
@@ -2067,11 +2063,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async vkeys(): Promise<WasmContract.Vkeywitnesses> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return new $outer.Vkeywitnesses(await this.wasm.vkeys(), $outer._ctx);
       }
 
       async bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return new $outer.BootstrapWitnesses(await this.wasm.bootstraps(), $outer._ctx);
       }
 
       static async new(): Promise<TransactionWitnessSet> {
@@ -2092,21 +2088,20 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionBody(await this.wasm.body(), $outer._ctx);
       }
 
-      witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
+        return new $outer.TransactionWitnessSet(await this.wasm.witness_set(), $outer._ctx);
       }
 
-      isValid(): Promise<boolean> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async isValid(): Promise<boolean> {
+        return await this.wasm.is_valid();
       }
 
       async toBytes(): Promise<Uint8Array> {
-        const anyWasm = this.wasm as any;
-        return await anyWasm.to_bytes();
+        return await this.wasm.to_bytes();
       }
 
-      auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
+        return new $outer.AuxiliaryData(await this.wasm.auxiliary_data(), $outer._ctx);
       }
 
       static async new(
@@ -2125,9 +2120,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<Transaction> {
-        // method missing from the Wasm object
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<Transaction> {
+        return new Transaction(await WasmV4.Transaction.from_bytes(bytes), $outer._ctx);
       }
     }
     return Transaction;
@@ -2143,39 +2137,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class NetworkInfo
-      extends Ptr<any>
+      extends Ptr<WasmV4.NetworkInfo>
       implements WasmContract.NetworkInfo {
 
-      public _networkId: number;
-      public _protocolMagic: number;
-
-      networkId(): Promise<number> {
-        return Promise.resolve(this._networkId);
+      async networkId(): Promise<number> {
+        return await this.wasm.network_id();
       }
 
-      protocolMagic(): Promise<number> {
-        return Promise.resolve(this._protocolMagic);
+      async protocolMagic(): Promise<number> {
+        return await this.wasm.protocol_magic();
       }
 
-      static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
-        const networkInfo = new NetworkInfo(undefined, $outer._ctx);
-        networkInfo._networkId = networkId;
-        networkInfo._protocolMagic = protocolMagic;
-        return Promise.resolve(networkInfo);
+      static async new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
+        return new NetworkInfo(await WasmV4.NetworkInfo.new(networkId, protocolMagic), $outer._ctx);
       }
 
       static async testnet(): Promise<NetworkInfo> {
-        const networkInfo = new NetworkInfo(undefined, $outer._ctx);
-        networkInfo._networkId = 0;
-        networkInfo._protocolMagic = 1097911063;
-        return Promise.resolve(networkInfo);
+        return new NetworkInfo(await WasmV4.NetworkInfo.testnet(), $outer._ctx);
       }
 
       static async mainnet(): Promise<NetworkInfo> {
-        const networkInfo = new NetworkInfo(undefined, $outer._ctx);
-        networkInfo._networkId = 1;
-        networkInfo._protocolMagic = 764824073;
-        return Promise.resolve(networkInfo);
+        return new NetworkInfo(await WasmV4.NetworkInfo.mainnet(), $outer._ctx);
       }
     }
     return NetworkInfo;
@@ -2217,28 +2199,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public NativeScript = (() => {
-    /**
-    * WARNING! This type is here to comply with the exported interface, but it is not implemented
-    */
+
+    const $outer = this;
+
     class NativeScript
-      extends Ptr<never>
+      extends Ptr<WasmV4.NativeScript>
       implements WasmContract.NativeScript {
-      toBytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      hash(): Promise<WasmContract.Ed25519KeyHash> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async hash(): Promise<WasmContract.Ed25519KeyHash> {
+        return new $outer.Ed25519KeyHash(await this.wasm.hash(), $outer._ctx);
       }
 
-      kind(): Promise<number> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async kind(): Promise<number> {
+        return await this.wasm.kind();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<NativeScript> {
+        return new NativeScript(await WasmV4.NativeScript.from_bytes(bytes), $outer._ctx);
       }
     }
     return NativeScript;
@@ -2246,28 +2227,26 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public NativeScripts = (() => {
-    /**
-    * WARNING! This type is here to comply with the exported interface, but it is not implemented
-    */
+
+    const $outer = this;
+
     class NativeScripts
-      extends Ptr<never>
+      extends Ptr<WasmV4.NativeScripts>
       implements WasmContract.NativeScripts {
-      len(): Promise<number> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async len(): Promise<number> {
+        return await this.wasm.len();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      get(index: number): Promise<WasmContract.NativeScript> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async get(index: number): Promise<WasmContract.NativeScript> {
+        return new $outer.NativeScript(await this.wasm.get(index), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      add(elem: WasmContract.NativeScript): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async add(elem: WasmContract.NativeScript): Promise<void> {
+        return await this.wasm.add(elem.wasm);
       }
 
-      static new(): Promise<NativeScripts> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async new(): Promise<NativeScripts> {
+        return new NativeScripts(await WasmV4.NativeScripts.new(), $outer._ctx);
       }
     }
     return NativeScripts;
@@ -2275,28 +2254,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public PlutusScript = (() => {
-    /**
-    * WARNING! This type is here to comply with the exported interface, but it is not implemented
-    */
+
+    const $outer = this;
+
     class PlutusScript
-      extends Ptr<never>
+      extends Ptr<WasmV4.PlutusScript>
       implements WasmContract.PlutusScript {
-      toBytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+
+      async toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
       }
 
-      bytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async bytes(): Promise<Uint8Array> {
+        return this.wasm.bytes();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
+        return new PlutusScript(await WasmV4.PlutusScript.from_bytes(bytes), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static new(bytes: Uint8Array): Promise<PlutusScript> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async new(bytes: Uint8Array): Promise<PlutusScript> {
+        return new PlutusScript(await WasmV4.PlutusScript.new(bytes), $outer._ctx);
       }
     }
     return PlutusScript;
@@ -2304,39 +2282,36 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   )();
 
   public PlutusScripts = (() => {
-    /**
-    * WARNING! This type is here to comply with the exported interface, but it is not implemented
-    */
+    const $outer = this;
+
     class PlutusScripts
-      extends Ptr<never>
-      implements WasmContract.PlutusScripts {
-      toBytes(): Promise<Uint8Array> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        extends Ptr<WasmV4.PlutusScripts>
+        implements WasmContract.PlutusScripts {
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
       }
 
-      len(): Promise<number> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async len(): Promise<number> {
+        return await this.wasm.len();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      get(index: number): Promise<WasmContract.PlutusScript> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async get(index: number): Promise<WasmContract.PlutusScript> {
+        return new $outer.PlutusScript(await this.wasm.get(index), $outer._ctx);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      add(elem: WasmContract.PlutusScript): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      async add(elem: WasmContract.PlutusScript): Promise<void> {
+        return await this.wasm.add(elem.wasm);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
+        return new PlutusScripts(await WasmV4.PlutusScripts.from_bytes(bytes), $outer._ctx);
       }
 
-      static new(): Promise<PlutusScripts> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async new(): Promise<PlutusScripts> {
+        return new PlutusScripts(await WasmV4.PlutusScripts.new(), $outer._ctx);
       }
     }
+
     return PlutusScripts;
   }
   )();
@@ -2345,22 +2320,21 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   * WARNING! This type is here to comply with the exported interface, but it is not implemented
   */
   public TxInputsBuilder = (() => {
+    const $outer = this;
+
     class TxInputsBuilder
       extends Ptr<any>
       implements WasmContract.TxInputsBuilder {
       addInput(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        address: WasmContract.Address,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        input: WasmContract.TransactionInput,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        amount: WasmContract.Value
+          address: WasmContract.Address,
+          input: WasmContract.TransactionInput,
+          amount: WasmContract.Value
       ): Promise<void> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+        return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
       }
 
-      static new(): Promise<TxInputsBuilder> {
-        throw new Error(EXCEPTIONS.NOT_IMPLEMENTED);
+      static async new(): Promise<TxInputsBuilder> {
+        return new TxInputsBuilder(await WasmV4.TxInputsBuilder.new(), $outer._ctx);
       }
     }
     return TxInputsBuilder;
