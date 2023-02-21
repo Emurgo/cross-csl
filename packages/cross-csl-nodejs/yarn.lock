@@ -21,10 +21,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@emurgo/cardano-serialization-lib-nodejs@11.1.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-11.1.0.tgz#d75decb7a8447abceb15162cc6254f5b9171ae8c"
-  integrity sha512-lcKuKmeMGLLu45DqT2HYugHujsu1/WYKfrPzycAMpRk4FhZ0wWY2IFkD6We8+CQwNpXyQquy0psmRD5tChIxMA==
+"@emurgo/cardano-serialization-lib-nodejs@11.3.0":
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-11.3.0.tgz#f8896ba4dd4411c97503d99f8fbcd2ef23087646"
+  integrity sha512-F1WXfvTtOZkJf3mSA9yToJaLCpPNOqyK5IljigS8fHxrLjSDEqVGVmQNM2R0NQTNsQLKxcSPBf0I3gukgoHnbQ==
 
 "@emurgo/cross-csl-core@2.1.1":
   version "2.1.1"

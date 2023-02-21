@@ -28,10 +28,9 @@
     hash-wasm "^4.9.0"
     mocha "^10.0.0"
 
-"@emurgo/react-native-haskell-shelley@3.1.4":
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/@emurgo/react-native-haskell-shelley/-/react-native-haskell-shelley-3.1.4.tgz#fa7c4997125fde97978ee1e42d19e6f51102deb4"
-  integrity sha512-cxI1XVsSdAR8EXnTSKI8pstmVmFtnlY40tl9HFf1Om0e0stJuX+UF1K4ilfrkTyOd/0YhBM5Mm2t0woP8Xgbpg==
+"@emurgo/react-native-haskell-shelley@git+https://github.com/emurgo/react-native-haskell-shelley.git#evgenii/csl_codegen":
+  version "4.0.0"
+  resolved "git+https://github.com/emurgo/react-native-haskell-shelley.git#0848071490352feb0879341e0288dfdf23b871a1"
   dependencies:
     base-64 "0.1.0"
 

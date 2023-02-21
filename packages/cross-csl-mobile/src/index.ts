@@ -2156,6 +2156,14 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new NetworkInfo(await WasmV4.NetworkInfo.testnet(), $outer._ctx);
       }
 
+      static async testnetPreview(): Promise<NetworkInfo> {
+        return new NetworkInfo(await WasmV4.NetworkInfo.testnet_preview(), $outer._ctx);
+      }
+
+      static async testnetPreprod(): Promise<NetworkInfo> {
+        return new NetworkInfo(await WasmV4.NetworkInfo.testnet_preprod(), $outer._ctx);
+      }
+
       static async mainnet(): Promise<NetworkInfo> {
         return new NetworkInfo(await WasmV4.NetworkInfo.mainnet(), $outer._ctx);
       }
