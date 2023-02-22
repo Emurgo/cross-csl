@@ -1139,9 +1139,10 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@emurgo/react-native-haskell-shelley@git+https://github.com/emurgo/react-native-haskell-shelley.git#evgenii/csl_codegen":
-  version "4.0.0"
-  resolved "git+https://github.com/emurgo/react-native-haskell-shelley.git#0848071490352feb0879341e0288dfdf23b871a1"
+"@emurgo/react-native-haskell-shelley@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/react-native-haskell-shelley/-/react-native-haskell-shelley-5.0.0.tgz#220968e1eb1fb353518081d147c2337728453793"
+  integrity sha512-jOtc/xZMKvxTX9MElj61DhOYOBbfGWPp7q/nIUYXJ0iyNjuBEHzEJ4qkYSlTh3JHObNSV+Qv1VO008oCf0cg5w==
   dependencies:
     base-64 "0.1.0"
 
