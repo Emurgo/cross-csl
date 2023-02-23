@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/cross-csl-mobile",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -20,10 +20,11 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
-    "@emurgo/react-native-haskell-shelley": "3.1.4",
-    "@emurgo/cross-csl-core": "2.1.1"
+    "@emurgo/cross-csl-core": "2.2.0",
+    "@emurgo/react-native-haskell-shelley": "^5.0.0"
   },
   "devDependencies": {
+    "install-peers-cli": "^2.2.0",
     "typescript": "^4.4.4"
   }
 }

@@ -2,8 +2,6 @@
   "scripts": {
     "test": "mocha --watch",
     "format": "prettier --config .prettierrc packages/**/*.ts --write",
-    "sample:sync": "yarn ts-node ./samples.ts sync",
-    "sample:sum": "yarn ts-node ./samples.ts sum",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },

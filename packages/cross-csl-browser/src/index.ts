@@ -3825,6 +3825,26 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      static testnetPreview(): Promise<NetworkInfo> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new NetworkInfo(WasmV4.NetworkInfo.testnet_preview(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static testnetPreprod(): Promise<NetworkInfo> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new NetworkInfo(WasmV4.NetworkInfo.testnet_preprod(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       static mainnet(): Promise<NetworkInfo> {
         return new Promise((resolve, reject) => {
           try {

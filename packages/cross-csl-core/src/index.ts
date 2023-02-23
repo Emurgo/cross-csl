@@ -1276,6 +1276,14 @@ export abstract class NetworkInfo extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
+  static testnetPreview(): Promise<NetworkInfo> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static testnetPreprod(): Promise<NetworkInfo> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
   static mainnet(): Promise<NetworkInfo> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
