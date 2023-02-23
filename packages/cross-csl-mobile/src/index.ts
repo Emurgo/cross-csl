@@ -1724,24 +1724,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
           keyDeposit: WasmContract.BigNum,
           coinsPerUtxoWord: WasmContract.BigNum,
       ): Promise<TransactionBuilder> {
-        let cfgBuilder = await WasmV4.TransactionBuilderConfigBuilder.new();
-        cfgBuilder = await cfgBuilder.fee_algo(linearFee.wasm);
-        cfgBuilder = await cfgBuilder.pool_deposit(poolDeposit.wasm);
-        cfgBuilder = await cfgBuilder.key_deposit(keyDeposit.wasm);
-        cfgBuilder = await cfgBuilder.coins_per_utxo_word(coinsPerUtxoWord.wasm);
-        cfgBuilder = await cfgBuilder.max_value_size(5000);
-        cfgBuilder = await cfgBuilder.max_tx_size(16384);
-        cfgBuilder = await cfgBuilder.ex_unit_prices(await WasmV4.ExUnitPrices.new(
-            await WasmV4.UnitInterval.new(
-                await WasmV4.BigNum.from_str('577'),
-                await WasmV4.BigNum.from_str('10000'),
-            ),
-            await WasmV4.UnitInterval.new(
-                await WasmV4.BigNum.from_str('721'),
-                await WasmV4.BigNum.from_str('10000000'),
-            ),
-        ));
-        cfgBuilder = await cfgBuilder.prefer_pure_change(true);
+        const unitPrice = await WasmV4.ExUnitPrices.new(
+          await WasmV4.UnitInterval.new(
+            await WasmV4.BigNum.from_str('577'), 
+            await WasmV4.BigNum.from_str('10000')
+          ),
+          await WasmV4.UnitInterval.new(
+            await WasmV4.BigNum.from_str('721'), 
+            await WasmV4.BigNum.from_str('10000000')
+          )
+        );
+
+        const cfgBuilder = await WasmV4.TransactionBuilderConfigBuilder.new()
+          .fee_algo(linearFee.wasm)
+          .pool_deposit(poolDeposit.wasm)
+          .key_deposit(keyDeposit.wasm)
+          .coins_per_utxo_word(coinsPerUtxoWord.wasm)
+          .max_value_size(5000)
+          .max_tx_size(16384)
+          .ex_unit_prices(unitPrice)
+          .prefer_pure_change(true);
+
         const cfg = await cfgBuilder.build();
 
         return new TransactionBuilder(
