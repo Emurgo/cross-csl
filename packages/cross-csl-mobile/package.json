@@ -7,7 +7,6 @@
     "dist/**"
   ],
   "scripts": {
-    "prepare": "install-peers",
     "build": "yarn install && node_modules/typescript/bin/tsc --project tsconfig.json",
     "clean": "rm -rf ./dist",
     "gen-flow-defs": "node ../../generate-flow.js",
@@ -22,9 +21,6 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cross-csl-core": "2.2.0",
-    "install-peers": "^1.0.4"
-  },
-  "peerDependencies": {
     "@emurgo/react-native-haskell-shelley": "^5.0.0"
   },
   "devDependencies": {

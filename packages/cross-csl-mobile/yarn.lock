@@ -28,6 +28,13 @@
     hash-wasm "^4.9.0"
     mocha "^10.0.0"
 
+"@emurgo/react-native-haskell-shelley@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/react-native-haskell-shelley/-/react-native-haskell-shelley-5.0.0.tgz#220968e1eb1fb353518081d147c2337728453793"
+  integrity sha512-jOtc/xZMKvxTX9MElj61DhOYOBbfGWPp7q/nIUYXJ0iyNjuBEHzEJ4qkYSlTh3JHObNSV+Qv1VO008oCf0cg5w==
+  dependencies:
+    base-64 "0.1.0"
+
 "@ledgerhq/devices@^5.51.1":
   version "5.51.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-5.51.1.tgz#d741a4a5d8f17c2f9d282fd27147e6fe1999edb7"
@@ -125,6 +132,11 @@ balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
+
+base-64@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
 
 base-x@^3.0.5:
   version "3.0.9"
@@ -404,13 +416,6 @@ install-peers-cli@^2.2.0:
   integrity sha512-scSNvF49HDOLNm2xLFwST23g/OvfsceiA087bcGBgZP/ZNCrvpSaCn5IrWNZ2XYmFFykXF/6J1Zgm+D/JgRgtA==
   dependencies:
     commander "^2.20.0"
-    executioner "^2.0.1"
-
-install-peers@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/install-peers/-/install-peers-1.0.4.tgz#0fcfe18d223a72bb39ddeca09394ce50e3305c79"
-  integrity sha512-0POFG2zRn/rt0uO1tUekCDhq6t6l3HDjxR42+Hcbjmj75Gv4yuqEfMe63HC76piO1lsctAp/cQW+Ny+i/SxTlg==
-  dependencies:
     executioner "^2.0.1"
 
 int64-buffer@^1.0.1:
