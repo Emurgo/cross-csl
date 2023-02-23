@@ -1736,14 +1736,14 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
 
         const cfgBuilder = await WasmV4.TransactionBuilderConfigBuilder.new()
-          .fee_algo(linearFee.wasm)
-          .pool_deposit(poolDeposit.wasm)
-          .key_deposit(keyDeposit.wasm)
-          .coins_per_utxo_word(coinsPerUtxoWord.wasm)
-          .max_value_size(5000)
-          .max_tx_size(16384)
-          .ex_unit_prices(unitPrice)
-          .prefer_pure_change(true);
+          .then(b => b.fee_algo(linearFee.wasm))
+          .then(b => b.pool_deposit(poolDeposit.wasm))
+          .then(b => b.key_deposit(keyDeposit.wasm))
+          .then(b => b.coins_per_utxo_word(coinsPerUtxoWord.wasm))
+          .then(b => b.max_value_size(5000))
+          .then(b => b.max_tx_size(16384))
+          .then(b => b.ex_unit_prices(unitPrice))
+          .then(b => b.prefer_pure_change(true));
 
         const cfg = await cfgBuilder.build();
 
