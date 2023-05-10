@@ -224,8 +224,6 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-haskell-shelley (5.0.0):
-    - React
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-udp (2.7.0):
@@ -366,7 +364,6 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
-  - "react-native-haskell-shelley (from `../node_modules/@emurgo/react-native-haskell-shelley`)"
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -448,8 +445,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
-  react-native-haskell-shelley:
-    :path: "../node_modules/@emurgo/react-native-haskell-shelley"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-udp:
@@ -522,7 +517,6 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-haskell-shelley: 0fb39d601a79556780abd2c72eaa3e67be763992
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
@@ -547,4 +541,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 51b3e80e9a4af87720635f96a6ba53834d64ab99
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

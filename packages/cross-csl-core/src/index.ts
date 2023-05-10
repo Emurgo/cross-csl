@@ -25,7 +25,11 @@ export interface WasmModuleProxy {
     json: string,
     schema: number
   ): Promise<TransactionMetadatum>
-  minAdaRequired(value: Value, hasDataHash: boolean, coinsPerUtxoWord: BigNum): Promise<BigNum>
+  minAdaRequired(
+    value: Value,
+    hasDataHash: boolean,
+    coinsPerUtxoWord: BigNum
+  ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   makeVkeyWitness(
     txBodyHash: TransactionHash,
@@ -103,7 +107,6 @@ const pointers: Record<string, any[]> = {};
 
 export const freeContext = async (context: string) => {
   if (pointers[context]) {
-
     for (const pointer of pointers[context]) {
       if (pointer.free) {
         await pointer.free();
@@ -113,7 +116,7 @@ export const freeContext = async (context: string) => {
   }
 };
 
-export const switchContext = async (from: string, to: string) => { 
+export const switchContext = async (from: string, to: string) => {
   if (pointers[from]) {
     if (!pointers[to]) {
       pointers[to] = [];
@@ -132,7 +135,7 @@ export abstract class _WasmProxy {
 
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) { }
+  constructor(wasm: any | undefined, ctx: string) {}
 
   abstract hasValue(): boolean;
 }
@@ -412,7 +415,6 @@ export abstract class TransactionMetadatum extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
-
 
 export abstract class AuxiliaryData extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
@@ -905,8 +907,7 @@ export abstract class RewardAddress extends _Ptr {
   }
 }
 
-export abstract class RewardAddresses
-  extends _Ptr {
+export abstract class RewardAddresses extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
   abstract len(): Promise<number>;
@@ -1044,7 +1045,7 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract addMintAsset(
     mintScript: NativeScript,
     mintName: AssetName,
-    amount: Int,
+    amount: Int
   ): Promise<void>;
 
   abstract addJsonMetadatum(key: BigNum, value: string): Promise<void>;
@@ -1056,7 +1057,7 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract addNativeScriptInput(
     nativeScript: NativeScript,
     input: TransactionInput,
-    amount: Value,
+    amount: Value
   ): Promise<void>;
 
   abstract addPlutusScriptInput(
@@ -1064,7 +1065,7 @@ export abstract class TransactionBuilder extends _Ptr {
     datum: string,
     redeemer: string,
     input: TransactionInput,
-    amount: Value,
+    amount: Value
   ): Promise<void>;
 
   abstract setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void>;
@@ -1075,7 +1076,7 @@ export abstract class TransactionBuilder extends _Ptr {
     linearFee: LinearFee,
     poolDeposit: BigNum,
     keyDeposit: BigNum,
-    coinsPerUtxoWord: BigNum,
+    coinsPerUtxoWord: BigNum
   ): Promise<TransactionBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
