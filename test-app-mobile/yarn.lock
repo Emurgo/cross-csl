@@ -1139,10 +1139,10 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@emurgo/react-native-haskell-shelley@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/react-native-haskell-shelley/-/react-native-haskell-shelley-5.0.0.tgz#220968e1eb1fb353518081d147c2337728453793"
-  integrity sha512-jOtc/xZMKvxTX9MElj61DhOYOBbfGWPp7q/nIUYXJ0iyNjuBEHzEJ4qkYSlTh3JHObNSV+Qv1VO008oCf0cg5w==
+"@emurgo/csl-mobile-bridge@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-5.1.0.tgz#18c2995c36a390999d015339c6aa46199465e3d3"
+  integrity sha512-83YoShdqGhGbJIvIuU1xVvKLSMjEOlm6zTODRxk/DgmEGyoJtlZfpdpBQqDrhAJovbyH5gtBYtGrmsbOH+I3GQ==
   dependencies:
     base-64 "0.1.0"
 
@@ -2109,8 +2109,8 @@ balanced-match@^1.0.0:
 
 base-64@0.1.0:
   version "0.1.0"
-  resolved "https://registry.npmjs.org/base-64/-/base-64-0.1.0.tgz"
-  integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
 
 base64-js@0.0.8:
   version "0.0.8"
