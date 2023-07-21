@@ -66,6 +66,8 @@ export interface WasmModuleProxy {
   Bip32PrivateKey: typeof Bip32PrivateKey
   ByronAddress: typeof ByronAddress
   TransactionOutput: typeof TransactionOutput
+  DataHash: typeof DataHash
+  PlutusData: typeof PlutusData
   StakeCredential: typeof StakeCredential
   StakeRegistration: typeof StakeRegistration
   StakeDeregistration: typeof StakeDeregistration
@@ -135,7 +137,7 @@ export abstract class _WasmProxy {
 
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) {}
+  constructor(wasm: any | undefined, ctx: string) { }
 
   abstract hasValue(): boolean;
 }
@@ -754,21 +756,71 @@ export abstract class ByronAddress extends _Ptr {
 }
 
 export abstract class TransactionOutput extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
   abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<TransactionOutput> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
 
   abstract address(): Promise<Address>;
 
   abstract amount(): Promise<Value>;
 
-  static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
+  abstract hasPlutusData(): Promise<boolean>;
+
+  abstract setPlutusData(plutusData: PlutusData): Promise<void>;
+
+  abstract plutusData(): Promise<PlutusData | undefined>;
+
+  abstract hasDataHash(): Promise<boolean>;
+
+  abstract setDataHash(dataHash: DataHash): Promise<void>;
+
+  abstract dataHash(): Promise<DataHash | undefined>;
 
   static new(address: Address, amount: Value): Promise<TransactionOutput> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+}
 
-  abstract setDataHash(dataHashHex: string): Promise<void>;
+export abstract class DataHash extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<DataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<DataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static fromBech32(bech: string): Promise<DataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  };
+
+  abstract toBech32(prefix: string): Promise<string>;
+}
+
+export abstract class PlutusData extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<PlutusData> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<PlutusData> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
 }
 
 export abstract class StakeCredential extends _Ptr {

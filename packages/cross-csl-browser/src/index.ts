@@ -191,8 +191,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class LinearFee
       extends Ptr<WasmV4.LinearFee>
-      implements WasmContract.LinearFee
-    {
+      implements WasmContract.LinearFee {
       constant(): Promise<WasmContract.BigNum> {
         return new Promise((resolve, reject) => {
           try {
@@ -236,8 +235,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class GeneralTransactionMetadata
       extends Ptr<WasmV4.GeneralTransactionMetadata>
-      implements WasmContract.GeneralTransactionMetadata
-    {
+      implements WasmContract.GeneralTransactionMetadata {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -346,8 +344,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionMetadatumLabels
       extends Ptr<WasmV4.TransactionMetadatumLabels>
-      implements WasmContract.TransactionMetadatumLabels
-    {
+      implements WasmContract.TransactionMetadatumLabels {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -426,8 +423,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MetadataMap
       extends Ptr<WasmV4.MetadataMap>
-      implements WasmContract.MetadataMap
-    {
+      implements WasmContract.MetadataMap {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -691,8 +687,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionMetadatum
       extends Ptr<WasmV4.TransactionMetadatum>
-      implements WasmContract.TransactionMetadatum
-    {
+      implements WasmContract.TransactionMetadatum {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -865,8 +860,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AuxiliaryData
       extends Ptr<WasmV4.AuxiliaryData>
-      implements WasmContract.AuxiliaryData
-    {
+      implements WasmContract.AuxiliaryData {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1007,8 +1001,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AssetName
       extends Ptr<WasmV4.AssetName>
-      implements WasmContract.AssetName
-    {
+      implements WasmContract.AssetName {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1059,8 +1052,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AssetNames
       extends Ptr<WasmV4.AssetNames>
-      implements WasmContract.AssetNames
-    {
+      implements WasmContract.AssetNames {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -1174,8 +1166,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ScriptHash
       extends WasmProxy<WasmV4.ScriptHash>
-      implements WasmContract.ScriptHash
-    {
+      implements WasmContract.ScriptHash {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1206,8 +1197,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ScriptHashes
       extends WasmProxy<WasmV4.ScriptHashes>
-      implements WasmContract.ScriptHashes
-    {
+      implements WasmContract.ScriptHashes {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1281,8 +1271,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MultiAsset
       extends Ptr<WasmV4.MultiAsset>
-      implements WasmContract.MultiAsset
-    {
+      implements WasmContract.MultiAsset {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -1359,8 +1348,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Ed25519KeyHash
       extends Ptr<WasmV4.Ed25519KeyHash>
-      implements WasmContract.Ed25519KeyHash
-    {
+      implements WasmContract.Ed25519KeyHash {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1394,8 +1382,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionHash
       extends Ptr<WasmV4.TransactionHash>
-      implements WasmContract.TransactionHash
-    {
+      implements WasmContract.TransactionHash {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1430,8 +1417,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionInput
       extends Ptr<WasmV4.TransactionInput>
-      implements WasmContract.TransactionInput
-    {
+      implements WasmContract.TransactionInput {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -1669,8 +1655,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PublicKey
       extends Ptr<WasmV4.PublicKey>
-      implements WasmContract.PublicKey
-    {
+      implements WasmContract.PublicKey {
       toBech32(): Promise<string> {
         return new Promise((resolve, reject) => {
           try {
@@ -1736,8 +1721,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Bip32PublicKey
       extends Ptr<WasmV4.Bip32PublicKey>
-      implements WasmContract.Bip32PublicKey
-    {
+      implements WasmContract.Bip32PublicKey {
       derive(index: number): Promise<Bip32PublicKey> {
         return new Promise((resolve, reject) => {
           try {
@@ -1826,8 +1810,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PrivateKey
       extends Ptr<WasmV4.PrivateKey>
-      implements WasmContract.PrivateKey
-    {
+      implements WasmContract.PrivateKey {
       toPublic(): Promise<WasmContract.PublicKey> {
         return new Promise((resolve, reject) => {
           try {
@@ -1935,8 +1918,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Bip32PrivateKey
       extends Ptr<WasmV4.Bip32PrivateKey>
-      implements WasmContract.Bip32PrivateKey
-    {
+      implements WasmContract.Bip32PrivateKey {
       derive(index: number): Promise<Bip32PrivateKey> {
         return new Promise((resolve, reject) => {
           try {
@@ -2060,8 +2042,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ByronAddress
       extends Ptr<WasmV4.ByronAddress>
-      implements WasmContract.ByronAddress
-    {
+      implements WasmContract.ByronAddress {
       toBase58(): Promise<string> {
         return new Promise((resolve, reject) => {
           try {
@@ -2168,12 +2149,52 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionOutput
       extends Ptr<WasmV4.TransactionOutput>
-      implements WasmContract.TransactionOutput
-    {
+      implements WasmContract.TransactionOutput {
+
+      static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionOutput(
+                WasmV4.TransactionOutput.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
             resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hexStr: string): Promise<TransactionOutput> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionOutput(
+                WasmV4.TransactionOutput.from_hex(hexStr),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
           } catch (e) {
             reject(e);
           }
@@ -2200,14 +2221,65 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+      hasPlutusData(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_plutus_data());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setPlutusData(data: WasmContract.PlutusData): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_plutus_data(data.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      plutusData(): Promise<WasmContract.PlutusData> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new TransactionOutput(
-                WasmV4.TransactionOutput.from_bytes(bytes),
-                $outer._ctx
-              )
+              this.wasm.plutus_data()
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      hasDataHash(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_data_hash());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setDataHash(dataHash: WasmContract.DataHash): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              this.wasm.set_data_hash(dataHash)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      dataHash(): Promise<WasmContract.DataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              this.wasm.data_hash()
             );
           } catch (e) {
             reject(e);
@@ -2217,7 +2289,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(
         address: WasmContract.Address,
-        amount: WasmContract.Value
+        amount: WasmContract.Value,
       ): Promise<TransactionOutput> {
         return new Promise((resolve, reject) => {
           try {
@@ -2232,13 +2304,23 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
           }
         });
       }
+    }
+    return TransactionOutput;
+  })();
 
-      setDataHash(dataHashHex: string): Promise<void> {
+  public DataHash = (() => {
+    const $outer = this;
+
+    class DataHash
+      extends Ptr<WasmV4.DataHash>
+      implements WasmContract.DataHash {
+      static fromBytes(bytes: Uint8Array): Promise<DataHash> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              this.wasm.set_data_hash(
-                WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex'))
+              new DataHash(
+                WasmV4.DataHash.from_bytes(bytes),
+                $outer._ctx
               )
             );
           } catch (e) {
@@ -2246,8 +2328,47 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
           }
         });
       }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<WasmContract.DataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DataHash(
+                WasmV4.DataHash.from_hex(hex),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBech32(prefix: string): Promise<string> {
+
+      }
     }
-    return TransactionOutput;
+    return DataHash;
   })();
 
   public StakeCredential = (() => {
@@ -2255,8 +2376,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeCredential
       extends Ptr<WasmV4.StakeCredential>
-      implements WasmContract.StakeCredential
-    {
+      implements WasmContract.StakeCredential {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2358,8 +2478,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeRegistration
       extends Ptr<WasmV4.StakeRegistration>
-      implements WasmContract.StakeRegistration
-    {
+      implements WasmContract.StakeRegistration {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2425,8 +2544,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeDeregistration
       extends Ptr<WasmV4.StakeDeregistration>
-      implements WasmContract.StakeDeregistration
-    {
+      implements WasmContract.StakeDeregistration {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2492,8 +2610,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeDelegation
       extends Ptr<WasmV4.StakeDelegation>
-      implements WasmContract.StakeDelegation
-    {
+      implements WasmContract.StakeDelegation {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2575,8 +2692,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Certificate
       extends Ptr<WasmV4.Certificate>
-      implements WasmContract.Certificate
-    {
+      implements WasmContract.Certificate {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2707,8 +2823,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Certificates
       extends Ptr<WasmV4.Certificates>
-      implements WasmContract.Certificates
-    {
+      implements WasmContract.Certificates {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2782,8 +2897,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class RewardAddress
       extends Ptr<WasmV4.RewardAddress>
-      implements WasmContract.RewardAddress
-    {
+      implements WasmContract.RewardAddress {
       paymentCred(): Promise<WasmContract.StakeCredential> {
         return new Promise((resolve, reject) => {
           try {
@@ -2847,8 +2961,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class RewardAddresses
       extends Ptr<WasmV4.RewardAddresses>
-      implements WasmContract.RewardAddresses
-    {
+      implements WasmContract.RewardAddresses {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -2924,8 +3037,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Withdrawals
       extends Ptr<WasmV4.Withdrawals>
-      implements WasmContract.Withdrawals
-    {
+      implements WasmContract.Withdrawals {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -3014,8 +3126,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionInputs
       extends Ptr<WasmV4.TransactionInputs>
-      implements WasmContract.TransactionInputs
-    {
+      implements WasmContract.TransactionInputs {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -3046,8 +3157,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionOutputs
       extends Ptr<WasmV4.TransactionOutputs>
-      implements WasmContract.TransactionOutputs
-    {
+      implements WasmContract.TransactionOutputs {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -3078,8 +3188,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionBody
       extends Ptr<WasmV4.TransactionBody>
-      implements WasmContract.TransactionBody
-    {
+      implements WasmContract.TransactionBody {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -3184,8 +3293,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionBuilder
       extends Ptr<WasmV4.TransactionBuilder>
-      implements WasmContract.TransactionBuilder
-    {
+      implements WasmContract.TransactionBuilder {
       addKeyInput(
         hash: WasmContract.Ed25519KeyHash,
         input: WasmContract.TransactionInput,
@@ -3625,8 +3733,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BaseAddress
       extends Ptr<WasmV4.BaseAddress>
-      implements WasmContract.BaseAddress
-    {
+      implements WasmContract.BaseAddress {
       paymentCred(): Promise<WasmContract.StakeCredential> {
         return new Promise((resolve, reject) => {
           try {
@@ -3703,8 +3810,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PointerAddress
       extends Ptr<WasmV4.PointerAddress>
-      implements WasmContract.PointerAddress
-    {
+      implements WasmContract.PointerAddress {
       paymentCred(): Promise<WasmContract.StakeCredential> {
         return new Promise((resolve, reject) => {
           try {
@@ -3779,8 +3885,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class EnterpriseAddress
       extends Ptr<WasmV4.EnterpriseAddress>
-      implements WasmContract.EnterpriseAddress
-    {
+      implements WasmContract.EnterpriseAddress {
       paymentCred(): Promise<WasmContract.StakeCredential> {
         return new Promise((resolve, reject) => {
           try {
@@ -3919,8 +4024,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Ed25519Signature
       extends Ptr<WasmV4.Ed25519Signature>
-      implements WasmContract.Ed25519Signature
-    {
+      implements WasmContract.Ed25519Signature {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -3964,8 +4068,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Vkeywitness
       extends Ptr<WasmV4.Vkeywitness>
-      implements WasmContract.Vkeywitness
-    {
+      implements WasmContract.Vkeywitness {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -4026,8 +4129,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Vkeywitnesses
       extends Ptr<WasmV4.Vkeywitnesses>
-      implements WasmContract.Vkeywitnesses
-    {
+      implements WasmContract.Vkeywitnesses {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -4076,8 +4178,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BootstrapWitness
       extends Ptr<WasmV4.BootstrapWitness>
-      implements WasmContract.BootstrapWitness
-    {
+      implements WasmContract.BootstrapWitness {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -4136,8 +4237,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BootstrapWitnesses
       extends Ptr<WasmV4.BootstrapWitnesses>
-      implements WasmContract.BootstrapWitnesses
-    {
+      implements WasmContract.BootstrapWitnesses {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -4193,8 +4293,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionWitnessSet
       extends Ptr<WasmV4.TransactionWitnessSet>
-      implements WasmContract.TransactionWitnessSet
-    {
+      implements WasmContract.TransactionWitnessSet {
       setBootstraps(
         bootstraps: WasmContract.BootstrapWitnesses
       ): Promise<void> {
@@ -4262,8 +4361,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Transaction
       extends Ptr<WasmV4.Transaction>
-      implements WasmContract.Transaction
-    {
+      implements WasmContract.Transaction {
       body(): Promise<WasmContract.TransactionBody> {
         return new Promise((resolve, reject) => {
           try {
@@ -4364,8 +4462,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NetworkInfo
       extends Ptr<WasmV4.NetworkInfo>
-      implements WasmContract.NetworkInfo
-    {
+      implements WasmContract.NetworkInfo {
       networkId(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -4456,8 +4553,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MetadataList
       extends Ptr<WasmV4.MetadataList>
-      implements WasmContract.MetadataList
-    {
+      implements WasmContract.MetadataList {
       static new(): Promise<MetadataList> {
         return new Promise((resolve, reject) => {
           try {
@@ -4533,8 +4629,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NativeScript
       extends Ptr<WasmV4.NativeScript>
-      implements WasmContract.NativeScript
-    {
+      implements WasmContract.NativeScript {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -4588,8 +4683,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NativeScripts
       extends Ptr<WasmV4.NativeScripts>
-      implements WasmContract.NativeScripts
-    {
+      implements WasmContract.NativeScripts {
       len(): Promise<number> {
         return new Promise((resolve, reject) => {
           try {
@@ -4638,8 +4732,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PlutusScript
       extends Ptr<WasmV4.PlutusScript>
-      implements WasmContract.PlutusScript
-    {
+      implements WasmContract.PlutusScript {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -4695,8 +4788,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PlutusScripts
       extends Ptr<WasmV4.PlutusScripts>
-      implements WasmContract.PlutusScripts
-    {
+      implements WasmContract.PlutusScripts {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
@@ -4770,8 +4862,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TxInputsBuilder
       extends Ptr<WasmV4.TxInputsBuilder>
-      implements WasmContract.TxInputsBuilder
-    {
+      implements WasmContract.TxInputsBuilder {
       addInput(
         address: WasmContract.Address,
         input: WasmContract.TransactionInput,
