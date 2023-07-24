@@ -2176,12 +2176,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static fromHex(hexStr: string): Promise<TransactionOutput> {
+      static fromHex(hex: string): Promise<TransactionOutput> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
               new TransactionOutput(
-                WasmV4.TransactionOutput.from_hex(hexStr),
+                WasmV4.TransactionOutput.from_hex(hex),
                 $outer._ctx
               )
             );
@@ -2231,10 +2231,10 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      setPlutusData(data: WasmContract.PlutusData): Promise<void> {
+      setPlutusData(plutusData: WasmContract.PlutusData): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(this.wasm.set_plutus_data(data.wasm));
+            resolve(this.wasm.set_plutus_data(plutusData.wasm));
           } catch (e) {
             reject(e);
           }
