@@ -139,8 +139,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class LinearFee
       extends Ptr<WasmV4.LinearFee>
-      implements WasmContract.LinearFee
-    {
+      implements WasmContract.LinearFee {
       async constant(): Promise<WasmContract.BigNum> {
         const constant = await this.wasm.constant();
         return new $outer.BigNum(constant, $outer._ctx);
@@ -168,8 +167,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class GeneralTransactionMetadata
       extends Ptr<WasmV4.GeneralTransactionMetadata>
-      implements WasmContract.GeneralTransactionMetadata
-    {
+      implements WasmContract.GeneralTransactionMetadata {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -226,8 +224,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionMetadatumLabels
       extends Ptr<WasmV4.TransactionMetadatumLabels>
-      implements WasmContract.TransactionMetadatumLabels
-    {
+      implements WasmContract.TransactionMetadatumLabels {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -268,8 +265,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MetadataMap
       extends Ptr<WasmV4.MetadataMap>
-      implements WasmContract.MetadataMap
-    {
+      implements WasmContract.MetadataMap {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -413,8 +409,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionMetadatum
       extends Ptr<WasmV4.TransactionMetadatum>
-      implements WasmContract.TransactionMetadatum
-    {
+      implements WasmContract.TransactionMetadatum {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -499,8 +494,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AuxiliaryData
       extends Ptr<WasmV4.AuxiliaryData>
-      implements WasmContract.AuxiliaryData
-    {
+      implements WasmContract.AuxiliaryData {
       async toBytes(): Promise<Uint8Array> {
         return Promise.resolve(this.wasm.to_bytes());
       }
@@ -575,8 +569,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AssetName
       extends Ptr<WasmV4.AssetName>
-      implements WasmContract.AssetName
-    {
+      implements WasmContract.AssetName {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -604,8 +597,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class AssetNames
       extends Ptr<WasmV4.AssetNames>
-      implements WasmContract.AssetNames
-    {
+      implements WasmContract.AssetNames {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -663,8 +655,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ScriptHash
       extends WasmProxy<WasmV4.ScriptHash>
-      implements WasmContract.ScriptHash
-    {
+      implements WasmContract.ScriptHash {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -684,8 +675,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ScriptHashes
       extends WasmProxy<WasmV4.ScriptHashes>
-      implements WasmContract.ScriptHashes
-    {
+      implements WasmContract.ScriptHashes {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -724,8 +714,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MultiAsset
       extends Ptr<WasmV4.MultiAsset>
-      implements WasmContract.MultiAsset
-    {
+      implements WasmContract.MultiAsset {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -764,8 +753,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Ed25519KeyHash
       extends Ptr<WasmV4.Ed25519KeyHash>
-      implements WasmContract.Ed25519KeyHash
-    {
+      implements WasmContract.Ed25519KeyHash {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -785,8 +773,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionHash
       extends Ptr<WasmV4.TransactionHash>
-      implements WasmContract.TransactionHash
-    {
+      implements WasmContract.TransactionHash {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -806,8 +793,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionInput
       extends Ptr<WasmV4.TransactionInput>
-      implements WasmContract.TransactionInput
-    {
+      implements WasmContract.TransactionInput {
       async toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
@@ -921,8 +907,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PublicKey
       extends Ptr<WasmV4.PublicKey>
-      implements WasmContract.PublicKey
-    {
+      implements WasmContract.PublicKey {
       async toBech32(): Promise<string> {
         return await this.wasm.to_bech32();
       }
@@ -957,8 +942,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Bip32PublicKey
       extends Ptr<WasmV4.Bip32PublicKey>
-      implements WasmContract.Bip32PublicKey
-    {
+      implements WasmContract.Bip32PublicKey {
       async derive(index: number): Promise<Bip32PublicKey> {
         return new Bip32PublicKey(await this.wasm.derive(index), $outer._ctx);
       }
@@ -1001,8 +985,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PrivateKey
       extends Ptr<WasmV4.PrivateKey>
-      implements WasmContract.PrivateKey
-    {
+      implements WasmContract.PrivateKey {
       async toPublic(): Promise<WasmContract.PublicKey> {
         return new $outer.PublicKey(await this.wasm.to_public(), $outer._ctx);
       }
@@ -1058,8 +1041,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Bip32PrivateKey
       extends Ptr<WasmV4.Bip32PrivateKey>
-      implements WasmContract.Bip32PrivateKey
-    {
+      implements WasmContract.Bip32PrivateKey {
       async derive(index: number): Promise<Bip32PrivateKey> {
         return new Bip32PrivateKey(await this.wasm.derive(index), $outer._ctx);
       }
@@ -1122,8 +1104,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ByronAddress
       extends Ptr<WasmV4.ByronAddress>
-      implements WasmContract.ByronAddress
-    {
+      implements WasmContract.ByronAddress {
       async toBase58(): Promise<string> {
         return await this.wasm.to_base58();
       }
@@ -1178,10 +1159,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionOutput
       extends Ptr<WasmV4.TransactionOutput>
-      implements WasmContract.TransactionOutput
-    {
+      implements WasmContract.TransactionOutput {
+      static async fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+        return new TransactionOutput(
+          await WasmV4.TransactionOutput.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<TransactionOutput> {
+        return new TransactionOutput(
+          await WasmV4.TransactionOutput.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
       }
 
       async address(): Promise<WasmContract.Address> {
@@ -1192,11 +1190,38 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Value(await this.wasm.amount(), $outer._ctx);
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-        return new TransactionOutput(
-          await WasmV4.TransactionOutput.from_bytes(bytes),
-          $outer._ctx
-        );
+      async hasPlutusData(): Promise<boolean> {
+        return await this.wasm.has_plutus_data();
+      }
+
+      async setPlutusData(plutusData: WasmContract.PlutusData): Promise<void> {
+        await this.wasm.set_plutus_data(plutusData.wasm);
+      }
+
+      async plutusData(): Promise<WasmContract.PlutusData | undefined> {
+        const wasm = await this.wasm.plutus_data();
+        if (wasm) {
+          return new $outer.PlutusData(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
+      async hasDataHash(): Promise<boolean> {
+        return await this.wasm.has_data_hash();
+      }
+
+      async setDataHash(dataHash: WasmContract.DataHash): Promise<void> {
+        await this.wasm.set_data_hash(dataHash.wasm);
+      }
+
+      async dataHash(): Promise<WasmContract.DataHash | undefined> {
+        const wasm = await this.wasm.data_hash();
+        if (wasm) {
+          return new $outer.DataHash(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       static async new(
@@ -1208,14 +1233,81 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
           $outer._ctx
         );
       }
-
-      async setDataHash(dataHashHex: string): Promise<void> {
-        return this.wasm.set_data_hash(
-          await WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex'))
-        );
-      }
     }
     return TransactionOutput;
+  })();
+
+  public DataHash = (() => {
+    const $outer = this;
+
+    class DataHash
+      extends Ptr<WasmV4.DataHash>
+      implements WasmContract.DataHash {
+      static async fromBytes(bytes: Uint8Array): Promise<DataHash> {
+        return new DataHash(
+          await WasmV4.DataHash.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.DataHash> {
+        return new DataHash(
+          await WasmV4.DataHash.from_bytes(Buffer.from(hex, 'hex')),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async fromBech32(str: string): Promise<WasmContract.DataHash> {
+        return new DataHash(
+          await WasmV4.DataHash.from_bech32(str),
+          $outer._ctx
+        );
+      }
+
+      async toBech32(prefix: string): Promise<string> {
+        return await this.wasm.to_bech32(prefix);
+      }
+    }
+    return DataHash;
+  })();
+
+  public PlutusData = (() => {
+    const $outer = this;
+
+    class PlutusData
+      extends Ptr<WasmV4.PlutusData>
+      implements WasmContract.PlutusData {
+      static async fromBytes(bytes: Uint8Array): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+    }
+    return PlutusData;
   })();
 
   public StakeCredential = (() => {
@@ -1223,8 +1315,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeCredential
       extends Ptr<WasmV4.StakeCredential>
-      implements WasmContract.StakeCredential
-    {
+      implements WasmContract.StakeCredential {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1280,8 +1371,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeRegistration
       extends Ptr<WasmV4.StakeRegistration>
-      implements WasmContract.StakeRegistration
-    {
+      implements WasmContract.StakeRegistration {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1317,8 +1407,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeDeregistration
       extends Ptr<WasmV4.StakeDeregistration>
-      implements WasmContract.StakeDeregistration
-    {
+      implements WasmContract.StakeDeregistration {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1354,8 +1443,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class StakeDelegation
       extends Ptr<WasmV4.StakeDelegation>
-      implements WasmContract.StakeDelegation
-    {
+      implements WasmContract.StakeDelegation {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1402,8 +1490,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Certificate
       extends Ptr<WasmV4.Certificate>
-      implements WasmContract.Certificate
-    {
+      implements WasmContract.Certificate {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1475,8 +1562,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Certificates
       extends Ptr<WasmV4.Certificates>
-      implements WasmContract.Certificates
-    {
+      implements WasmContract.Certificates {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1512,8 +1598,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class RewardAddress
       extends Ptr<WasmV4.RewardAddress>
-      implements WasmContract.RewardAddress
-    {
+      implements WasmContract.RewardAddress {
       async paymentCred(): Promise<WasmContract.StakeCredential> {
         return new $outer.StakeCredential(
           await this.wasm.payment_cred(),
@@ -1552,8 +1637,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class RewardAddresses
       extends Ptr<WasmV4.RewardAddresses>
-      implements WasmContract.RewardAddresses
-    {
+      implements WasmContract.RewardAddresses {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1592,8 +1676,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Withdrawals
       extends Ptr<WasmV4.Withdrawals>
-      implements WasmContract.Withdrawals
-    {
+      implements WasmContract.Withdrawals {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1640,8 +1723,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionInputs
       extends Ptr<WasmV4.TransactionInputs>
-      implements WasmContract.TransactionInputs
-    {
+      implements WasmContract.TransactionInputs {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -1661,8 +1743,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionOutputs
       extends Ptr<WasmV4.TransactionOutputs>
-      implements WasmContract.TransactionOutputs
-    {
+      implements WasmContract.TransactionOutputs {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -1682,8 +1763,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionBody
       extends Ptr<WasmV4.TransactionBody>
-      implements WasmContract.TransactionBody
-    {
+      implements WasmContract.TransactionBody {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1739,8 +1819,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionBuilder
       extends Ptr<WasmV4.TransactionBuilder>
-      implements WasmContract.TransactionBuilder
-    {
+      implements WasmContract.TransactionBuilder {
       async addKeyInput(
         hash: WasmContract.Ed25519KeyHash,
         input: WasmContract.TransactionInput,
@@ -1996,8 +2075,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BaseAddress
       extends Ptr<WasmV4.BaseAddress>
-      implements WasmContract.BaseAddress
-    {
+      implements WasmContract.BaseAddress {
       async paymentCred(): Promise<WasmContract.StakeCredential> {
         return new $outer.StakeCredential(
           await this.wasm.payment_cred(),
@@ -2044,8 +2122,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PointerAddress
       extends Ptr<WasmV4.PointerAddress>
-      implements WasmContract.PointerAddress
-    {
+      implements WasmContract.PointerAddress {
       async paymentCred(): Promise<WasmContract.StakeCredential> {
         return new $outer.StakeCredential(
           await this.wasm.payment_cred(),
@@ -2089,8 +2166,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class EnterpriseAddress
       extends Ptr<WasmV4.EnterpriseAddress>
-      implements WasmContract.EnterpriseAddress
-    {
+      implements WasmContract.EnterpriseAddress {
       async paymentCred(): Promise<WasmContract.StakeCredential> {
         return new $outer.StakeCredential(
           await this.wasm.payment_cred(),
@@ -2171,8 +2247,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Ed25519Signature
       extends Ptr<WasmV4.Ed25519Signature>
-      implements WasmContract.Ed25519Signature
-    {
+      implements WasmContract.Ed25519Signature {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -2196,8 +2271,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Vkeywitness
       extends Ptr<WasmV4.Vkeywitness>
-      implements WasmContract.Vkeywitness
-    {
+      implements WasmContract.Vkeywitness {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -2234,8 +2308,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Vkeywitnesses
       extends Ptr<WasmV4.Vkeywitnesses>
-      implements WasmContract.Vkeywitnesses
-    {
+      implements WasmContract.Vkeywitnesses {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -2260,8 +2333,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BootstrapWitness
       extends Ptr<WasmV4.BootstrapWitness>
-      implements WasmContract.BootstrapWitness
-    {
+      implements WasmContract.BootstrapWitness {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -2298,8 +2370,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class BootstrapWitnesses
       extends Ptr<WasmV4.BootstrapWitnesses>
-      implements WasmContract.BootstrapWitnesses
-    {
+      implements WasmContract.BootstrapWitnesses {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -2330,8 +2401,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionWitnessSet
       extends Ptr<WasmV4.TransactionWitnessSet>
-      implements WasmContract.TransactionWitnessSet
-    {
+      implements WasmContract.TransactionWitnessSet {
       async setBootstraps(
         bootstraps: WasmContract.BootstrapWitnesses
       ): Promise<void> {
@@ -2368,8 +2438,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Transaction
       extends Ptr<WasmV4.Transaction>
-      implements WasmContract.Transaction
-    {
+      implements WasmContract.Transaction {
       async body(): Promise<WasmContract.TransactionBody> {
         return new $outer.TransactionBody(await this.wasm.body(), $outer._ctx);
       }
@@ -2432,8 +2501,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NetworkInfo
       extends Ptr<WasmV4.NetworkInfo>
-      implements WasmContract.NetworkInfo
-    {
+      implements WasmContract.NetworkInfo {
       async networkId(): Promise<number> {
         return await this.wasm.network_id();
       }
@@ -2482,8 +2550,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class MetadataList
       extends Ptr<WasmV4.MetadataList>
-      implements WasmContract.MetadataList
-    {
+      implements WasmContract.MetadataList {
       static async new(): Promise<MetadataList> {
         return new MetadataList(await WasmV4.MetadataList.new(), $outer._ctx);
       }
@@ -2522,8 +2589,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NativeScript
       extends Ptr<WasmV4.NativeScript>
-      implements WasmContract.NativeScript
-    {
+      implements WasmContract.NativeScript {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -2551,8 +2617,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class NativeScripts
       extends Ptr<WasmV4.NativeScripts>
-      implements WasmContract.NativeScripts
-    {
+      implements WasmContract.NativeScripts {
       async len(): Promise<number> {
         return await this.wasm.len();
       }
@@ -2577,8 +2642,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PlutusScript
       extends Ptr<WasmV4.PlutusScript>
-      implements WasmContract.PlutusScript
-    {
+      implements WasmContract.PlutusScript {
       async toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
@@ -2609,8 +2673,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PlutusScripts
       extends Ptr<WasmV4.PlutusScripts>
-      implements WasmContract.PlutusScripts
-    {
+      implements WasmContract.PlutusScripts {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -2650,8 +2713,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TxInputsBuilder
       extends Ptr<any>
-      implements WasmContract.TxInputsBuilder
-    {
+      implements WasmContract.TxInputsBuilder {
       addInput(
         address: WasmContract.Address,
         input: WasmContract.TransactionInput,

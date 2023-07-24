@@ -2370,12 +2370,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static fromBech32(prefix: string): Promise<WasmContract.DataHash> {
+      static fromBech32(str: string): Promise<WasmContract.DataHash> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
               new DataHash(
-                WasmV4.DataHash.from_bech32(prefix),
+                WasmV4.DataHash.from_bech32(str),
                 $outer._ctx
               )
             );
