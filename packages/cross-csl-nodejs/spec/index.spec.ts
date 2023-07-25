@@ -1,5 +1,5 @@
-import { init } from '../src';
+import { init } from '../src'
 
-import { setupTests } from '../../cross-csl-core/spec/index.spec';
+import { setupTests } from '../../cross-csl-core/spec/index.spec'
 
-setupTests(init('global') as any, 'Cross CSL Core');
+setupTests(init('global') as any, 'Cross CSL Core')
