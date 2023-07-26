@@ -50,6 +50,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  async hashPlutusData(
+    plutusData: WasmContract.PlutusData
+  ): Promise<WasmContract.DataHash> {
+    return new this.DataHash(
+      await WasmV4.hash_plutus_data(plutusData.wasm),
+      this._ctx
+    );
+  }
+
   async makeVkeyWitness(
     txBodyHash: WasmContract.TransactionHash,
     sk: WasmContract.PrivateKey

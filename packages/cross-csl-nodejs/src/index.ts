@@ -49,6 +49,14 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  hashPlutusData(
+    plutusData: WasmContract.PlutusData
+  ): Promise<WasmContract.DataHash> {
+    return Promise.resolve(
+      new this.DataHash(WasmV4.hash_plutus_data(plutusData.wasm), this._ctx)
+    );
+  }
+
   makeVkeyWitness(
     txBodyHash: WasmContract.TransactionHash,
     sk: WasmContract.PrivateKey
