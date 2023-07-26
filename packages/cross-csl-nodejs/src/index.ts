@@ -2170,10 +2170,50 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.TransactionOutput>
       implements WasmContract.TransactionOutput
     {
+      static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionOutput(
+                WasmV4.TransactionOutput.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
           try {
             resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<TransactionOutput> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionOutput(
+                WasmV4.TransactionOutput.from_hex(hex),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
           } catch (e) {
             reject(e);
           }
@@ -2200,15 +2240,70 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+      hasPlutusData(): Promise<boolean> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(
-              new TransactionOutput(
-                WasmV4.TransactionOutput.from_bytes(bytes),
-                $outer._ctx
-              )
-            );
+            resolve(this.wasm.has_plutus_data());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setPlutusData(plutusData: WasmContract.PlutusData): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_plutus_data(plutusData.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      plutusData(): Promise<WasmContract.PlutusData | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.plutus_data();
+            if (wasm) {
+              resolve(new $outer.PlutusData(wasm, $outer._ctx));
+            } else {
+              resolve(undefined);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      hasDataHash(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_data_hash());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setDataHash(dataHash: WasmContract.DataHash): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_data_hash(dataHash.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      dataHash(): Promise<WasmContract.DataHash | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.data_hash();
+            if (wasm) {
+              resolve(new $outer.DataHash(wasm, $outer._ctx));
+            } else {
+              resolve(undefined);
+            }
           } catch (e) {
             reject(e);
           }
@@ -2232,22 +2327,134 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
           }
         });
       }
+    }
+    return TransactionOutput;
+  })();
 
-      setDataHash(dataHashHex: string): Promise<void> {
+  public DataHash = (() => {
+    const $outer = this;
+
+    class DataHash
+      extends Ptr<WasmV4.DataHash>
+      implements WasmContract.DataHash
+    {
+      static fromBytes(bytes: Uint8Array): Promise<DataHash> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              this.wasm.set_data_hash(
-                WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex'))
-              )
+              new DataHash(WasmV4.DataHash.from_bytes(bytes), $outer._ctx)
             );
           } catch (e) {
             reject(e);
           }
         });
       }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<WasmContract.DataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new DataHash(WasmV4.DataHash.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromBech32(str: string): Promise<WasmContract.DataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new DataHash(WasmV4.DataHash.from_bech32(str), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBech32(prefix: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bech32(prefix));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
     }
-    return TransactionOutput;
+    return DataHash;
+  })();
+
+  public PlutusData = (() => {
+    const $outer = this;
+
+    class PlutusData
+      extends Ptr<WasmV4.PlutusData>
+      implements WasmContract.PlutusData
+    {
+      static fromBytes(bytes: Uint8Array): Promise<PlutusData> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new PlutusData(WasmV4.PlutusData.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<PlutusData> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new PlutusData(WasmV4.PlutusData.from_hex(hex), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return PlutusData;
   })();
 
   public StakeCredential = (() => {

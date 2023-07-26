@@ -1180,8 +1180,26 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.TransactionOutput>
       implements WasmContract.TransactionOutput
     {
+      static async fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+        return new TransactionOutput(
+          await WasmV4.TransactionOutput.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<TransactionOutput> {
+        return new TransactionOutput(
+          await WasmV4.TransactionOutput.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
       }
 
       async address(): Promise<WasmContract.Address> {
@@ -1192,11 +1210,38 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Value(await this.wasm.amount(), $outer._ctx);
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
-        return new TransactionOutput(
-          await WasmV4.TransactionOutput.from_bytes(bytes),
-          $outer._ctx
-        );
+      async hasPlutusData(): Promise<boolean> {
+        return await this.wasm.has_plutus_data();
+      }
+
+      async setPlutusData(plutusData: WasmContract.PlutusData): Promise<void> {
+        await this.wasm.set_plutus_data(plutusData.wasm);
+      }
+
+      async plutusData(): Promise<WasmContract.PlutusData | undefined> {
+        const wasm = await this.wasm.plutus_data();
+        if (wasm) {
+          return new $outer.PlutusData(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
+      async hasDataHash(): Promise<boolean> {
+        return await this.wasm.has_data_hash();
+      }
+
+      async setDataHash(dataHash: WasmContract.DataHash): Promise<void> {
+        await this.wasm.set_data_hash(dataHash.wasm);
+      }
+
+      async dataHash(): Promise<WasmContract.DataHash | undefined> {
+        const wasm = await this.wasm.data_hash();
+        if (wasm) {
+          return new $outer.DataHash(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       static async new(
@@ -1208,14 +1253,80 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
           $outer._ctx
         );
       }
-
-      async setDataHash(dataHashHex: string): Promise<void> {
-        return this.wasm.set_data_hash(
-          await WasmV4.DataHash.from_bytes(Buffer.from(dataHashHex, 'hex'))
-        );
-      }
     }
     return TransactionOutput;
+  })();
+
+  public DataHash = (() => {
+    const $outer = this;
+
+    class DataHash
+      extends Ptr<WasmV4.DataHash>
+      implements WasmContract.DataHash
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<DataHash> {
+        return new DataHash(
+          await WasmV4.DataHash.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.DataHash> {
+        return new DataHash(
+          await WasmV4.DataHash.from_bytes(Buffer.from(hex, 'hex')),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async fromBech32(str: string): Promise<WasmContract.DataHash> {
+        return new DataHash(await WasmV4.DataHash.from_bech32(str), $outer._ctx);
+      }
+
+      async toBech32(prefix: string): Promise<string> {
+        return await this.wasm.to_bech32(prefix);
+      }
+    }
+    return DataHash;
+  })();
+
+  public PlutusData = (() => {
+    const $outer = this;
+
+    class PlutusData
+      extends Ptr<WasmV4.PlutusData>
+      implements WasmContract.PlutusData
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+    }
+    return PlutusData;
   })();
 
   public StakeCredential = (() => {
