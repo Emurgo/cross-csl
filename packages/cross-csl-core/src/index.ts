@@ -31,6 +31,7 @@ export interface WasmModuleProxy {
     coinsPerUtxoWord: BigNum
   ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
+  hashPlutusData(plutusData: PlutusData): Promise<DataHash>
   makeVkeyWitness(
     txBodyHash: TransactionHash,
     sk: PrivateKey
