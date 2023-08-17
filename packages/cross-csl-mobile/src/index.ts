@@ -45,12 +45,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   async minAdaForOutput(
     output: WasmContract.TransactionOutput,
-    dataCost: WasmV4.DataCost,
+    dataCost: WasmContract.DataCost,
   ) {
     return new this.BigNum(
       await WasmV4.min_ada_for_output(
         output.wasm,
-        dataCost,
+        dataCost.wasm,
       ),
       this._ctx
     );
@@ -2802,4 +2802,35 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     }
     return TxInputsBuilder;
   })();
+
+  public DataCost = (() => {
+    const $outer = this;
+
+    class DataCost
+      extends Ptr<WasmV4.DataCost>
+      implements WasmContract.DataCost
+    {
+      static async newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
+        return new DataCost(
+          await WasmV4.DataCost.new_coins_per_word(coinsPerWord),
+          $outer._ctx,
+        );
+      }
+
+      static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
+        return new DataCost(
+          await WasmV4.DataCost.new_coins_per_byte(coinsPerByte),
+          $outer._ctx,
+        );
+      }
+
+      async coinsPerByte(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(
+          await this.wasm.coins_per_byte(),
+          $outer._ctx,
+        );
+      }
+    }
+    return DataCost;
+  })()
 }
