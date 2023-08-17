@@ -43,6 +43,18 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  minAdaForOutput(
+    output: WasmContract.TransactionOutput,
+    dataCost: WasmV4.DataCost
+  ) {
+    return Promise.resolve(
+      new this.BigNum(
+        WasmV4.min_ada_for_output(output.wasm, dataCost),
+        this._ctx
+      )
+    );
+  }
+
   hashTransaction(txBody: WasmContract.TransactionBody) {
     return Promise.resolve(
       new this.TransactionHash(WasmV4.hash_transaction(txBody.wasm), this._ctx)

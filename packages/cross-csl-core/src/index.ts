@@ -30,6 +30,10 @@ export interface WasmModuleProxy {
     hasDataHash: boolean,
     coinsPerUtxoWord: BigNum
   ): Promise<BigNum>
+  minAdaForOutput(
+    output: typeof TransactionOutput,
+    // dataCost: 
+  ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   hashPlutusData(plutusData: PlutusData): Promise<DataHash>
   makeVkeyWitness(

@@ -43,6 +43,19 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  async minAdaForOutput(
+    output: WasmContract.TransactionOutput,
+    dataCost: WasmV4.DataCost,
+  ) {
+    return new this.BigNum(
+      await WasmV4.min_ada_for_output(
+        output.wasm,
+        dataCost,
+      ),
+      this._ctx
+    );
+  }
+
   async hashTransaction(txBody: WasmContract.TransactionBody) {
     return new this.TransactionHash(
       await WasmV4.hash_transaction(txBody.wasm),
