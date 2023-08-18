@@ -2683,8 +2683,8 @@ export const setupTests = (
     describe('DataCost', () => {
       it('.coinsPerByte()', async () => {
         const bigNum = await wasm.BigNum.fromStr('123');
-        const p = await wasm.DataCost.newCoinsPerByte(bigNum);
-        const coinsPerByte = await p.coinsPerByte();
+        const d = await wasm.DataCost.newCoinsPerByte(bigNum);
+        const coinsPerByte = await d.coinsPerByte();
         expect(coinsPerByte.toString()).to.be.equal(bigNum.toString());
       });
     });
