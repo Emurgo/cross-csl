@@ -45,11 +45,11 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   minAdaForOutput(
     output: WasmContract.TransactionOutput,
-    dataCost: WasmV4.DataCost
+    dataCost: WasmContract.DataCost
   ) {
     return Promise.resolve(
       new this.BigNum(
-        WasmV4.min_ada_for_output(output.wasm, dataCost),
+        WasmV4.min_ada_for_output(output.wasm, dataCost.wasm),
         this._ctx
       )
     );
@@ -5026,5 +5026,60 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
     }
     return TxInputsBuilder;
+  })();
+
+  public DataCost = (() => {
+    const $outer = this;
+
+    class DataCost
+      extends Ptr<WasmV4.DataCost>
+      implements WasmContract.DataCost
+    {
+      static newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DataCost(
+                WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm),
+                $outer._ctx,
+              ),
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DataCost(
+                WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm),
+                $outer._ctx,
+              ),
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      coinsPerByte(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.BigNum(
+                this.wasm.coins_per_byte(),
+                $outer._ctx,
+              ),
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return DataCost;
   })();
 }

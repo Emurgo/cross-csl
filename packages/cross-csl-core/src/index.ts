@@ -1469,5 +1469,5 @@ export abstract class DataCost extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract coinsPerByte(): Promise<BigNum>
+  abstract coinsPerByte(): Promise<BigNum>;
 }

@@ -2812,14 +2812,14 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
       static async newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
         return new DataCost(
-          await WasmV4.DataCost.new_coins_per_word(coinsPerWord),
+          await WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm),
           $outer._ctx,
         );
       }
 
       static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
         return new DataCost(
-          await WasmV4.DataCost.new_coins_per_byte(coinsPerByte),
+          await WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm),
           $outer._ctx,
         );
       }
@@ -2832,5 +2832,5 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
     }
     return DataCost;
-  })()
+  })();
 }
