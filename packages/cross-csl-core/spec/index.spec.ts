@@ -2680,5 +2680,13 @@ export const setupTests = (
         expect(await p.len().then((x) => x.toString())).to.be.equal('1');
       });
     });
+    describe('DataCost', () => {
+      it('.coinsPerByte()', async () => {
+        const bigNum = await wasm.BigNum.fromStr('123');
+        const d = await wasm.DataCost.newCoinsPerByte(bigNum);
+        const coinsPerByte = await d.coinsPerByte();
+        expect(coinsPerByte.toString()).to.be.equal(bigNum.toString());
+      });
+    });
   });
 };

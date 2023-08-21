@@ -30,6 +30,10 @@ export interface WasmModuleProxy {
     hasDataHash: boolean,
     coinsPerUtxoWord: BigNum
   ): Promise<BigNum>
+  minAdaForOutput(
+    output: TransactionOutput,
+    dataCost: DataCost
+  ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   hashPlutusData(plutusData: PlutusData): Promise<DataHash>
   makeVkeyWitness(
@@ -104,6 +108,7 @@ export interface WasmModuleProxy {
   PlutusScript: typeof PlutusScript
   PlutusScripts: typeof PlutusScripts
   TxInputsBuilder: typeof TxInputsBuilder
+  DataCost: typeof DataCost
 }
 
 const pointers: Record<string, any[]> = {};
@@ -1453,4 +1458,16 @@ export abstract class TxInputsBuilder extends _Ptr {
   static new(): Promise<TxInputsBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+}
+
+export abstract class DataCost extends _Ptr {
+  static newCoinsPerWord(coinsPerWord: BigNum): Promise<DataCost> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCoinsPerByte(coinsPerByte: BigNum): Promise<DataCost> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract coinsPerByte(): Promise<BigNum>;
 }

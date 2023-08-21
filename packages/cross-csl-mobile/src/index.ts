@@ -43,6 +43,19 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  async minAdaForOutput(
+    output: WasmContract.TransactionOutput,
+    dataCost: WasmContract.DataCost,
+  ) {
+    return new this.BigNum(
+      await WasmV4.min_ada_for_output(
+        output.wasm,
+        dataCost.wasm,
+      ),
+      this._ctx
+    );
+  }
+
   async hashTransaction(txBody: WasmContract.TransactionBody) {
     return new this.TransactionHash(
       await WasmV4.hash_transaction(txBody.wasm),
@@ -2788,5 +2801,36 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
     }
     return TxInputsBuilder;
+  })();
+
+  public DataCost = (() => {
+    const $outer = this;
+
+    class DataCost
+      extends Ptr<WasmV4.DataCost>
+      implements WasmContract.DataCost
+    {
+      static async newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
+        return new DataCost(
+          await WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm),
+          $outer._ctx,
+        );
+      }
+
+      static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
+        return new DataCost(
+          await WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm),
+          $outer._ctx,
+        );
+      }
+
+      async coinsPerByte(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(
+          await this.wasm.coins_per_byte(),
+          $outer._ctx,
+        );
+      }
+    }
+    return DataCost;
   })();
 }
