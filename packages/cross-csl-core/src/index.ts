@@ -36,6 +36,7 @@ export interface WasmModuleProxy {
   ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   hashPlutusData(plutusData: PlutusData): Promise<DataHash>
+  hashScriptData(redeemers: Redeemers, costModels: Costmdls, datums?: PlutusList): Promise<ScriptDataHash>
   makeVkeyWitness(
     txBodyHash: TransactionHash,
     sk: PrivateKey
@@ -73,6 +74,15 @@ export interface WasmModuleProxy {
   TransactionOutput: typeof TransactionOutput
   DataHash: typeof DataHash
   PlutusData: typeof PlutusData
+  PlutusList: typeof PlutusList
+  Redeemer: typeof Redeemer
+  RedeemerTag: typeof RedeemerTag
+  Redeemers: typeof Redeemers
+  CostModel: typeof CostModel
+  Costmdls: typeof Costmdls
+  Language: typeof Language
+  Languages: typeof Languages
+  ScriptDataHash: typeof ScriptDataHash
   StakeCredential: typeof StakeCredential
   StakeRegistration: typeof StakeRegistration
   StakeDeregistration: typeof StakeDeregistration
@@ -143,7 +153,7 @@ export abstract class _WasmProxy {
 
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) {}
+  constructor(wasm: any | undefined, ctx: string) { }
 
   abstract hasValue(): boolean;
 }
@@ -829,6 +839,248 @@ export abstract class PlutusData extends _Ptr {
   abstract toHex(): Promise<string>;
 }
 
+export abstract class PlutusList extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<PlutusList> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<PlutusList> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static new(): Promise<PlutusList> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract len(): Promise<number>;
+
+  abstract get(index: number): Promise<PlutusList>;
+
+  abstract add(elem: PlutusData): Promise<void>;
+}
+
+export abstract class ExUnits extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<ExUnits> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<ExUnits> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  abstract mem(): BigNum;
+
+  abstract steps(): BigNum;
+
+  static new(mem: BigNum, steps: BigNum): Promise<ExUnits> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class Redeemer extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<Redeemer> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<Redeemer> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  abstract tag(): Promise<RedeemerTag>;
+
+  abstract index(): BigNum;
+
+  abstract data(): PlutusData;
+
+  abstract exUnits(): ExUnits;
+
+  static new(tag: RedeemerTag, index: BigNum, data: PlutusData, ex_units: ExUnits): Promise<Redeemer> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class RedeemerTag extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static newSpend(): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newMint(): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCert(): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newReward(): Promise<RedeemerTag> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract kind(): Promise<number>;
+}
+
+export abstract class Redeemers extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<Redeemers> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<Redeemers> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static new(): Promise<Redeemers> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract len(): Promise<number>;
+
+  abstract get(index: number): Promise<Redeemers>;
+
+  abstract add(elem: Redeemer): Promise<void>;
+
+  abstract totalExUnits(): Promise<ExUnits>;
+}
+
+export abstract class CostModel extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<CostModel> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<CostModel> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static new(): Promise<CostModel> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract set(operation: number, cost: Int): Promise<Int>;
+
+  abstract get(operation: number): Promise<Int>;
+
+  abstract len(): Promise<number>;
+}
+
+export abstract class Costmdls extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static new(): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract len(): Promise<number>;
+
+  abstract insert(key: Language, value: CostModel): Promise<CostModel | undefined>;
+
+  abstract get(key: Language): Promise<CostModel | undefined>;
+
+  abstract keys(): Promise<Languages>;
+
+  abstract retainLanguageVersions(languages: Languages): Promise<Costmdls>;
+}
+
+export abstract class Language extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<Language> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<Language> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static newPlutusV1(): Promise<Language> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newPlutusV2(): Promise<Language> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract kind(): Promise<number>;
+}
+
+export abstract class Languages extends _Ptr {
+  static new(): Promise<Languages> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract len(): Promise<number>;
+
+  abstract get(index: number): Promise<Language>;
+
+  abstract add(elem: Language): Promise<void>;
+
+  static list(): Promise<Languages> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class ScriptDataHash extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<ScriptDataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<ScriptDataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
+  static fromBech32(str: string): Promise<ScriptDataHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBech32(prefix: string): Promise<string>;
+}
+
 export abstract class StakeCredential extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
@@ -1285,13 +1537,29 @@ export abstract class BootstrapWitnesses extends _Ptr {
 }
 
 export abstract class TransactionWitnessSet extends _Ptr {
+  static fromBytes(bytes: Uint8Array): Promise<TransactionWitnessSet> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  static fromHex(hex: string): Promise<TransactionWitnessSet> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex(): Promise<string>;
+
   abstract setBootstraps(bootstraps: BootstrapWitnesses): Promise<void>;
+
+  abstract bootstraps(): Promise<BootstrapWitnesses>;
+
+  abstract setPlutusData(plutusData: PlutusList): Promise<void>;
+
+  abstract plutusData(): Promise<PlutusList | undefined>;
 
   abstract setVkeys(vkeywitnesses: Vkeywitnesses): Promise<void>;
 
   abstract vkeys(): Promise<Vkeywitnesses>;
-
-  abstract bootstraps(): Promise<BootstrapWitnesses>;
 
   static new(): Promise<TransactionWitnessSet> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
