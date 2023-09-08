@@ -45,13 +45,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   async minAdaForOutput(
     output: WasmContract.TransactionOutput,
-    dataCost: WasmContract.DataCost,
+    dataCost: WasmContract.DataCost
   ) {
     return new this.BigNum(
-      await WasmV4.min_ada_for_output(
-        output.wasm,
-        dataCost.wasm,
-      ),
+      await WasmV4.min_ada_for_output(output.wasm, dataCost.wasm),
       this._ctx
     );
   }
@@ -68,6 +65,21 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   ): Promise<WasmContract.DataHash> {
     return new this.DataHash(
       await WasmV4.hash_plutus_data(plutusData.wasm),
+      this._ctx
+    );
+  }
+
+  async hashScriptData(
+    redeemers: WasmContract.Redeemers,
+    costModels: WasmContract.Costmdls,
+    datums?: WasmContract.PlutusList
+  ): Promise<WasmContract.ScriptDataHash> {
+    return new this.ScriptDataHash(
+      await WasmV4.hash_script_data(
+        redeemers.wasm,
+        costModels.wasm,
+        datums?.wasm
+      ),
       this._ctx
     );
   }
@@ -1351,6 +1363,515 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return PlutusData;
   })();
 
+  public PlutusList = (() => {
+    const $outer = this;
+
+    class PlutusList
+      extends Ptr<WasmV4.PlutusList>
+      implements WasmContract.PlutusList
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<PlutusList> {
+        return new PlutusList(
+          await WasmV4.PlutusList.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<PlutusList> {
+        return new PlutusList(
+          await WasmV4.PlutusList.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static async new(): Promise<PlutusList> {
+        return new PlutusList(await WasmV4.PlutusList.new(), $outer._ctx);
+      }
+
+      async len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.PlutusData> {
+        return new $outer.PlutusData(await this.wasm.get(index), $outer._ctx);
+      }
+
+      async add(elem: WasmContract.PlutusData): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return PlutusList;
+  })();
+
+  public ExUnits = (() => {
+    const $outer = this;
+
+    class ExUnits extends Ptr<WasmV4.ExUnits> implements WasmContract.ExUnits {
+      static async fromBytes(bytes: Uint8Array): Promise<ExUnits> {
+        return new ExUnits(await WasmV4.ExUnits.from_bytes(bytes), $outer._ctx);
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<ExUnits> {
+        return new ExUnits(await WasmV4.ExUnits.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async mem(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(await this.wasm.mem(), $outer._ctx);
+      }
+
+      async steps(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(await this.wasm.steps(), $outer._ctx);
+      }
+
+      static async new(
+        mem: WasmContract.BigNum,
+        steps: WasmContract.BigNum
+      ): Promise<ExUnits> {
+        return new ExUnits(
+          await WasmV4.ExUnits.new(mem.wasm, steps.wasm),
+          $outer._ctx
+        );
+      }
+    }
+    return ExUnits;
+  })();
+
+  public Redeemer = (() => {
+    const $outer = this;
+
+    class Redeemer
+      extends Ptr<WasmV4.Redeemer>
+      implements WasmContract.Redeemer
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<Redeemer> {
+        return new Redeemer(
+          await WasmV4.Redeemer.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<Redeemer> {
+        return new Redeemer(await WasmV4.Redeemer.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async new(
+        tag: WasmContract.RedeemerTag,
+        index: WasmContract.BigNum,
+        data: WasmContract.PlutusData,
+        exUnits: WasmContract.ExUnits
+      ): Promise<Redeemer> {
+        return new Redeemer(
+          await WasmV4.Redeemer.new(
+            tag.wasm,
+            index.wasm,
+            data.wasm,
+            exUnits.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      async tag(): Promise<WasmContract.RedeemerTag> {
+        return new $outer.RedeemerTag(await this.wasm.tag(), $outer._ctx);
+      }
+
+      async index(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(await this.wasm.index(), $outer._ctx);
+      }
+
+      async data(): Promise<WasmContract.PlutusData> {
+        return new $outer.PlutusData(await this.wasm.data(), $outer._ctx);
+      }
+
+      async exUnits(): Promise<WasmContract.ExUnits> {
+        return new $outer.ExUnits(await this.wasm.ex_units(), $outer._ctx);
+      }
+    }
+    return Redeemer;
+  })();
+
+  public RedeemerTag = (() => {
+    const $outer = this;
+
+    class RedeemerTag
+      extends Ptr<WasmV4.RedeemerTag>
+      implements WasmContract.RedeemerTag
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<RedeemerTag> {
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.RedeemerTag> {
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async newSpend(): Promise<RedeemerTag> {
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.new_spend(),
+          $outer._ctx
+        );
+      }
+
+      static async newMint(): Promise<RedeemerTag> {
+        return new RedeemerTag(await WasmV4.RedeemerTag.new_mint(), $outer._ctx);
+      }
+
+      static async newCert(): Promise<RedeemerTag> {
+        return new RedeemerTag(await WasmV4.RedeemerTag.new_cert(), $outer._ctx);
+      }
+
+      static async newReward(): Promise<RedeemerTag> {
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.new_reward(),
+          $outer._ctx
+        );
+      }
+
+      async kind(): Promise<number> {
+        return await this.wasm.kind();
+      }
+    }
+    return RedeemerTag;
+  })();
+
+  public Redeemers = (() => {
+    const $outer = this;
+
+    class Redeemers
+      extends Ptr<WasmV4.Redeemers>
+      implements WasmContract.Redeemers
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<Redeemers> {
+        return new Redeemers(
+          await WasmV4.Redeemers.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<Redeemers> {
+        return new Redeemers(await WasmV4.Redeemers.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async totalExUnits(): Promise<WasmContract.ExUnits> {
+        return new $outer.ExUnits(await this.wasm.total_ex_units(), $outer._ctx);
+      }
+
+      static async new(): Promise<Redeemers> {
+        return new Redeemers(await WasmV4.Redeemers.new(), $outer._ctx);
+      }
+
+      async len(): Promise<number> {
+        return await this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.Redeemer> {
+        return new $outer.Redeemer(await this.wasm.get(index), $outer._ctx);
+      }
+
+      async add(elem: WasmContract.Redeemer): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Redeemers;
+  })();
+
+  public CostModel = (() => {
+    const $outer = this;
+
+    class CostModel
+      extends Ptr<WasmV4.CostModel>
+      implements WasmContract.CostModel
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<CostModel> {
+        return new CostModel(
+          await WasmV4.CostModel.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.CostModel> {
+        return new CostModel(await WasmV4.CostModel.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async get(operation: number): Promise<WasmContract.Int> {
+        return new $outer.Int(await this.wasm.get(operation), $outer._ctx);
+      }
+
+      async set(
+        operation: number,
+        cost: WasmContract.Int
+      ): Promise<WasmContract.Int> {
+        return new $outer.Int(
+          await this.wasm.set(operation, cost.wasm),
+          $outer._ctx
+        );
+      }
+
+      async len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      static async new(): Promise<WasmContract.CostModel> {
+        return new CostModel(await WasmV4.CostModel.new(), $outer._ctx);
+      }
+    }
+    return CostModel;
+  })();
+
+  public Costmdls = (() => {
+    const $outer = this;
+
+    class Costmdls
+      extends Ptr<WasmV4.Costmdls>
+      implements WasmContract.Costmdls
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<Costmdls> {
+        return new Costmdls(
+          await WasmV4.Costmdls.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<Costmdls> {
+        return new Costmdls(await WasmV4.Costmdls.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(key: WasmContract.Language): Promise<WasmContract.CostModel> {
+        return new $outer.CostModel(await this.wasm.get(key.wasm), $outer._ctx);
+      }
+
+      async insert(
+        key: WasmContract.Language,
+        value: WasmContract.CostModel
+      ): Promise<WasmContract.CostModel | undefined> {
+        const wasm = await this.wasm.insert(key.wasm, value.wasm);
+        if (wasm) {
+          return new $outer.CostModel(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
+      async keys(): Promise<WasmContract.Languages> {
+        return new $outer.Languages(await this.wasm.keys(), $outer._ctx);
+      }
+
+      async retainLanguageVersions(
+        languages: WasmContract.Languages
+      ): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          await this.wasm.retain_language_versions(languages.wasm),
+          $outer._ctx
+        );
+      }
+
+      static async new(): Promise<Costmdls> {
+        return new Costmdls(await WasmV4.Costmdls.new(), $outer._ctx);
+      }
+    }
+    return Costmdls;
+  })();
+
+  public Language = (() => {
+    const $outer = this;
+
+    class Language
+      extends Ptr<WasmV4.Language>
+      implements WasmContract.Language
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<Language> {
+        return new Language(
+          await WasmV4.Language.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.Language> {
+        return new Language(await WasmV4.Language.from_hex(hex), $outer._ctx);
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async newPlutusV1(): Promise<WasmContract.Language> {
+        return new Language(await WasmV4.Language.new_plutus_v1(), $outer._ctx);
+      }
+
+      static async newPlutusV2(): Promise<WasmContract.Language> {
+        return new Language(await WasmV4.Language.new_plutus_v2(), $outer._ctx);
+      }
+
+      async kind(): Promise<number> {
+        return await this.wasm.kind();
+      }
+    }
+    return Language;
+  })();
+
+  public Languages = (() => {
+    const $outer = this;
+
+    class Languages
+      extends Ptr<WasmV4.Languages>
+      implements WasmContract.Languages
+    {
+      async len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.Language> {
+        return new $outer.Language(await this.wasm.get(index), $outer._ctx);
+      }
+
+      async add(elem: WasmContract.Language): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static async new(): Promise<Languages> {
+        return new Languages(await WasmV4.Languages.new(), $outer._ctx);
+      }
+
+      static async list(): Promise<WasmContract.Languages> {
+        return new Languages(await WasmV4.Languages.list(), $outer._ctx);
+      }
+    }
+    return Languages;
+  })();
+
+  public ScriptDataHash = (() => {
+    const $outer = this;
+
+    class ScriptDataHash
+      extends Ptr<WasmV4.ScriptDataHash>
+      implements WasmContract.ScriptDataHash
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<ScriptDataHash> {
+        return new ScriptDataHash(
+          await WasmV4.ScriptDataHash.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.ScriptDataHash> {
+        return new ScriptDataHash(
+          await WasmV4.ScriptDataHash.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      static async fromBech32(
+        str: string
+      ): Promise<WasmContract.ScriptDataHash> {
+        return new ScriptDataHash(
+          await WasmV4.ScriptDataHash.from_bech32(str),
+          $outer._ctx
+        );
+      }
+
+      async toBech32(prefix: string): Promise<string> {
+        return await this.wasm.to_bech32(prefix);
+      }
+    }
+    return ScriptDataHash;
+  })();
+
   public StakeCredential = (() => {
     const $outer = this;
 
@@ -2465,10 +2986,54 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.TransactionWitnessSet>
       implements WasmContract.TransactionWitnessSet
     {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<TransactionWitnessSet> {
+        return new TransactionWitnessSet(
+          await WasmV4.TransactionWitnessSet.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      static async fromHex(hex: string): Promise<TransactionWitnessSet> {
+        return new TransactionWitnessSet(
+          await WasmV4.TransactionWitnessSet.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
       async setBootstraps(
         bootstraps: WasmContract.BootstrapWitnesses
       ): Promise<void> {
         return await this.wasm.set_bootstraps(bootstraps.wasm);
+      }
+
+      async bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
+        return new $outer.BootstrapWitnesses(
+          await this.wasm.bootstraps(),
+          $outer._ctx
+        );
+      }
+
+      async setPlutusData(plutusData: WasmContract.PlutusList): Promise<void> {
+        return await this.wasm.set_plutus_data(plutusData.wasm);
+      }
+
+      async plutusData(): Promise<WasmContract.PlutusList | undefined> {
+        const wasm = await this.wasm.plutus_data();
+        if (wasm) {
+          return new $outer.PlutusList(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
       }
 
       async setVkeys(vkeywitnesses: WasmContract.Vkeywitnesses): Promise<void> {
@@ -2477,13 +3042,6 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async vkeys(): Promise<WasmContract.Vkeywitnesses> {
         return new $outer.Vkeywitnesses(await this.wasm.vkeys(), $outer._ctx);
-      }
-
-      async bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
-        return new $outer.BootstrapWitnesses(
-          await this.wasm.bootstraps(),
-          $outer._ctx
-        );
       }
 
       static async new(): Promise<TransactionWitnessSet> {
@@ -2810,25 +3368,26 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.DataCost>
       implements WasmContract.DataCost
     {
-      static async newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
+      static async newCoinsPerWord(
+        coinsPerWord: WasmContract.BigNum
+      ): Promise<DataCost> {
         return new DataCost(
           await WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm),
-          $outer._ctx,
+          $outer._ctx
         );
       }
 
-      static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
+      static async newCoinsPerByte(
+        coinsPerByte: WasmContract.BigNum
+      ): Promise<DataCost> {
         return new DataCost(
           await WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm),
-          $outer._ctx,
+          $outer._ctx
         );
       }
 
       async coinsPerByte(): Promise<WasmContract.BigNum> {
-        return new $outer.BigNum(
-          await this.wasm.coins_per_byte(),
-          $outer._ctx,
-        );
+        return new $outer.BigNum(await this.wasm.coins_per_byte(), $outer._ctx);
       }
     }
     return DataCost;
