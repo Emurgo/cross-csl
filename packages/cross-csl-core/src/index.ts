@@ -36,7 +36,11 @@ export interface WasmModuleProxy {
   ): Promise<BigNum>
   hashTransaction(txBody: TransactionBody): Promise<TransactionHash>
   hashPlutusData(plutusData: PlutusData): Promise<DataHash>
-  hashScriptData(redeemers: Redeemers, costModels: Costmdls, datums?: PlutusList): Promise<ScriptDataHash>
+  hashScriptData(
+    redeemers: Redeemers,
+    costModels: Costmdls,
+    datums?: PlutusList
+  ): Promise<ScriptDataHash>
   makeVkeyWitness(
     txBodyHash: TransactionHash,
     sk: PrivateKey
@@ -77,6 +81,7 @@ export interface WasmModuleProxy {
   PlutusList: typeof PlutusList
   Redeemer: typeof Redeemer
   RedeemerTag: typeof RedeemerTag
+  ExUnits: typeof ExUnits
   Redeemers: typeof Redeemers
   CostModel: typeof CostModel
   Costmdls: typeof Costmdls
@@ -153,7 +158,7 @@ export abstract class _WasmProxy {
 
   // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) { }
+  constructor(wasm: any | undefined, ctx: string) {}
 
   abstract hasValue(): boolean;
 }
@@ -858,7 +863,7 @@ export abstract class PlutusList extends _Ptr {
 
   abstract len(): Promise<number>;
 
-  abstract get(index: number): Promise<PlutusList>;
+  abstract get(index: number): Promise<PlutusData>;
 
   abstract add(elem: PlutusData): Promise<void>;
 }
@@ -876,9 +881,9 @@ export abstract class ExUnits extends _Ptr {
 
   abstract toHex(): Promise<string>;
 
-  abstract mem(): BigNum;
+  abstract mem(): Promise<BigNum>;
 
-  abstract steps(): BigNum;
+  abstract steps(): Promise<BigNum>;
 
   static new(mem: BigNum, steps: BigNum): Promise<ExUnits> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -900,13 +905,18 @@ export abstract class Redeemer extends _Ptr {
 
   abstract tag(): Promise<RedeemerTag>;
 
-  abstract index(): BigNum;
+  abstract index(): Promise<BigNum>;
 
-  abstract data(): PlutusData;
+  abstract data(): Promise<PlutusData>;
 
-  abstract exUnits(): ExUnits;
+  abstract exUnits(): Promise<ExUnits>;
 
-  static new(tag: RedeemerTag, index: BigNum, data: PlutusData, ex_units: ExUnits): Promise<Redeemer> {
+  static new(
+    tag: RedeemerTag,
+    index: BigNum,
+    data: PlutusData,
+    ex_units: ExUnits
+  ): Promise<Redeemer> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -962,7 +972,7 @@ export abstract class Redeemers extends _Ptr {
 
   abstract len(): Promise<number>;
 
-  abstract get(index: number): Promise<Redeemers>;
+  abstract get(index: number): Promise<Redeemer>;
 
   abstract add(elem: Redeemer): Promise<void>;
 
@@ -1012,7 +1022,10 @@ export abstract class Costmdls extends _Ptr {
 
   abstract len(): Promise<number>;
 
-  abstract insert(key: Language, value: CostModel): Promise<CostModel | undefined>;
+  abstract insert(
+    key: Language,
+    value: CostModel
+  ): Promise<CostModel | undefined>;
 
   abstract get(key: Language): Promise<CostModel | undefined>;
 
