@@ -2463,6 +2463,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
+      async setScriptDataHash(
+        script_data_hash: WasmContract.ScriptDataHash
+      ): Promise<void> {
+        return await this.wasm.set_script_data_hash(script_data_hash.wasm);
+      }
+
       async setCerts(certs: WasmContract.Certificates): Promise<void> {
         return await this.wasm.set_certs(certs.wasm);
       }

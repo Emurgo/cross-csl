@@ -1345,6 +1345,8 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract setAuxiliaryData(auxiliary: AuxiliaryData): Promise<void>;
 
+  abstract setScriptDataHash(script_data_hash: ScriptDataHash): Promise<void>;
+
   abstract getExplicitInput(): Promise<Value>;
 
   abstract getImplicitInput(): Promise<Value>;

@@ -4497,6 +4497,18 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      setScriptDataHash(
+        script_data_hash: WasmContract.ScriptDataHash
+      ): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_script_data_hash(script_data_hash.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       setValidityStartInterval(validityStartInterval: number): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
