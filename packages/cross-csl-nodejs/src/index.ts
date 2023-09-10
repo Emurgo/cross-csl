@@ -69,6 +69,19 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  hashScriptData(
+    redeemers: WasmContract.Redeemers,
+    costModels: WasmContract.Costmdls,
+    datums?: WasmContract.PlutusList
+  ): Promise<WasmContract.ScriptDataHash> {
+    return Promise.resolve(
+      new this.ScriptDataHash(
+        WasmV4.hash_script_data(redeemers.wasm, costModels.wasm, datums?.wasm),
+        this._ctx
+      )
+    );
+  }
+
   makeVkeyWitness(
     txBodyHash: WasmContract.TransactionHash,
     sk: WasmContract.PrivateKey
@@ -2477,6 +2490,967 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return PlutusData;
   })();
 
+  public PlutusList = (() => {
+    const $outer = this;
+
+    class PlutusList
+      extends Ptr<WasmV4.PlutusList>
+      implements WasmContract.PlutusList
+    {
+      static fromBytes(bytes: Uint8Array): Promise<PlutusList> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new PlutusList(WasmV4.PlutusList.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<PlutusList> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new PlutusList(WasmV4.PlutusList.from_hex(hex), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(): Promise<PlutusList> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new PlutusList(WasmV4.PlutusList.new(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      len(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.len());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      get(index: number): Promise<WasmContract.PlutusData> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.PlutusData(this.wasm.get(index), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      add(elem: WasmContract.PlutusData): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return PlutusList;
+  })();
+
+  public Redeemer = (() => {
+    const $outer = this;
+
+    class Redeemer
+      extends Ptr<WasmV4.Redeemer>
+      implements WasmContract.Redeemer
+    {
+      static fromBytes(bytes: Uint8Array): Promise<Redeemer> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Redeemer(WasmV4.Redeemer.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<Redeemer> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Redeemer(WasmV4.Redeemer.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      tag(): Promise<WasmContract.RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.RedeemerTag(this.wasm.tag(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      index(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.index(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      data(): Promise<WasmContract.PlutusData> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.PlutusData(this.wasm.data(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      exUnits(): Promise<WasmContract.ExUnits> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.ExUnits(this.wasm.ex_units(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(
+        tag: WasmContract.RedeemerTag,
+        index: WasmContract.BigNum,
+        data: WasmContract.PlutusData,
+        ex_units: WasmContract.ExUnits
+      ): Promise<Redeemer> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Redeemer(
+                WasmV4.Redeemer.new(
+                  tag.wasm,
+                  index.wasm,
+                  data.wasm,
+                  ex_units.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Redeemer;
+  })();
+
+  public RedeemerTag = (() => {
+    const $outer = this;
+
+    class RedeemerTag
+      extends Ptr<WasmV4.RedeemerTag>
+      implements WasmContract.RedeemerTag
+    {
+      static fromBytes(bytes: Uint8Array): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.from_hex(hex), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newSpend(): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.new_spend(), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newMint(): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new RedeemerTag(WasmV4.RedeemerTag.new_mint(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newCert(): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new RedeemerTag(WasmV4.RedeemerTag.new_cert(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newReward(): Promise<RedeemerTag> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.new_reward(), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      kind(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.kind());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return RedeemerTag;
+  })();
+
+  public ExUnits = (() => {
+    const $outer = this;
+
+    class ExUnits extends Ptr<WasmV4.ExUnits> implements WasmContract.ExUnits {
+      static fromBytes(bytes: Uint8Array): Promise<ExUnits> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new ExUnits(WasmV4.ExUnits.from_bytes(bytes), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<ExUnits> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new ExUnits(WasmV4.ExUnits.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      mem(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.mem(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      steps(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.steps(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(
+        mem: WasmContract.BigNum,
+        steps: WasmContract.BigNum
+      ): Promise<ExUnits> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new ExUnits(WasmV4.ExUnits.new(mem.wasm, steps.wasm), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return ExUnits;
+  })();
+
+  public Redeemers = (() => {
+    const $outer = this;
+
+    class Redeemers
+      extends Ptr<WasmV4.Redeemers>
+      implements WasmContract.Redeemers
+    {
+      static fromBytes(bytes: Uint8Array): Promise<Redeemers> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Redeemers(WasmV4.Redeemers.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<Redeemers> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Redeemers(WasmV4.Redeemers.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(): Promise<Redeemers> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Redeemers(WasmV4.Redeemers.new(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      len(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.len());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      get(index: number): Promise<WasmContract.Redeemer> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.Redeemer(this.wasm.get(index), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      add(elem: WasmContract.Redeemer): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      totalExUnits(): Promise<WasmContract.ExUnits> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.ExUnits(this.wasm.total_ex_units(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Redeemers;
+  })();
+
+  public CostModel = (() => {
+    const $outer = this;
+
+    class CostModel
+      extends Ptr<WasmV4.CostModel>
+      implements WasmContract.CostModel
+    {
+      static fromBytes(bytes: Uint8Array): Promise<CostModel> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new CostModel(WasmV4.CostModel.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<CostModel> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new CostModel(WasmV4.CostModel.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(): Promise<CostModel> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new CostModel(WasmV4.CostModel.new(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      set(
+        operation: number,
+        cost: WasmContract.Int
+      ): Promise<WasmContract.Int> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.set(operation, cost.wasm);
+            resolve(new $outer.Int(wasm, $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      get(operation: number): Promise<WasmContract.Int> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.get(operation);
+            resolve(new $outer.Int(wasm, $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      len(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.len());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return CostModel;
+  })();
+
+  public Costmdls = (() => {
+    const $outer = this;
+
+    class Costmdls
+      extends Ptr<WasmV4.Costmdls>
+      implements WasmContract.Costmdls
+    {
+      static fromBytes(bytes: Uint8Array): Promise<Costmdls> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Costmdls(WasmV4.Costmdls.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<Costmdls> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Costmdls(WasmV4.Costmdls.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static new(): Promise<Costmdls> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Costmdls(WasmV4.Costmdls.new(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      len(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.len());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      insert(
+        key: WasmContract.Language,
+        value: WasmContract.CostModel
+      ): Promise<WasmContract.CostModel | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.insert(key.wasm, value.wasm);
+            if (wasm) {
+              resolve(new $outer.CostModel(wasm, $outer._ctx));
+            } else {
+              resolve(undefined);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      get(
+        key: WasmContract.Language
+      ): Promise<WasmContract.CostModel | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.get(key.wasm);
+            if (wasm) {
+              resolve(new $outer.CostModel(wasm, $outer._ctx));
+            } else {
+              resolve(undefined);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      keys(): Promise<WasmContract.Languages> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.Languages(this.wasm.keys(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      retainLanguageVersions(
+        languages: WasmContract.Languages
+      ): Promise<Costmdls> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Costmdls(
+                this.wasm.retain_language_versions(languages.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Costmdls;
+  })();
+
+  public Language = (() => {
+    const $outer = this;
+
+    class Language
+      extends Ptr<WasmV4.Language>
+      implements WasmContract.Language
+    {
+      static fromBytes(bytes: Uint8Array): Promise<Language> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Language(WasmV4.Language.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<Language> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Language(WasmV4.Language.from_hex(hex), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newPlutusV1(): Promise<Language> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Language(WasmV4.Language.new_plutus_v1(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newPlutusV2(): Promise<Language> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Language(WasmV4.Language.new_plutus_v2(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      kind(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.kind());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Language;
+  })();
+
+  public Languages = (() => {
+    const $outer = this;
+
+    class Languages
+      extends Ptr<WasmV4.Languages>
+      implements WasmContract.Languages
+    {
+      static new(): Promise<Languages> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Languages(WasmV4.Languages.new(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      len(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.len());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      get(index: number): Promise<WasmContract.Language> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.Language(this.wasm.get(index), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      add(elem: WasmContract.Language): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.add(elem.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static list(): Promise<Languages> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Languages(WasmV4.Languages.list(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return Languages;
+  })();
+
+  public ScriptDataHash = (() => {
+    const $outer = this;
+
+    class ScriptDataHash
+      extends Ptr<WasmV4.ScriptDataHash>
+      implements WasmContract.ScriptDataHash
+    {
+      static fromBytes(bytes: Uint8Array): Promise<ScriptDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new ScriptDataHash(
+                WasmV4.ScriptDataHash.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<ScriptDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new ScriptDataHash(
+                WasmV4.ScriptDataHash.from_hex(hex),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromBech32(str: string): Promise<ScriptDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new ScriptDataHash(
+                WasmV4.ScriptDataHash.from_bech32(str),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBech32(prefix: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bech32(prefix));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return ScriptDataHash;
+  })();
+
   public StakeCredential = (() => {
     const $outer = this;
 
@@ -3523,6 +4497,18 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      setScriptDataHash(
+        script_data_hash: WasmContract.ScriptDataHash
+      ): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_script_data_hash(script_data_hash.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       setValidityStartInterval(validityStartInterval: number): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
@@ -4422,12 +5408,99 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.TransactionWitnessSet>
       implements WasmContract.TransactionWitnessSet
     {
+      static fromBytes(bytes: Uint8Array): Promise<TransactionWitnessSet> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionWitnessSet(
+                WasmV4.TransactionWitnessSet.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static fromHex(hex: string): Promise<TransactionWitnessSet> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new TransactionWitnessSet(
+                WasmV4.TransactionWitnessSet.from_hex(hex),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toHex(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_hex());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       setBootstraps(
         bootstraps: WasmContract.BootstrapWitnesses
       ): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
             resolve(this.wasm.set_bootstraps(bootstraps.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.BootstrapWitnesses(this.wasm.bootstraps(), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setPlutusData(plutusData: WasmContract.PlutusList): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.set_plutus_data(plutusData.wasm));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      plutusData(): Promise<WasmContract.PlutusList | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.plutus_data();
+            if (wasm) {
+              resolve(new $outer.PlutusList(wasm, $outer._ctx));
+            } else {
+              resolve(undefined);
+            }
           } catch (e) {
             reject(e);
           }
@@ -4448,18 +5521,6 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Promise((resolve, reject) => {
           try {
             resolve(new $outer.Vkeywitnesses(this.wasm.vkeys(), $outer._ctx));
-          } catch (e) {
-            reject(e);
-          }
-        });
-      }
-
-      bootstraps(): Promise<WasmContract.BootstrapWitnesses> {
-        return new Promise((resolve, reject) => {
-          try {
-            resolve(
-              new $outer.BootstrapWitnesses(this.wasm.bootstraps(), $outer._ctx)
-            );
           } catch (e) {
             reject(e);
           }
@@ -5035,14 +6096,16 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.DataCost>
       implements WasmContract.DataCost
     {
-      static newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<DataCost> {
+      static newCoinsPerWord(
+        coinsPerWord: WasmContract.BigNum
+      ): Promise<DataCost> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
               new DataCost(
                 WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm),
-                $outer._ctx,
-              ),
+                $outer._ctx
+              )
             );
           } catch (e) {
             reject(e);
@@ -5050,14 +6113,16 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<DataCost> {
+      static newCoinsPerByte(
+        coinsPerByte: WasmContract.BigNum
+      ): Promise<DataCost> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
               new DataCost(
                 WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm),
-                $outer._ctx,
-              ),
+                $outer._ctx
+              )
             );
           } catch (e) {
             reject(e);
@@ -5068,12 +6133,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       coinsPerByte(): Promise<WasmContract.BigNum> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(
-              new $outer.BigNum(
-                this.wasm.coins_per_byte(),
-                $outer._ctx,
-              ),
-            );
+            resolve(new $outer.BigNum(this.wasm.coins_per_byte(), $outer._ctx));
           } catch (e) {
             reject(e);
           }
