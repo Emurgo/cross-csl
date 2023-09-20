@@ -2376,6 +2376,28 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
+      async scriptDataHash(): Promise<WasmContract.ScriptDataHash | undefined> {
+        const wasm = await this.wasm.script_data_hash();
+        if (wasm) {
+          return new $outer.ScriptDataHash(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
+      async setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): Promise<void> {
+        await this.wasm.set_script_data_hash(scriptDataHash.wasm);
+      }
+
+      async collateral(): Promise<WasmContract.TransactionInputs | undefined> {
+        const wasm = await this.wasm.collateral();
+        if (wasm) {
+          return new $outer.TransactionInputs(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
       static async fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
         return Promise.resolve(
           new TransactionBody(

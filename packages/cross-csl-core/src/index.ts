@@ -1297,6 +1297,12 @@ export abstract class TransactionBody extends _Ptr {
 
   abstract withdrawals(): Promise<Withdrawals>;
 
+  abstract scriptDataHash(): Promise<ScriptDataHash | undefined>;
+
+  abstract setScriptDataHash(script_data_hash: ScriptDataHash): Promise<void>;
+
+  abstract collateral(): Promise<TransactionInputs | undefined>;
+
   static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
