@@ -4362,6 +4362,52 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      scriptDataHash(): Promise<WasmContract.ScriptDataHash | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.script_data_hash();
+            if (wasm) {
+              resolve(
+                new $outer.ScriptDataHash(wasm, $outer._ctx)
+              );
+            } else {
+              resolve(undefined);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): Promise<void> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              this.wasm.set_script_data_hash(scriptDataHash.wasm)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      collateral(): Promise<WasmContract.TransactionInputs | undefined> {
+        return new Promise((resolve, reject) => {
+          try {
+            const wasm = this.wasm.collateral();
+            if (wasm) {
+              resolve(
+                new $outer.TransactionInputs(wasm, $outer._ctx)
+              );
+            } else {
+              resolve(undefined);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
         return new Promise((resolve, reject) => {
           try {
