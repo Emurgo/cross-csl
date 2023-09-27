@@ -692,6 +692,9 @@ export abstract class PrivateKey extends _Ptr {
   static generateEd25519extended(): Promise<PrivateKey> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+  static fromBech32(bech32Str: string): Promise<PrivateKey> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class Bip32PrivateKey extends _Ptr {

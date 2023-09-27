@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/csl-mobile-bridge';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -1080,6 +1080,13 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async generateEd25519extended(): Promise<PrivateKey> {
         return new PrivateKey(
           await WasmV4.PrivateKey.generate_ed25519extended(),
+          $outer._ctx
+        );
+      }
+
+      static async fromBech32(bech32Str: string): Promise<PrivateKey> {
+        return new PrivateKey(
+          await WasmV4.PrivateKey.from_bech32(bech32Str),
           $outer._ctx
         );
       }
