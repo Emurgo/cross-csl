@@ -1638,6 +1638,8 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
   abstract vkeys(): Promise<Vkeywitnesses>;
 
+  abstract plutusScripts: () => Promise<PlutusScripts | undefined>;
+
   static new(): Promise<TransactionWitnessSet> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }

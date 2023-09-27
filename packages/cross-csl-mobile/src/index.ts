@@ -3049,6 +3049,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
+      async plutusScripts(): Promise<WasmContract.PlutusScripts> {
+        return new $outer.PlutusScripts(await this.wasm.plutus_scripts(), $outer._ctx);
+      }
+
       static async fromHex(hex: string): Promise<TransactionWitnessSet> {
         return new TransactionWitnessSet(
           await WasmV4.TransactionWitnessSet.from_hex(hex),
