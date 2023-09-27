@@ -1457,13 +1457,10 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void>;
 
-  abstract calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void>;
+  abstract calcScriptDataHash(costModels: Costmdls): Promise<void>;
 
   static new(
-    linearFee: LinearFee,
-    poolDeposit: BigNum,
-    keyDeposit: BigNum,
-    coinsPerUtxoWord: BigNum
+   transactionBuilderConfig: TransactionBuilderConfig
   ): Promise<TransactionBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
