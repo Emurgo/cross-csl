@@ -825,6 +825,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
       static async fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
         return new TransactionHash(
           await WasmV4.TransactionHash.from_bytes(bytes),
@@ -3141,6 +3145,13 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async fromBytes(bytes: Uint8Array): Promise<Transaction> {
         return new Transaction(
           await WasmV4.Transaction.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      static async fromHex(hex: string): Promise<Transaction> {
+        return new Transaction(
+          await WasmV4.Transaction.from_hex(hex),
           $outer._ctx
         );
       }

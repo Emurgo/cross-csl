@@ -547,6 +547,7 @@ export abstract class Ed25519KeyHash extends _Ptr {
 
 export abstract class TransactionHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -1610,6 +1611,9 @@ export abstract class Transaction extends _Ptr {
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+  static fromHex(hex: string): Promise<Transaction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
