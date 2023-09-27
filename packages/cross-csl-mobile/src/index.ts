@@ -3615,4 +3615,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return PlutusWitness;
   })();
+
+  public PlutusScriptSource = (() => {
+    const $outer = this;
+
+    class PlutusScriptSource
+      extends Ptr<WasmV4.PlutusScriptSource>
+        implements WasmContract.PlutusScriptSource {
+
+      static async new(script: WasmContract.PlutusScript): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new(script.wasm), $outer._ctx);
+      }
+
+      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm), $outer._ctx);
+      }
+
+      static async newRefInputWithLangVer(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(scriptHash.wasm, input.wasm, langVer.wasm), $outer._ctx);
+      }
+    }
+
+    return PlutusScriptSource;
+  })();
 }
