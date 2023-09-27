@@ -2663,12 +2663,9 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async fromConfig(
-       transactionBuilderConfig: WasmContract.TransactionBuilderConfig
+       cfg: WasmContract.TransactionBuilderConfig
       ): Promise<TransactionBuilder> {
-        return new TransactionBuilder(
-          await WasmV4.TransactionBuilder.new(transactionBuilderConfig),
-          $outer._ctx
-        );
+        return new TransactionBuilder(await WasmV4.TransactionBuilder.new(cfg.wasm), $outer._ctx);
       }
 
       static async new(
