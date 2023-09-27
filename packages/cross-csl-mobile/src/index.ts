@@ -2353,6 +2353,13 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
+      async requiredSigners(): Promise<WasmContract.Ed25519KeyHashes> {
+        return new $outer.Ed25519KeyHashes(
+          await this.wasm.required_signers(),
+          $outer._ctx
+        );
+      }
+
       async inputs(): Promise<WasmContract.TransactionInputs> {
         return new $outer.TransactionInputs(
           await this.wasm.inputs(),
@@ -3856,5 +3863,63 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return TransactionUnspentOutput;
+  })();
+
+  public Ed25519KeyHashes = (() => {
+    const $outer = this;
+
+    class Ed25519KeyHashes
+      extends Ptr<WasmV4.Ed25519KeyHashes>
+        implements WasmContract.Ed25519KeyHashes {
+      static async new(): Promise<Ed25519KeyHashes> {
+        return new Ed25519KeyHashes(await WasmV4.Ed25519KeyHashes.new(), $outer._ctx);
+      }
+
+      static async fromJson(json: string): Promise<Ed25519KeyHashes | undefined> {
+        const wasm = await WasmV4.Ed25519KeyHashes.from_json(json);
+        return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHashes | undefined> {
+        const wasm = await WasmV4.Ed25519KeyHashes.from_bytes(bytes);
+        return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromHex(hexStr: string): Promise<Ed25519KeyHashes | undefined> {
+        const wasm = await WasmV4.Ed25519KeyHashes.from_hex(hexStr);
+        return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async toJson(): Promise<string> {
+        return await this.wasm.to_json();
+      }
+
+      async len(): Promise<number> {
+        return await this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.Ed25519KeyHash> {
+        return new $outer.Ed25519KeyHash(await this.wasm.get(index), $outer._ctx);
+      }
+
+      async add(elem: WasmContract.Ed25519KeyHash): Promise<void> {
+        return await this.wasm.add(elem.wasm);
+      }
+
+      async toOption(): Promise<WasmContract.Ed25519KeyHashes | undefined> {
+        const wasm = await this.wasm.to_option();
+        return wasm ? new $outer.Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
+      }
+
+    }
+    return Ed25519KeyHashes;
   })();
 }

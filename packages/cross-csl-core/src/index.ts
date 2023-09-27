@@ -1307,10 +1307,61 @@ export abstract class TransactionBody extends _Ptr {
 
   abstract collateral(): Promise<TransactionInputs | undefined>;
 
+  abstract requiredSigners(): Promise<Ed25519KeyHashes>;
+
   static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
+
+export abstract class Ed25519KeyHashes extends _Ptr {
+
+  static fromBytes(bytes: Uint8Array): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromJson(json: string): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static new(): Promise<Ed25519KeyHashes> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hexStr: string): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toBytes(): Promise<Uint8Array> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toHex(): Promise<string> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toJson(): Promise<Optional<string>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  len(): Promise<number> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  get(index: number): Promise<Ed25519KeyHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  add(elem: Ed25519KeyHash): Promise<void> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toOption(): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+}
+
 
 export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
