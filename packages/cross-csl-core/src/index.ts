@@ -1878,32 +1878,31 @@ export abstract class DatumSource extends _Ptr {
 
 export abstract class ExUnitPrices extends _Ptr {
 
-  abstract toBytes(): Promise<Uint8Array>;
+  static new(memPrice: UnitInterval, stepPrice: UnitInterval): Promise<ExUnitPrices> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 
   static fromBytes(bytes: Uint8Array): Promise<Optional<ExUnitPrices>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract toHex(): Promise<string>;
-
   static fromHex(hexStr: string): Promise<Optional<ExUnitPrices>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
-
-  abstract toJson(): Promise<Optional<string>>;
 
   static fromJson(json: string): Promise<Optional<ExUnitPrices>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
+
+  abstract toJson(): Promise<Optional<string>>;
+
   abstract memPrice(): Promise<UnitInterval>;
 
   abstract stepPrice(): Promise<UnitInterval>;
-
-  static new(memPrice: UnitInterval, stepPrice: UnitInterval): Promise<ExUnitPrices> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
 }
 
 

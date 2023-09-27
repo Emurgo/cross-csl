@@ -3656,4 +3656,55 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return DatumSource;
   })();
+
+  public ExUnitPrices = (() => {
+    const $outer = this;
+
+    class ExUnitPrices
+      extends Ptr<WasmV4.ExUnitPrices>
+          implements WasmContract.ExUnitPrices {
+
+      static async new(memPrice: WasmContract.UnitInterval, stepPrice: WasmContract.UnitInterval): Promise<ExUnitPrices> {
+        return new ExUnitPrices(await WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm), $outer._ctx);
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<ExUnitPrices | undefined> {
+        const wasm = await WasmV4.ExUnitPrices.from_bytes(bytes);
+        return wasm ? new ExUnitPrices(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromHex(hexStr: string): Promise<ExUnitPrices | undefined> {
+        const wasm = await WasmV4.ExUnitPrices.from_hex(hexStr);
+        return wasm ? new ExUnitPrices(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromJson(json: string): Promise<ExUnitPrices | undefined> {
+        const wasm = await WasmV4.ExUnitPrices.from_json(json);
+        return wasm ? new ExUnitPrices(wasm, $outer._ctx) : undefined;
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async toJson(): Promise<string | undefined> {
+        const json = await this.wasm.to_json();
+        return json ? json : undefined;
+      }
+
+      async memPrice(): Promise<WasmContract.UnitInterval> {
+        return new $outer.UnitInterval(await this.wasm.mem_price(), $outer._ctx);
+      }
+
+      async stepPrice(): Promise<WasmContract.UnitInterval> {
+        return new $outer.UnitInterval(await this.wasm.step_price(), $outer._ctx);
+      }
+    }
+
+    return ExUnitPrices;
+  })();
 }
