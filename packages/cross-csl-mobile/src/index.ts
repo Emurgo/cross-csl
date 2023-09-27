@@ -2641,7 +2641,16 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.set_collateral(txInputsBuilder.wasm);
       }
 
-      async calcScriptDataHash(costModels: WasmContract.Costmdls): Promise<void> {
+      async calcScriptDataHash(costModels: WasmContract.Costmdls | 'vasil' | 'default'): Promise<void> {
+
+        if (costModels === 'vasil') {
+          return await this.wasm.calc_script_data_hash(await WasmV4.TxBuilderConstants.plutus_vasil_cost_models());
+        }
+
+        if (costModels === 'default') {
+            return await this.wasm.calc_script_data_hash(await WasmV4.TxBuilderConstants.plutus_default_cost_models());
+        }
+
         return await this.wasm.calc_script_data_hash(costModels.wasm);
       }
 
@@ -2653,13 +2662,44 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BigNum(await this.wasm.min_fee(), $outer._ctx);
       }
 
-      static async new(
+      static async fromConfig(
        transactionBuilderConfig: WasmContract.TransactionBuilderConfig
       ): Promise<TransactionBuilder> {
         return new TransactionBuilder(
           await WasmV4.TransactionBuilder.new(transactionBuilderConfig),
           $outer._ctx
         );
+      }
+
+      static async new(
+          linearFee: WasmContract.LinearFee,
+          poolDeposit: WasmContract.BigNum,
+          keyDeposit: WasmContract.BigNum,
+          coinsPerUtxoWord: WasmContract.BigNum
+      ): Promise<TransactionBuilder> {
+        const unitPrice = await WasmV4.ExUnitPrices.new(
+            await WasmV4.UnitInterval.new(
+                await WasmV4.BigNum.from_str('577'),
+                await WasmV4.BigNum.from_str('10000')
+            ),
+            await WasmV4.UnitInterval.new(
+                await WasmV4.BigNum.from_str('721'),
+                await WasmV4.BigNum.from_str('10000000')
+            )
+        );
+
+        const cfgBuilder = await WasmV4.TransactionBuilderConfigBuilder.new()
+            .then((b) => b.fee_algo(linearFee.wasm))
+            .then((b) => b.pool_deposit(poolDeposit.wasm))
+            .then((b) => b.key_deposit(keyDeposit.wasm))
+            .then((b) => b.coins_per_utxo_word(coinsPerUtxoWord.wasm))
+            .then((b) => b.max_value_size(5000))
+            .then((b) => b.max_tx_size(16384))
+            .then((b) => b.ex_unit_prices(unitPrice))
+            .then((b) => b.prefer_pure_change(true));
+
+        const cfg = await cfgBuilder.build();
+        return new TransactionBuilder(await WasmV4.TransactionBuilder.new(cfg), $outer._ctx);
       }
     }
     return TransactionBuilder;
