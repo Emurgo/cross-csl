@@ -3789,4 +3789,54 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     }
     return FixedTransaction;
   })();
+
+  public TransactionUnspentOutput = (() => {
+    const $outer = this;
+
+    class TransactionUnspentOutput
+      extends Ptr<WasmV4.TransactionUnspentOutput>
+        implements WasmContract.TransactionUnspentOutput {
+
+      static async new(input: WasmContract.TransactionInput, output: WasmContract.TransactionOutput): Promise<TransactionUnspentOutput> {
+        return new TransactionUnspentOutput(await WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm), $outer._ctx);
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<TransactionUnspentOutput | undefined> {
+        const wasm = await WasmV4.TransactionUnspentOutput.from_bytes(bytes);
+        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromHex(hexStr: string): Promise<TransactionUnspentOutput | undefined> {
+        const wasm = await WasmV4.TransactionUnspentOutput.from_hex(hexStr);
+        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromJson(json: string): Promise<TransactionUnspentOutput | undefined> {
+        const wasm = await WasmV4.TransactionUnspentOutput.from_json(json);
+        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+      }
+
+      async toJson(): Promise<string> {
+        return await this.wasm.to_json();
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async input(): Promise<WasmContract.TransactionInput> {
+        return new $outer.TransactionInput(await this.wasm.input(), $outer._ctx);
+      }
+
+      async output(): Promise<WasmContract.TransactionOutput> {
+        return new $outer.TransactionOutput(await this.wasm.output(), $outer._ctx);
+      }
+
+    }
+    return TransactionUnspentOutput;
+  })();
 }

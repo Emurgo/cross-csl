@@ -1958,31 +1958,30 @@ export const makeVkeyWitness: (txBodyHash: TransactionHash, sk: PrivateKey) => P
 
 export abstract class TransactionUnspentOutput extends _Ptr {
 
-  abstract toBytes(): Promise<Uint8Array>;
+  static new(input: TransactionInput, output: TransactionOutput): Promise<TransactionUnspentOutput> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 
   static fromBytes(bytes: Uint8Array): Promise<Optional<TransactionUnspentOutput>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract toHex(): Promise<string>;
-
   static fromHex(hexStr: string): Promise<Optional<TransactionUnspentOutput>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
-
-  abstract toJson(): Promise<Optional<string>>;
 
   static fromJson(json: string): Promise<Optional<TransactionUnspentOutput>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static new(input: TransactionInput, output: TransactionOutput): Promise<TransactionUnspentOutput> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
+  abstract toJson(): Promise<Optional<string>>;
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
 
   abstract input(): Promise<TransactionInput>;
 
   abstract output(): Promise<TransactionOutput>;
-
 }
 
