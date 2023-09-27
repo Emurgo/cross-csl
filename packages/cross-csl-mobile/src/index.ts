@@ -3574,4 +3574,45 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return TransactionBuilderConfig;
   })();
+
+  public PlutusWitness = (() => {
+    const $outer = this;
+
+    class PlutusWitness extends Ptr<WasmV4.PlutusWitness> implements WasmContract.PlutusWitness {
+      static async new(script: WasmContract.PlutusScript, datum: WasmContract.PlutusData, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
+        return new PlutusWitness(await WasmV4.PlutusWitness.new(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
+      }
+
+      static async newWithRef(script: WasmContract.PlutusScriptSource, datum: WasmContract.DatumSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
+        return new PlutusWitness(await WasmV4.PlutusWitness.new_with_ref(script, datum, redeemer.wasm), $outer._ctx);
+      }
+
+      static async newWithoutDatum(script: WasmContract.PlutusScript, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
+        return new PlutusWitness(await WasmV4.PlutusWitness.new_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
+      }
+
+      static async newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
+        return new PlutusWitness(await WasmV4.PlutusWitness.new_with_ref_without_datum(script, redeemer.wasm), $outer._ctx);
+      }
+
+      async script(): Promise<WasmContract.PlutusScript> {
+        return new $outer.PlutusScript(await this.wasm.script(), $outer._ctx);
+      }
+
+      async datum(): Promise<WasmContract.PlutusData | undefined> {
+        const wasm = await this.wasm.datum();
+        if (wasm) {
+          return new $outer.PlutusData(wasm, $outer._ctx);
+        } else {
+          return undefined;
+        }
+      }
+
+      async redeemer(): Promise<WasmContract.Redeemer> {
+        return new $outer.Redeemer(await this.wasm.redeemer(), $outer._ctx);
+      }
+    }
+
+    return PlutusWitness;
+  })();
 }
