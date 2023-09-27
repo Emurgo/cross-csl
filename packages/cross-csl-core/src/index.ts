@@ -1763,27 +1763,31 @@ export abstract class DataCost extends _Ptr {
 
 export abstract class UnitInterval extends _Ptr {
 
-  abstract toBytes: () => Promise<Uint8Array>;
   static fromBytes(bytes: Uint8Array) :Promise<Optional<UnitInterval>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract toHex: () => Promise<string>;
-
-  static fromHex: (hex_str: string) => Promise<Optional<UnitInterval>>;
-  abstract toJson: () => Promise<Optional<string>>;
+  static fromHex(hex_str: string): Promise<Optional<UnitInterval>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 
   static from_json(json: string): Promise<Optional<UnitInterval>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract numerator: () => Promise<BigNum>;
-
-  abstract denominator: () => Promise<BigNum>;
-
   static new(numerator: BigNum, denominator: BigNum): Promise<UnitInterval> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  abstract toHex: () => Promise<string>;
+
+  abstract toBytes: () => Promise<Uint8Array>;
+
+  abstract toJson: () => Promise<Optional<string>>;
+
+  abstract numerator: () => Promise<BigNum>;
+
+  abstract denominator: () => Promise<BigNum>;
 }
 
 export abstract class TransactionBuilderConfigBuilder extends _Ptr {

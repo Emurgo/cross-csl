@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/csl-mobile-bridge';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -3419,5 +3419,63 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
     }
     return DataCost;
+  })();
+
+  public UnitInterval = (() => {
+    const $outer = this;
+
+    class UnitInterval
+      extends Ptr<WasmV4.UnitInterval>
+      implements WasmContract.UnitInterval
+    {
+      static async fromBytes(bytes: Uint8Array): Promise<UnitInterval> {
+        return new UnitInterval(
+          await WasmV4.UnitInterval.from_bytes(bytes),
+          $outer._ctx
+        );
+      }
+
+      static async fromHex(hex: string): Promise<UnitInterval> {
+        return new UnitInterval(
+          await WasmV4.UnitInterval.from_hex(hex),
+          $outer._ctx
+        );
+      }
+
+      static async fromJson(json: string): Promise<UnitInterval> {
+        return new UnitInterval(
+          await WasmV4.UnitInterval.from_json(json),
+          $outer._ctx
+        );
+      }
+
+      static async new(numerator: WasmContract.BigNum, denominator: WasmContract.BigNum) {
+        return new UnitInterval(
+          await WasmV4.UnitInterval.new(numerator.wasm, denominator.wasm),
+          $outer._ctx
+        );
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      async toJson(): Promise<string> {
+        return await this.wasm.to_json();
+      }
+
+      async numerator(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(await this.wasm.numerator(), $outer._ctx);
+      }
+
+      async denominator(): Promise<WasmContract.BigNum> {
+        return new $outer.BigNum(await this.wasm.denominator(), $outer._ctx);
+      }
+    }
+    return UnitInterval;
   })();
 }
