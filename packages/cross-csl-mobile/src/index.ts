@@ -3638,4 +3638,22 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return PlutusScriptSource;
   })();
+
+  public DatumSource = (() => {
+    const $outer = this;
+
+    class DatumSource
+      extends Ptr<WasmV4.DatumSource>
+        implements WasmContract.DatumSource {
+      static async new(datum: WasmContract.PlutusData): Promise<DatumSource> {
+        return new DatumSource(await WasmV4.DatumSource.new(datum.wasm), $outer._ctx);
+      }
+
+      static async newRefInput(input: WasmContract.TransactionInput): Promise<DatumSource> {
+        return new DatumSource(await WasmV4.DatumSource.new_ref_input(input.wasm), $outer._ctx);
+      }
+    }
+
+    return DatumSource;
+  })();
 }
