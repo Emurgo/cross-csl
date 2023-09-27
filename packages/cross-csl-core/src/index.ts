@@ -539,6 +539,7 @@ export abstract class MultiAsset extends _Ptr {
 
 export abstract class Ed25519KeyHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);

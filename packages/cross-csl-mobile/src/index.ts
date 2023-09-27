@@ -804,6 +804,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
       static async fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
         return new Ed25519KeyHash(
           await WasmV4.Ed25519KeyHash.from_bytes(bytes),
