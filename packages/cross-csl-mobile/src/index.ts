@@ -3707,4 +3707,86 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return ExUnitPrices;
   })();
+
+  public FixedTransaction = (() => {
+    const $outer = this;
+
+    class FixedTransaction
+      extends Ptr<WasmV4.FixedTransaction>
+        implements WasmContract.FixedTransaction {
+
+      static async new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
+        return new FixedTransaction(await WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid), $outer._ctx);
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<FixedTransaction | undefined> {
+        const wasm = await WasmV4.FixedTransaction.from_bytes(bytes);
+        return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
+      }
+
+      static async fromHex(hexStr: string): Promise<FixedTransaction | undefined> {
+        const wasm = await WasmV4.FixedTransaction.from_hex(hexStr);
+        return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
+      }
+
+      static async newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<FixedTransaction | undefined> {
+        const wasm = await WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
+        return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
+      }
+
+      async toBytes(): Promise<Uint8Array> {
+        return await this.wasm.to_bytes();
+      }
+
+      async toHex(): Promise<string> {
+        return await this.wasm.to_hex();
+      }
+
+      async body(): Promise<WasmContract.TransactionBody> {
+        return new $outer.TransactionBody(await this.wasm.body(), $outer._ctx);
+      }
+
+      async rawBody(): Promise<Uint8Array> {
+        return await this.wasm.raw_body();
+      }
+
+      async setBody(body: Uint8Array): Promise<void> {
+        return await this.wasm.set_body(body);
+      }
+
+      async setWitnessSet(witnessSet: Uint8Array): Promise<void> {
+        return await this.wasm.set_witness_set(witnessSet);
+      }
+
+      async witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
+        return new $outer.TransactionWitnessSet(await this.wasm.witness_set(), $outer._ctx);
+      }
+
+      async rawWitnessSet(): Promise<Uint8Array> {
+        return await this.wasm.raw_witness_set();
+      }
+
+      async setIsValid(isValid: boolean): Promise<void> {
+        return await this.wasm.set_is_valid(isValid);
+      }
+
+      async isValid(): Promise<boolean> {
+        return await this.wasm.is_valid();
+      }
+
+      async setAuxiliaryData(auxiliaryData: Uint8Array): Promise<void> {
+        return await this.wasm.set_auxiliary_data(auxiliaryData);
+      }
+
+      async auxiliaryData(): Promise<WasmContract.AuxiliaryData | undefined> {
+        const wasm = await this.wasm.auxiliary_data();
+        return wasm ? new $outer.AuxiliaryData(wasm, $outer._ctx) : undefined;
+      }
+
+      async rawAuxiliaryData(): Promise<Uint8Array> {
+        return await this.wasm.raw_auxiliary_data();
+      }
+    }
+    return FixedTransaction;
+  })();
 }

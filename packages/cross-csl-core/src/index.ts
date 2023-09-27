@@ -1908,25 +1908,25 @@ export abstract class ExUnitPrices extends _Ptr {
 
 export abstract class FixedTransaction extends _Ptr {
 
-  abstract toBytes(): Promise<Uint8Array>;
+  static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<Optional<FixedTransaction>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 
   static fromBytes(bytes: Uint8Array): Promise<Optional<FixedTransaction>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  abstract toHex(): Promise<string>;
-
   static fromHex(hexStr: string): Promise<Optional<FixedTransaction>> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<Optional<FixedTransaction>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<Optional<FixedTransaction>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
 
   abstract body(): Promise<TransactionBody>;
 
