@@ -3053,6 +3053,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.PlutusScripts(await this.wasm.plutus_scripts(), $outer._ctx);
       }
 
+      async redeemers(): Promise<WasmContract.Redeemers> {
+        return new $outer.Redeemers(await this.wasm.redeemers(), $outer._ctx);
+      }
+
       static async fromHex(hex: string): Promise<TransactionWitnessSet> {
         return new TransactionWitnessSet(
           await WasmV4.TransactionWitnessSet.from_hex(hex),

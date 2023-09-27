@@ -1640,6 +1640,8 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
   abstract plutusScripts: () => Promise<PlutusScripts | undefined>;
 
+  abstract redeemers(): Promise<Redeemers | undefined>;
+
   static new(): Promise<TransactionWitnessSet> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
