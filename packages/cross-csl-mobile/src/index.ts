@@ -3478,4 +3478,100 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     }
     return UnitInterval;
   })();
+
+  public TransactionBuilderConfigBuilder = (() => {
+    const $outer = this;
+
+    class TransactionBuilderConfigBuilder
+      extends Ptr<WasmV4.TransactionBuilderConfigBuilder>
+        implements WasmContract.TransactionBuilderConfigBuilder {
+
+      static async new(): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await WasmV4.TransactionBuilderConfigBuilder.new(),
+          $outer._ctx
+        );
+      }
+
+      async feeAlgo(linearFee: WasmContract.LinearFee): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.fee_algo(linearFee.wasm),
+          $outer._ctx
+        );
+      }
+
+      async coinsPerUtxoWord(coinsPerUtxoWord: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.coins_per_utxo_word(coinsPerUtxoWord.wasm),
+          $outer._ctx
+        );
+      }
+
+      async coinsPerUtxoByte(coinsPerUtxoByte: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.coins_per_utxo_byte(coinsPerUtxoByte.wasm),
+          $outer._ctx
+        );
+      }
+
+      async exUnitPrices(exUnitPrices: WasmContract.ExUnitPrices): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.ex_unit_prices(exUnitPrices.wasm),
+          $outer._ctx
+        );
+      }
+
+      async poolDeposit(poolDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.pool_deposit(poolDeposit.wasm),
+          $outer._ctx
+        );
+      }
+
+      async keyDeposit(keyDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.key_deposit(keyDeposit.wasm),
+          $outer._ctx
+        );
+      }
+
+      async maxValueSize(maxValueSize: number): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.max_value_size(maxValueSize),
+          $outer._ctx
+        );
+      }
+
+      async maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.max_tx_size(maxTxSize),
+          $outer._ctx
+        );
+      }
+
+      async preferPureChange(preferPureChange: boolean): Promise<TransactionBuilderConfigBuilder> {
+        return new TransactionBuilderConfigBuilder(
+          await this.wasm.prefer_pure_change(preferPureChange),
+          $outer._ctx
+        );
+      }
+
+      async build(): Promise<WasmContract.TransactionBuilderConfig> {
+        return new $outer.TransactionBuilderConfig(await this.wasm.build(), $outer._ctx);
+      }
+    }
+
+    return TransactionBuilderConfigBuilder;
+  })();
+
+  public TransactionBuilderConfig = (() => {
+
+    class TransactionBuilderConfig
+      extends Ptr<WasmV4.TransactionBuilderConfig>
+        implements WasmContract.TransactionBuilderConfig {
+
+    }
+
+    return TransactionBuilderConfig;
+  })();
 }
