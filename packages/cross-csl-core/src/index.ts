@@ -124,6 +124,15 @@ export interface WasmModuleProxy {
   PlutusScripts: typeof PlutusScripts
   TxInputsBuilder: typeof TxInputsBuilder
   DataCost: typeof DataCost
+  TransactionBuilderConfigBuilder: typeof TransactionBuilderConfigBuilder
+  PlutusWitness: typeof PlutusWitness
+  TransactionBuilderConfig: typeof TransactionBuilderConfig
+  TransactionUnspentOutput: typeof TransactionUnspentOutput
+  FixedTransaction: typeof FixedTransaction
+  ExUnitPrices: typeof ExUnitPrices
+  DatumSource: typeof DatumSource
+  PlutusScriptSource: typeof PlutusScriptSource
+  UnitInterval: typeof UnitInterval
 }
 
 const pointers: Record<string, any[]> = {};
@@ -1839,7 +1848,7 @@ export abstract class UnitInterval extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static from_json(json: string): Promise<Optional<UnitInterval>> {
+  static fromJson(json: string): Promise<Optional<UnitInterval>> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
