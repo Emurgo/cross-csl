@@ -124,6 +124,15 @@ export interface WasmModuleProxy {
   PlutusScripts: typeof PlutusScripts
   TxInputsBuilder: typeof TxInputsBuilder
   DataCost: typeof DataCost
+  TransactionBuilderConfigBuilder: typeof TransactionBuilderConfigBuilder
+  PlutusWitness: typeof PlutusWitness
+  TransactionBuilderConfig: typeof TransactionBuilderConfig
+  TransactionUnspentOutput: typeof TransactionUnspentOutput
+  FixedTransaction: typeof FixedTransaction
+  ExUnitPrices: typeof ExUnitPrices
+  DatumSource: typeof DatumSource
+  PlutusScriptSource: typeof PlutusScriptSource
+  UnitInterval: typeof UnitInterval
 }
 
 const pointers: Record<string, any[]> = {};
@@ -539,6 +548,7 @@ export abstract class MultiAsset extends _Ptr {
 
 export abstract class Ed25519KeyHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
 
   static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -547,6 +557,7 @@ export abstract class Ed25519KeyHash extends _Ptr {
 
 export abstract class TransactionHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
 
   static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -690,6 +701,9 @@ export abstract class PrivateKey extends _Ptr {
   }
 
   static generateEd25519extended(): Promise<PrivateKey> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+  static fromBech32(bech32Str: string): Promise<PrivateKey> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1303,10 +1317,61 @@ export abstract class TransactionBody extends _Ptr {
 
   abstract collateral(): Promise<TransactionInputs | undefined>;
 
+  abstract requiredSigners(): Promise<Ed25519KeyHashes>;
+
   static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
+
+export abstract class Ed25519KeyHashes extends _Ptr {
+
+  static fromBytes(bytes: Uint8Array): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromJson(json: string): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static new(): Promise<Ed25519KeyHashes> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hexStr: string): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toBytes(): Promise<Uint8Array> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toHex(): Promise<string> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toJson(): Promise<Optional<string>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  len(): Promise<number> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  get(index: number): Promise<Ed25519KeyHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  add(elem: Ed25519KeyHash): Promise<void> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  toOption(): Promise<Optional<Ed25519KeyHashes>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+}
+
 
 export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
@@ -1401,14 +1466,9 @@ export abstract class TransactionBuilder extends _Ptr {
 
   abstract setCollateral(txInputsBuilder: TxInputsBuilder): Promise<void>;
 
-  abstract calcScriptDataHash(costModel: 'vasil' | 'default'): Promise<void>;
+  abstract calcScriptDataHash(costModels: Costmdls): Promise<void>;
 
-  static new(
-    linearFee: LinearFee,
-    poolDeposit: BigNum,
-    keyDeposit: BigNum,
-    coinsPerUtxoWord: BigNum
-  ): Promise<TransactionBuilder> {
+  static new(transactionBuilderConfig: TransactionBuilderConfig): Promise<TransactionBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1582,6 +1642,10 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
   abstract vkeys(): Promise<Vkeywitnesses>;
 
+  abstract plutusScripts: () => Promise<PlutusScripts | undefined>;
+
+  abstract redeemers(): Promise<Redeemers | undefined>;
+
   static new(): Promise<TransactionWitnessSet> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -1607,6 +1671,9 @@ export abstract class Transaction extends _Ptr {
   }
 
   static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+  static fromHex(hex: string): Promise<Transaction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1760,3 +1827,228 @@ export abstract class DataCost extends _Ptr {
 
   abstract coinsPerByte(): Promise<BigNum>;
 }
+
+export abstract class UnitInterval extends _Ptr {
+
+  static fromBytes(bytes: Uint8Array) :Promise<Optional<UnitInterval>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hex_str: string): Promise<Optional<UnitInterval>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromJson(json: string): Promise<Optional<UnitInterval>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static new(numerator: BigNum, denominator: BigNum): Promise<UnitInterval> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toHex: () => Promise<string>;
+
+  abstract toBytes: () => Promise<Uint8Array>;
+
+  abstract toJson: () => Promise<Optional<string>>;
+
+  abstract numerator: () => Promise<BigNum>;
+
+  abstract denominator: () => Promise<BigNum>;
+}
+
+export abstract class TransactionBuilderConfigBuilder extends _Ptr {
+
+  static new(): Promise<TransactionBuilderConfigBuilder> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract feeAlgo(feeAlgo: LinearFee): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract coinsPerUtxoWord(coinsPerUtxoWord: BigNum): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract coinsPerUtxoByte(coinsPerUtxoByte: BigNum): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract exUnitPrices(exUnitPrices: ExUnitPrices): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract poolDeposit(poolDeposit: BigNum): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract keyDeposit(keyDeposit: BigNum): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract maxValueSize(maxValueSize: number): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract preferPureChange(preferPureChange: boolean): Promise<TransactionBuilderConfigBuilder>;
+
+  abstract build(): Promise<Optional<TransactionBuilderConfig>>;
+
+}
+
+export abstract class TransactionBuilderConfig extends _Ptr {
+}
+
+export abstract class PlutusWitness extends _Ptr {
+
+  static new(script: PlutusScript, datum: PlutusData, redeemer: Redeemer): Promise<PlutusWitness> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithRef(script: PlutusScriptSource, datum: DatumSource, redeemer: Redeemer): Promise<PlutusWitness> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithoutDatum(script: PlutusScript, redeemer: Redeemer): Promise<PlutusWitness> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithRefWithoutDatum(script: PlutusScriptSource, redeemer: Redeemer): Promise<PlutusWitness> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract script(): Promise<Optional<PlutusScript>>;
+
+  abstract datum(): Promise<Optional<PlutusData>>;
+
+  abstract redeemer(): Promise<Redeemer>;
+
+}
+
+export abstract class PlutusScriptSource extends _Ptr {
+
+  static new(script: PlutusScript): Promise<PlutusScriptSource> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput): Promise<PlutusScriptSource> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newRefInputWithLangVer(scriptHash: ScriptHash, input: TransactionInput, langVer: Language): Promise<PlutusScriptSource> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+}
+
+export abstract class DatumSource extends _Ptr {
+
+  static new(datum: PlutusData): Promise<DatumSource> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newRefInput(input: TransactionInput): Promise<DatumSource> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+}
+
+
+export abstract class ExUnitPrices extends _Ptr {
+
+  static new(memPrice: UnitInterval, stepPrice: UnitInterval): Promise<ExUnitPrices> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<Optional<ExUnitPrices>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hexStr: string): Promise<Optional<ExUnitPrices>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromJson(json: string): Promise<Optional<ExUnitPrices>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
+
+  abstract toJson(): Promise<Optional<string>>;
+
+  abstract memPrice(): Promise<UnitInterval>;
+
+  abstract stepPrice(): Promise<UnitInterval>;
+}
+
+
+export abstract class FixedTransaction extends _Ptr {
+
+  static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<Optional<FixedTransaction>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<Optional<FixedTransaction>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hexStr: string): Promise<Optional<FixedTransaction>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<Optional<FixedTransaction>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
+
+  abstract body(): Promise<TransactionBody>;
+
+  abstract rawBody(): Promise<Uint8Array>;
+
+  abstract setBody(rawBody: Uint8Array): Promise<void>;
+
+  abstract setWitnessSet(rawWitnessSet: Uint8Array): Promise<void>;
+
+  abstract witnessSet(): Promise<TransactionWitnessSet>;
+
+  abstract rawWitnessSet(): Promise<Uint8Array>;
+
+  abstract setIsValid(valid: boolean): Promise<void>;
+
+  abstract isValid(): Promise<boolean>;
+
+  abstract setAuxiliaryData(rawAuxiliaryData: Uint8Array): Promise<void>;
+
+  abstract auxiliaryData(): Promise<Optional<AuxiliaryData>>;
+
+  abstract rawAuxiliaryData(): Promise<Uint8Array>;
+
+}
+
+export const makeVkeyWitness: (txBodyHash: TransactionHash, sk: PrivateKey) => Promise<Vkeywitness> = () => {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+};
+
+export abstract class TransactionUnspentOutput extends _Ptr {
+
+  static new(input: TransactionInput, output: TransactionOutput): Promise<TransactionUnspentOutput> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<Optional<TransactionUnspentOutput>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromHex(hexStr: string): Promise<Optional<TransactionUnspentOutput>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromJson(json: string): Promise<Optional<TransactionUnspentOutput>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toJson(): Promise<Optional<string>>;
+
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract toHex(): Promise<string>;
+
+  abstract input(): Promise<TransactionInput>;
+
+  abstract output(): Promise<TransactionOutput>;
+}
+
