@@ -1457,9 +1457,7 @@ export abstract class TransactionBuilder extends _Ptr {
   ): Promise<void>;
 
   abstract addPlutusScriptInput(
-    plutusScript: PlutusScript,
-    datum: string,
-    redeemer: string,
+    witness: PlutusWitness,
     input: TransactionInput,
     amount: Value
   ): Promise<void>;

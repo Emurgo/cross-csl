@@ -2617,19 +2617,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async addPlutusScriptInput(
-        plutusScript: WasmContract.PlutusScript,
-        datum: string,
-        redeemer: string,
+        witness: WasmContract.PlutusWitness,
         input: WasmContract.TransactionInput,
         amount: WasmContract.Value
       ): Promise<void> {
-        const plutusWitness = await WasmV4.PlutusWitness.new(
-          plutusScript.wasm,
-          await WasmV4.PlutusData.from_bytes(Buffer.from(datum, 'hex')),
-          await WasmV4.Redeemer.from_bytes(Buffer.from(redeemer, 'hex'))
-        );
         return await this.wasm.add_plutus_script_input(
-          plutusWitness,
+          witness.wasm,
           input.wasm,
           amount.wasm
         );

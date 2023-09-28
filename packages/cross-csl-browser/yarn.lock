@@ -940,10 +940,10 @@
   resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-11.5.0.tgz"
   integrity sha512-qchOJ9NYDUz10tzs5r5QhP9hK0p+ZOlRiBwPdTAxqAYLw/8emYBkQQLaS8T1DF6EkeudyrgS00ym5Trw1fo4iA==
 
-"@emurgo/cross-csl-core@^2.9.0":
-  version "2.9.0"
-  resolved "https://registry.npmjs.org/@emurgo/cross-csl-core/-/cross-csl-core-2.9.0.tgz"
-  integrity sha512-/8KgmGye1gJST/IXrngUqW1PVGUqCNAZlEOC73qzROzwwR55xewTxqqFysIEaNZHsR1hw8m0yPPlLydeaex9qA==
+"@emurgo/cross-csl-core@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.1.0.tgz#bfc0af0e76fdd93af420c2fe079a482593792758"
+  integrity sha512-owiAQKAk04u+8xhyqp/9Bkh5T/kcNbBsMcYZRzsN7TFryMM7mKsnorGmV1F0B0h4AjvmmV/pDmhvVqdiyADoMg==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     "@types/mocha" "^9.1.1"
