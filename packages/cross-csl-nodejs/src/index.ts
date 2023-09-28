@@ -4784,22 +4784,15 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addPlutusScriptInput(
-        plutusScript: WasmContract.PlutusScript,
-        datum: string,
-        redeemer: string,
+        witness: WasmContract.PlutusWitness,
         input: WasmContract.TransactionInput,
         amount: WasmContract.Value
       ): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
-            const plutusWitness = WasmV4.PlutusWitness.new(
-              plutusScript.wasm,
-              WasmV4.PlutusData.from_bytes(Buffer.from(datum, 'hex')),
-              WasmV4.Redeemer.from_bytes(Buffer.from(redeemer, 'hex'))
-            );
             resolve(
               this.wasm.add_plutus_script_input(
-                plutusWitness,
+                witness.wasm,
                 input.wasm,
                 amount.wasm
               )
