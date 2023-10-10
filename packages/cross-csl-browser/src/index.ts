@@ -3465,12 +3465,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return ScriptDataHash;
   })();
 
-  public StakeCredential = (() => {
+  public Credential = (() => {
     const $outer = this;
 
-    class StakeCredential
-      extends Ptr<WasmV4.StakeCredential>
-      implements WasmContract.StakeCredential
+    class Credential
+      extends Ptr<WasmV4.Credential>
+      implements WasmContract.Credential
     {
       toBytes(): Promise<Uint8Array> {
         return new Promise((resolve, reject) => {
@@ -3516,12 +3516,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static fromBytes(bytes: Uint8Array): Promise<StakeCredential> {
+      static fromBytes(bytes: Uint8Array): Promise<Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new StakeCredential(
-                WasmV4.StakeCredential.from_bytes(bytes),
+              new Credential(
+                WasmV4.Credential.from_bytes(bytes),
                 $outer._ctx
               )
             );
@@ -3533,12 +3533,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromKeyhash(
         hash: WasmContract.Ed25519KeyHash
-      ): Promise<StakeCredential> {
+      ): Promise<Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new StakeCredential(
-                WasmV4.StakeCredential.from_keyhash(hash.wasm),
+              new Credential(
+                WasmV4.Credential.from_keyhash(hash.wasm),
                 $outer._ctx
               )
             );
@@ -3550,12 +3550,12 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromScripthash(
         hash: WasmContract.ScriptHash
-      ): Promise<StakeCredential> {
+      ): Promise<Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new StakeCredential(
-                WasmV4.StakeCredential.from_scripthash(hash.wasm),
+              new Credential(
+                WasmV4.Credential.from_scripthash(hash.wasm),
                 $outer._ctx
               )
             );
@@ -3565,7 +3565,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
     }
-    return StakeCredential;
+    return Credential;
   })();
 
   public StakeRegistration = (() => {
@@ -3585,11 +3585,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      stakeCredential(): Promise<WasmContract.StakeCredential> {
+      stakeCredential(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(
+              new $outer.Credential(
                 this.wasm.stake_credential(),
                 $outer._ctx
               )
@@ -3601,7 +3601,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static new(
-        stakeCredential: WasmContract.StakeCredential
+        stakeCredential: WasmContract.Credential
       ): Promise<StakeRegistration> {
         return new Promise((resolve, reject) => {
           try {
@@ -3652,11 +3652,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      stakeCredential(): Promise<WasmContract.StakeCredential> {
+      stakeCredential(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(
+              new $outer.Credential(
                 this.wasm.stake_credential(),
                 $outer._ctx
               )
@@ -3668,7 +3668,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static new(
-        stakeCredential: WasmContract.StakeCredential
+        stakeCredential: WasmContract.Credential
       ): Promise<StakeDeregistration> {
         return new Promise((resolve, reject) => {
           try {
@@ -3719,11 +3719,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      stakeCredential(): Promise<WasmContract.StakeCredential> {
+      stakeCredential(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(
+              new $outer.Credential(
                 this.wasm.stake_credential(),
                 $outer._ctx
               )
@@ -3747,7 +3747,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static new(
-        stakeCredential: WasmContract.StakeCredential,
+        stakeCredential: WasmContract.Credential,
         poolKeyHash: WasmContract.Ed25519KeyHash
       ): Promise<StakeDelegation> {
         return new Promise((resolve, reject) => {
@@ -3999,11 +3999,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.RewardAddress>
       implements WasmContract.RewardAddress
     {
-      paymentCred(): Promise<WasmContract.StakeCredential> {
+      paymentCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(this.wasm.payment_cred(), $outer._ctx)
+              new $outer.Credential(this.wasm.payment_cred(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -4038,7 +4038,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(
         network: number,
-        payment: WasmContract.StakeCredential
+        payment: WasmContract.Credential
       ): Promise<RewardAddress> {
         return new Promise((resolve, reject) => {
           try {
@@ -4853,11 +4853,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.BaseAddress>
       implements WasmContract.BaseAddress
     {
-      paymentCred(): Promise<WasmContract.StakeCredential> {
+      paymentCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(this.wasm.payment_cred(), $outer._ctx)
+              new $outer.Credential(this.wasm.payment_cred(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -4865,11 +4865,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      stakeCred(): Promise<WasmContract.StakeCredential> {
+      stakeCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(this.wasm.stake_cred(), $outer._ctx)
+              new $outer.Credential(this.wasm.stake_cred(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -4904,8 +4904,8 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(
         network: number,
-        payment: WasmContract.StakeCredential,
-        stake: WasmContract.StakeCredential
+        payment: WasmContract.Credential,
+        stake: WasmContract.Credential
       ): Promise<BaseAddress> {
         return new Promise((resolve, reject) => {
           try {
@@ -4931,11 +4931,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.PointerAddress>
       implements WasmContract.PointerAddress
     {
-      paymentCred(): Promise<WasmContract.StakeCredential> {
+      paymentCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(this.wasm.payment_cred(), $outer._ctx)
+              new $outer.Credential(this.wasm.payment_cred(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -4980,7 +4980,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(
         network: number,
-        payment: WasmContract.StakeCredential,
+        payment: WasmContract.Credential,
         stake: WasmContract.Pointer
       ): Promise<PointerAddress> {
         return new Promise((resolve, reject) => {
@@ -5007,11 +5007,11 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.EnterpriseAddress>
       implements WasmContract.EnterpriseAddress
     {
-      paymentCred(): Promise<WasmContract.StakeCredential> {
+      paymentCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.StakeCredential(this.wasm.payment_cred(), $outer._ctx)
+              new $outer.Credential(this.wasm.payment_cred(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -5048,7 +5048,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(
         network: number,
-        payment: WasmContract.StakeCredential
+        payment: WasmContract.Credential
       ): Promise<EnterpriseAddress> {
         return new Promise((resolve, reject) => {
           try {
