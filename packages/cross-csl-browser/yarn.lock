@@ -941,9 +941,9 @@
   integrity sha512-JzuOiuVeri+G1TQosfUXDZ+jgPKByH8DqO3nfVKAuP/VzuRhT38oBxFr5YivSMGUaQ6P4XScL4n79mwa2Lpxeg==
 
 "@emurgo/cross-csl-core@3.2.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.1.0.tgz#bfc0af0e76fdd93af420c2fe079a482593792758"
-  integrity sha512-owiAQKAk04u+8xhyqp/9Bkh5T/kcNbBsMcYZRzsN7TFryMM7mKsnorGmV1F0B0h4AjvmmV/pDmhvVqdiyADoMg==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.2.0.tgz#af157e3cf79ec4ae993e0fee63673b74fba29ae8"
+  integrity sha512-fryPF38KHosMRPT0/APi02PBWHShGzhaSCAJCcolJiId9BSyBOEqYIZUcHNZb6JyOaClMd1vV/aYnETV8tBy6Q==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     "@types/mocha" "^9.1.1"
