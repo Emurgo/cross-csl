@@ -88,7 +88,7 @@ export interface WasmModuleProxy {
   Language: typeof Language
   Languages: typeof Languages
   ScriptDataHash: typeof ScriptDataHash
-  StakeCredential: typeof StakeCredential
+  Credential: typeof Credential
   StakeRegistration: typeof StakeRegistration
   StakeDeregistration: typeof StakeDeregistration
   StakeDelegation: typeof StakeDelegation
@@ -1108,7 +1108,7 @@ export abstract class ScriptDataHash extends _Ptr {
   abstract toBech32(prefix: string): Promise<string>;
 }
 
-export abstract class StakeCredential extends _Ptr {
+export abstract class Credential extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
   abstract toKeyhash(): Promise<Ed25519KeyHash>;
@@ -1117,15 +1117,15 @@ export abstract class StakeCredential extends _Ptr {
 
   abstract kind(): Promise<number>;
 
-  static fromBytes(bytes: Uint8Array): Promise<StakeCredential> {
+  static fromBytes(bytes: Uint8Array): Promise<Credential> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static fromKeyhash(hash: Ed25519KeyHash): Promise<StakeCredential> {
+  static fromKeyhash(hash: Ed25519KeyHash): Promise<Credential> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static fromScripthash(hash: ScriptHash): Promise<StakeCredential> {
+  static fromScripthash(hash: ScriptHash): Promise<Credential> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1133,9 +1133,9 @@ export abstract class StakeCredential extends _Ptr {
 export abstract class StakeRegistration extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<Credential>;
 
-  static new(stakeCredential: StakeCredential): Promise<StakeRegistration> {
+  static new(stakeCredential: Credential): Promise<StakeRegistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1147,9 +1147,9 @@ export abstract class StakeRegistration extends _Ptr {
 export abstract class StakeDeregistration extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<Credential>;
 
-  static new(stakeCredential: StakeCredential): Promise<StakeDeregistration> {
+  static new(stakeCredential: Credential): Promise<StakeDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1161,12 +1161,12 @@ export abstract class StakeDeregistration extends _Ptr {
 export abstract class StakeDelegation extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
-  abstract stakeCredential(): Promise<StakeCredential>;
+  abstract stakeCredential(): Promise<Credential>;
 
   abstract poolKeyhash(): Promise<Ed25519KeyHash>;
 
   static new(
-    stakeCredential: StakeCredential,
+    stakeCredential: Credential,
     poolKeyHash: Ed25519KeyHash
   ): Promise<StakeDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -1228,7 +1228,7 @@ export abstract class Certificates extends _Ptr {
 }
 
 export abstract class RewardAddress extends _Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<Credential>;
 
   abstract toAddress(): Promise<Address>;
 
@@ -1238,7 +1238,7 @@ export abstract class RewardAddress extends _Ptr {
 
   static new(
     network: number,
-    payment: StakeCredential
+    payment: Credential
   ): Promise<RewardAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -1472,9 +1472,9 @@ export abstract class TransactionBuilder extends _Ptr {
 }
 
 export abstract class BaseAddress extends _Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<Credential>;
 
-  abstract stakeCred(): Promise<StakeCredential>;
+  abstract stakeCred(): Promise<Credential>;
 
   abstract toAddress(): Promise<Address>;
 
@@ -1484,15 +1484,15 @@ export abstract class BaseAddress extends _Ptr {
 
   static new(
     network: number,
-    payment: StakeCredential,
-    stake: StakeCredential
+    payment: Credential,
+    stake: Credential
   ): Promise<BaseAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
 
 export abstract class PointerAddress extends _Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<Credential>;
 
   abstract stakePointer(): Promise<Pointer>;
 
@@ -1504,7 +1504,7 @@ export abstract class PointerAddress extends _Ptr {
 
   static new(
     network: number,
-    payment: StakeCredential,
+    payment: Credential,
     stake: Pointer
   ): Promise<PointerAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -1512,7 +1512,7 @@ export abstract class PointerAddress extends _Ptr {
 }
 
 export abstract class EnterpriseAddress extends _Ptr {
-  abstract paymentCred(): Promise<StakeCredential>;
+  abstract paymentCred(): Promise<Credential>;
 
   abstract toAddress(): Promise<Address>;
 
@@ -1522,7 +1522,7 @@ export abstract class EnterpriseAddress extends _Ptr {
 
   static new(
     network: number,
-    payment: StakeCredential
+    payment: Credential
   ): Promise<EnterpriseAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
