@@ -28,6 +28,33 @@ export const setupTests = (
   wasm: WasmModuleProxy,
   suiteName: string
 ): Mocha.Suite => {
+  async function makeTransactionBuilder() {
+    const bigNum = await wasm.BigNum.fromStr('0');
+    const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
+    const transactionBuilderConfig = await wasm.TransactionBuilderConfigBuilder.new()
+      .then(b => b.feeAlgo(linearFee))
+      .then(b => b.poolDeposit(bigNum))
+      .then(b => b.keyDeposit(bigNum))
+      .then(b => b.coinsPerUtxoWord(bigNum))
+      .then(b => b.maxValueSize(5000))
+      .then(b => b.maxTxSize(16384))
+      .then(async b => b.exUnitPrices(
+        await wasm.ExUnitPrices.new(
+          await wasm.UnitInterval.new(
+            await wasm.BigNum.fromStr('577'),
+            await wasm.BigNum.fromStr('1000'),
+          ),
+          await wasm.UnitInterval.new(
+            await wasm.BigNum.fromStr('721'),
+            await wasm.BigNum.fromStr('10000000'),
+          ),
+        )
+      ))
+      .then(b => b.preferPureChange(true))
+      .then(b => b.build());
+    return await wasm.TransactionBuilder.new(transactionBuilderConfig);
+  }
+
   return describe(suiteName, () => {
     const stakePrivateKey = wasm.PrivateKey.fromNormalBytes(
       Buffer.from(PRIVATE_KEY, 'hex')
@@ -1097,51 +1124,51 @@ export const setupTests = (
         expect(t.hasValue()).to.be.true;
       });
     });
-    describe('StakeCredential', () => {
+    describe('Credential', () => {
       it('.toBytes()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const s = await wasm.StakeCredential.fromKeyhash(hash);
+        const s = await wasm.Credential.fromKeyhash(hash);
         expect(await s.toBytes()).to.be.instanceOf(Uint8Array);
       });
       it('.toKeyhash()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const s = await wasm.StakeCredential.fromKeyhash(hash);
+        const s = await wasm.Credential.fromKeyhash(hash);
         expect(await s.toKeyhash()).to.be.instanceOf(wasm.Ed25519KeyHash);
       });
       it('.toScripthash()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const s = await wasm.StakeCredential.fromKeyhash(hash);
+        const s = await wasm.Credential.fromKeyhash(hash);
         expect(await s.toScripthash()).to.be.instanceOf(wasm.ScriptHash);
       });
       it('.kind()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const s = await wasm.StakeCredential.fromKeyhash(hash);
+        const s = await wasm.Credential.fromKeyhash(hash);
         expect(await s.kind()).to.be.equal(0);
       });
       it('.fromBytes()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const sBytes = await wasm.StakeCredential.fromKeyhash(hash).then((x) =>
+        const sBytes = await wasm.Credential.fromKeyhash(hash).then((x) =>
           x.toBytes()
         );
-        const s = await wasm.StakeCredential.fromBytes(sBytes);
+        const s = await wasm.Credential.fromBytes(sBytes);
         expect(s.hasValue()).to.be.true;
       });
       it('.fromKeyhash()', async () => {
         const key = await stakePrivateKey;
         const hash = await key.toPublic().then((x) => x.hash());
-        const s = await wasm.StakeCredential.fromKeyhash(hash);
+        const s = await wasm.Credential.fromKeyhash(hash);
         expect(s.hasValue()).to.be.true;
       });
       it('.fromScripthash()', async () => {
         const scriptHash = await wasm.ScriptHash.fromBytes(
           Buffer.from(Array.from(Array(28).keys()).fill(0))
         );
-        const s = await wasm.StakeCredential.fromScripthash(scriptHash);
+        const s = await wasm.Credential.fromScripthash(scriptHash);
         expect(s.hasValue()).to.be.true;
       });
     });
@@ -1151,7 +1178,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeRegistration.new(stakeCredential);
         expect(await s.toBytes()).to.be.instanceOf(Uint8Array);
       });
@@ -1160,16 +1187,16 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeRegistration.new(stakeCredential);
-        expect(await s.stakeCredential()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await s.stakeCredential()).to.be.instanceOf(wasm.Credential);
       });
       it('.fromBytes()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const sBytes = await wasm.StakeRegistration.new(stakeCredential).then(
           (x) => x.toBytes()
         );
@@ -1181,7 +1208,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeRegistration.new(stakeCredential);
         expect(s.hasValue()).to.be.true;
       });
@@ -1193,7 +1220,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeDeregistration.new(stakeCredential);
         expect(await s.toBytes()).to.be.instanceOf(Uint8Array);
       });
@@ -1202,16 +1229,16 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeDeregistration.new(stakeCredential);
-        expect(await s.stakeCredential()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await s.stakeCredential()).to.be.instanceOf(wasm.Credential);
       });
       it('.fromBytes()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const sBytes = await (
           await wasm.StakeDeregistration.new(stakeCredential)
         ).toBytes();
@@ -1223,7 +1250,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const s = await wasm.StakeDeregistration.new(stakeCredential);
         expect(s.hasValue()).to.be.true;
       });
@@ -1234,7 +1261,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const s = await wasm.StakeDelegation.new(stakeCredential, poolKeyHash);
         expect(await s.toBytes()).to.be.instanceOf(Uint8Array);
@@ -1244,17 +1271,17 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const s = await wasm.StakeDelegation.new(stakeCredential, poolKeyHash);
-        expect(await s.stakeCredential()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await s.stakeCredential()).to.be.instanceOf(wasm.Credential);
       });
       it('.poolKeyhash()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const s = await wasm.StakeDelegation.new(stakeCredential, poolKeyHash);
         expect(await s.poolKeyhash()).to.be.instanceOf(wasm.Ed25519KeyHash);
@@ -1264,7 +1291,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const sBytes = await wasm.StakeDelegation.new(
           stakeCredential,
@@ -1278,7 +1305,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const s = await wasm.StakeDelegation.new(stakeCredential, poolKeyHash);
         expect(s.hasValue()).to.be.true;
@@ -1290,7 +1317,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const c = await wasm.Certificate.newStakeRegistration(
           await wasm.StakeRegistration.new(stakeCredential)
         );
@@ -1301,7 +1328,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1315,7 +1342,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1329,7 +1356,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1340,7 +1367,7 @@ export const setupTests = (
         expect(c.hasValue()).to.be.true;
       });
       it('.newStakeRegistration()', async () => {
-        const stakeCredential = await wasm.StakeCredential.fromKeyhash(
+        const stakeCredential = await wasm.Credential.fromKeyhash(
           await (await (await stakePrivateKey).toPublic()).hash()
         );
         const c = await wasm.Certificate.newStakeRegistration(
@@ -1353,7 +1380,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1365,7 +1392,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const poolKeyHash = await key.toPublic().then((x) => x.hash());
         const stakeDelegation = await wasm.StakeDelegation.new(
           stakeCredential,
@@ -1389,7 +1416,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1405,7 +1432,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
@@ -1433,7 +1460,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const r = await wasm.RewardAddress.new(0, stakeCredential);
         expect(r.hasValue()).to.be.true;
       });
@@ -1442,16 +1469,16 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const r = await wasm.RewardAddress.new(0, stakeCredential);
-        expect(await r.paymentCred()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await r.paymentCred()).to.be.instanceOf(wasm.Credential);
       });
       it('.toAddress()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const r = await wasm.RewardAddress.new(0, stakeCredential);
         expect(await r.toAddress()).to.be.instanceOf(wasm.Address);
       });
@@ -1535,14 +1562,7 @@ export const setupTests = (
     });
     describe('TransactionInputs', () => {
       it('.len()', async () => {
-        const bigNum = await wasm.BigNum.fromStr('0');
-        const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1552,12 +1572,7 @@ export const setupTests = (
       it('.get()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(
           Buffer.from(ED25519KEYHASH, 'hex')
@@ -1581,12 +1596,7 @@ export const setupTests = (
       it('.len()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1596,12 +1606,7 @@ export const setupTests = (
       it('.get()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const address = await wasm.Address.fromBytes(
           Buffer.from(Array.from(Array(57).keys()).fill(0))
@@ -1619,12 +1624,7 @@ export const setupTests = (
       it('.inputs()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1633,12 +1633,7 @@ export const setupTests = (
       it('.outputs()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1647,12 +1642,7 @@ export const setupTests = (
       it('.fee()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1661,12 +1651,7 @@ export const setupTests = (
       it('.ttl()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1675,12 +1660,7 @@ export const setupTests = (
       it('.certs()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1689,12 +1669,7 @@ export const setupTests = (
       it('.withdrawals()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1703,12 +1678,7 @@ export const setupTests = (
       it('.toBytes()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1717,12 +1687,7 @@ export const setupTests = (
       it('.fromBytes()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         await tBuilder.setFee(await wasm.BigNum.fromStr('0'));
         const tBodyBytes = await tBuilder.build().then((x) => x.toBytes());
         const t = await wasm.TransactionBody.fromBytes(tBodyBytes);
@@ -1733,12 +1698,7 @@ export const setupTests = (
       it('.new()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(t.hasValue()).to.be.true;
       });
       it('.addKeyInput()', async () => {
@@ -1751,12 +1711,7 @@ export const setupTests = (
         ).then((x) => x.toBytes());
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(
           Buffer.from(ED25519KEYHASH, 'hex')
@@ -1775,12 +1730,7 @@ export const setupTests = (
         );
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(
           Buffer.from(ED25519KEYHASH, 'hex')
@@ -1799,12 +1749,7 @@ export const setupTests = (
         );
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(await wasm.BigNum.fromStr('0'));
         const hash = await wasm.Ed25519KeyHash.fromBytes(
           Buffer.from(ED25519KEYHASH, 'hex')
@@ -1823,12 +1768,7 @@ export const setupTests = (
         );
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const input = await wasm.TransactionInput.fromBytes(tBytes);
         const address = await wasm.Address.fromBytes(
           Buffer.from(Array.from(Array(57).keys()).fill(0))
@@ -1841,12 +1781,7 @@ export const setupTests = (
       it('.addOutput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const address = await wasm.Address.fromBytes(
           Buffer.from(Array.from(Array(57).keys()).fill(0))
         );
@@ -1860,12 +1795,7 @@ export const setupTests = (
       it('.feeForOutput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const address = await wasm.Address.fromBytes(
           Buffer.from(Array.from(Array(57).keys()).fill(0))
         );
@@ -1876,24 +1806,14 @@ export const setupTests = (
       it('.setFee()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(bigNum);
         expect(t.hasValue()).to.be.true;
       });
       it('.setTtl()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(bigNum);
         await t.setTtl(0);
         expect(t.hasValue()).to.be.true;
@@ -1901,24 +1821,14 @@ export const setupTests = (
       it('.setValidityStartInterval()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setValidityStartInterval(0);
         expect(t.hasValue()).to.be.true;
       });
       it('.setCerts()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const cBytes = await wasm.Certificates.new().then((x) => x.toBytes());
         const certificates = await wasm.Certificates.fromBytes(cBytes);
         await t.setCerts(certificates);
@@ -1927,12 +1837,7 @@ export const setupTests = (
       it('.setWithdrawals()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const rBytes = await wasm.Withdrawals.new().then((x) => x.toBytes());
         const withdrawals = await wasm.Withdrawals.fromBytes(rBytes);
         await t.setWithdrawals(withdrawals);
@@ -1941,12 +1846,7 @@ export const setupTests = (
       it('.setAuxiliaryData()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         const generalTransactionMetadata =
           await wasm.GeneralTransactionMetadata.new();
         const aBytes = await wasm.AuxiliaryData.new(
@@ -1960,67 +1860,37 @@ export const setupTests = (
       it('.getExplicitInput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.getExplicitInput()).to.be.instanceOf(wasm.Value);
       });
       it('.getImplicitInput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.getImplicitInput()).to.be.instanceOf(wasm.Value);
       });
       it('.getExplicitOutput()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.getExplicitOutput()).to.be.instanceOf(wasm.Value);
       });
       it('.getDeposit()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.getDeposit()).to.be.instanceOf(wasm.BigNum);
       });
       it('.getFeeIfSet()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.getFeeIfSet()).to.be.instanceOf(wasm.BigNum);
       });
       it('.addChangeIfNeeded()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(
           await t.addChangeIfNeeded(
             await wasm.Address.fromBytes(Buffer.from(Array(57).fill(0)))
@@ -2030,24 +1900,14 @@ export const setupTests = (
       it('.build()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         await t.setFee(bigNum);
         expect(await t.build()).to.be.instanceOf(wasm.TransactionBody);
       });
       it('.minFee()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const t = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const t = await makeTransactionBuilder();
         expect(await t.minFee()).to.be.instanceOf(wasm.BigNum);
       });
     });
@@ -2058,7 +1918,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.BaseAddress.new(
           0,
           stakeCredential,
@@ -2071,33 +1931,33 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.BaseAddress.new(
           0,
           stakeCredential,
           stakeCredential
         );
-        expect(await b.paymentCred()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await b.paymentCred()).to.be.instanceOf(wasm.Credential);
       });
       it('.stakeCred()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.BaseAddress.new(
           0,
           stakeCredential,
           stakeCredential
         );
-        expect(await b.stakeCred()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await b.stakeCred()).to.be.instanceOf(wasm.Credential);
       });
       it('.toAddress()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.BaseAddress.new(
           0,
           stakeCredential,
@@ -2117,7 +1977,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const pointer = await wasm.Pointer.new(0, 0, 0);
         const b = await wasm.PointerAddress.new(0, stakeCredential, pointer);
         expect(b.hasValue()).to.be.true;
@@ -2127,13 +1987,13 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const pointer = await wasm.Pointer.new(0, 0, 0);
         const b = await wasm.PointerAddress.new(0, stakeCredential, pointer);
-        expect(await b.paymentCred()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await b.paymentCred()).to.be.instanceOf(wasm.Credential);
       });
       it('.stakePointer()', async () => {
-        const stakeCredential = await wasm.StakeCredential.fromKeyhash(
+        const stakeCredential = await wasm.Credential.fromKeyhash(
           await (await (await stakePrivateKey).toPublic()).hash()
         );
         const b = await wasm.PointerAddress.new(
@@ -2148,7 +2008,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const pointer = await wasm.Pointer.new(0, 0, 0);
         const b = await wasm.PointerAddress.new(0, stakeCredential, pointer);
         expect(await b.toAddress()).to.be.instanceOf(wasm.Address);
@@ -2165,7 +2025,7 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.EnterpriseAddress.new(0, stakeCredential);
         expect(b.hasValue()).to.be.true;
       });
@@ -2174,16 +2034,16 @@ export const setupTests = (
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.EnterpriseAddress.new(0, stakeCredential);
-        expect(await b.paymentCred()).to.be.instanceOf(wasm.StakeCredential);
+        expect(await b.paymentCred()).to.be.instanceOf(wasm.Credential);
       });
       it('.toAddress()', async () => {
         const key = await stakePrivateKey;
         const stakeCredential = await key
           .toPublic()
           .then((x) => x.hash())
-          .then((x) => wasm.StakeCredential.fromKeyhash(x));
+          .then((x) => wasm.Credential.fromKeyhash(x));
         const b = await wasm.EnterpriseAddress.new(0, stakeCredential);
         expect(await b.toAddress()).to.be.instanceOf(wasm.Address);
       });
@@ -2434,12 +2294,7 @@ export const setupTests = (
       it('.new()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
@@ -2449,12 +2304,7 @@ export const setupTests = (
       it('.fromBytes()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
@@ -2468,12 +2318,7 @@ export const setupTests = (
       it('.body()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
@@ -2483,12 +2328,7 @@ export const setupTests = (
       it('.witnessSet()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
@@ -2500,12 +2340,7 @@ export const setupTests = (
       it('.isValid()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
@@ -2515,12 +2350,7 @@ export const setupTests = (
       it('.isValid()', async () => {
         const bigNum = await wasm.BigNum.fromStr('0');
         const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-        const tBuilder = await wasm.TransactionBuilder.new(
-          linearFee,
-          bigNum,
-          bigNum,
-          bigNum
-        );
+        const tBuilder = await makeTransactionBuilder();
         tBuilder.setFee(bigNum);
         const tBody = await tBuilder.build();
         const transactionWitnessSet = await wasm.TransactionWitnessSet.new();
