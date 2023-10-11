@@ -6635,4 +6635,37 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     return PlutusScriptSource;
   })();
+
+  public TxBuilderConstants = (() => {
+    const $outer = this;
+
+    class TxBuilderConstants
+        extends Ptr<WasmV4.TxBuilderConstants>
+        implements WasmContract.TxBuilderConstants {
+
+      static async plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          WasmV4.TxBuilderConstants.plutus_default_cost_models(),
+          $outer._ctx
+        );
+      }
+
+      static async plutusAlonzoCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          WasmV4.TxBuilderConstants.plutus_alonzo_cost_models(),
+          $outer._ctx
+        );
+      }
+
+      static async plutusVasilCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          WasmV4.TxBuilderConstants.plutus_vasil_cost_models(),
+          $outer._ctx
+        );
+      }
+    } 
+
+    return TxBuilderConstants;
+  })();
+
 }

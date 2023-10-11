@@ -133,6 +133,7 @@ export interface WasmModuleProxy {
   DatumSource: typeof DatumSource
   PlutusScriptSource: typeof PlutusScriptSource
   UnitInterval: typeof UnitInterval
+  TxBuilderConstants: typeof TxBuilderConstants
 }
 
 const pointers: Record<string, any[]> = {};
@@ -2050,3 +2051,17 @@ export abstract class TransactionUnspentOutput extends _Ptr {
   abstract output(): Promise<TransactionOutput>;
 }
 
+export abstract class TxBuilderConstants extends _Ptr {
+
+  static plutusDefaultCostModels(): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+  
+  static plutusAlonzoCostModels(): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static plutusVasilCostModels(): Promise<Costmdls> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
