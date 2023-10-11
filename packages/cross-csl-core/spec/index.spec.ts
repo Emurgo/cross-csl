@@ -2518,5 +2518,19 @@ export const setupTests = (
         expect(coinsPerByte.toString()).to.be.equal(bigNum.toString());
       });
     });
+    describe('TxBuilderConstants', () => {
+      it('.plutusDefaultCostModels', async () => {
+        const costmdls = await wasm.TxBuilderConstants.plutusDefaultCostModels();
+        expect(costmdls).to.be.instanceOf(wasm.Costmdls);
+      });
+      it('.plutusAlonzoCostModels', async () => {
+        const costmdls = await wasm.TxBuilderConstants.plutusAlonzoCostModels();
+        expect(costmdls).to.be.instanceOf(wasm.Costmdls);
+      });
+      it('.plutusVasilCostModels', async () => {
+        const costmdls = await wasm.TxBuilderConstants.plutusVasilCostModels();
+        expect(costmdls).to.be.instanceOf(wasm.Costmdls);
+      });
+    });
   });
 };
