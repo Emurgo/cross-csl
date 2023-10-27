@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/csl-mobile-bridge';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -1360,6 +1360,13 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
+      static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_json(json, schema),
+          $outer._ctx
+        );
+      }
+
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
       }
@@ -1887,12 +1894,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return ScriptDataHash;
   })();
 
-  public StakeCredential = (() => {
+  public Credential = (() => {
     const $outer = this;
 
     class StakeCredential
       extends Ptr<WasmV4.StakeCredential>
-      implements WasmContract.StakeCredential
+      implements WasmContract.Credential
     {
       async toBytes(): Promise<Uint8Array> {
         return await this.wasm.to_bytes();
@@ -1955,15 +1962,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
-      async stakeCredential(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async stakeCredential(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.stake_credential(),
           $outer._ctx
         );
       }
 
       static async new(
-        stakeCredential: WasmContract.StakeCredential
+        stakeCredential: WasmContract.Credential
       ): Promise<StakeRegistration> {
         return new StakeRegistration(
           await WasmV4.StakeRegistration.new(stakeCredential.wasm),
@@ -1992,15 +1999,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
-      async stakeCredential(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async stakeCredential(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.stake_credential(),
           $outer._ctx
         );
       }
 
       static async new(
-        stakeCredential: WasmContract.StakeCredential
+        stakeCredential: WasmContract.Credential
       ): Promise<StakeDeregistration> {
         return new StakeDeregistration(
           await WasmV4.StakeDeregistration.new(stakeCredential.wasm),
@@ -2029,8 +2036,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.to_bytes();
       }
 
-      async stakeCredential(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async stakeCredential(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.stake_credential(),
           $outer._ctx
         );
@@ -2044,7 +2051,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async new(
-        stakeCredential: WasmContract.StakeCredential,
+        stakeCredential: WasmContract.Credential,
         poolKeyHash: WasmContract.Ed25519KeyHash
       ): Promise<StakeDelegation> {
         return new StakeDelegation(
@@ -2183,8 +2190,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.RewardAddress>
       implements WasmContract.RewardAddress
     {
-      async paymentCred(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async paymentCred(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.payment_cred(),
           $outer._ctx
         );
@@ -2205,7 +2212,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async new(
         network: number,
-        payment: WasmContract.StakeCredential
+        payment: WasmContract.Credential
       ): Promise<RewardAddress> {
         return new RewardAddress(
           await WasmV4.RewardAddress.new(network, payment.wasm),
@@ -2662,15 +2669,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.BaseAddress>
       implements WasmContract.BaseAddress
     {
-      async paymentCred(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async paymentCred(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.payment_cred(),
           $outer._ctx
         );
       }
 
-      async stakeCred(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async stakeCred(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.stake_cred(),
           $outer._ctx
         );
@@ -2691,8 +2698,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async new(
         network: number,
-        payment: WasmContract.StakeCredential,
-        stake: WasmContract.StakeCredential
+        payment: WasmContract.Credential,
+        stake: WasmContract.Credential
       ): Promise<BaseAddress> {
         return new BaseAddress(
           await WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm),
@@ -2710,8 +2717,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.PointerAddress>
       implements WasmContract.PointerAddress
     {
-      async paymentCred(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async paymentCred(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.payment_cred(),
           $outer._ctx
         );
@@ -2736,7 +2743,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async new(
         network: number,
-        payment: WasmContract.StakeCredential,
+        payment: WasmContract.Credential,
         stake: WasmContract.Pointer
       ): Promise<PointerAddress> {
         return new PointerAddress(
@@ -2755,8 +2762,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.EnterpriseAddress>
       implements WasmContract.EnterpriseAddress
     {
-      async paymentCred(): Promise<WasmContract.StakeCredential> {
-        return new $outer.StakeCredential(
+      async paymentCred(): Promise<WasmContract.Credential> {
+        return new $outer.Credential(
           await this.wasm.payment_cred(),
           $outer._ctx
         );
@@ -2777,7 +2784,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async new(
         network: number,
-        payment: WasmContract.StakeCredential
+        payment: WasmContract.Credential
       ): Promise<EnterpriseAddress> {
         return new EnterpriseAddress(
           await WasmV4.EnterpriseAddress.new(network, payment.wasm),
@@ -3893,5 +3900,37 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return Ed25519KeyHashes;
+  })();
+
+  public TxBuilderConstants = (() => {
+    const $outer = this;
+
+    class TxBuilderConstants
+      extends Ptr<WasmV4.TxBuilderConstants>
+      implements WasmContract.TxBuilderConstants {
+
+      static async plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          await WasmV4.TxBuilderConstants.plutus_default_cost_models(),
+          $outer._ctx
+        );
+      }
+
+      static async plutusAlonzoCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          await WasmV4.TxBuilderConstants.plutus_alonzo_cost_models(),
+          $outer._ctx
+        );
+      }
+
+      static async plutusVasilCostModels(): Promise<WasmContract.Costmdls> {
+        return new $outer.Costmdls(
+          await WasmV4.TxBuilderConstants.plutus_vasil_cost_models(),
+          $outer._ctx
+        );
+      }
+    }
+
+    return TxBuilderConstants;
   })();
 }

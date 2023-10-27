@@ -26,10 +26,10 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.0.0-alpha.9.tgz#bc7cb9185d7622cc3ac8fc7803fabdf676d699cf"
   integrity sha512-XA4VxKqSTqHDhoBJWfgygVZ6wijwJiE9gozEdbdViK6kjKsSNnJ0hnuFt1LYI9b9yzk3FZlJdIKOyLaBBDmXbQ==
 
-"@emurgo/cross-csl-core@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.2.0.tgz#af157e3cf79ec4ae993e0fee63673b74fba29ae8"
-  integrity sha512-fryPF38KHosMRPT0/APi02PBWHShGzhaSCAJCcolJiId9BSyBOEqYIZUcHNZb6JyOaClMd1vV/aYnETV8tBy6Q==
+"@emurgo/cross-csl-core@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.2.1.tgz#3b5e8849a3e4f3df130b234c3bea077b1a943080"
+  integrity sha512-Mt6bdKT09cfwoo6UsdMtmORZx1hvGUNCM5E+zBPqQjzqnn42WNlcoSx+z4PEFzTNM8OraVwpJNNFFgtmBCnFnQ==
   dependencies:
     "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
     "@types/mocha" "^9.1.1"

@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -2469,6 +2469,13 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
             reject(e);
           }
         });
+      }
+
+      static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<PlutusData> {
+        return new PlutusData(
+          await WasmV4.PlutusData.from_json(json, schema),
+          $outer._ctx
+        );
       }
 
       toBytes(): Promise<Uint8Array> {
