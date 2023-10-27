@@ -2473,7 +2473,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<PlutusData> {
         return new PlutusData(
-          await WasmV4.PlutusData.from_json(json, schema),
+          WasmV4.PlutusData.from_json(json, schema),
           $outer._ctx
         );
       }
