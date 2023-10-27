@@ -134,6 +134,7 @@ export interface WasmModuleProxy {
   PlutusScriptSource: typeof PlutusScriptSource
   UnitInterval: typeof UnitInterval
   TxBuilderConstants: typeof TxBuilderConstants
+  PlutusDatumSchema: typeof PlutusDatumSchema
 }
 
 const pointers: Record<string, any[]> = {};
@@ -865,11 +866,11 @@ export abstract class PlutusData extends _Ptr {
 
 export abstract class PlutusDatumSchema extends _Ptr {
 
-  static get BasicConversions() {
+  static get BasicConversions(): number {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static get DetailedSchema() {
+  static get DetailedSchema(): number {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
