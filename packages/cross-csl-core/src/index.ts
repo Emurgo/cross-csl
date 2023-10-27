@@ -856,7 +856,16 @@ export abstract class PlutusData extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
+  static fromJson(json: string, schema: PlutusDatumSchema): Promise<PlutusData | undefined> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
   abstract toHex(): Promise<string>;
+}
+
+export enum PlutusDatumSchema {
+  BasicConversions = 0,
+  DetailedSchema = 1,
 }
 
 export abstract class PlutusList extends _Ptr {
