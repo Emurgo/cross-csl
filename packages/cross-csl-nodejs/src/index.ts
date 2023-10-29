@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -118,6 +118,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return Promise.resolve(
       WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema)
     );
+  }
+
+  async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData> {
+    return new this.PlutusData(WasmV4.encode_json_str_to_plutus_datum(json, schema), this._ctx);
   }
 
   constructor(ctx: string) {
@@ -6109,6 +6113,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
             reject(e);
           }
         });
+      }
+
+      async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+        this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
       static new(): Promise<TxInputsBuilder> {
