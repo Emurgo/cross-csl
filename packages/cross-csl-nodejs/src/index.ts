@@ -6115,6 +6115,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      async inputs(): Promise<WasmContract.TransactionInputs> {
+        return new $outer.TransactionInputs(this.wasm.inputs(), $outer._ctx);
+      }
+
       async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }

@@ -3376,7 +3376,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class TxInputsBuilder
-      extends Ptr<any>
+      extends Ptr<WasmV4.TxInputsBuilder>
       implements WasmContract.TxInputsBuilder
     {
       addInput(
@@ -3385,6 +3385,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         amount: WasmContract.Value
       ): Promise<void> {
         return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
+      }
+
+      async inputs(): Promise<WasmContract.TransactionInputs> {
+        return new $outer.TransactionInputs(await this.wasm.inputs(), $outer._ctx);
       }
 
       async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {

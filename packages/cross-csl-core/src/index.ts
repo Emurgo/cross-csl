@@ -1822,6 +1822,8 @@ export abstract class TxInputsBuilder extends _Ptr {
 
   abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value):Promise<void>;
 
+  abstract inputs: () => Promise<TransactionInputs>;
+
   static new(): Promise<TxInputsBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
