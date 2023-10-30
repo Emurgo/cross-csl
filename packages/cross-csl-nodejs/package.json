@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/cross-csl-nodejs",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-nodejs": "12.0.0-alpha.9",
-    "@emurgo/cross-csl-core": "3.3.0"
+    "@emurgo/cross-csl-core": "3.4.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.56",
