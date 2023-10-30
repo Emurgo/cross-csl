@@ -54,6 +54,7 @@ export interface WasmModuleProxy {
     metadatum: TransactionMetadatum,
     schema: number
   ): Promise<string>
+  encodeJsonStrToPlutusDatum(json: string, schema: PlutusDatumSchema): Promise<Optional<PlutusData>>;
   BigNum: typeof BigNum
   LinearFee: typeof LinearFee
   GeneralTransactionMetadata: typeof GeneralTransactionMetadata
@@ -1818,6 +1819,10 @@ export abstract class TxInputsBuilder extends _Ptr {
     input: TransactionInput,
     amount: Value
   ): Promise<void>;
+
+  abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value):Promise<void>;
+
+  abstract inputs: () => Promise<TransactionInputs>;
 
   static new(): Promise<TxInputsBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);

@@ -120,6 +120,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
+  async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData> {
+    return new this.PlutusData(WasmV4.encode_json_str_to_plutus_datum(json, schema), this._ctx);
+  }
+
   constructor(ctx: string) {
     this._ctx = ctx;
   }
@@ -6109,6 +6113,14 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
             reject(e);
           }
         });
+      }
+
+      async inputs(): Promise<WasmContract.TransactionInputs> {
+        return new $outer.TransactionInputs(this.wasm.inputs(), $outer._ctx);
+      }
+
+      async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+        this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
       static new(): Promise<TxInputsBuilder> {

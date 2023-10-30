@@ -116,6 +116,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return await WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema);
   }
 
+  async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData | undefined> {
+    return new this.PlutusData(await WasmV4.encode_json_str_to_plutus_datum(json, schema), this._ctx);
+  }
+
   constructor(ctx: string) {
     this._ctx = ctx;
   }
@@ -3372,7 +3376,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class TxInputsBuilder
-      extends Ptr<any>
+      extends Ptr<WasmV4.TxInputsBuilder>
       implements WasmContract.TxInputsBuilder
     {
       addInput(
@@ -3381,6 +3385,14 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         amount: WasmContract.Value
       ): Promise<void> {
         return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
+      }
+
+      async inputs(): Promise<WasmContract.TransactionInputs> {
+        return new $outer.TransactionInputs(await this.wasm.inputs(), $outer._ctx);
+      }
+
+      async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+        await this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
       static async new(): Promise<TxInputsBuilder> {
