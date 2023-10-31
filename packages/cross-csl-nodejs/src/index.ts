@@ -6286,7 +6286,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async newWithRef(script: WasmContract.PlutusScriptSource, datum: WasmContract.DatumSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref(script, datum, redeemer.wasm), $outer._ctx);
+        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
       }
 
       static async newWithoutDatum(script: WasmContract.PlutusScript, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
@@ -6294,7 +6294,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref_without_datum(script, redeemer.wasm), $outer._ctx);
+        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
       }
 
       async script(): Promise<WasmContract.PlutusScript> {
