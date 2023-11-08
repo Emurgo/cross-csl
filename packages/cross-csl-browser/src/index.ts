@@ -6292,7 +6292,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm redeemer.wasm), $outer._ctx);
+        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
       }
 
       async script(): Promise<WasmContract.PlutusScript> {
