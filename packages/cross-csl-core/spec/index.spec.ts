@@ -31,27 +31,30 @@ export const setupTests = (
   async function makeTransactionBuilder() {
     const bigNum = await wasm.BigNum.fromStr('0');
     const linearFee = await wasm.LinearFee.new(bigNum, bigNum);
-    const transactionBuilderConfig = await wasm.TransactionBuilderConfigBuilder.new()
-      .then(b => b.feeAlgo(linearFee))
-      .then(b => b.poolDeposit(bigNum))
-      .then(b => b.keyDeposit(bigNum))
-      .then(b => b.coinsPerUtxoWord(bigNum))
-      .then(b => b.maxValueSize(5000))
-      .then(b => b.maxTxSize(16384))
-      .then(async b => b.exUnitPrices(
-        await wasm.ExUnitPrices.new(
-          await wasm.UnitInterval.new(
-            await wasm.BigNum.fromStr('577'),
-            await wasm.BigNum.fromStr('1000'),
-          ),
-          await wasm.UnitInterval.new(
-            await wasm.BigNum.fromStr('721'),
-            await wasm.BigNum.fromStr('10000000'),
-          ),
+    const transactionBuilderConfig =
+      await wasm.TransactionBuilderConfigBuilder.new()
+        .then((b) => b.feeAlgo(linearFee))
+        .then((b) => b.poolDeposit(bigNum))
+        .then((b) => b.keyDeposit(bigNum))
+        .then((b) => b.coinsPerUtxoWord(bigNum))
+        .then((b) => b.maxValueSize(5000))
+        .then((b) => b.maxTxSize(16384))
+        .then(async (b) =>
+          b.exUnitPrices(
+            await wasm.ExUnitPrices.new(
+              await wasm.UnitInterval.new(
+                await wasm.BigNum.fromStr('577'),
+                await wasm.BigNum.fromStr('1000')
+              ),
+              await wasm.UnitInterval.new(
+                await wasm.BigNum.fromStr('721'),
+                await wasm.BigNum.fromStr('10000000')
+              )
+            )
+          )
         )
-      ))
-      .then(b => b.preferPureChange(true))
-      .then(b => b.build());
+        .then((b) => b.preferPureChange(true))
+        .then((b) => b.build());
     return await wasm.TransactionBuilder.new(transactionBuilderConfig);
   }
 
@@ -880,7 +883,9 @@ export const setupTests = (
 
     describe('PublicKey', () => {
       it('.toBech32()', async () => {
-        const p = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, 'hex'));
+        const p = await wasm.PublicKey.fromBytes(
+          Buffer.from(PUBLIC_KEY, 'hex')
+        );
         expect(await p.toBech32()).to.be.equal(BECH32_PUBLIC_KEY);
       });
       it('.asBytes()', async () => {
@@ -902,7 +907,9 @@ export const setupTests = (
         expect(p.hasValue()).to.be.true;
       });
       it('.fromBytes()', async () => {
-        const p = await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, 'hex'));
+        const p = await wasm.PublicKey.fromBytes(
+          Buffer.from(PUBLIC_KEY, 'hex')
+        );
         expect(p.hasValue()).to.be.true;
       });
     });
@@ -1332,7 +1339,9 @@ export const setupTests = (
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
-        const c = await wasm.Certificate.newStakeRegistration(stakeRegistration);
+        const c = await wasm.Certificate.newStakeRegistration(
+          stakeRegistration
+        );
         expect(await c.asStakeRegistration()).to.be.instanceOf(
           wasm.StakeRegistration
         );
@@ -1346,7 +1355,9 @@ export const setupTests = (
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
-        const c = await wasm.Certificate.newStakeRegistration(stakeRegistration);
+        const c = await wasm.Certificate.newStakeRegistration(
+          stakeRegistration
+        );
         expect(await c.asStakeDelegation()).to.be.instanceOf(
           wasm.StakeDelegation
         );
@@ -1384,7 +1395,9 @@ export const setupTests = (
         const stakeRegistration = await wasm.StakeRegistration.new(
           stakeCredential
         );
-        const c = await wasm.Certificate.newStakeRegistration(stakeRegistration);
+        const c = await wasm.Certificate.newStakeRegistration(
+          stakeRegistration
+        );
         expect(c.hasValue()).to.be.true;
       });
       it('.newStakeDelegation()', async () => {
@@ -1518,7 +1531,9 @@ export const setupTests = (
         expect(await r.toBytes()).to.be.instanceOf(Uint8Array);
       });
       it('.fromBytes()', async () => {
-        const cBytes = await wasm.RewardAddresses.new().then((x) => x.toBytes());
+        const cBytes = await wasm.RewardAddresses.new().then((x) =>
+          x.toBytes()
+        );
         const c = await wasm.RewardAddresses.fromBytes(cBytes);
         expect(c.hasValue()).to.be.true;
       });
@@ -2520,7 +2535,8 @@ export const setupTests = (
     });
     describe('TxBuilderConstants', () => {
       it('.plutusDefaultCostModels', async () => {
-        const costmdls = await wasm.TxBuilderConstants.plutusDefaultCostModels();
+        const costmdls =
+          await wasm.TxBuilderConstants.plutusDefaultCostModels();
         expect(costmdls).to.be.instanceOf(wasm.Costmdls);
       });
       it('.plutusAlonzoCostModels', async () => {

@@ -25,7 +25,9 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   async encodeJsonStrToMetadatum(json: string, schema: number) {
     const wasm = await WasmV4.encode_json_str_to_metadatum(json, schema);
-    return await Promise.resolve(new this.TransactionMetadatum(wasm, this._ctx));
+    return await Promise.resolve(
+      new this.TransactionMetadatum(wasm, this._ctx)
+    );
   }
 
   async minAdaRequired(
@@ -116,8 +118,14 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return await WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema);
   }
 
-  async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData | undefined> {
-    return new this.PlutusData(await WasmV4.encode_json_str_to_plutus_datum(json, schema), this._ctx);
+  async encodeJsonStrToPlutusDatum(
+    json: string,
+    schema: WasmContract.PlutusDatumSchema
+  ): Promise<WasmContract.PlutusData | undefined> {
+    return new this.PlutusData(
+      await WasmV4.encode_json_str_to_plutus_datum(json, schema),
+      this._ctx
+    );
   }
 
   constructor(ctx: string) {
@@ -1340,7 +1348,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async fromBech32(str: string): Promise<WasmContract.DataHash> {
-        return new DataHash(await WasmV4.DataHash.from_bech32(str), $outer._ctx);
+        return new DataHash(
+          await WasmV4.DataHash.from_bech32(str),
+          $outer._ctx
+        );
       }
 
       async toBech32(prefix: string): Promise<string> {
@@ -1364,7 +1375,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
-      static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<PlutusData> {
+      static async fromJson(
+        json: string,
+        schema: WasmContract.PlutusDatumSchema
+      ): Promise<PlutusData> {
         return new PlutusData(
           await WasmV4.PlutusData.from_json(json, schema),
           $outer._ctx
@@ -1583,11 +1597,17 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async newMint(): Promise<RedeemerTag> {
-        return new RedeemerTag(await WasmV4.RedeemerTag.new_mint(), $outer._ctx);
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.new_mint(),
+          $outer._ctx
+        );
       }
 
       static async newCert(): Promise<RedeemerTag> {
-        return new RedeemerTag(await WasmV4.RedeemerTag.new_cert(), $outer._ctx);
+        return new RedeemerTag(
+          await WasmV4.RedeemerTag.new_cert(),
+          $outer._ctx
+        );
       }
 
       static async newReward(): Promise<RedeemerTag> {
@@ -1631,7 +1651,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async totalExUnits(): Promise<WasmContract.ExUnits> {
-        return new $outer.ExUnits(await this.wasm.total_ex_units(), $outer._ctx);
+        return new $outer.ExUnits(
+          await this.wasm.total_ex_units(),
+          $outer._ctx
+        );
       }
 
       static async new(): Promise<Redeemers> {
@@ -2243,7 +2266,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async get(index: number): Promise<WasmContract.RewardAddress> {
-        return new $outer.RewardAddress(await this.wasm.get(index), $outer._ctx);
+        return new $outer.RewardAddress(
+          await this.wasm.get(index),
+          $outer._ctx
+        );
       }
 
       async add(item: WasmContract.RewardAddress): Promise<void> {
@@ -2418,7 +2444,9 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         }
       }
 
-      async setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): Promise<void> {
+      async setScriptDataHash(
+        scriptDataHash: WasmContract.ScriptDataHash
+      ): Promise<void> {
         await this.wasm.set_script_data_hash(scriptDataHash.wasm);
       }
 
@@ -2455,7 +2483,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         input: WasmContract.TransactionInput,
         amount: WasmContract.Value
       ): Promise<void> {
-        return await this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
+        return await this.wasm.add_key_input(
+          hash.wasm,
+          input.wasm,
+          amount.wasm
+        );
       }
 
       async addBootstrapInput(
@@ -2562,7 +2594,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async getTotalOutput(): Promise<WasmContract.Value> {
-        return new $outer.Value(await this.wasm.get_total_output(), $outer._ctx);
+        return new $outer.Value(
+          await this.wasm.get_total_output(),
+          $outer._ctx
+        );
       }
 
       async getTotalInput(): Promise<WasmContract.Value> {
@@ -2645,7 +2680,9 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return await this.wasm.set_collateral(txInputsBuilder.wasm);
       }
 
-      async calcScriptDataHash(costModels: WasmContract.Costmdls): Promise<void> {
+      async calcScriptDataHash(
+        costModels: WasmContract.Costmdls
+      ): Promise<void> {
         return await this.wasm.calc_script_data_hash(costModels.wasm);
       }
 
@@ -2658,9 +2695,12 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async new(
-       cfg: WasmContract.TransactionBuilderConfig
+        cfg: WasmContract.TransactionBuilderConfig
       ): Promise<TransactionBuilder> {
-        return new TransactionBuilder(await WasmV4.TransactionBuilder.new(cfg.wasm), $outer._ctx);
+        return new TransactionBuilder(
+          await WasmV4.TransactionBuilder.new(cfg.wasm),
+          $outer._ctx
+        );
       }
     }
     return TransactionBuilder;
@@ -2681,10 +2721,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async stakeCred(): Promise<WasmContract.Credential> {
-        return new $outer.Credential(
-          await this.wasm.stake_cred(),
-          $outer._ctx
-        );
+        return new $outer.Credential(await this.wasm.stake_cred(), $outer._ctx);
       }
 
       async toAddress(): Promise<WasmContract.Address> {
@@ -3021,7 +3058,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async plutusScripts(): Promise<WasmContract.PlutusScripts> {
-        return new $outer.PlutusScripts(await this.wasm.plutus_scripts(), $outer._ctx);
+        return new $outer.PlutusScripts(
+          await this.wasm.plutus_scripts(),
+          $outer._ctx
+        );
       }
 
       async redeemers(): Promise<WasmContract.Redeemers> {
@@ -3388,11 +3428,22 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async inputs(): Promise<WasmContract.TransactionInputs> {
-        return new $outer.TransactionInputs(await this.wasm.inputs(), $outer._ctx);
+        return new $outer.TransactionInputs(
+          await this.wasm.inputs(),
+          $outer._ctx
+        );
       }
 
-      async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        await this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
+      async addPlutusScriptInput(
+        witness: WasmContract.PlutusWitness,
+        input: WasmContract.TransactionInput,
+        amount: WasmContract.Value
+      ): Promise<void> {
+        await this.wasm.add_plutus_script_input(
+          witness.wasm,
+          input.wasm,
+          amount.wasm
+        );
       }
 
       static async new(): Promise<TxInputsBuilder> {
@@ -3465,7 +3516,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
-      static async new(numerator: WasmContract.BigNum, denominator: WasmContract.BigNum) {
+      static async new(
+        numerator: WasmContract.BigNum,
+        denominator: WasmContract.BigNum
+      ) {
         return new UnitInterval(
           await WasmV4.UnitInterval.new(numerator.wasm, denominator.wasm),
           $outer._ctx
@@ -3500,8 +3554,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionBuilderConfigBuilder
       extends Ptr<WasmV4.TransactionBuilderConfigBuilder>
-        implements WasmContract.TransactionBuilderConfigBuilder {
-
+      implements WasmContract.TransactionBuilderConfigBuilder
+    {
       static async new(): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await WasmV4.TransactionBuilderConfigBuilder.new(),
@@ -3509,63 +3563,81 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
         );
       }
 
-      async feeAlgo(linearFee: WasmContract.LinearFee): Promise<TransactionBuilderConfigBuilder> {
+      async feeAlgo(
+        linearFee: WasmContract.LinearFee
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.fee_algo(linearFee.wasm),
           $outer._ctx
         );
       }
 
-      async coinsPerUtxoWord(coinsPerUtxoWord: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async coinsPerUtxoWord(
+        coinsPerUtxoWord: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.coins_per_utxo_word(coinsPerUtxoWord.wasm),
           $outer._ctx
         );
       }
 
-      async coinsPerUtxoByte(coinsPerUtxoByte: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async coinsPerUtxoByte(
+        coinsPerUtxoByte: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.coins_per_utxo_byte(coinsPerUtxoByte.wasm),
           $outer._ctx
         );
       }
 
-      async exUnitPrices(exUnitPrices: WasmContract.ExUnitPrices): Promise<TransactionBuilderConfigBuilder> {
+      async exUnitPrices(
+        exUnitPrices: WasmContract.ExUnitPrices
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.ex_unit_prices(exUnitPrices.wasm),
           $outer._ctx
         );
       }
 
-      async poolDeposit(poolDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async poolDeposit(
+        poolDeposit: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.pool_deposit(poolDeposit.wasm),
           $outer._ctx
         );
       }
 
-      async keyDeposit(keyDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async keyDeposit(
+        keyDeposit: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.key_deposit(keyDeposit.wasm),
           $outer._ctx
         );
       }
 
-      async maxValueSize(maxValueSize: number): Promise<TransactionBuilderConfigBuilder> {
+      async maxValueSize(
+        maxValueSize: number
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.max_value_size(maxValueSize),
           $outer._ctx
         );
       }
 
-      async maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder> {
+      async maxTxSize(
+        maxTxSize: number
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.max_tx_size(maxTxSize),
           $outer._ctx
         );
       }
 
-      async preferPureChange(preferPureChange: boolean): Promise<TransactionBuilderConfigBuilder> {
+      async preferPureChange(
+        preferPureChange: boolean
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
           await this.wasm.prefer_pure_change(preferPureChange),
           $outer._ctx
@@ -3573,7 +3645,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async build(): Promise<WasmContract.TransactionBuilderConfig> {
-        return new $outer.TransactionBuilderConfig(await this.wasm.build(), $outer._ctx);
+        return new $outer.TransactionBuilderConfig(
+          await this.wasm.build(),
+          $outer._ctx
+        );
       }
     }
 
@@ -3581,12 +3656,9 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   })();
 
   public TransactionBuilderConfig = (() => {
-
     class TransactionBuilderConfig
       extends Ptr<WasmV4.TransactionBuilderConfig>
-        implements WasmContract.TransactionBuilderConfig {
-
-    }
+      implements WasmContract.TransactionBuilderConfig {}
 
     return TransactionBuilderConfig;
   })();
@@ -3594,21 +3666,64 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   public PlutusWitness = (() => {
     const $outer = this;
 
-    class PlutusWitness extends Ptr<WasmV4.PlutusWitness> implements WasmContract.PlutusWitness {
-      static async new(script: WasmContract.PlutusScript, datum: WasmContract.PlutusData, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(await WasmV4.PlutusWitness.new(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
+    class PlutusWitness
+      extends Ptr<WasmV4.PlutusWitness>
+      implements WasmContract.PlutusWitness
+    {
+      static async new(
+        script: WasmContract.PlutusScript,
+        datum: WasmContract.PlutusData,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          await WasmV4.PlutusWitness.new(
+            script.wasm,
+            datum.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
-      static async newWithRef(script: WasmContract.PlutusScriptSource, datum: WasmContract.DatumSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(await WasmV4.PlutusWitness.new_with_ref(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithRef(
+        script: WasmContract.PlutusScriptSource,
+        datum: WasmContract.DatumSource,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          await WasmV4.PlutusWitness.new_with_ref(
+            script.wasm,
+            datum.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
-      static async newWithoutDatum(script: WasmContract.PlutusScript, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(await WasmV4.PlutusWitness.new_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithoutDatum(
+        script: WasmContract.PlutusScript,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          await WasmV4.PlutusWitness.new_without_datum(
+            script.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
-      static async newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(await WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithRefWithoutDatum(
+        script: WasmContract.PlutusScriptSource,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          await WasmV4.PlutusWitness.new_with_ref_without_datum(
+            script.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
       async script(): Promise<WasmContract.PlutusScript> {
@@ -3637,18 +3752,43 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class PlutusScriptSource
       extends Ptr<WasmV4.PlutusScriptSource>
-        implements WasmContract.PlutusScriptSource {
-
-      static async new(script: WasmContract.PlutusScript): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new(script.wasm), $outer._ctx);
+      implements WasmContract.PlutusScriptSource
+    {
+      static async new(
+        script: WasmContract.PlutusScript
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          await WasmV4.PlutusScriptSource.new(script.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm), $outer._ctx);
+      static async newRefInput(
+        scriptHash: WasmContract.ScriptHash,
+        input: WasmContract.TransactionInput
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          await WasmV4.PlutusScriptSource.new_ref_input(
+            scriptHash.wasm,
+            input.wasm
+          ),
+          $outer._ctx
+        );
       }
 
-      static async newRefInputWithLangVer(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(await WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(scriptHash.wasm, input.wasm, langVer.wasm), $outer._ctx);
+      static async newRefInputWithLangVer(
+        scriptHash: WasmContract.ScriptHash,
+        input: WasmContract.TransactionInput,
+        langVer: WasmContract.Language
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          await WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(
+            scriptHash.wasm,
+            input.wasm,
+            langVer.wasm
+          ),
+          $outer._ctx
+        );
       }
     }
 
@@ -3660,13 +3800,22 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class DatumSource
       extends Ptr<WasmV4.DatumSource>
-        implements WasmContract.DatumSource {
+      implements WasmContract.DatumSource
+    {
       static async new(datum: WasmContract.PlutusData): Promise<DatumSource> {
-        return new DatumSource(await WasmV4.DatumSource.new(datum.wasm), $outer._ctx);
+        return new DatumSource(
+          await WasmV4.DatumSource.new(datum.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newRefInput(input: WasmContract.TransactionInput): Promise<DatumSource> {
-        return new DatumSource(await WasmV4.DatumSource.new_ref_input(input.wasm), $outer._ctx);
+      static async newRefInput(
+        input: WasmContract.TransactionInput
+      ): Promise<DatumSource> {
+        return new DatumSource(
+          await WasmV4.DatumSource.new_ref_input(input.wasm),
+          $outer._ctx
+        );
       }
     }
 
@@ -3678,13 +3827,21 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class ExUnitPrices
       extends Ptr<WasmV4.ExUnitPrices>
-          implements WasmContract.ExUnitPrices {
-
-      static async new(memPrice: WasmContract.UnitInterval, stepPrice: WasmContract.UnitInterval): Promise<ExUnitPrices> {
-        return new ExUnitPrices(await WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm), $outer._ctx);
+      implements WasmContract.ExUnitPrices
+    {
+      static async new(
+        memPrice: WasmContract.UnitInterval,
+        stepPrice: WasmContract.UnitInterval
+      ): Promise<ExUnitPrices> {
+        return new ExUnitPrices(
+          await WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm),
+          $outer._ctx
+        );
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<ExUnitPrices | undefined> {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<ExUnitPrices | undefined> {
         const wasm = await WasmV4.ExUnitPrices.from_bytes(bytes);
         return wasm ? new ExUnitPrices(wasm, $outer._ctx) : undefined;
       }
@@ -3713,11 +3870,17 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async memPrice(): Promise<WasmContract.UnitInterval> {
-        return new $outer.UnitInterval(await this.wasm.mem_price(), $outer._ctx);
+        return new $outer.UnitInterval(
+          await this.wasm.mem_price(),
+          $outer._ctx
+        );
       }
 
       async stepPrice(): Promise<WasmContract.UnitInterval> {
-        return new $outer.UnitInterval(await this.wasm.step_price(), $outer._ctx);
+        return new $outer.UnitInterval(
+          await this.wasm.step_price(),
+          $outer._ctx
+        );
       }
     }
 
@@ -3729,24 +3892,45 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class FixedTransaction
       extends Ptr<WasmV4.FixedTransaction>
-        implements WasmContract.FixedTransaction {
-
-      static async new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
-        return new FixedTransaction(await WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid), $outer._ctx);
+      implements WasmContract.FixedTransaction
+    {
+      static async new(
+        rawBody: Uint8Array,
+        rawWitnessSet: Uint8Array,
+        isValid: boolean
+      ): Promise<FixedTransaction> {
+        return new FixedTransaction(
+          await WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid),
+          $outer._ctx
+        );
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<FixedTransaction | undefined> {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<FixedTransaction | undefined> {
         const wasm = await WasmV4.FixedTransaction.from_bytes(bytes);
         return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
       }
 
-      static async fromHex(hexStr: string): Promise<FixedTransaction | undefined> {
+      static async fromHex(
+        hexStr: string
+      ): Promise<FixedTransaction | undefined> {
         const wasm = await WasmV4.FixedTransaction.from_hex(hexStr);
         return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
       }
 
-      static async newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<FixedTransaction | undefined> {
-        const wasm = await WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
+      static async newWithAuxiliary(
+        rawBody: Uint8Array,
+        rawWitnessSet: Uint8Array,
+        rawAuxiliaryData: Uint8Array,
+        isValid: boolean
+      ): Promise<FixedTransaction | undefined> {
+        const wasm = await WasmV4.FixedTransaction.new_with_auxiliary(
+          rawBody,
+          rawWitnessSet,
+          rawAuxiliaryData,
+          isValid
+        );
         return wasm ? new FixedTransaction(wasm, $outer._ctx) : undefined;
       }
 
@@ -3775,7 +3959,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
-        return new $outer.TransactionWitnessSet(await this.wasm.witness_set(), $outer._ctx);
+        return new $outer.TransactionWitnessSet(
+          await this.wasm.witness_set(),
+          $outer._ctx
+        );
       }
 
       async rawWitnessSet(): Promise<Uint8Array> {
@@ -3811,25 +3998,43 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TransactionUnspentOutput
       extends Ptr<WasmV4.TransactionUnspentOutput>
-        implements WasmContract.TransactionUnspentOutput {
-
-      static async new(input: WasmContract.TransactionInput, output: WasmContract.TransactionOutput): Promise<TransactionUnspentOutput> {
-        return new TransactionUnspentOutput(await WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm), $outer._ctx);
+      implements WasmContract.TransactionUnspentOutput
+    {
+      static async new(
+        input: WasmContract.TransactionInput,
+        output: WasmContract.TransactionOutput
+      ): Promise<TransactionUnspentOutput> {
+        return new TransactionUnspentOutput(
+          await WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm),
+          $outer._ctx
+        );
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<TransactionUnspentOutput | undefined> {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<TransactionUnspentOutput | undefined> {
         const wasm = await WasmV4.TransactionUnspentOutput.from_bytes(bytes);
-        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+        return wasm
+          ? new TransactionUnspentOutput(wasm, $outer._ctx)
+          : undefined;
       }
 
-      static async fromHex(hexStr: string): Promise<TransactionUnspentOutput | undefined> {
+      static async fromHex(
+        hexStr: string
+      ): Promise<TransactionUnspentOutput | undefined> {
         const wasm = await WasmV4.TransactionUnspentOutput.from_hex(hexStr);
-        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+        return wasm
+          ? new TransactionUnspentOutput(wasm, $outer._ctx)
+          : undefined;
       }
 
-      static async fromJson(json: string): Promise<TransactionUnspentOutput | undefined> {
+      static async fromJson(
+        json: string
+      ): Promise<TransactionUnspentOutput | undefined> {
         const wasm = await WasmV4.TransactionUnspentOutput.from_json(json);
-        return wasm ? new TransactionUnspentOutput(wasm, $outer._ctx) : undefined;
+        return wasm
+          ? new TransactionUnspentOutput(wasm, $outer._ctx)
+          : undefined;
       }
 
       async toJson(): Promise<string> {
@@ -3845,13 +4050,18 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async input(): Promise<WasmContract.TransactionInput> {
-        return new $outer.TransactionInput(await this.wasm.input(), $outer._ctx);
+        return new $outer.TransactionInput(
+          await this.wasm.input(),
+          $outer._ctx
+        );
       }
 
       async output(): Promise<WasmContract.TransactionOutput> {
-        return new $outer.TransactionOutput(await this.wasm.output(), $outer._ctx);
+        return new $outer.TransactionOutput(
+          await this.wasm.output(),
+          $outer._ctx
+        );
       }
-
     }
     return TransactionUnspentOutput;
   })();
@@ -3861,22 +4071,32 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class Ed25519KeyHashes
       extends Ptr<WasmV4.Ed25519KeyHashes>
-        implements WasmContract.Ed25519KeyHashes {
+      implements WasmContract.Ed25519KeyHashes
+    {
       static async new(): Promise<Ed25519KeyHashes> {
-        return new Ed25519KeyHashes(await WasmV4.Ed25519KeyHashes.new(), $outer._ctx);
+        return new Ed25519KeyHashes(
+          await WasmV4.Ed25519KeyHashes.new(),
+          $outer._ctx
+        );
       }
 
-      static async fromJson(json: string): Promise<Ed25519KeyHashes | undefined> {
+      static async fromJson(
+        json: string
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = await WasmV4.Ed25519KeyHashes.from_json(json);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHashes | undefined> {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = await WasmV4.Ed25519KeyHashes.from_bytes(bytes);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
 
-      static async fromHex(hexStr: string): Promise<Ed25519KeyHashes | undefined> {
+      static async fromHex(
+        hexStr: string
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = await WasmV4.Ed25519KeyHashes.from_hex(hexStr);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
@@ -3898,7 +4118,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async get(index: number): Promise<WasmContract.Ed25519KeyHash> {
-        return new $outer.Ed25519KeyHash(await this.wasm.get(index), $outer._ctx);
+        return new $outer.Ed25519KeyHash(
+          await this.wasm.get(index),
+          $outer._ctx
+        );
       }
 
       async add(elem: WasmContract.Ed25519KeyHash): Promise<void> {
@@ -3907,9 +4130,10 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async toOption(): Promise<WasmContract.Ed25519KeyHashes | undefined> {
         const wasm = await this.wasm.to_option();
-        return wasm ? new $outer.Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
+        return wasm
+          ? new $outer.Ed25519KeyHashes(wasm, $outer._ctx)
+          : undefined;
       }
-
     }
     return Ed25519KeyHashes;
   })();
@@ -3919,8 +4143,8 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     class TxBuilderConstants
       extends Ptr<WasmV4.TxBuilderConstants>
-      implements WasmContract.TxBuilderConstants {
-
+      implements WasmContract.TxBuilderConstants
+    {
       static async plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
         return new $outer.Costmdls(
           await WasmV4.TxBuilderConstants.plutus_default_cost_models(),

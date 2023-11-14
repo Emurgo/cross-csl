@@ -120,8 +120,14 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     );
   }
 
-  async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData> {
-    return new this.PlutusData(WasmV4.encode_json_str_to_plutus_datum(json, schema), this._ctx);
+  async encodeJsonStrToPlutusDatum(
+    json: string,
+    schema: WasmContract.PlutusDatumSchema
+  ): Promise<WasmContract.PlutusData> {
+    return new this.PlutusData(
+      WasmV4.encode_json_str_to_plutus_datum(json, schema),
+      this._ctx
+    );
   }
 
   constructor(ctx: string) {
@@ -1974,11 +1980,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async fromBech32(bech32Str: string): Promise<PrivateKey> {
         return new PrivateKey(
-            WasmV4.PrivateKey.from_bech32(bech32Str),
-            $outer._ctx
+          WasmV4.PrivateKey.from_bech32(bech32Str),
+          $outer._ctx
         );
       }
-
     }
     return PrivateKey;
   })();
@@ -2436,7 +2441,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static fromBech32(str: string): Promise<WasmContract.DataHash> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new DataHash(WasmV4.DataHash.from_bech32(str), $outer._ctx));
+            resolve(
+              new DataHash(WasmV4.DataHash.from_bech32(str), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -2475,7 +2482,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<PlutusData> {
+      static async fromJson(
+        json: string,
+        schema: WasmContract.PlutusDatumSchema
+      ): Promise<PlutusData> {
         return new PlutusData(
           WasmV4.PlutusData.from_json(json, schema),
           $outer._ctx
@@ -2794,7 +2804,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static newMint(): Promise<RedeemerTag> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new RedeemerTag(WasmV4.RedeemerTag.new_mint(), $outer._ctx));
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.new_mint(), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -2804,7 +2816,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       static newCert(): Promise<RedeemerTag> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new RedeemerTag(WasmV4.RedeemerTag.new_cert(), $outer._ctx));
+            resolve(
+              new RedeemerTag(WasmV4.RedeemerTag.new_cert(), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -3010,7 +3024,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       totalExUnits(): Promise<WasmContract.ExUnits> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new $outer.ExUnits(this.wasm.total_ex_units(), $outer._ctx));
+            resolve(
+              new $outer.ExUnits(this.wasm.total_ex_units(), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -3533,10 +3549,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new Credential(
-                WasmV4.Credential.from_bytes(bytes),
-                $outer._ctx
-              )
+              new Credential(WasmV4.Credential.from_bytes(bytes), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -3602,10 +3615,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.Credential(
-                this.wasm.stake_credential(),
-                $outer._ctx
-              )
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -3669,10 +3679,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.Credential(
-                this.wasm.stake_credential(),
-                $outer._ctx
-              )
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -3736,10 +3743,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new Promise((resolve, reject) => {
           try {
             resolve(
-              new $outer.Credential(
-                this.wasm.stake_credential(),
-                $outer._ctx
-              )
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
             );
           } catch (e) {
             reject(e);
@@ -3796,6 +3800,29 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
     }
     return StakeDelegation;
+  })();
+
+  public Drep = (() => {
+    const $outer = this;
+
+    class DrepDeregistration
+      extends Ptr<WasmV4.DrepDeregistration>
+      implements WasmContract.DrepDeregistration
+    {
+      votingCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.voting_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return DrepDeregistration;
   })();
 
   public Certificate = (() => {
@@ -4100,7 +4127,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(index: number): Promise<WasmContract.RewardAddress> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new $outer.RewardAddress(this.wasm.get(index), $outer._ctx));
+            resolve(
+              new $outer.RewardAddress(this.wasm.get(index), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -4394,9 +4423,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
           try {
             const wasm = this.wasm.script_data_hash();
             if (wasm) {
-              resolve(
-                new $outer.ScriptDataHash(wasm, $outer._ctx)
-              );
+              resolve(new $outer.ScriptDataHash(wasm, $outer._ctx));
             } else {
               resolve(undefined);
             }
@@ -4406,12 +4433,12 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): Promise<void> {
+      setScriptDataHash(
+        scriptDataHash: WasmContract.ScriptDataHash
+      ): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(
-              this.wasm.set_script_data_hash(scriptDataHash.wasm)
-            );
+            resolve(this.wasm.set_script_data_hash(scriptDataHash.wasm));
           } catch (e) {
             reject(e);
           }
@@ -4423,9 +4450,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
           try {
             const wasm = this.wasm.collateral();
             if (wasm) {
-              resolve(
-                new $outer.TransactionInputs(wasm, $outer._ctx)
-              );
+              resolve(new $outer.TransactionInputs(wasm, $outer._ctx));
             } else {
               resolve(undefined);
             }
@@ -4437,8 +4462,8 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async requiredSigners(): Promise<WasmContract.Ed25519KeyHashes> {
         return new $outer.Ed25519KeyHashes(
-            this.wasm.required_signers(),
-            $outer._ctx
+          this.wasm.required_signers(),
+          $outer._ctx
         );
       }
 
@@ -4474,7 +4499,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       ): Promise<void> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm));
+            resolve(
+              this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm)
+            );
           } catch (e) {
             reject(e);
           }
@@ -4670,7 +4697,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       getTotalOutput(): Promise<WasmContract.Value> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(new $outer.Value(this.wasm.get_total_output(), $outer._ctx));
+            resolve(
+              new $outer.Value(this.wasm.get_total_output(), $outer._ctx)
+            );
           } catch (e) {
             reject(e);
           }
@@ -4826,7 +4855,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      async calcScriptDataHash(costModels: WasmContract.Costmdls): Promise<void> {
+      async calcScriptDataHash(
+        costModels: WasmContract.Costmdls
+      ): Promise<void> {
         return this.wasm.calc_script_data_hash(costModels.wasm);
       }
 
@@ -4851,9 +4882,12 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async new(
-          cfg: WasmContract.TransactionBuilderConfig
+        cfg: WasmContract.TransactionBuilderConfig
       ): Promise<TransactionBuilder> {
-        return new TransactionBuilder(WasmV4.TransactionBuilder.new(cfg.wasm), $outer._ctx);
+        return new TransactionBuilder(
+          WasmV4.TransactionBuilder.new(cfg.wasm),
+          $outer._ctx
+        );
       }
     }
     return TransactionBuilder;
@@ -4881,9 +4915,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       stakeCred(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
-            resolve(
-              new $outer.Credential(this.wasm.stake_cred(), $outer._ctx)
-            );
+            resolve(new $outer.Credential(this.wasm.stake_cred(), $outer._ctx));
           } catch (e) {
             reject(e);
           }
@@ -5435,7 +5467,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.TransactionWitnessSet
     {
       async plutusScripts(): Promise<WasmContract.PlutusScripts> {
-        return new $outer.PlutusScripts(this.wasm.plutus_scripts(), $outer._ctx);
+        return new $outer.PlutusScripts(
+          this.wasm.plutus_scripts(),
+          $outer._ctx
+        );
       }
 
       async redeemers(): Promise<WasmContract.Redeemers> {
@@ -5679,10 +5714,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static async fromHex(hex: string): Promise<Transaction> {
-        return new Transaction(
-            WasmV4.Transaction.from_hex(hex),
-            $outer._ctx
-        );
+        return new Transaction(WasmV4.Transaction.from_hex(hex), $outer._ctx);
       }
     }
     return Transaction;
@@ -6119,8 +6151,16 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionInputs(this.wasm.inputs(), $outer._ctx);
       }
 
-      async addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
+      async addPlutusScriptInput(
+        witness: WasmContract.PlutusWitness,
+        input: WasmContract.TransactionInput,
+        amount: WasmContract.Value
+      ): Promise<void> {
+        this.wasm.add_plutus_script_input(
+          witness.wasm,
+          input.wasm,
+          amount.wasm
+        );
       }
 
       static new(): Promise<TxInputsBuilder> {
@@ -6196,81 +6236,102 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class TransactionBuilderConfigBuilder
-        extends Ptr<WasmV4.TransactionBuilderConfigBuilder>
-        implements WasmContract.TransactionBuilderConfigBuilder {
-
+      extends Ptr<WasmV4.TransactionBuilderConfigBuilder>
+      implements WasmContract.TransactionBuilderConfigBuilder
+    {
       static async new(): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            WasmV4.TransactionBuilderConfigBuilder.new(),
-            $outer._ctx
+          WasmV4.TransactionBuilderConfigBuilder.new(),
+          $outer._ctx
         );
       }
 
-      async feeAlgo(linearFee: WasmContract.LinearFee): Promise<TransactionBuilderConfigBuilder> {
+      async feeAlgo(
+        linearFee: WasmContract.LinearFee
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.fee_algo(linearFee.wasm),
-            $outer._ctx
+          this.wasm.fee_algo(linearFee.wasm),
+          $outer._ctx
         );
       }
 
-      async coinsPerUtxoWord(coinsPerUtxoWord: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async coinsPerUtxoWord(
+        coinsPerUtxoWord: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.coins_per_utxo_word(coinsPerUtxoWord.wasm),
-            $outer._ctx
+          this.wasm.coins_per_utxo_word(coinsPerUtxoWord.wasm),
+          $outer._ctx
         );
       }
 
-      async coinsPerUtxoByte(coinsPerUtxoByte: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async coinsPerUtxoByte(
+        coinsPerUtxoByte: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.coins_per_utxo_byte(coinsPerUtxoByte.wasm),
-            $outer._ctx
+          this.wasm.coins_per_utxo_byte(coinsPerUtxoByte.wasm),
+          $outer._ctx
         );
       }
 
-      async exUnitPrices(exUnitPrices: WasmContract.ExUnitPrices): Promise<TransactionBuilderConfigBuilder> {
+      async exUnitPrices(
+        exUnitPrices: WasmContract.ExUnitPrices
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.ex_unit_prices(exUnitPrices.wasm),
-            $outer._ctx
+          this.wasm.ex_unit_prices(exUnitPrices.wasm),
+          $outer._ctx
         );
       }
 
-      async poolDeposit(poolDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async poolDeposit(
+        poolDeposit: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.pool_deposit(poolDeposit.wasm),
-            $outer._ctx
+          this.wasm.pool_deposit(poolDeposit.wasm),
+          $outer._ctx
         );
       }
 
-      async keyDeposit(keyDeposit: WasmContract.BigNum): Promise<TransactionBuilderConfigBuilder> {
+      async keyDeposit(
+        keyDeposit: WasmContract.BigNum
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.key_deposit(keyDeposit.wasm),
-            $outer._ctx
+          this.wasm.key_deposit(keyDeposit.wasm),
+          $outer._ctx
         );
       }
 
-      async maxValueSize(maxValueSize: number): Promise<TransactionBuilderConfigBuilder> {
+      async maxValueSize(
+        maxValueSize: number
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.max_value_size(maxValueSize),
-            $outer._ctx
+          this.wasm.max_value_size(maxValueSize),
+          $outer._ctx
         );
       }
 
-      async maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder> {
+      async maxTxSize(
+        maxTxSize: number
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.max_tx_size(maxTxSize),
-            $outer._ctx
+          this.wasm.max_tx_size(maxTxSize),
+          $outer._ctx
         );
       }
 
-      async preferPureChange(preferPureChange: boolean): Promise<TransactionBuilderConfigBuilder> {
+      async preferPureChange(
+        preferPureChange: boolean
+      ): Promise<TransactionBuilderConfigBuilder> {
         return new TransactionBuilderConfigBuilder(
-            this.wasm.prefer_pure_change(preferPureChange),
-            $outer._ctx
+          this.wasm.prefer_pure_change(preferPureChange),
+          $outer._ctx
         );
       }
 
       async build(): Promise<WasmContract.TransactionBuilderConfig> {
-        return new $outer.TransactionBuilderConfig(this.wasm.build(), $outer._ctx);
+        return new $outer.TransactionBuilderConfig(
+          this.wasm.build(),
+          $outer._ctx
+        );
       }
     }
 
@@ -6280,21 +6341,57 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
   public PlutusWitness = (() => {
     const $outer = this;
 
-    class PlutusWitness extends Ptr<WasmV4.PlutusWitness> implements WasmContract.PlutusWitness {
-      static async new(script: WasmContract.PlutusScript, datum: WasmContract.PlutusData, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
+    class PlutusWitness
+      extends Ptr<WasmV4.PlutusWitness>
+      implements WasmContract.PlutusWitness
+    {
+      static async new(
+        script: WasmContract.PlutusScript,
+        datum: WasmContract.PlutusData,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          WasmV4.PlutusWitness.new(script.wasm, datum.wasm, redeemer.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newWithRef(script: WasmContract.PlutusScriptSource, datum: WasmContract.DatumSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref(script.wasm, datum.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithRef(
+        script: WasmContract.PlutusScriptSource,
+        datum: WasmContract.DatumSource,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          WasmV4.PlutusWitness.new_with_ref(
+            script.wasm,
+            datum.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
-      static async newWithoutDatum(script: WasmContract.PlutusScript, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithoutDatum(
+        script: WasmContract.PlutusScript,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          WasmV4.PlutusWitness.new_without_datum(script.wasm, redeemer.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): Promise<PlutusWitness> {
-        return new PlutusWitness(WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm, redeemer.wasm), $outer._ctx);
+      static async newWithRefWithoutDatum(
+        script: WasmContract.PlutusScriptSource,
+        redeemer: WasmContract.Redeemer
+      ): Promise<PlutusWitness> {
+        return new PlutusWitness(
+          WasmV4.PlutusWitness.new_with_ref_without_datum(
+            script.wasm,
+            redeemer.wasm
+          ),
+          $outer._ctx
+        );
       }
 
       async script(): Promise<WasmContract.PlutusScript> {
@@ -6314,12 +6411,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
   })();
 
   public TransactionBuilderConfig = (() => {
-
     class TransactionBuilderConfig
-        extends Ptr<WasmV4.TransactionBuilderConfig>
-        implements WasmContract.TransactionBuilderConfig {
-
-    }
+      extends Ptr<WasmV4.TransactionBuilderConfig>
+      implements WasmContract.TransactionBuilderConfig {}
 
     return TransactionBuilderConfig;
   })();
@@ -6328,23 +6422,40 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class TransactionUnspentOutput
-        extends Ptr<WasmV4.TransactionUnspentOutput>
-        implements WasmContract.TransactionUnspentOutput {
-
-      static async new(input: WasmContract.TransactionInput, output: WasmContract.TransactionOutput): Promise<TransactionUnspentOutput> {
-        return new TransactionUnspentOutput(WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm), $outer._ctx);
+      extends Ptr<WasmV4.TransactionUnspentOutput>
+      implements WasmContract.TransactionUnspentOutput
+    {
+      static async new(
+        input: WasmContract.TransactionInput,
+        output: WasmContract.TransactionOutput
+      ): Promise<TransactionUnspentOutput> {
+        return new TransactionUnspentOutput(
+          WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm),
+          $outer._ctx
+        );
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<TransactionUnspentOutput> {
-        return new TransactionUnspentOutput(WasmV4.TransactionUnspentOutput.from_bytes(bytes), $outer._ctx);
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<TransactionUnspentOutput> {
+        return new TransactionUnspentOutput(
+          WasmV4.TransactionUnspentOutput.from_bytes(bytes),
+          $outer._ctx
+        );
       }
 
       static async fromHex(hexStr: string): Promise<TransactionUnspentOutput> {
-        return new TransactionUnspentOutput(WasmV4.TransactionUnspentOutput.from_hex(hexStr), $outer._ctx);
+        return new TransactionUnspentOutput(
+          WasmV4.TransactionUnspentOutput.from_hex(hexStr),
+          $outer._ctx
+        );
       }
 
       static async fromJson(json: string): Promise<TransactionUnspentOutput> {
-        return new TransactionUnspentOutput(WasmV4.TransactionUnspentOutput.from_json(json), $outer._ctx);
+        return new TransactionUnspentOutput(
+          WasmV4.TransactionUnspentOutput.from_json(json),
+          $outer._ctx
+        );
       }
 
       async toJson(): Promise<string> {
@@ -6366,7 +6477,6 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       async output(): Promise<WasmContract.TransactionOutput> {
         return new $outer.TransactionOutput(this.wasm.output(), $outer._ctx);
       }
-
     }
     return TransactionUnspentOutput;
   })();
@@ -6375,23 +6485,46 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class FixedTransaction
-        extends Ptr<WasmV4.FixedTransaction>
-        implements WasmContract.FixedTransaction {
-
-      static async new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
-        return new FixedTransaction(WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid), $outer._ctx);
+      extends Ptr<WasmV4.FixedTransaction>
+      implements WasmContract.FixedTransaction
+    {
+      static async new(
+        rawBody: Uint8Array,
+        rawWitnessSet: Uint8Array,
+        isValid: boolean
+      ): Promise<FixedTransaction> {
+        return new FixedTransaction(
+          WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid),
+          $outer._ctx
+        );
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<FixedTransaction> {
-        return new FixedTransaction(WasmV4.FixedTransaction.from_bytes(bytes), $outer._ctx);
+        return new FixedTransaction(
+          WasmV4.FixedTransaction.from_bytes(bytes),
+          $outer._ctx
+        );
       }
 
       static async fromHex(hexStr: string): Promise<FixedTransaction> {
-        return new FixedTransaction(WasmV4.FixedTransaction.from_hex(hexStr), $outer._ctx);
+        return new FixedTransaction(
+          WasmV4.FixedTransaction.from_hex(hexStr),
+          $outer._ctx
+        );
       }
 
-      static async newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
-        const wasm = WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
+      static async newWithAuxiliary(
+        rawBody: Uint8Array,
+        rawWitnessSet: Uint8Array,
+        rawAuxiliaryData: Uint8Array,
+        isValid: boolean
+      ): Promise<FixedTransaction> {
+        const wasm = WasmV4.FixedTransaction.new_with_auxiliary(
+          rawBody,
+          rawWitnessSet,
+          rawAuxiliaryData,
+          isValid
+        );
         return new FixedTransaction(wasm, $outer._ctx);
       }
 
@@ -6420,7 +6553,10 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
-        return new $outer.TransactionWitnessSet(this.wasm.witness_set(), $outer._ctx);
+        return new $outer.TransactionWitnessSet(
+          this.wasm.witness_set(),
+          $outer._ctx
+        );
       }
 
       async rawWitnessSet(): Promise<Uint8Array> {
@@ -6440,13 +6576,16 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       async auxiliaryData(): Promise<WasmContract.AuxiliaryData> {
-        return new $outer.AuxiliaryData(this.wasm.auxiliary_data(), $outer._ctx);
+        return new $outer.AuxiliaryData(
+          this.wasm.auxiliary_data(),
+          $outer._ctx
+        );
       }
 
       async rawAuxiliaryData(): Promise<Uint8Array> {
         const data = this.wasm.raw_auxiliary_data();
         if (!data) {
-          throw new Error("rawAuxiliaryData is not available");
+          throw new Error('rawAuxiliaryData is not available');
         }
         return data;
       }
@@ -6458,23 +6597,38 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class ExUnitPrices
-        extends Ptr<WasmV4.ExUnitPrices>
-        implements WasmContract.ExUnitPrices {
-
-      static async new(memPrice: WasmContract.UnitInterval, stepPrice: WasmContract.UnitInterval): Promise<ExUnitPrices> {
-        return new ExUnitPrices(WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm), $outer._ctx);
+      extends Ptr<WasmV4.ExUnitPrices>
+      implements WasmContract.ExUnitPrices
+    {
+      static async new(
+        memPrice: WasmContract.UnitInterval,
+        stepPrice: WasmContract.UnitInterval
+      ): Promise<ExUnitPrices> {
+        return new ExUnitPrices(
+          WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm),
+          $outer._ctx
+        );
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<ExUnitPrices> {
-        return new ExUnitPrices(WasmV4.ExUnitPrices.from_bytes(bytes), $outer._ctx);
+        return new ExUnitPrices(
+          WasmV4.ExUnitPrices.from_bytes(bytes),
+          $outer._ctx
+        );
       }
 
       static async fromHex(hexStr: string): Promise<ExUnitPrices> {
-        return new ExUnitPrices(WasmV4.ExUnitPrices.from_hex(hexStr), $outer._ctx);
+        return new ExUnitPrices(
+          WasmV4.ExUnitPrices.from_hex(hexStr),
+          $outer._ctx
+        );
       }
 
       static async fromJson(json: string): Promise<ExUnitPrices> {
-        return new ExUnitPrices(WasmV4.ExUnitPrices.from_json(json), $outer._ctx);
+        return new ExUnitPrices(
+          WasmV4.ExUnitPrices.from_json(json),
+          $outer._ctx
+        );
       }
 
       async toBytes(): Promise<Uint8Array> {
@@ -6505,34 +6659,34 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class UnitInterval
-        extends Ptr<WasmV4.UnitInterval>
-        implements WasmContract.UnitInterval
+      extends Ptr<WasmV4.UnitInterval>
+      implements WasmContract.UnitInterval
     {
       static async fromBytes(bytes: Uint8Array): Promise<UnitInterval> {
         return new UnitInterval(
-            WasmV4.UnitInterval.from_bytes(bytes),
-            $outer._ctx
+          WasmV4.UnitInterval.from_bytes(bytes),
+          $outer._ctx
         );
       }
 
       static async fromHex(hex: string): Promise<UnitInterval> {
-        return new UnitInterval(
-            WasmV4.UnitInterval.from_hex(hex),
-            $outer._ctx
-        );
+        return new UnitInterval(WasmV4.UnitInterval.from_hex(hex), $outer._ctx);
       }
 
       static async fromJson(json: string): Promise<UnitInterval> {
         return new UnitInterval(
-            WasmV4.UnitInterval.from_json(json),
-            $outer._ctx
+          WasmV4.UnitInterval.from_json(json),
+          $outer._ctx
         );
       }
 
-      static async new(numerator: WasmContract.BigNum, denominator: WasmContract.BigNum) {
+      static async new(
+        numerator: WasmContract.BigNum,
+        denominator: WasmContract.BigNum
+      ) {
         return new UnitInterval(
-            WasmV4.UnitInterval.new(numerator.wasm, denominator.wasm),
-            $outer._ctx
+          WasmV4.UnitInterval.new(numerator.wasm, denominator.wasm),
+          $outer._ctx
         );
       }
 
@@ -6563,23 +6717,30 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class Ed25519KeyHashes
-        extends Ptr<WasmV4.Ed25519KeyHashes>
-        implements WasmContract.Ed25519KeyHashes {
+      extends Ptr<WasmV4.Ed25519KeyHashes>
+      implements WasmContract.Ed25519KeyHashes
+    {
       static async new(): Promise<Ed25519KeyHashes> {
         return new Ed25519KeyHashes(WasmV4.Ed25519KeyHashes.new(), $outer._ctx);
       }
 
-      static async fromJson(json: string): Promise<Ed25519KeyHashes | undefined> {
+      static async fromJson(
+        json: string
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = WasmV4.Ed25519KeyHashes.from_json(json);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHashes | undefined> {
+      static async fromBytes(
+        bytes: Uint8Array
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = WasmV4.Ed25519KeyHashes.from_bytes(bytes);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
 
-      static async fromHex(hexStr: string): Promise<Ed25519KeyHashes | undefined> {
+      static async fromHex(
+        hexStr: string
+      ): Promise<Ed25519KeyHashes | undefined> {
         const wasm = WasmV4.Ed25519KeyHashes.from_hex(hexStr);
         return wasm ? new Ed25519KeyHashes(wasm, $outer._ctx) : undefined;
       }
@@ -6611,7 +6772,6 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       async toOption(): Promise<WasmContract.Ed25519KeyHashes> {
         return new $outer.Ed25519KeyHashes(this.wasm.to_option(), $outer._ctx);
       }
-
     }
     return Ed25519KeyHashes;
   })();
@@ -6620,14 +6780,20 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class DatumSource
-        extends Ptr<WasmV4.DatumSource>
-        implements WasmContract.DatumSource {
+      extends Ptr<WasmV4.DatumSource>
+      implements WasmContract.DatumSource
+    {
       static async new(datum: WasmContract.PlutusData): Promise<DatumSource> {
         return new DatumSource(WasmV4.DatumSource.new(datum.wasm), $outer._ctx);
       }
 
-      static async newRefInput(input: WasmContract.TransactionInput): Promise<DatumSource> {
-        return new DatumSource(WasmV4.DatumSource.new_ref_input(input.wasm), $outer._ctx);
+      static async newRefInput(
+        input: WasmContract.TransactionInput
+      ): Promise<DatumSource> {
+        return new DatumSource(
+          WasmV4.DatumSource.new_ref_input(input.wasm),
+          $outer._ctx
+        );
       }
     }
 
@@ -6638,19 +6804,41 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class PlutusScriptSource
-        extends Ptr<WasmV4.PlutusScriptSource>
-        implements WasmContract.PlutusScriptSource {
-
-      static async new(script: WasmContract.PlutusScript): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(WasmV4.PlutusScriptSource.new(script.wasm), $outer._ctx);
+      extends Ptr<WasmV4.PlutusScriptSource>
+      implements WasmContract.PlutusScriptSource
+    {
+      static async new(
+        script: WasmContract.PlutusScript
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          WasmV4.PlutusScriptSource.new(script.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm), $outer._ctx);
+      static async newRefInput(
+        scriptHash: WasmContract.ScriptHash,
+        input: WasmContract.TransactionInput
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm),
+          $outer._ctx
+        );
       }
 
-      static async newRefInputWithLangVer(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<PlutusScriptSource> {
-        return new PlutusScriptSource(WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(scriptHash.wasm, input.wasm, langVer.wasm), $outer._ctx);
+      static async newRefInputWithLangVer(
+        scriptHash: WasmContract.ScriptHash,
+        input: WasmContract.TransactionInput,
+        langVer: WasmContract.Language
+      ): Promise<PlutusScriptSource> {
+        return new PlutusScriptSource(
+          WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(
+            scriptHash.wasm,
+            input.wasm,
+            langVer.wasm
+          ),
+          $outer._ctx
+        );
       }
     }
 
@@ -6661,9 +6849,9 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     const $outer = this;
 
     class TxBuilderConstants
-        extends Ptr<WasmV4.TxBuilderConstants>
-        implements WasmContract.TxBuilderConstants {
-
+      extends Ptr<WasmV4.TxBuilderConstants>
+      implements WasmContract.TxBuilderConstants
+    {
       static async plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
         return new $outer.Costmdls(
           WasmV4.TxBuilderConstants.plutus_default_cost_models(),
@@ -6684,9 +6872,8 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
           $outer._ctx
         );
       }
-    } 
+    }
 
     return TxBuilderConstants;
   })();
-
 }
