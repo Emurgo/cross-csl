@@ -96,6 +96,16 @@ export interface WasmModuleProxy {
   StakeRegistration: typeof StakeRegistration;
   StakeDeregistration: typeof StakeDeregistration;
   StakeDelegation: typeof StakeDelegation;
+  CommitteeHotAuth: typeof CommitteeHotAuth;
+  CommitteeColdResign: typeof CommitteeColdResign;
+  DrepDeregistration: typeof DrepDeregistration;
+  DrepRegistration: typeof DrepRegistration;
+  DrepUpdate: typeof DrepUpdate;
+  StakeAndVoteDelegation: typeof StakeAndVoteDelegation;
+  StakeRegistrationAndDelegation: typeof StakeRegistrationAndDelegation;
+  StakeVoteRegistrationAndDelegation: typeof StakeVoteRegistrationAndDelegation;
+  VoteDelegation: typeof VoteDelegation;
+  VoteRegistrationAndDelegation: typeof VoteRegistrationAndDelegation;
   Certificate: typeof Certificate;
   Certificates: typeof Certificates;
   RewardAddress: typeof RewardAddress;
@@ -561,6 +571,24 @@ export abstract class Ed25519KeyHash extends _Ptr {
 }
 
 export abstract class TransactionHash extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
+
+  static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class AnchorDataHash extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+  abstract toHex(): Promise<string>;
+
+  static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class VRFKeyHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
   abstract toHex(): Promise<string>;
 
@@ -1194,10 +1222,132 @@ export abstract class StakeDelegation extends _Ptr {
   }
 }
 
-export abstract class DrepDeregistration extends _Ptr {
-  abstract votingCredential(): Promise<Credential>;
-
+export abstract class StakeAndVoteDelegation extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
+
+  abstract stakeCredential(): Promise<Credential>;
+
+  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+
+  abstract drep(): Promise<DRep>;
+
+  abstract hasScriptCredential(): Promise<boolean>;
+
+  static new(
+    stakeCredential: Credential,
+    poolKeyHash: Ed25519KeyHash
+  ): Promise<StakeAndVoteDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class StakeRegistrationAndDelegation extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract stakeCredential(): Promise<Credential>;
+
+  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+
+  abstract coin(): Promise<BigNum>;
+
+  abstract hasScriptCredential(): Promise<boolean>;
+
+  static new(
+    stakeCredential: Credential,
+    poolKeyHash: Ed25519KeyHash,
+    coin: BigNum
+  ): Promise<StakeRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class StakeVoteRegistrationAndDelegation extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract stakeCredential(): Promise<Credential>;
+
+  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+
+  abstract coin(): Promise<BigNum>;
+
+  abstract drep(): Promise<DRep>;
+
+  abstract hasScriptCredential(): Promise<boolean>;
+
+  static new(
+    stakeCredential: Credential,
+    poolKeyHash: Ed25519KeyHash,
+    drep: DRep,
+    coin: BigNum
+  ): Promise<StakeVoteRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class VoteDelegation extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract stakeCredential(): Promise<Credential>;
+
+  abstract drep(): Promise<DRep>;
+
+  abstract hasScriptCredential(): Promise<boolean>;
+
+  static new(stakeCredential: Credential, drep: DRep): Promise<VoteDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class VoteRegistrationAndDelegation extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract stakeCredential(): Promise<Credential>;
+
+  abstract drep(): Promise<DRep>;
+
+  abstract coin(): Promise<BigNum>;
+
+  abstract hasScriptCredential(): Promise<boolean>;
+
+  static new(
+    stakeCredential: Credential,
+    drep: DRep,
+    coin: BigNum
+  ): Promise<VoteRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class DRep extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract kind(): Promise<number>;
+
+  abstract toKeyHash(): Promise<Ed25519KeyHash | undefined>;
+
+  abstract toScriptHash(): Promise<ScriptDataHash | undefined>;
+
+  static newKeyHash(keyHash: Ed25519KeyHash): Promise<DRep> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newScriptHash(scriptHash: ScriptHash): Promise<DRep> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newAlwaysAbstain(): Promise<DRep> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newAlwasyNoConfidence(): Promise<DRep> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class DrepDeregistration extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract votingCredential(): Promise<Credential>;
 
   abstract coin(): Promise<BigNum>;
 
@@ -1211,6 +1361,110 @@ export abstract class DrepDeregistration extends _Ptr {
   }
 }
 
+export abstract class DrepRegistration extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract votingCredential(): Promise<Credential>;
+
+  abstract coin(): Promise<BigNum>;
+
+  abstract anchor(): Promise<Anchor>;
+
+  static new(
+    votingCredential: Credential,
+    coin: BigNum
+  ): Promise<DrepRegistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithAnchor(
+    votingCredential: Credential,
+    coin: BigNum,
+    anchor: Anchor
+  ): Promise<DrepRegistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class DrepUpdate extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract votingCredential(): Promise<Credential>;
+
+  abstract anchor(): Promise<Anchor>;
+
+  static new(votingCredential: Credential): Promise<DrepUpdate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithAnchor(
+    votingCredential: Credential,
+    anchor: Anchor
+  ): Promise<DrepUpdate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class Anchor extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract url(): Promise<URL>;
+
+  abstract anchorDataHash(): Promise<AnchorDataHash>;
+
+  static new(anchorUrl: URL, anchorDataHash: AnchorDataHash): Promise<Anchor> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class URL extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract url(): Promise<string>;
+
+  static new(url: string): Promise<URL> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class CommitteeHotAuth extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract committeeColdKey(): Promise<Credential>;
+
+  abstract committeeHotKey(): Promise<Credential>;
+
+  abstract hasScriptCredentials(): Promise<boolean>;
+
+  static new(
+    committeeColdKey: Credential,
+    committeeHotKey: Credential
+  ): Promise<CommitteeHotAuth> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class CommitteeColdResign extends _Ptr {
+  abstract toBytes(): Promise<Uint8Array>;
+
+  abstract committeeColdKey(): Promise<Credential>;
+
+  abstract anchor(): Promise<Anchor>;
+
+  abstract hasScriptCredentials(): Promise<boolean>;
+
+  static new(committeeColdKey: Credential): Promise<CommitteeColdResign> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithAnchor(
+    committeeColdKey: Credential,
+    anchor: Anchor
+  ): Promise<CommitteeColdResign> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
 export abstract class Certificate extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
 
@@ -1219,6 +1473,36 @@ export abstract class Certificate extends _Ptr {
   abstract asStakeDeregistration(): Promise<StakeDeregistration>;
 
   abstract asStakeDelegation(): Promise<StakeDelegation>;
+
+  abstract asCommitteeHotAuth(): Promise<CommitteeHotAuth | undefined>;
+
+  abstract asCommitteeColdResign(): Promise<CommitteeColdResign | undefined>;
+
+  abstract asDrepDeregistration(): Promise<DrepDeregistration | undefined>;
+
+  abstract asDrepRegistration(): Promise<DrepRegistration | undefined>;
+
+  abstract asDrepUpdate(): Promise<DrepUpdate | undefined>;
+
+  abstract asStakeAndVoteDelegation(): Promise<
+    StakeAndVoteDelegation | undefined
+  >;
+
+  abstract asStakeRegistrationAndDelegation(): Promise<
+    StakeRegistrationAndDelegation | undefined
+  >;
+
+  abstract asStakeVoteRegistrationAndDelegation(): Promise<
+    StakeVoteRegistrationAndDelegation | undefined
+  >;
+
+  abstract asVoteDelegation(): Promise<VoteDelegation | undefined>;
+
+  abstract asVoteRegistrationAndDelegation(): Promise<
+    VoteRegistrationAndDelegation | undefined
+  >;
+
+  abstract kind(): Promise<number>;
 
   static fromBytes(bytes: Uint8Array): Promise<Certificate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
@@ -1238,6 +1522,64 @@ export abstract class Certificate extends _Ptr {
 
   static newStakeDelegation(
     stakeDelegation: StakeDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCommitteeHostAuth(
+    committeeHotAuth: CommitteeHotAuth
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCommitteeColdResign(
+    CommitteeColdResign: CommitteeColdResign
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newDrepDeregistration(
+    drepDeregistration: DrepDeregistration
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newDrepRegistration(
+    drepRegistration: DrepRegistration
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newDrepUpdate(drepUpdate: DrepUpdate): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newStakeAndVoteDelegation(
+    stakeAndVoteDelegation: StakeAndVoteDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newStakeRegistrationAndDelegation(
+    stakeRegistrationAndDelegation: StakeRegistrationAndDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newStakeVoteRegistrationAndDelegation(
+    stakeVoteRegistrationAndDelegation: StakeVoteRegistrationAndDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newVoteDelegation(
+    voteDelegation: VoteDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newVoteRegistrationAndDelegation(
+    voteRegistrationAndDelegation: VoteRegistrationAndDelegation
   ): Promise<Certificate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
