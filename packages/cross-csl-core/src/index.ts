@@ -1511,33 +1511,25 @@ export abstract class Certificate extends _Ptr {
 
   abstract asStakeDelegation(): Promise<StakeDelegation>;
 
-  abstract asCommitteeHotAuth(): Promise<CommitteeHotAuth | undefined>;
+  abstract asDrepDeregistration(): Promise<DrepDeregistration>;
 
-  abstract asCommitteeColdResign(): Promise<CommitteeColdResign | undefined>;
+  abstract asDrepRegistration(): Promise<DrepRegistration>;
 
-  abstract asDrepDeregistration(): Promise<DrepDeregistration | undefined>;
+  abstract asDrepUpdate(): Promise<DrepUpdate>;
 
-  abstract asDrepRegistration(): Promise<DrepRegistration | undefined>;
+  abstract asStakeAndVoteDelegation(): Promise<StakeAndVoteDelegation>;
 
-  abstract asDrepUpdate(): Promise<DrepUpdate | undefined>;
+  abstract asStakeRegistrationAndDelegation(): Promise<StakeRegistrationAndDelegation>;
 
-  abstract asStakeAndVoteDelegation(): Promise<
-    StakeAndVoteDelegation | undefined
-  >;
+  abstract asStakeVoteRegistrationAndDelegation(): Promise<StakeVoteRegistrationAndDelegation>;
 
-  abstract asStakeRegistrationAndDelegation(): Promise<
-    StakeRegistrationAndDelegation | undefined
-  >;
+  abstract asVoteDelegation(): Promise<VoteDelegation>;
 
-  abstract asStakeVoteRegistrationAndDelegation(): Promise<
-    StakeVoteRegistrationAndDelegation | undefined
-  >;
+  abstract asVoteRegistrationAndDelegation(): Promise<VoteRegistrationAndDelegation>;
 
-  abstract asVoteDelegation(): Promise<VoteDelegation | undefined>;
+  abstract asCommitteeHotKeyRegistration(): Promise<CommitteeHotAuth>;
 
-  abstract asVoteRegistrationAndDelegation(): Promise<
-    VoteRegistrationAndDelegation | undefined
-  >;
+  abstract asCommitteeHotKeyDeregistration(): Promise<CommitteeColdResign>;
 
   abstract kind(): Promise<number>;
 
@@ -1559,18 +1551,6 @@ export abstract class Certificate extends _Ptr {
 
   static newStakeDelegation(
     stakeDelegation: StakeDelegation
-  ): Promise<Certificate> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  static newCommitteeHostAuth(
-    committeeHotAuth: CommitteeHotAuth
-  ): Promise<Certificate> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  static newCommitteeColdResign(
-    CommitteeColdResign: CommitteeColdResign
   ): Promise<Certificate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -1617,6 +1597,18 @@ export abstract class Certificate extends _Ptr {
 
   static newVoteRegistrationAndDelegation(
     voteRegistrationAndDelegation: VoteRegistrationAndDelegation
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCommitteeHotKeyRegistration(
+    committeeHotAuth: CommitteeHotAuth
+  ): Promise<Certificate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newCommitteeHotKeyDeregistration(
+    CommitteeColdResign: CommitteeColdResign
   ): Promise<Certificate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }

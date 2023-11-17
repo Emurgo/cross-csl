@@ -5111,6 +5111,163 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      asDrepRegistration(): Promise<WasmContract.DrepRegistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.DrepRegistration(
+                this.wasm.as_drep_registration(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asDrepDeregistration(): Promise<WasmContract.DrepDeregistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.DrepDeregistration(
+                this.wasm.as_drep_deregistration(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asDrepUpdate(): Promise<WasmContract.DrepUpdate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.DrepUpdate(this.wasm.as_drep_update(), $outer._ctx)
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asStakeRegistrationAndDelegation(): Promise<WasmContract.StakeRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.StakeRegistrationAndDelegation(
+                this.wasm.as_stake_registration_and_delegation(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asStakeAndVoteDelegation(): Promise<WasmContract.StakeAndVoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.StakeAndVoteDelegation(
+                this.wasm.as_stake_and_vote_delegation(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asStakeVoteRegistrationAndDelegation(): Promise<WasmContract.StakeVoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.StakeVoteRegistrationAndDelegation(
+                this.wasm.as_stake_vote_registration_and_delegation(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asVoteDelegation(): Promise<WasmContract.VoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.VoteDelegation(
+                this.wasm.as_vote_delegation(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asVoteRegistrationAndDelegation(): Promise<WasmContract.VoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.VoteRegistrationAndDelegation(
+                this.wasm.as_vote_registration_and_delegation(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asCommitteeHotKeyRegistration(): Promise<WasmContract.CommitteeHotAuth> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.CommitteeHotAuth(
+                this.wasm.as_committee_hot_key_registration(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      asCommitteeHotKeyDeregistration(): Promise<WasmContract.CommitteeColdResign> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.CommitteeColdResign(
+                this.wasm.as_committee_hot_key_deregistration(),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      kind(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.kind());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       static fromBytes(bytes: Uint8Array): Promise<Certificate> {
         return new Promise((resolve, reject) => {
           try {
@@ -5169,6 +5326,190 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
             resolve(
               new Certificate(
                 WasmV4.Certificate.new_stake_delegation(stakeDelegation.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newDrepDeregistration(
+        drepDeregistration: WasmContract.DrepDeregistration
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_drep_deregistration(
+                  drepDeregistration.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newDrepRegistration(
+        drepRegistration: WasmContract.DrepRegistration
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_drep_registration(drepRegistration.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newDrepUpdate(
+        drepUpdate: WasmContract.DrepUpdate
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_drep_update(drepUpdate.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newStakeAndVoteDelegation(
+        stakeAndVoteDelegation: WasmContract.StakeAndVoteDelegation
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_stake_and_vote_delegation(
+                  stakeAndVoteDelegation.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newStakeRegistrationAndDelegation(
+        stakeRegistrationAndDelegation: WasmContract.StakeRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_stake_registration_and_delegation(
+                  stakeRegistrationAndDelegation.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newStakeVoteRegistrationAndDelegation(
+        stakeVoteRegistrationAndDelegation: WasmContract.StakeVoteRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_stake_vote_registration_and_delegation(
+                  stakeVoteRegistrationAndDelegation.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newVoteDelegation(
+        voteDelegation: WasmContract.VoteDelegation
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_vote_delegation(voteDelegation.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newVoteRegistrationAndDelegation(
+        voteRegistrationAndDelegation: WasmContract.VoteRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_vote_registration_and_delegation(
+                  voteRegistrationAndDelegation.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newCommitteeHotKeyRegistration(
+        committeeHotAuth: WasmContract.CommitteeHotAuth
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_committee_hot_key_registration(
+                  committeeHotAuth.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newCommitteeHotKeyDeregistration(
+        committeeColdResign: WasmContract.CommitteeColdResign
+      ): Promise<Certificate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Certificate(
+                WasmV4.Certificate.new_committee_hot_key_deregistration(
+                  committeeColdResign.wasm
+                ),
                 $outer._ctx
               )
             );
