@@ -1476,6 +1476,45 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return TransactionHash;
   })();
 
+  public AnchorDataHash = (() => {
+    const $outer = this;
+
+    class AnchorDataHash
+      extends Ptr<WasmV4.AnchorDataHash>
+      implements WasmContract.AnchorDataHash
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      async toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<AnchorDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new AnchorDataHash(
+                WasmV4.AnchorDataHash.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+    return AnchorDataHash;
+  })();
+
   public TransactionInput = (() => {
     const $outer = this;
 
@@ -3802,13 +3841,23 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
     return StakeDelegation;
   })();
 
-  public Drep = (() => {
+  public DrepDeregistration = (() => {
     const $outer = this;
 
     class DrepDeregistration
       extends Ptr<WasmV4.DrepDeregistration>
       implements WasmContract.DrepDeregistration
     {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
       votingCredential(): Promise<WasmContract.Credential> {
         return new Promise((resolve, reject) => {
           try {
@@ -3820,9 +3869,1184 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
           }
         });
       }
+
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredentials(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        votingCredential: WasmContract.Certificate,
+        coin: WasmContract.BigNum
+      ): Promise<WasmContract.DrepDeregistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepDeregistration(
+                WasmV4.DrepDeregistration.new(votingCredential.wasm, coin.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<WasmContract.DrepDeregistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepDeregistration(
+                WasmV4.DrepDeregistration.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
     }
 
     return DrepDeregistration;
+  })();
+
+  public DrepRegistration = (() => {
+    const $outer = this;
+
+    class DrepRegistration
+      extends Ptr<WasmV4.DrepRegistration>
+      implements WasmContract.DrepRegistration
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      votingCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.voting_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      anchor(): Promise<WasmContract.Anchor> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.Anchor(this.wasm.anchor(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        votingCredential: WasmContract.Credential,
+        coin: WasmContract.BigNum
+      ): Promise<WasmContract.DrepRegistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepRegistration(
+                WasmV4.DrepRegistration.new(votingCredential.wasm, coin.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newWithAnchor(
+        votingCredential: WasmContract.Credential,
+        coin: WasmContract.BigNum,
+        anchor: WasmContract.Anchor
+      ): Promise<WasmContract.DrepRegistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepRegistration(
+                WasmV4.DrepRegistration.new_with_anchor(
+                  votingCredential.wasm,
+                  coin.wasm,
+                  anchor.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<DrepRegistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepRegistration(
+                WasmV4.DrepRegistration.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return DrepRegistration;
+  })();
+
+  public VoteDelegation = (() => {
+    const $outer = this;
+
+    class VoteDelegation
+      extends Ptr<WasmV4.VoteDelegation>
+      implements WasmContract.VoteDelegation
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      stakeCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      drep(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.DRep(this.wasm.drep(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredential(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        stakeCredential: WasmContract.Credential,
+        drep: WasmContract.DRep
+      ): Promise<WasmContract.VoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new VoteDelegation(
+                WasmV4.VoteDelegation.new(stakeCredential.wasm, drep.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<VoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new VoteDelegation(
+                WasmV4.VoteDelegation.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return VoteDelegation;
+  })();
+
+  public VoteRegistrationAndDelegation = (() => {
+    const $outer = this;
+
+    class VoteRegistrationAndDelegation
+      extends Ptr<WasmV4.VoteRegistrationAndDelegation>
+      implements WasmContract.VoteRegistrationAndDelegation
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      stakeCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      drep(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.DRep(this.wasm.drep(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredential(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        stakeCredential: WasmContract.Credential,
+        drep: WasmContract.DRep,
+        coin: WasmContract.BigNum
+      ): Promise<WasmContract.VoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new VoteRegistrationAndDelegation(
+                WasmV4.VoteRegistrationAndDelegation.new(
+                  stakeCredential.wasm,
+                  drep.wasm,
+                  coin.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<VoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new VoteRegistrationAndDelegation(
+                WasmV4.VoteRegistrationAndDelegation.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return VoteRegistrationAndDelegation;
+  })();
+
+  public StakeVoteRegistrationAndDelegation = (() => {
+    const $outer = this;
+
+    class StakeVoteRegistrationAndDelegation
+      extends Ptr<WasmV4.StakeVoteRegistrationAndDelegation>
+      implements WasmContract.StakeVoteRegistrationAndDelegation
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      stakeCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      poolKeyhash(): Promise<WasmContract.Ed25519KeyHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Ed25519KeyHash(this.wasm.pool_keyhash(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      drep(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.DRep(this.wasm.drep(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredential(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        stakeCredential: WasmContract.Credential,
+        poolKeyHash: WasmContract.Ed25519KeyHash,
+        drep: WasmContract.DRep,
+        coin: WasmContract.BigNum
+      ): Promise<WasmContract.StakeVoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeVoteRegistrationAndDelegation(
+                WasmV4.StakeVoteRegistrationAndDelegation.new(
+                  stakeCredential.wasm,
+                  poolKeyHash.wasm,
+                  drep.wasm,
+                  coin.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<StakeVoteRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeVoteRegistrationAndDelegation(
+                WasmV4.StakeVoteRegistrationAndDelegation.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return StakeVoteRegistrationAndDelegation;
+  })();
+
+  public StakeRegistrationAndDelegation = (() => {
+    const $outer = this;
+
+    class StakeRegistrationAndDelegation
+      extends Ptr<WasmV4.StakeRegistrationAndDelegation>
+      implements WasmContract.StakeRegistrationAndDelegation
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      stakeCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      poolKeyhash(): Promise<WasmContract.Ed25519KeyHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Ed25519KeyHash(this.wasm.pool_keyhash(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredential(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        stakeCredential: WasmContract.Credential,
+        poolKeyHash: WasmContract.Ed25519KeyHash,
+        coin: WasmContract.BigNum
+      ): Promise<WasmContract.StakeRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeRegistrationAndDelegation(
+                WasmV4.StakeRegistrationAndDelegation.new(
+                  stakeCredential.wasm,
+                  poolKeyHash.wasm,
+                  coin.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<StakeRegistrationAndDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeRegistrationAndDelegation(
+                WasmV4.StakeRegistrationAndDelegation.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return StakeRegistrationAndDelegation;
+  })();
+
+  public StakeAndVoteDelegation = (() => {
+    const $outer = this;
+
+    class StakeAndVoteDelegation
+      extends Ptr<WasmV4.StakeAndVoteDelegation>
+      implements WasmContract.StakeAndVoteDelegation
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      stakeCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.stake_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      poolKeyhash(): Promise<WasmContract.Ed25519KeyHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Ed25519KeyHash(this.wasm.pool_keyhash(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      drep(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.DRep(this.wasm.drep(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredential(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        stakeCredential: WasmContract.Credential,
+        poolKeyHash: WasmContract.Ed25519KeyHash,
+        drep: WasmContract.DRep
+      ): Promise<WasmContract.StakeAndVoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeAndVoteDelegation(
+                WasmV4.StakeAndVoteDelegation.new(
+                  stakeCredential.wasm,
+                  poolKeyHash.wasm,
+                  drep.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<StakeAndVoteDelegation> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeAndVoteDelegation(
+                WasmV4.StakeAndVoteDelegation.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return StakeAndVoteDelegation;
+  })();
+
+  public DRep = (() => {
+    const $outer = this;
+
+    class DRep extends Ptr<WasmV4.DRep> implements WasmContract.DRep {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      toKeyHash(): Promise<WasmContract.Ed25519KeyHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Ed25519KeyHash(this.wasm.to_key_hash(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      toScriptHash(): Promise<WasmContract.ScriptDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.ScriptDataHash(this.wasm.to_script_hash(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      kind(): Promise<number> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.kind());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newKeyHash(
+        keyHash: WasmContract.Ed25519KeyHash
+      ): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DRep(WasmV4.DRep.new_key_hash(keyHash.wasm), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newScriptHash(
+        scriptHash: WasmContract.ScriptDataHash
+      ): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DRep(
+                WasmV4.DRep.new_script_hash(scriptHash.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newAlwaysAbstain(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new DRep(WasmV4.DRep.new_always_abstain(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newAlwasyNoConfidence(): Promise<WasmContract.DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DRep(WasmV4.DRep.new_always_no_confidence(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<DRep> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new DRep(WasmV4.DRep.from_bytes(bytes), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    }
+
+    return DRep;
+  })();
+
+  public DrepUpdate = (() => {
+    const $outer = this;
+
+    class DrepUpdate
+      extends Ptr<WasmV4.DrepUpdate>
+      implements WasmContract.DrepUpdate
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      votingCredential(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.voting_credential(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      anchor(): Promise<WasmContract.Anchor> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.Anchor(this.wasm.anchor(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        votingCredential: WasmContract.Credential
+      ): Promise<WasmContract.DrepUpdate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepUpdate(
+                WasmV4.DrepUpdate.new(votingCredential.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static newWithAnchor(
+        votingCredential: WasmContract.Credential,
+        anchor: WasmContract.Anchor
+      ): Promise<WasmContract.DrepUpdate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepUpdate(
+                WasmV4.DrepUpdate.new_with_anchor(
+                  votingCredential.wasm,
+                  anchor.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepUpdate> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new DrepUpdate(WasmV4.DrepUpdate.from_bytes(bytes), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return DrepUpdate;
+  })();
+
+  public CommitteeHotAuth = (() => {
+    const $outer = this;
+
+    class CommitteeHotAuth
+      extends Ptr<WasmV4.CommitteeHotAuth>
+      implements WasmContract.CommitteeHotAuth
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      committeeColdKey(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.committee_cold_key(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      committeeHotKey(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.committee_hot_key(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredentials(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        committeeColdKey: WasmContract.Credential,
+        committeeHotKey: WasmContract.Credential
+      ): Promise<WasmContract.CommitteeHotAuth> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new CommitteeHotAuth(
+                WasmV4.CommitteeHotAuth.new(
+                  committeeColdKey.wasm,
+                  committeeHotKey.wasm
+                ),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<WasmContract.CommitteeHotAuth> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new CommitteeHotAuth(
+                WasmV4.CommitteeHotAuth.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return CommitteeHotAuth;
+  })();
+
+  public CommitteeColdResign = (() => {
+    const $outer = this;
+
+    class CommitteeColdResign
+      extends Ptr<WasmV4.CommitteeColdResign>
+      implements WasmContract.CommitteeColdResign
+    {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      committeeColdKey(): Promise<WasmContract.Credential> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.Credential(this.wasm.committee_cold_key(), $outer._ctx)
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      hasScriptCredentials(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.has_script_credentials());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        committeeColdKey: WasmContract.Credential
+      ): Promise<WasmContract.CommitteeColdResign> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new CommitteeColdResign(
+                WasmV4.CommitteeColdResign.new(committeeColdKey.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(
+        bytes: Uint8Array
+      ): Promise<WasmContract.CommitteeColdResign> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new CommitteeColdResign(
+                WasmV4.CommitteeColdResign.from_bytes(bytes),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return CommitteeColdResign;
+  })();
+
+  public Anchor = (() => {
+    const $outer = this;
+
+    class Anchor extends Ptr<WasmV4.Anchor> implements WasmContract.Anchor {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      url(): Promise<WasmContract.URL> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.URL(this.wasm.url(), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      anchorDataHash(): Promise<WasmContract.AnchorDataHash> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new $outer.AnchorDataHash(
+                this.wasm.anchor_data_hash(),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(
+        anchorUrl: WasmContract.URL,
+        anchorDataHash: WasmContract.AnchorDataHash
+      ): Promise<WasmContract.Anchor> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new Anchor(
+                WasmV4.Anchor.new(anchorUrl.wasm, anchorDataHash.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<WasmContract.Anchor> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new Anchor(WasmV4.Anchor.from_bytes(bytes), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return Anchor;
+  })();
+
+  public URL = (() => {
+    const $outer = this;
+
+    class URL extends Ptr<WasmV4.URL> implements WasmContract.URL {
+      toBytes(): Promise<Uint8Array> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_bytes());
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      url(): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.url());
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static new(url: string): Promise<WasmContract.URL> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new URL(WasmV4.URL.new(url), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<WasmContract.URL> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new URL(WasmV4.URL.from_bytes(bytes), $outer._ctx));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+    }
+
+    return URL;
   })();
 
   public Certificate = (() => {

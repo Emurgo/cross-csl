@@ -583,16 +583,7 @@ export abstract class AnchorDataHash extends _Ptr {
   abstract toBytes(): Promise<Uint8Array>;
   abstract toHex(): Promise<string>;
 
-  static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-}
-
-export abstract class VRFKeyHash extends _Ptr {
-  abstract toBytes(): Promise<Uint8Array>;
-  abstract toHex(): Promise<string>;
-
-  static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
+  static fromBytes(bytes: Uint8Array): Promise<AnchorDataHash> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1235,8 +1226,13 @@ export abstract class StakeAndVoteDelegation extends _Ptr {
 
   static new(
     stakeCredential: Credential,
-    poolKeyHash: Ed25519KeyHash
+    poolKeyHash: Ed25519KeyHash,
+    drep: DRep
   ): Promise<StakeAndVoteDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<StakeAndVoteDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1257,6 +1253,10 @@ export abstract class StakeRegistrationAndDelegation extends _Ptr {
     poolKeyHash: Ed25519KeyHash,
     coin: BigNum
   ): Promise<StakeRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<StakeRegistrationAndDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1282,6 +1282,12 @@ export abstract class StakeVoteRegistrationAndDelegation extends _Ptr {
   ): Promise<StakeVoteRegistrationAndDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(
+    bytes: Uint8Array
+  ): Promise<StakeVoteRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class VoteDelegation extends _Ptr {
@@ -1294,6 +1300,10 @@ export abstract class VoteDelegation extends _Ptr {
   abstract hasScriptCredential(): Promise<boolean>;
 
   static new(stakeCredential: Credential, drep: DRep): Promise<VoteDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<VoteDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1314,6 +1324,10 @@ export abstract class VoteRegistrationAndDelegation extends _Ptr {
     drep: DRep,
     coin: BigNum
   ): Promise<VoteRegistrationAndDelegation> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<VoteRegistrationAndDelegation> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1342,6 +1356,10 @@ export abstract class DRep extends _Ptr {
   static newAlwasyNoConfidence(): Promise<DRep> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<DRep> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class DrepDeregistration extends _Ptr {
@@ -1357,6 +1375,10 @@ export abstract class DrepDeregistration extends _Ptr {
     votingCredential: Certificate,
     coin: BigNum
   ): Promise<DrepDeregistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<DrepDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1384,6 +1406,10 @@ export abstract class DrepRegistration extends _Ptr {
   ): Promise<DrepRegistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<DrepRegistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class DrepUpdate extends _Ptr {
@@ -1403,6 +1429,10 @@ export abstract class DrepUpdate extends _Ptr {
   ): Promise<DrepUpdate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<DrepUpdate> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class Anchor extends _Ptr {
@@ -1415,6 +1445,10 @@ export abstract class Anchor extends _Ptr {
   static new(anchorUrl: URL, anchorDataHash: AnchorDataHash): Promise<Anchor> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<Anchor> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class URL extends _Ptr {
@@ -1423,6 +1457,10 @@ export abstract class URL extends _Ptr {
   abstract url(): Promise<string>;
 
   static new(url: string): Promise<URL> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static fromBytes(bytes: Uint8Array): Promise<URL> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
@@ -1442,6 +1480,10 @@ export abstract class CommitteeHotAuth extends _Ptr {
   ): Promise<CommitteeHotAuth> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  static fromBytes(bytes: Uint8Array): Promise<CommitteeHotAuth> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class CommitteeColdResign extends _Ptr {
@@ -1449,18 +1491,13 @@ export abstract class CommitteeColdResign extends _Ptr {
 
   abstract committeeColdKey(): Promise<Credential>;
 
-  abstract anchor(): Promise<Anchor>;
-
   abstract hasScriptCredentials(): Promise<boolean>;
 
   static new(committeeColdKey: Credential): Promise<CommitteeColdResign> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
-  static newWithAnchor(
-    committeeColdKey: Credential,
-    anchor: Anchor
-  ): Promise<CommitteeColdResign> {
+  static fromBytes(bytes: Uint8Array): Promise<CommitteeColdResign> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 }
