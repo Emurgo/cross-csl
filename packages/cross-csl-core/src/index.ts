@@ -1608,7 +1608,7 @@ export abstract class Certificate extends _Ptr {
   }
 
   static newCommitteeHotKeyDeregistration(
-    CommitteeColdResign: CommitteeColdResign
+    committeeColdResign: CommitteeColdResign
   ): Promise<Certificate> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
