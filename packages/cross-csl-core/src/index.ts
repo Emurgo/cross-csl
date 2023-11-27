@@ -1852,7 +1852,9 @@ export abstract class ParameterChangeAction extends _Ptr {
 export abstract class GovernanceAction extends _Ptr {
   static newParameterChangeAction(
     parameterChangeAction: ParameterChangeAction
-  ): Promise<GovernanceAction>;
+  ): Promise<GovernanceAction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 }
 
 export abstract class GovernanceActionIds extends _Ptr {
@@ -1953,7 +1955,7 @@ export abstract class VotingBuilder extends _Ptr {
     voter: Voter,
     govActionId: GovernanceActionId,
     votingProcedure: VotingProcedures
-  );
+  ): Promise<void>;
 
   abstract build(): VotingProcedures;
 
