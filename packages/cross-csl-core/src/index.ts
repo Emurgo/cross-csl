@@ -1772,6 +1772,196 @@ export abstract class Ed25519KeyHashes extends _Ptr {
   }
 }
 
+export abstract class ProtocolVersion extends _Ptr {
+  static new(major: number, minor: number): Promise<ProtocolVersion> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class ProtocolParamUpdate extends _Ptr {
+  abstract setMinFeeA(minFeeA: BigNum): Promise<void>;
+
+  abstract getMinFeeA(): Promise<BigNum>;
+
+  abstract setMinFeeB(minFeeB: BigNum): Promise<void>;
+
+  abstract minFeeB(): Promise<BigNum>;
+
+  abstract setMaxBlockBodySize(maxBlockBodySize: number): Promise<void>;
+
+  abstract maxBlockBodySize(): Promise<number | undefined>;
+
+  abstract setMaxTxSize(maxTxSize: number): Promise<void>;
+
+  abstract maxTxSize(): Promise<number | undefined>;
+
+  abstract setMaxBlockHeaderSize(maxBlockHeaderSize: number): Promise<void>;
+
+  abstract maxBlockHeaderSize(): Promise<number | undefined>;
+
+  abstract setKeyDeposit(keyDeposit: BigNum): Promise<void>;
+
+  abstract keyDeposit(): Promise<BigNum>;
+
+  abstract setPoolDeposit(poolDeposit: BigNum): Promise<void>;
+
+  abstract poolDeposit(): Promise<BigNum>;
+
+  abstract setMaxEpoch(maxEpoch: number): Promise<void>;
+
+  abstract maxEpoch(): Promise<number | undefined>;
+
+  abstract setNOpt(nOpt: number): Promise<void>;
+
+  abstract nOpt(): Promise<number | undefined>;
+
+  abstract setPoolPledgeInfluence(
+    poolPledgeInfluence: UnitInterval
+  ): Promise<void>;
+
+  abstract poolPledgeInfluence(): Promise<UnitInterval>;
+
+  abstract setExpantionRate(expansionRate: UnitInterval): Promise<void>;
+
+  abstract expantionRate(): Promise<UnitInterval>;
+
+  abstract setTreasuryGrowthRate(
+    treasuryGrowthRate: UnitInterval
+  ): Promise<void>;
+
+  abstract treasuryGrowthRate(): Promise<UnitInterval>;
+
+  abstract setProtocolVersion(version: ProtocolVersion): Promise<void>;
+
+  abstract setMinPoolCost(minPoolCost: BigNum): Promise<void>;
+
+  abstract minPoolCost(): Promise<BigNum>;
+
+  abstract setAdaPerUtxoByte(adaPerUtxoByte: BigNum): Promise<void>;
+
+  abstract adaPerUtxoByte(): Promise<BigNum>;
+
+  // abstract setCostModel(): Promise<>
+}
+
+export abstract class ParameterChangeAction extends _Ptr {
+  abstract govActionId(): Promise<GovernanceActionId>;
+  abstract protocolParamUpdates(): ProtocolParamUpdate;
+}
+
+export abstract class GovernanceAction extends _Ptr {
+  static newParameterChangeAction(
+    parameterChangeAction: ParameterChangeAction
+  ): Promise<GovernanceAction>;
+}
+
+export abstract class GovernanceActionIds extends _Ptr {
+  abstract transactionId(): TransactionHash;
+
+  static new(): Promise<GovernanceActionIds> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract add(governanceActionId: GovernanceActionId): Promise<void>;
+
+  abstract get(index: number): Promise<GovernanceActionId>;
+}
+
+export abstract class GovernanceActionId extends _Ptr {
+  abstract transactionId(): TransactionHash;
+
+  static new(
+    transactionId: TransactionHash,
+    index: number
+  ): Promise<GovernanceActionId> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
+export abstract class Voter extends _Ptr {
+  static newConstitutionalCommitteeHotKey(cred: Credential): Promise<Voter> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newDrep(cred: Credential): Promise<Voter> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newStakePool(keyHash: Ed25519KeyHash): Promise<Voter> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract toConstitutionalCommitteeHotCred(): Credential;
+
+  abstract toDrepCred(): Credential;
+
+  abstract toStakePoolKeyHash(): Ed25519KeyHash;
+
+  abstract toKeyHash(): Ed25519KeyHash;
+}
+
+export abstract class Voters extends _Ptr {
+  abstract add(voter: Voter): Promise<void>;
+  abstract get(index: number): Promise<Voter | undefined>;
+}
+
+export abstract class VotingProcedure extends _Ptr {
+  static new(vote: number): Promise<VotingProcedure> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithAnchor(vote: number, anchor: Anchor): Promise<VotingProcedure> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract anchor(): Promise<Anchor>;
+}
+
+export abstract class VotingProcedures extends _Ptr {
+  static new(): Promise<VotingProcedures> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  abstract insert(
+    voter: Voter,
+    govActionId: GovernanceActionId,
+    votingProcedure: VotingProcedure
+  ): Promise<void>;
+
+  abstract get(
+    voter: Voter,
+    govActionId: GovernanceActionId
+  ): Promise<VotingProcedure>;
+
+  abstract getVoters(): Promise<Voters>;
+
+  abstract getGovernanceActionIdsByVoter(): Promise<GovernanceActionIds>;
+}
+
+export abstract class VotingProposal extends _Ptr {
+  abstract governanceAction(): GovernanceAction;
+}
+
+export abstract class VotingBuilder extends _Ptr {
+  abstract getPlutusWitnesses(): PlutusWitness;
+
+  abstract getRefInputs(): TransactionInputs;
+
+  abstract getNativeScript(): NativeScript;
+
+  abstract add(
+    voter: Voter,
+    govActionId: GovernanceActionId,
+    votingProcedure: VotingProcedures
+  );
+
+  abstract build(): VotingProcedures;
+
+  static new(): VotingBuilder {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+}
+
 export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(
     hash: Ed25519KeyHash,
