@@ -1014,6 +1014,20 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.0.0-alpha.9.tgz#bc7cb9185d7622cc3ac8fc7803fabdf676d699cf"
   integrity sha512-XA4VxKqSTqHDhoBJWfgygVZ6wijwJiE9gozEdbdViK6kjKsSNnJ0hnuFt1LYI9b9yzk3FZlJdIKOyLaBBDmXbQ==
 
+"@emurgo/cross-csl-core@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cross-csl-core/-/cross-csl-core-3.4.0.tgz#06bafe87660c2128ad96f22c4d990899c32670dd"
+  integrity sha512-EjmoD/TRfYSwoBS+ycH675Uo4+N9LHeZDaxSWlpNSNadadvZQ6QY30VAiqLZ5axZOLacviwf6KrS+EnyuDhffQ==
+  dependencies:
+    "@cardano-foundation/ledgerjs-hw-app-cardano" "^5.0.0"
+    "@types/mocha" "^9.1.1"
+    axios "^0.24.0"
+    bech32 "^2.0.0"
+    bignumber.js "^9.0.1"
+    blake2b "^2.1.4"
+    hash-wasm "^4.9.0"
+    mocha "^10.0.0"
+
 "@emurgo/csl-mobile-bridge@^5.1.2":
   version "5.1.3"
   resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-5.1.3.tgz#91515b34fd8e4fbf507520690258d83a1e94f0d2"
