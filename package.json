@@ -10,6 +10,10 @@
     "bignumber.js": "^9.0.1",
     "yargs": "^17.2.1"
   },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@types/node": "^16.9.1",
     "@types/sinon": "^10.0.2",
