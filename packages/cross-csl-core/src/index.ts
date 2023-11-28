@@ -101,6 +101,7 @@ export interface WasmModuleProxy {
   DrepDeregistration: typeof DrepDeregistration;
   DrepRegistration: typeof DrepRegistration;
   DrepUpdate: typeof DrepUpdate;
+  DRep: typeof DRep;
   StakeAndVoteDelegation: typeof StakeAndVoteDelegation;
   StakeRegistrationAndDelegation: typeof StakeRegistrationAndDelegation;
   StakeVoteRegistrationAndDelegation: typeof StakeVoteRegistrationAndDelegation;
