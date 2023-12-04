@@ -3891,7 +3891,7 @@ export class NodeJsWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static new(
-        votingCredential: WasmContract.Certificate,
+        votingCredential: WasmContract.Credential,
         coin: WasmContract.BigNum
       ): Promise<WasmContract.DrepDeregistration> {
         return new Promise((resolve, reject) => {

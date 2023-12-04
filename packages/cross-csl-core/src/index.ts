@@ -1373,7 +1373,7 @@ export abstract class DrepDeregistration extends _Ptr {
   abstract hasScriptCredentials(): Promise<boolean>;
 
   static new(
-    votingCredential: Certificate,
+    votingCredential: Credential,
     coin: BigNum
   ): Promise<DrepDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
