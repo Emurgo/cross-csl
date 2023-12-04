@@ -2561,6 +2561,16 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
           }
         });
       }
+
+      toJson(schema: number): Promise<string> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(this.wasm.to_json(schema));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
     }
     return PlutusData;
   })();

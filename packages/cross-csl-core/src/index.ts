@@ -887,6 +887,8 @@ export abstract class PlutusData extends _Ptr {
   }
 
   abstract toHex(): Promise<string>;
+
+  abstract toJson(schema: number): Promise<string>;
 }
 
 export enum PlutusDatumSchema {
