@@ -1172,7 +1172,16 @@ export abstract class StakeRegistration extends _Ptr {
 
   abstract stakeCredential(): Promise<Credential>;
 
+  abstract coin(): Promise<BigNum>;
+
   static new(stakeCredential: Credential): Promise<StakeRegistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithCoin(
+    stakeCredential: Credential,
+    coin: BigNum
+  ): Promise<StakeRegistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1186,7 +1195,16 @@ export abstract class StakeDeregistration extends _Ptr {
 
   abstract stakeCredential(): Promise<Credential>;
 
+  abstract coin(): Promise<BigNum>;
+
   static new(stakeCredential: Credential): Promise<StakeDeregistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithCoin(
+    stakeCredential: Credential,
+    coin: BigNum
+  ): Promise<StakeDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 

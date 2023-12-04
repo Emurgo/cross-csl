@@ -3661,6 +3661,16 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       static new(
         stakeCredential: WasmContract.Credential
       ): Promise<StakeRegistration> {
@@ -3669,6 +3679,27 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
             resolve(
               new StakeRegistration(
                 WasmV4.StakeRegistration.new(stakeCredential.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newWithCoin(
+        stakeCredential: WasmContract.Credential,
+        coin: WasmContract.BigNum
+      ): Promise<StakeRegistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeRegistration(
+                WasmV4.StakeRegistration.new_with_coin(
+                  stakeCredential.wasm,
+                  coin.wasm
+                ),
                 $outer._ctx
               )
             );
@@ -3725,6 +3756,16 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      coin(): Promise<WasmContract.BigNum> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(new $outer.BigNum(this.wasm.coin(), $outer._ctx));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
       static new(
         stakeCredential: WasmContract.Credential
       ): Promise<StakeDeregistration> {
@@ -3733,6 +3774,27 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
             resolve(
               new StakeDeregistration(
                 WasmV4.StakeDeregistration.new(stakeCredential.wasm),
+                $outer._ctx
+              )
+            );
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      static newWithCoin(
+        stakeCredential: WasmContract.Credential,
+        coin: WasmContract.BigNum
+      ): Promise<StakeDeregistration> {
+        return new Promise((resolve, reject) => {
+          try {
+            resolve(
+              new StakeDeregistration(
+                WasmV4.StakeDeregistration.new_with_coin(
+                  stakeCredential.wasm,
+                  coin.wasm
+                ),
                 $outer._ctx
               )
             );
@@ -3890,7 +3952,7 @@ export class BrowserWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static new(
-        votingCredential: WasmContract.Certificate,
+        votingCredential: WasmContract.Credential,
         coin: WasmContract.BigNum
       ): Promise<WasmContract.DrepDeregistration> {
         return new Promise((resolve, reject) => {
