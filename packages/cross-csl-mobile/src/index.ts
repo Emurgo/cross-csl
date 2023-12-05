@@ -1,5 +1,5 @@
 import * as WasmV4 from '@emurgo/csl-mobile-bridge';
-import * as WasmContract from '@emurgo/cross-csl-core';
+import * as WasmContract from '../../cross-csl-core/src';
 
 const { Ptr, WasmProxy } = WasmContract;
 
@@ -2568,6 +2568,111 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
           $outer._ctx
         );
       }
+
+      static async newDrepDeregistration(
+        drepDeregistration: WasmContract.DrepDeregistration
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_drep_deregistration(
+            drepDeregistration.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newDrepRegistration(
+        drepRegistration: WasmContract.DrepRegistration
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_drep_registration(drepRegistration.wasm),
+          $outer._ctx
+        );
+      }
+
+      static async newDrepUpdate(
+        drepUpdate: WasmContract.DrepUpdate
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_drep_update(drepUpdate.wasm),
+          $outer._ctx
+        );
+      }
+
+      static async newStakeAndVoteDelegation(
+        stakeAndVoteDelegation: WasmContract.StakeAndVoteDelegation
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_stake_and_vote_delegation(
+            stakeAndVoteDelegation.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newStakeRegistrationAndDelegation(
+        stakeRegistrationAndDelegation: WasmContract.StakeRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_stake_registration_and_delegation(
+            stakeRegistrationAndDelegation.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newStakeVoteRegistrationAndDelegation(
+        stakeVoteRegistrationAndDelegation: WasmContract.StakeVoteRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_stake_vote_registration_and_delegation(
+            stakeVoteRegistrationAndDelegation.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newVoteDelegation(
+        voteDelegation: WasmContract.VoteDelegation
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_vote_delegation(voteDelegation.wasm),
+          $outer._ctx
+        );
+      }
+
+      static async newVoteRegistrationAndDelegation(
+        voteRegistrationAndDelegation: WasmContract.VoteRegistrationAndDelegation
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_vote_registration_and_delegation(
+            voteRegistrationAndDelegation.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newCommitteeHotKeyRegistration(
+        committeeHotAuth: WasmContract.CommitteeHotAuth
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_committee_hot_key_registration(
+            committeeHotAuth.wasm
+          ),
+          $outer._ctx
+        );
+      }
+
+      static async newCommitteeHotKeyDeregistration(
+        committeeColdResign: WasmContract.CommitteeColdResign
+      ): Promise<Certificate> {
+        return new Certificate(
+          await WasmV4.Certificate.new_committee_hot_key_deregistration(
+            committeeColdResign.wasm
+          ),
+          $outer._ctx
+        );
+    }
+
 
       async asDrepRegistration(): Promise<WasmContract.DrepRegistration> {
         return new $outer.DrepRegistration(
