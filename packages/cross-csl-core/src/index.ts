@@ -101,6 +101,7 @@ export interface WasmModuleProxy {
   DrepDeregistration: typeof DrepDeregistration;
   DrepRegistration: typeof DrepRegistration;
   DrepUpdate: typeof DrepUpdate;
+  DRep: typeof DRep;
   StakeAndVoteDelegation: typeof StakeAndVoteDelegation;
   StakeRegistrationAndDelegation: typeof StakeRegistrationAndDelegation;
   StakeVoteRegistrationAndDelegation: typeof StakeVoteRegistrationAndDelegation;
@@ -1173,7 +1174,16 @@ export abstract class StakeRegistration extends _Ptr {
 
   abstract stakeCredential(): Promise<Credential>;
 
+  abstract coin(): Promise<BigNum>;
+
   static new(stakeCredential: Credential): Promise<StakeRegistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithCoin(
+    stakeCredential: Credential,
+    coin: BigNum
+  ): Promise<StakeRegistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1187,7 +1197,16 @@ export abstract class StakeDeregistration extends _Ptr {
 
   abstract stakeCredential(): Promise<Credential>;
 
+  abstract coin(): Promise<BigNum>;
+
   static new(stakeCredential: Credential): Promise<StakeDeregistration> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  static newWithCoin(
+    stakeCredential: Credential,
+    coin: BigNum
+  ): Promise<StakeDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1374,7 +1393,7 @@ export abstract class DrepDeregistration extends _Ptr {
   abstract hasScriptCredentials(): Promise<boolean>;
 
   static new(
-    votingCredential: Certificate,
+    votingCredential: Credential,
     coin: BigNum
   ): Promise<DrepDeregistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
