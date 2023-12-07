@@ -1014,9 +1014,6 @@
   resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.0.0-alpha.15.tgz#244fb4df7c240def0cf259b915158b2653a4316c"
   integrity sha512-s75fBN9xAUkZNPaeBoVtXKQJaOjMr1ndmB6i9Ms79J/FN9LUq9XS6p08lVgWyjZPg6BEDU3wdrDJCtKYnMWIPg==
 
-"@emurgo/cross-csl-core@file:packages/cross-csl-core/dist":
-  version "0.0.0"
-
 "@emurgo/csl-mobile-bridge@6.0.0-alpha.2":
   version "6.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.0.0-alpha.2.tgz#a2180e1af1e1bb700091cd70b44259cf6e3b1447"

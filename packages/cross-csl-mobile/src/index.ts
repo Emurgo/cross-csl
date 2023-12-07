@@ -18,122 +18,117 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
   async calculateExUnitsCeilCost(exUnits: WasmContract.ExUnits, exUnitPrices: WasmContract.ExUnitPrices): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.calculate_ex_units_ceil_cost(exUnits.wasm, exUnitPrices.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   async createSendAll(address: WasmContract.Address, utxos: WasmContract.TransactionUnspentOutputs, config: WasmContract.TransactionBuilderConfig): Promise<WasmContract.TransactionBatchList> {
     const ret = await WasmV4.create_send_all(address.wasm, utxos.wasm, config.wasm);
     return new this.TransactionBatchList(ret, this._ctx);
-  };
+  }
 
   decodeArbitraryBytesFromMetadatum(metadata: WasmContract.TransactionMetadatum): Promise<Uint8Array> {
-    const ret = WasmV4.decode_arbitrary_bytes_from_metadatum(metadata.wasm);
-    return ret;
-  };
+    return WasmV4.decode_arbitrary_bytes_from_metadatum(metadata.wasm);
+  }
 
   decodeMetadatumToJsonStr(metadatum: WasmContract.TransactionMetadatum, schema: WasmContract.MetadataJsonSchema): Promise<string> {
-    const ret = WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema);
-    return ret;
-  };
+    return WasmV4.decode_metadatum_to_json_str(metadatum.wasm, schema);
+  }
 
   decodePlutusDatumToJsonStr(datum: WasmContract.PlutusData, schema: WasmContract.PlutusDatumSchema): Promise<string> {
-    const ret = WasmV4.decode_plutus_datum_to_json_str(datum.wasm, schema);
-    return ret;
-  };
+    return WasmV4.decode_plutus_datum_to_json_str(datum.wasm, schema);
+  }
 
   decryptWithPassword(password: string, data: string): Promise<string> {
-    const ret = WasmV4.decrypt_with_password(password, data);
-    return ret;
-  };
+    return WasmV4.decrypt_with_password(password, data);
+  }
 
   async encodeArbitraryBytesAsMetadatum(bytes: Uint8Array): Promise<WasmContract.TransactionMetadatum> {
     const ret = await WasmV4.encode_arbitrary_bytes_as_metadatum(bytes);
     return new this.TransactionMetadatum(ret, this._ctx);
-  };
+  }
 
   async encodeJsonStrToMetadatum(json: string, schema: WasmContract.MetadataJsonSchema): Promise<WasmContract.TransactionMetadatum> {
     const ret = await WasmV4.encode_json_str_to_metadatum(json, schema);
     return new this.TransactionMetadatum(ret, this._ctx);
-  };
+  }
 
   async encodeJsonStrToNativeScript(json: string, selfXpub: string, schema: WasmContract.ScriptSchema): Promise<WasmContract.NativeScript> {
     const ret = await WasmV4.encode_json_str_to_native_script(json, selfXpub, schema);
     return new this.NativeScript(ret, this._ctx);
-  };
+  }
 
   async encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData> {
     const ret = await WasmV4.encode_json_str_to_plutus_datum(json, schema);
     return new this.PlutusData(ret, this._ctx);
-  };
+  }
 
   encryptWithPassword(password: string, salt: string, nonce: string, data: string): Promise<string> {
-    const ret = WasmV4.encrypt_with_password(password, salt, nonce, data);
-    return ret;
-  };
+    return WasmV4.encrypt_with_password(password, salt, nonce, data);
+  }
 
   async getDeposit(txbody: WasmContract.TransactionBody, poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.get_deposit(txbody.wasm, poolDeposit.wasm, keyDeposit.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   async getImplicitInput(txbody: WasmContract.TransactionBody, poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): Promise<WasmContract.Value> {
     const ret = await WasmV4.get_implicit_input(txbody.wasm, poolDeposit.wasm, keyDeposit.wasm);
     return new this.Value(ret, this._ctx);
-  };
+  }
 
   async hashAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): Promise<WasmContract.AuxiliaryDataHash> {
     const ret = await WasmV4.hash_auxiliary_data(auxiliaryData.wasm);
     return new this.AuxiliaryDataHash(ret, this._ctx);
-  };
+  }
 
   async hashPlutusData(plutusData: WasmContract.PlutusData): Promise<WasmContract.DataHash> {
     const ret = await WasmV4.hash_plutus_data(plutusData.wasm);
     return new this.DataHash(ret, this._ctx);
-  };
+  }
 
   async hashScriptData(redeemers: WasmContract.Redeemers, costModels: WasmContract.Costmdls, datums: Optional<WasmContract.PlutusList>): Promise<WasmContract.ScriptDataHash> {
     const ret = await WasmV4.hash_script_data(redeemers.wasm, costModels.wasm, datums?.wasm);
     return new this.ScriptDataHash(ret, this._ctx);
-  };
+  }
 
   async hashTransaction(txBody: WasmContract.TransactionBody): Promise<WasmContract.TransactionHash> {
     const ret = await WasmV4.hash_transaction(txBody.wasm);
     return new this.TransactionHash(ret, this._ctx);
-  };
+  }
 
   async makeDaedalusBootstrapWitness(txBodyHash: WasmContract.TransactionHash, addr: WasmContract.ByronAddress, key: WasmContract.LegacyDaedalusPrivateKey): Promise<WasmContract.BootstrapWitness> {
     const ret = await WasmV4.make_daedalus_bootstrap_witness(txBodyHash.wasm, addr.wasm, key.wasm);
     return new this.BootstrapWitness(ret, this._ctx);
-  };
+  }
 
   async makeIcarusBootstrapWitness(txBodyHash: WasmContract.TransactionHash, addr: WasmContract.ByronAddress, key: WasmContract.Bip32PrivateKey): Promise<WasmContract.BootstrapWitness> {
     const ret = await WasmV4.make_icarus_bootstrap_witness(txBodyHash.wasm, addr.wasm, key.wasm);
     return new this.BootstrapWitness(ret, this._ctx);
-  };
+  }
 
   async makeVkeyWitness(txBodyHash: WasmContract.TransactionHash, sk: WasmContract.PrivateKey): Promise<WasmContract.Vkeywitness> {
     const ret = await WasmV4.make_vkey_witness(txBodyHash.wasm, sk.wasm);
     return new this.Vkeywitness(ret, this._ctx);
-  };
+  }
 
   async minAdaForOutput(output: WasmContract.TransactionOutput, dataCost: WasmContract.DataCost): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.min_ada_for_output(output.wasm, dataCost.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   async minAdaRequired(assets: WasmContract.Value, hasDataHash: boolean, coinsPerUtxoWord: WasmContract.BigNum): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.min_ada_required(assets.wasm, hasDataHash, coinsPerUtxoWord.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   async minFee(tx: WasmContract.Transaction, linearFee: WasmContract.LinearFee): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.min_fee(tx.wasm, linearFee.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   async minScriptFee(tx: WasmContract.Transaction, exUnitPrices: WasmContract.ExUnitPrices): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.min_script_fee(tx.wasm, exUnitPrices.wasm);
     return new this.BigNum(ret, this._ctx);
-  };
+  }
 
   public Address = (() => {
     const $outer = this;
@@ -149,8 +144,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Address> {
@@ -159,8 +153,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Address> {
@@ -169,13 +162,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: Optional<string>): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.Address> {
@@ -184,8 +175,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       networkId(): Promise<number> {
-        const ret = this.wasm.network_id();
-        return ret;
+        return this.wasm.network_id();
       }
 
     }
@@ -201,8 +191,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Anchor> {
@@ -211,8 +200,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Anchor> {
@@ -221,8 +209,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Anchor> {
@@ -263,13 +250,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.AnchorDataHash> {
@@ -278,8 +263,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.AnchorDataHash> {
@@ -300,8 +284,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.AssetName> {
@@ -310,8 +293,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.AssetName> {
@@ -320,8 +302,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.AssetName> {
@@ -335,8 +316,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       name(): Promise<Uint8Array> {
-        const ret = this.wasm.name();
-        return ret;
+        return this.wasm.name();
       }
 
     }
@@ -352,8 +332,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.AssetNames> {
@@ -362,8 +341,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.AssetNames> {
@@ -372,8 +350,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.AssetNames> {
@@ -387,8 +364,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.AssetName> {
@@ -397,8 +373,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.AssetName): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -414,8 +389,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Assets> {
@@ -424,8 +398,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Assets> {
@@ -434,8 +407,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Assets> {
@@ -449,8 +421,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.AssetName, value: WasmContract.BigNum): Promise<Optional<WasmContract.BigNum>> {
@@ -483,8 +454,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.AuxiliaryData> {
@@ -493,8 +463,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.AuxiliaryData> {
@@ -503,8 +472,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.AuxiliaryData> {
@@ -524,8 +492,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMetadata(metadata: WasmContract.GeneralTransactionMetadata): Promise<void> {
-        const ret = this.wasm.set_metadata(metadata.wasm);
-        return ret;
+        return this.wasm.set_metadata(metadata.wasm);
       }
 
       async nativeScripts(): Promise<Optional<WasmContract.NativeScripts>> {
@@ -535,8 +502,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setNativeScripts(nativeScripts: WasmContract.NativeScripts): Promise<void> {
-        const ret = this.wasm.set_native_scripts(nativeScripts.wasm);
-        return ret;
+        return this.wasm.set_native_scripts(nativeScripts.wasm);
       }
 
       async plutusScripts(): Promise<Optional<WasmContract.PlutusScripts>> {
@@ -546,18 +512,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setPlutusScripts(plutusScripts: WasmContract.PlutusScripts): Promise<void> {
-        const ret = this.wasm.set_plutus_scripts(plutusScripts.wasm);
-        return ret;
+        return this.wasm.set_plutus_scripts(plutusScripts.wasm);
       }
 
       preferAlonzoFormat(): Promise<boolean> {
-        const ret = this.wasm.prefer_alonzo_format();
-        return ret;
+        return this.wasm.prefer_alonzo_format();
       }
 
       setPreferAlonzoFormat(prefer: boolean): Promise<void> {
-        const ret = this.wasm.set_prefer_alonzo_format(prefer);
-        return ret;
+        return this.wasm.set_prefer_alonzo_format(prefer);
       }
 
     }
@@ -578,13 +541,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.AuxiliaryDataHash> {
@@ -593,8 +554,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.AuxiliaryDataHash> {
@@ -620,8 +580,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(txIndex: number, data: WasmContract.AuxiliaryData): Promise<Optional<WasmContract.AuxiliaryData>> {
@@ -637,8 +596,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       indices(): Promise<Uint32Array> {
-        const ret = this.wasm.indices();
-        return ret;
+        return this.wasm.indices();
       }
 
     }
@@ -692,8 +650,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.BigInt> {
@@ -702,8 +659,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.BigInt> {
@@ -712,8 +668,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.BigInt> {
@@ -722,8 +677,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isZero(): Promise<boolean> {
-        const ret = this.wasm.is_zero();
-        return ret;
+        return this.wasm.is_zero();
       }
 
       async asU64(): Promise<Optional<WasmContract.BigNum>> {
@@ -744,8 +698,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toStr(): Promise<string> {
-        const ret = this.wasm.to_str();
-        return ret;
+        return this.wasm.to_str();
       }
 
       async add(other: WasmContract.BigInt): Promise<WasmContract.BigInt> {
@@ -786,8 +739,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.BigNum> {
@@ -796,8 +748,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.BigNum> {
@@ -806,8 +757,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.BigNum> {
@@ -821,8 +771,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toStr(): Promise<string> {
-        const ret = this.wasm.to_str();
-        return ret;
+        return this.wasm.to_str();
       }
 
       static async zero(): Promise<WasmContract.BigNum> {
@@ -836,8 +785,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isZero(): Promise<boolean> {
-        const ret = this.wasm.is_zero();
-        return ret;
+        return this.wasm.is_zero();
       }
 
       async divFloor(other: WasmContract.BigNum): Promise<WasmContract.BigNum> {
@@ -866,13 +814,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       compare(rhsValue: WasmContract.BigNum): Promise<number> {
-        const ret = this.wasm.compare(rhsValue.wasm);
-        return ret;
+        return this.wasm.compare(rhsValue.wasm);
       }
 
       lessThan(rhsValue: WasmContract.BigNum): Promise<boolean> {
-        const ret = this.wasm.less_than(rhsValue.wasm);
-        return ret;
+        return this.wasm.less_than(rhsValue.wasm);
       }
 
       static async maxValue(): Promise<WasmContract.BigNum> {
@@ -908,8 +854,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       to_128Xprv(): Promise<Uint8Array> {
-        const ret = this.wasm.to_128_xprv();
-        return ret;
+        return this.wasm.to_128_xprv();
       }
 
       static async generateEd25519Bip32(): Promise<WasmContract.Bip32PrivateKey> {
@@ -933,8 +878,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       static async fromBech32(bech32Str: string): Promise<WasmContract.Bip32PrivateKey> {
@@ -943,8 +887,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBech32(): Promise<string> {
-        const ret = this.wasm.to_bech32();
-        return ret;
+        return this.wasm.to_bech32();
       }
 
       static async fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<WasmContract.Bip32PrivateKey> {
@@ -953,13 +896,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       chaincode(): Promise<Uint8Array> {
-        const ret = this.wasm.chaincode();
-        return ret;
+        return this.wasm.chaincode();
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Bip32PrivateKey> {
@@ -995,8 +936,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       static async fromBech32(bech32Str: string): Promise<WasmContract.Bip32PublicKey> {
@@ -1005,18 +945,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBech32(): Promise<string> {
-        const ret = this.wasm.to_bech32();
-        return ret;
+        return this.wasm.to_bech32();
       }
 
       chaincode(): Promise<Uint8Array> {
-        const ret = this.wasm.chaincode();
-        return ret;
+        return this.wasm.chaincode();
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Bip32PublicKey> {
@@ -1037,8 +974,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Block> {
@@ -1047,8 +983,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Block> {
@@ -1057,8 +992,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Block> {
@@ -1087,8 +1021,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       invalidTransactions(): Promise<Uint32Array> {
-        const ret = this.wasm.invalid_transactions();
-        return ret;
+        return this.wasm.invalid_transactions();
       }
 
       static async new(header: WasmContract.Header, transactionBodies: WasmContract.TransactionBodies, transactionWitnessSets: WasmContract.TransactionWitnessSets, auxiliaryDataSet: WasmContract.AuxiliaryDataSet, invalidTransactions: Uint32Array): Promise<WasmContract.Block> {
@@ -1114,13 +1047,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.BlockHash> {
@@ -1129,8 +1060,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.BlockHash> {
@@ -1151,8 +1081,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.BootstrapWitness> {
@@ -1161,8 +1090,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.BootstrapWitness> {
@@ -1171,8 +1099,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.BootstrapWitness> {
@@ -1191,13 +1118,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       chainCode(): Promise<Uint8Array> {
-        const ret = this.wasm.chain_code();
-        return ret;
+        return this.wasm.chain_code();
       }
 
       attributes(): Promise<Uint8Array> {
-        const ret = this.wasm.attributes();
-        return ret;
+        return this.wasm.attributes();
       }
 
       static async new(vkey: WasmContract.Vkey, signature: WasmContract.Ed25519Signature, chainCode: Uint8Array, attributes: Uint8Array): Promise<WasmContract.BootstrapWitness> {
@@ -1223,8 +1148,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.BootstrapWitness> {
@@ -1233,8 +1157,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.BootstrapWitness): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -1250,13 +1173,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBase58(): Promise<string> {
-        const ret = this.wasm.to_base58();
-        return ret;
+        return this.wasm.to_base58();
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ByronAddress> {
@@ -1265,18 +1186,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       byronProtocolMagic(): Promise<number> {
-        const ret = this.wasm.byron_protocol_magic();
-        return ret;
+        return this.wasm.byron_protocol_magic();
       }
 
       attributes(): Promise<Uint8Array> {
-        const ret = this.wasm.attributes();
-        return ret;
+        return this.wasm.attributes();
       }
 
       networkId(): Promise<number> {
-        const ret = this.wasm.network_id();
-        return ret;
+        return this.wasm.network_id();
       }
 
       static async fromBase58(s: string): Promise<WasmContract.ByronAddress> {
@@ -1290,8 +1208,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       static isValid(s: string): Promise<boolean> {
-        const ret = WasmV4.ByronAddress.is_valid(s);
-        return ret;
+        return WasmV4.ByronAddress.is_valid(s);
       }
 
       async toAddress(): Promise<WasmContract.Address> {
@@ -1318,8 +1235,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Certificate> {
@@ -1328,8 +1244,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Certificate> {
@@ -1338,8 +1253,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Certificate> {
@@ -1433,8 +1347,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.CertificateKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asStakeRegistration(): Promise<Optional<WasmContract.StakeRegistration>> {
@@ -1540,8 +1453,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasRequiredScriptWitness(): Promise<boolean> {
-        const ret = this.wasm.has_required_script_witness();
-        return ret;
+        return this.wasm.has_required_script_witness();
       }
 
     }
@@ -1557,8 +1469,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Certificates> {
@@ -1567,8 +1478,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Certificates> {
@@ -1577,8 +1487,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Certificates> {
@@ -1592,8 +1501,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Certificate> {
@@ -1602,8 +1510,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Certificate): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -1624,18 +1531,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(cert: WasmContract.Certificate): Promise<void> {
-        const ret = this.wasm.add(cert.wasm);
-        return ret;
+        return this.wasm.add(cert.wasm);
       }
 
       addWithPlutusWitness(cert: WasmContract.Certificate, witness: WasmContract.PlutusWitness): Promise<void> {
-        const ret = this.wasm.add_with_plutus_witness(cert.wasm, witness.wasm);
-        return ret;
+        return this.wasm.add_with_plutus_witness(cert.wasm, witness.wasm);
       }
 
       addWithNativeScript(cert: WasmContract.Certificate, nativeScriptSource: WasmContract.NativeScriptSource): Promise<void> {
-        const ret = this.wasm.add_with_native_script(cert.wasm, nativeScriptSource.wasm);
-        return ret;
+        return this.wasm.add_with_native_script(cert.wasm, nativeScriptSource.wasm);
       }
 
       async getPlutusWitnesses(): Promise<WasmContract.PlutusWitnesses> {
@@ -1664,8 +1568,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasPlutusScripts(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_scripts();
-        return ret;
+        return this.wasm.has_plutus_scripts();
       }
 
       async build(): Promise<WasmContract.Certificates> {
@@ -1686,8 +1589,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Committee> {
@@ -1696,8 +1598,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Committee> {
@@ -1706,8 +1607,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Committee> {
@@ -1731,13 +1631,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addMember(committeeColdCredential: WasmContract.Credential, epoch: number): Promise<void> {
-        const ret = this.wasm.add_member(committeeColdCredential.wasm, epoch);
-        return ret;
+        return this.wasm.add_member(committeeColdCredential.wasm, epoch);
       }
 
       getMemberEpoch(committeeColdCredential: WasmContract.Credential): Promise<Optional<number>> {
-        const ret = this.wasm.get_member_epoch(committeeColdCredential.wasm);
-        return ret;
+        return this.wasm.get_member_epoch(committeeColdCredential.wasm);
       }
 
     }
@@ -1753,8 +1651,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.CommitteeColdResign> {
@@ -1763,8 +1660,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.CommitteeColdResign> {
@@ -1773,8 +1669,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.CommitteeColdResign> {
@@ -1804,8 +1699,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -1821,8 +1715,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.CommitteeHotAuth> {
@@ -1831,8 +1724,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.CommitteeHotAuth> {
@@ -1841,8 +1733,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.CommitteeHotAuth> {
@@ -1866,8 +1757,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -1883,8 +1773,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Constitution> {
@@ -1893,8 +1782,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Constitution> {
@@ -1903,8 +1791,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Constitution> {
@@ -1946,8 +1833,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ConstrPlutusData> {
@@ -1956,8 +1842,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ConstrPlutusData> {
@@ -1993,8 +1878,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.CostModel> {
@@ -2003,8 +1887,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.CostModel> {
@@ -2013,8 +1896,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.CostModel> {
@@ -2038,8 +1920,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
     }
@@ -2055,8 +1936,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Costmdls> {
@@ -2065,8 +1945,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Costmdls> {
@@ -2075,8 +1954,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Costmdls> {
@@ -2090,8 +1968,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.Language, value: WasmContract.CostModel): Promise<Optional<WasmContract.CostModel>> {
@@ -2151,18 +2028,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.CredKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       hasScriptHash(): Promise<boolean> {
-        const ret = this.wasm.has_script_hash();
-        return ret;
+        return this.wasm.has_script_hash();
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Credential> {
@@ -2171,8 +2045,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Credential> {
@@ -2181,8 +2054,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Credential> {
@@ -2203,8 +2075,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Credentials> {
@@ -2213,8 +2084,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Credentials> {
@@ -2223,8 +2093,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Credentials> {
@@ -2238,8 +2107,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Credential> {
@@ -2248,8 +2116,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Credential): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -2265,8 +2132,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DNSRecordAorAAAA> {
@@ -2275,8 +2141,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DNSRecordAorAAAA> {
@@ -2285,8 +2150,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DNSRecordAorAAAA> {
@@ -2300,8 +2164,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       record(): Promise<string> {
-        const ret = this.wasm.record();
-        return ret;
+        return this.wasm.record();
       }
 
     }
@@ -2317,8 +2180,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DNSRecordSRV> {
@@ -2327,8 +2189,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DNSRecordSRV> {
@@ -2337,8 +2198,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DNSRecordSRV> {
@@ -2352,8 +2212,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       record(): Promise<string> {
-        const ret = this.wasm.record();
-        return ret;
+        return this.wasm.record();
       }
 
     }
@@ -2369,8 +2228,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DRep> {
@@ -2379,8 +2237,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DRep> {
@@ -2389,8 +2246,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DRep> {
@@ -2419,8 +2275,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.DRepKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async toKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
@@ -2480,13 +2335,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.DataHash> {
@@ -2495,8 +2348,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.DataHash> {
@@ -2539,8 +2391,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepDeregistration> {
@@ -2549,8 +2400,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DrepDeregistration> {
@@ -2559,8 +2409,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DrepDeregistration> {
@@ -2584,8 +2433,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -2601,8 +2449,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepRegistration> {
@@ -2611,8 +2458,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DrepRegistration> {
@@ -2621,8 +2467,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DrepRegistration> {
@@ -2669,8 +2514,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepUpdate> {
@@ -2679,8 +2523,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DrepUpdate> {
@@ -2689,8 +2532,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DrepUpdate> {
@@ -2720,8 +2562,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -2737,8 +2578,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepVotingThresholds> {
@@ -2747,8 +2587,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.DrepVotingThresholds> {
@@ -2757,8 +2596,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.DrepVotingThresholds> {
@@ -2777,53 +2615,43 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMotionNoConfidence(motionNoConfidence: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_motion_no_confidence(motionNoConfidence.wasm);
-        return ret;
+        return this.wasm.set_motion_no_confidence(motionNoConfidence.wasm);
       }
 
       setCommitteeNormal(committeeNormal: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_committee_normal(committeeNormal.wasm);
-        return ret;
+        return this.wasm.set_committee_normal(committeeNormal.wasm);
       }
 
       setCommitteeNoConfidence(committeeNoConfidence: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_committee_no_confidence(committeeNoConfidence.wasm);
-        return ret;
+        return this.wasm.set_committee_no_confidence(committeeNoConfidence.wasm);
       }
 
       setUpdateConstitution(updateConstitution: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_update_constitution(updateConstitution.wasm);
-        return ret;
+        return this.wasm.set_update_constitution(updateConstitution.wasm);
       }
 
       setHardForkInitiation(hardForkInitiation: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_hard_fork_initiation(hardForkInitiation.wasm);
-        return ret;
+        return this.wasm.set_hard_fork_initiation(hardForkInitiation.wasm);
       }
 
       setPpNetworkGroup(ppNetworkGroup: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_pp_network_group(ppNetworkGroup.wasm);
-        return ret;
+        return this.wasm.set_pp_network_group(ppNetworkGroup.wasm);
       }
 
       setPpEconomicGroup(ppEconomicGroup: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_pp_economic_group(ppEconomicGroup.wasm);
-        return ret;
+        return this.wasm.set_pp_economic_group(ppEconomicGroup.wasm);
       }
 
       setPpTechnicalGroup(ppTechnicalGroup: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_pp_technical_group(ppTechnicalGroup.wasm);
-        return ret;
+        return this.wasm.set_pp_technical_group(ppTechnicalGroup.wasm);
       }
 
       setPpGovernanceGroup(ppGovernanceGroup: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_pp_governance_group(ppGovernanceGroup.wasm);
-        return ret;
+        return this.wasm.set_pp_governance_group(ppGovernanceGroup.wasm);
       }
 
       setTreasuryWithdrawal(treasuryWithdrawal: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_treasury_withdrawal(treasuryWithdrawal.wasm);
-        return ret;
+        return this.wasm.set_treasury_withdrawal(treasuryWithdrawal.wasm);
       }
 
       async motionNoConfidence(): Promise<WasmContract.UnitInterval> {
@@ -2894,13 +2722,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.Ed25519KeyHash> {
@@ -2909,8 +2735,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.Ed25519KeyHash> {
@@ -2931,8 +2756,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Ed25519KeyHashes> {
@@ -2941,8 +2765,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Ed25519KeyHashes> {
@@ -2951,8 +2774,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Ed25519KeyHashes> {
@@ -2966,8 +2788,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Ed25519KeyHash> {
@@ -2976,8 +2797,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Ed25519KeyHash): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
       async toOption(): Promise<Optional<WasmContract.Ed25519KeyHashes>> {
@@ -2999,18 +2819,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(): Promise<string> {
-        const ret = this.wasm.to_bech32();
-        return ret;
+        return this.wasm.to_bech32();
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromBech32(bech32Str: string): Promise<WasmContract.Ed25519Signature> {
@@ -3074,8 +2891,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ExUnitPrices> {
@@ -3084,8 +2900,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ExUnitPrices> {
@@ -3094,8 +2909,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ExUnitPrices> {
@@ -3131,8 +2945,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ExUnits> {
@@ -3141,8 +2954,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ExUnits> {
@@ -3151,8 +2963,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ExUnits> {
@@ -3188,8 +2999,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.FixedTransaction> {
@@ -3198,8 +3008,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.FixedTransaction> {
@@ -3223,18 +3032,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       rawBody(): Promise<Uint8Array> {
-        const ret = this.wasm.raw_body();
-        return ret;
+        return this.wasm.raw_body();
       }
 
       setBody(rawBody: Uint8Array): Promise<void> {
-        const ret = this.wasm.set_body(rawBody);
-        return ret;
+        return this.wasm.set_body(rawBody);
       }
 
       setWitnessSet(rawWitnessSet: Uint8Array): Promise<void> {
-        const ret = this.wasm.set_witness_set(rawWitnessSet);
-        return ret;
+        return this.wasm.set_witness_set(rawWitnessSet);
       }
 
       async witnessSet(): Promise<WasmContract.TransactionWitnessSet> {
@@ -3243,23 +3049,19 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       rawWitnessSet(): Promise<Uint8Array> {
-        const ret = this.wasm.raw_witness_set();
-        return ret;
+        return this.wasm.raw_witness_set();
       }
 
       setIsValid(valid: boolean): Promise<void> {
-        const ret = this.wasm.set_is_valid(valid);
-        return ret;
+        return this.wasm.set_is_valid(valid);
       }
 
       isValid(): Promise<boolean> {
-        const ret = this.wasm.is_valid();
-        return ret;
+        return this.wasm.is_valid();
       }
 
       setAuxiliaryData(rawAuxiliaryData: Uint8Array): Promise<void> {
-        const ret = this.wasm.set_auxiliary_data(rawAuxiliaryData);
-        return ret;
+        return this.wasm.set_auxiliary_data(rawAuxiliaryData);
       }
 
       async auxiliaryData(): Promise<Optional<WasmContract.AuxiliaryData>> {
@@ -3269,8 +3071,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       rawAuxiliaryData(): Promise<Optional<Uint8Array>> {
-        const ret = this.wasm.raw_auxiliary_data();
-        return ret;
+        return this.wasm.raw_auxiliary_data();
       }
 
     }
@@ -3286,8 +3087,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.GeneralTransactionMetadata> {
@@ -3296,8 +3096,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.GeneralTransactionMetadata> {
@@ -3306,8 +3105,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GeneralTransactionMetadata> {
@@ -3321,8 +3119,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.BigNum, value: WasmContract.TransactionMetadatum): Promise<Optional<WasmContract.TransactionMetadatum>> {
@@ -3360,13 +3157,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.GenesisDelegateHash> {
@@ -3375,8 +3170,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.GenesisDelegateHash> {
@@ -3402,13 +3196,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.GenesisHash> {
@@ -3417,8 +3209,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.GenesisHash> {
@@ -3439,8 +3230,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.GenesisHashes> {
@@ -3449,8 +3239,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.GenesisHashes> {
@@ -3459,8 +3248,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GenesisHashes> {
@@ -3474,8 +3262,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.GenesisHash> {
@@ -3484,8 +3271,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.GenesisHash): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -3501,8 +3287,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.GenesisKeyDelegation> {
@@ -3511,8 +3296,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.GenesisKeyDelegation> {
@@ -3521,8 +3305,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GenesisKeyDelegation> {
@@ -3563,8 +3346,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.GovernanceAction> {
@@ -3573,8 +3355,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.GovernanceAction> {
@@ -3583,8 +3364,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GovernanceAction> {
@@ -3628,8 +3408,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.GovernanceActionKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asParameterChangeAction(): Promise<Optional<WasmContract.ParameterChangeAction>> {
@@ -3687,8 +3466,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.GovernanceActionId> {
@@ -3697,8 +3475,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.GovernanceActionId> {
@@ -3707,8 +3484,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GovernanceActionId> {
@@ -3722,8 +3498,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       index(): Promise<number> {
-        const ret = this.wasm.index();
-        return ret;
+        return this.wasm.index();
       }
 
       static async new(transactionId: WasmContract.TransactionHash, index: number): Promise<WasmContract.GovernanceActionId> {
@@ -3744,8 +3519,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.GovernanceActionIds> {
@@ -3759,8 +3533,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(governanceActionId: WasmContract.GovernanceActionId): Promise<void> {
-        const ret = this.wasm.add(governanceActionId.wasm);
-        return ret;
+        return this.wasm.add(governanceActionId.wasm);
       }
 
       async get(index: number): Promise<Optional<WasmContract.GovernanceActionId>> {
@@ -3770,8 +3543,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
     }
@@ -3787,8 +3559,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.HardForkInitiationAction> {
@@ -3797,8 +3568,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.HardForkInitiationAction> {
@@ -3807,8 +3577,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.HardForkInitiationAction> {
@@ -3850,8 +3619,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Header> {
@@ -3860,8 +3628,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Header> {
@@ -3870,8 +3637,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Header> {
@@ -3907,8 +3673,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.HeaderBody> {
@@ -3917,8 +3682,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.HeaderBody> {
@@ -3927,8 +3691,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.HeaderBody> {
@@ -3937,13 +3700,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       blockNumber(): Promise<number> {
-        const ret = this.wasm.block_number();
-        return ret;
+        return this.wasm.block_number();
       }
 
       slot(): Promise<number> {
-        const ret = this.wasm.slot();
-        return ret;
+        return this.wasm.slot();
       }
 
       async slotBignum(): Promise<WasmContract.BigNum> {
@@ -3968,8 +3729,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasNonceAndLeaderVrf(): Promise<boolean> {
-        const ret = this.wasm.has_nonce_and_leader_vrf();
-        return ret;
+        return this.wasm.has_nonce_and_leader_vrf();
       }
 
       async nonceVrfOrNothing(): Promise<Optional<WasmContract.VRFCert>> {
@@ -3985,8 +3745,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasVrfResult(): Promise<boolean> {
-        const ret = this.wasm.has_vrf_result();
-        return ret;
+        return this.wasm.has_vrf_result();
       }
 
       async vrfResultOrNothing(): Promise<Optional<WasmContract.VRFCert>> {
@@ -3996,8 +3755,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       blockBodySize(): Promise<number> {
-        const ret = this.wasm.block_body_size();
-        return ret;
+        return this.wasm.block_body_size();
       }
 
       async blockBodyHash(): Promise<WasmContract.BlockHash> {
@@ -4087,8 +3845,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(input: WasmContract.InputWithScriptWitness): Promise<void> {
-        const ret = this.wasm.add(input.wasm);
-        return ret;
+        return this.wasm.add(input.wasm);
       }
 
       async get(index: number): Promise<WasmContract.InputWithScriptWitness> {
@@ -4097,8 +3854,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
     }
@@ -4114,8 +3870,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Int> {
@@ -4124,8 +3879,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Int> {
@@ -4134,8 +3888,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Int> {
@@ -4159,8 +3912,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isPositive(): Promise<boolean> {
-        const ret = this.wasm.is_positive();
-        return ret;
+        return this.wasm.is_positive();
       }
 
       async asPositive(): Promise<Optional<WasmContract.BigNum>> {
@@ -4176,23 +3928,19 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asI32(): Promise<Optional<number>> {
-        const ret = this.wasm.as_i32();
-        return ret;
+        return this.wasm.as_i32();
       }
 
       asI32OrNothing(): Promise<Optional<number>> {
-        const ret = this.wasm.as_i32_or_nothing();
-        return ret;
+        return this.wasm.as_i32_or_nothing();
       }
 
       asI32OrFail(): Promise<number> {
-        const ret = this.wasm.as_i32_or_fail();
-        return ret;
+        return this.wasm.as_i32_or_fail();
       }
 
       toStr(): Promise<string> {
-        const ret = this.wasm.to_str();
-        return ret;
+        return this.wasm.to_str();
       }
 
       static async fromStr(string: string): Promise<WasmContract.Int> {
@@ -4213,8 +3961,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Ipv4> {
@@ -4223,8 +3970,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Ipv4> {
@@ -4233,8 +3979,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Ipv4> {
@@ -4248,8 +3993,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       ip(): Promise<Uint8Array> {
-        const ret = this.wasm.ip();
-        return ret;
+        return this.wasm.ip();
       }
 
     }
@@ -4265,8 +4009,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Ipv6> {
@@ -4275,8 +4018,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Ipv6> {
@@ -4285,8 +4027,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Ipv6> {
@@ -4300,8 +4041,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       ip(): Promise<Uint8Array> {
-        const ret = this.wasm.ip();
-        return ret;
+        return this.wasm.ip();
       }
 
     }
@@ -4317,8 +4057,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.KESSignature> {
@@ -4344,13 +4083,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.KESVKey> {
@@ -4359,8 +4096,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.KESVKey> {
@@ -4381,8 +4117,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Language> {
@@ -4391,8 +4126,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Language> {
@@ -4401,8 +4135,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Language> {
@@ -4426,8 +4159,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.LanguageKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
     }
@@ -4448,8 +4180,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Language> {
@@ -4458,8 +4189,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Language): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
       static async list(): Promise<WasmContract.Languages> {
@@ -4485,13 +4215,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       chaincode(): Promise<Uint8Array> {
-        const ret = this.wasm.chaincode();
-        return ret;
+        return this.wasm.chaincode();
       }
 
     }
@@ -4534,8 +4262,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MIRToStakeCredentials> {
@@ -4544,8 +4271,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MIRToStakeCredentials> {
@@ -4554,8 +4280,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.MIRToStakeCredentials> {
@@ -4569,8 +4294,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(cred: WasmContract.Credential, delta: WasmContract.Int): Promise<Optional<WasmContract.Int>> {
@@ -4603,8 +4327,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MetadataList> {
@@ -4613,8 +4336,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MetadataList> {
@@ -4628,8 +4350,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionMetadatum> {
@@ -4638,8 +4359,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionMetadatum): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -4655,8 +4375,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MetadataMap> {
@@ -4665,8 +4384,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MetadataMap> {
@@ -4680,8 +4398,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.TransactionMetadatum, value: WasmContract.TransactionMetadatum): Promise<Optional<WasmContract.TransactionMetadatum>> {
@@ -4718,8 +4435,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       has(key: WasmContract.TransactionMetadatum): Promise<boolean> {
-        const ret = this.wasm.has(key.wasm);
-        return ret;
+        return this.wasm.has(key.wasm);
       }
 
       async keys(): Promise<WasmContract.MetadataList> {
@@ -4740,8 +4456,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Mint> {
@@ -4750,8 +4465,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Mint> {
@@ -4760,8 +4474,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Mint> {
@@ -4780,8 +4493,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.ScriptHash, value: WasmContract.MintAssets): Promise<Optional<WasmContract.MintAssets>> {
@@ -4840,8 +4552,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.AssetName, value: WasmContract.Int): Promise<Optional<WasmContract.Int>> {
@@ -4879,13 +4590,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addAsset(mint: WasmContract.MintWitness, assetName: WasmContract.AssetName, amount: WasmContract.Int): Promise<void> {
-        const ret = this.wasm.add_asset(mint.wasm, assetName.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_asset(mint.wasm, assetName.wasm, amount.wasm);
       }
 
       setAsset(mint: WasmContract.MintWitness, assetName: WasmContract.AssetName, amount: WasmContract.Int): Promise<void> {
-        const ret = this.wasm.set_asset(mint.wasm, assetName.wasm, amount.wasm);
-        return ret;
+        return this.wasm.set_asset(mint.wasm, assetName.wasm, amount.wasm);
       }
 
       async build(): Promise<WasmContract.Mint> {
@@ -4914,13 +4623,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasPlutusScripts(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_scripts();
-        return ret;
+        return this.wasm.has_plutus_scripts();
       }
 
       hasNativeScripts(): Promise<boolean> {
-        const ret = this.wasm.has_native_scripts();
-        return ret;
+        return this.wasm.has_native_scripts();
       }
 
     }
@@ -4970,8 +4677,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MoveInstantaneousReward> {
@@ -4980,8 +4686,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MoveInstantaneousReward> {
@@ -4990,8 +4695,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.MoveInstantaneousReward> {
@@ -5010,13 +4714,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       pot(): Promise<WasmContract.MIRPot> {
-        const ret = this.wasm.pot();
-        return ret;
+        return this.wasm.pot();
       }
 
       kind(): Promise<WasmContract.MIRKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asToOtherPot(): Promise<Optional<WasmContract.BigNum>> {
@@ -5044,8 +4746,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MoveInstantaneousRewardsCert> {
@@ -5054,8 +4755,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MoveInstantaneousRewardsCert> {
@@ -5064,8 +4764,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.MoveInstantaneousRewardsCert> {
@@ -5096,8 +4795,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MultiAsset> {
@@ -5106,8 +4804,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MultiAsset> {
@@ -5116,8 +4813,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.MultiAsset> {
@@ -5131,8 +4827,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(policyId: WasmContract.ScriptHash, assets: WasmContract.Assets): Promise<Optional<WasmContract.Assets>> {
@@ -5181,8 +4876,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.MultiHostName> {
@@ -5191,8 +4885,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.MultiHostName> {
@@ -5201,8 +4894,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.MultiHostName> {
@@ -5233,8 +4925,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.NativeScript> {
@@ -5243,8 +4934,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.NativeScript> {
@@ -5253,8 +4943,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.NativeScript> {
@@ -5298,8 +4987,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.NativeScriptKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asScriptPubkey(): Promise<Optional<WasmContract.ScriptPubkey>> {
@@ -5383,8 +5071,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.NativeScript> {
@@ -5393,8 +5080,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.NativeScript): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -5410,8 +5096,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.NetworkId> {
@@ -5420,8 +5105,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.NetworkId> {
@@ -5430,8 +5114,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.NetworkId> {
@@ -5450,8 +5133,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.NetworkIdKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
     }
@@ -5472,13 +5154,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       networkId(): Promise<number> {
-        const ret = this.wasm.network_id();
-        return ret;
+        return this.wasm.network_id();
       }
 
       protocolMagic(): Promise<number> {
-        const ret = this.wasm.protocol_magic();
-        return ret;
+        return this.wasm.protocol_magic();
       }
 
       static async testnetPreview(): Promise<WasmContract.NetworkInfo> {
@@ -5514,8 +5194,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.NewConstitutionAction> {
@@ -5524,8 +5203,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.NewConstitutionAction> {
@@ -5534,8 +5212,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.NewConstitutionAction> {
@@ -5577,8 +5254,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.NoConfidenceAction> {
@@ -5587,8 +5263,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.NoConfidenceAction> {
@@ -5597,8 +5272,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.NoConfidenceAction> {
@@ -5635,8 +5309,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Nonce> {
@@ -5645,8 +5318,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Nonce> {
@@ -5655,8 +5327,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Nonce> {
@@ -5675,8 +5346,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       getHash(): Promise<Optional<Uint8Array>> {
-        const ret = this.wasm.get_hash();
-        return ret;
+        return this.wasm.get_hash();
       }
 
     }
@@ -5692,8 +5362,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.OperationalCert> {
@@ -5702,8 +5371,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.OperationalCert> {
@@ -5712,8 +5380,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.OperationalCert> {
@@ -5727,13 +5394,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       sequenceNumber(): Promise<number> {
-        const ret = this.wasm.sequence_number();
-        return ret;
+        return this.wasm.sequence_number();
       }
 
       kesPeriod(): Promise<number> {
-        const ret = this.wasm.kes_period();
-        return ret;
+        return this.wasm.kes_period();
       }
 
       async sigma(): Promise<WasmContract.Ed25519Signature> {
@@ -5793,8 +5458,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ParameterChangeAction> {
@@ -5803,8 +5467,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ParameterChangeAction> {
@@ -5813,8 +5476,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ParameterChangeAction> {
@@ -5856,8 +5518,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusData> {
@@ -5866,8 +5527,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusData> {
@@ -5911,8 +5571,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.PlutusDataKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asConstrPlutusData(): Promise<Optional<WasmContract.ConstrPlutusData>> {
@@ -5940,13 +5599,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asBytes(): Promise<Optional<Uint8Array>> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       toJson(schema: WasmContract.PlutusDatumSchema): Promise<string> {
-        const ret = this.wasm.to_json(schema);
-        return ret;
+        return this.wasm.to_json(schema);
       }
 
       static async fromJson(json: string, schema: WasmContract.PlutusDatumSchema): Promise<WasmContract.PlutusData> {
@@ -5972,8 +5629,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusList> {
@@ -5982,8 +5638,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
@@ -5997,8 +5652,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.PlutusData> {
@@ -6007,8 +5661,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.PlutusData): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -6024,8 +5677,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusMap> {
@@ -6034,8 +5686,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusMap> {
@@ -6049,8 +5700,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.PlutusData, value: WasmContract.PlutusData): Promise<Optional<WasmContract.PlutusData>> {
@@ -6083,8 +5733,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusScript> {
@@ -6093,8 +5742,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusScript> {
@@ -6123,8 +5771,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       bytes(): Promise<Uint8Array> {
-        const ret = this.wasm.bytes();
-        return ret;
+        return this.wasm.bytes();
       }
 
       static async fromBytesV2(bytes: Uint8Array): Promise<WasmContract.PlutusScript> {
@@ -6197,8 +5844,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusScripts> {
@@ -6207,8 +5853,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusScripts> {
@@ -6217,8 +5862,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PlutusScripts> {
@@ -6232,8 +5876,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.PlutusScript> {
@@ -6242,8 +5885,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.PlutusScript): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -6313,8 +5955,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.PlutusWitness> {
@@ -6323,8 +5964,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.PlutusWitness): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -6350,18 +5990,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       slot(): Promise<number> {
-        const ret = this.wasm.slot();
-        return ret;
+        return this.wasm.slot();
       }
 
       txIndex(): Promise<number> {
-        const ret = this.wasm.tx_index();
-        return ret;
+        return this.wasm.tx_index();
       }
 
       certIndex(): Promise<number> {
-        const ret = this.wasm.cert_index();
-        return ret;
+        return this.wasm.cert_index();
       }
 
       async slotBignum(): Promise<WasmContract.BigNum> {
@@ -6430,8 +6067,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PoolMetadata> {
@@ -6440,8 +6076,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PoolMetadata> {
@@ -6450,8 +6085,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PoolMetadata> {
@@ -6492,13 +6126,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.PoolMetadataHash> {
@@ -6507,8 +6139,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.PoolMetadataHash> {
@@ -6529,8 +6160,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PoolParams> {
@@ -6539,8 +6169,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PoolParams> {
@@ -6549,8 +6178,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PoolParams> {
@@ -6622,8 +6250,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PoolRegistration> {
@@ -6632,8 +6259,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PoolRegistration> {
@@ -6642,8 +6268,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PoolRegistration> {
@@ -6674,8 +6299,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PoolRetirement> {
@@ -6684,8 +6308,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PoolRetirement> {
@@ -6694,8 +6317,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PoolRetirement> {
@@ -6709,8 +6331,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       epoch(): Promise<number> {
-        const ret = this.wasm.epoch();
-        return ret;
+        return this.wasm.epoch();
       }
 
       static async new(poolKeyhash: WasmContract.Ed25519KeyHash, epoch: number): Promise<WasmContract.PoolRetirement> {
@@ -6731,8 +6352,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PoolVotingThresholds> {
@@ -6741,8 +6361,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PoolVotingThresholds> {
@@ -6751,8 +6370,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.PoolVotingThresholds> {
@@ -6818,13 +6436,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBech32(): Promise<string> {
-        const ret = this.wasm.to_bech32();
-        return ret;
+        return this.wasm.to_bech32();
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       static async fromExtendedBytes(bytes: Uint8Array): Promise<WasmContract.PrivateKey> {
@@ -6843,8 +6459,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PrivateKey> {
@@ -6865,8 +6480,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ProposedProtocolParameterUpdates> {
@@ -6875,8 +6489,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ProposedProtocolParameterUpdates> {
@@ -6885,8 +6498,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ProposedProtocolParameterUpdates> {
@@ -6900,8 +6512,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.GenesisHash, value: WasmContract.ProtocolParamUpdate): Promise<Optional<WasmContract.ProtocolParamUpdate>> {
@@ -6934,8 +6545,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ProtocolParamUpdate> {
@@ -6944,8 +6554,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ProtocolParamUpdate> {
@@ -6954,8 +6563,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ProtocolParamUpdate> {
@@ -6964,8 +6572,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMinfeeA(minfeeA: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_minfee_a(minfeeA.wasm);
-        return ret;
+        return this.wasm.set_minfee_a(minfeeA.wasm);
       }
 
       async minfeeA(): Promise<Optional<WasmContract.BigNum>> {
@@ -6975,8 +6582,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMinfeeB(minfeeB: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_minfee_b(minfeeB.wasm);
-        return ret;
+        return this.wasm.set_minfee_b(minfeeB.wasm);
       }
 
       async minfeeB(): Promise<Optional<WasmContract.BigNum>> {
@@ -6986,38 +6592,31 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMaxBlockBodySize(maxBlockBodySize: number): Promise<void> {
-        const ret = this.wasm.set_max_block_body_size(maxBlockBodySize);
-        return ret;
+        return this.wasm.set_max_block_body_size(maxBlockBodySize);
       }
 
       maxBlockBodySize(): Promise<Optional<number>> {
-        const ret = this.wasm.max_block_body_size();
-        return ret;
+        return this.wasm.max_block_body_size();
       }
 
       setMaxTxSize(maxTxSize: number): Promise<void> {
-        const ret = this.wasm.set_max_tx_size(maxTxSize);
-        return ret;
+        return this.wasm.set_max_tx_size(maxTxSize);
       }
 
       maxTxSize(): Promise<Optional<number>> {
-        const ret = this.wasm.max_tx_size();
-        return ret;
+        return this.wasm.max_tx_size();
       }
 
       setMaxBlockHeaderSize(maxBlockHeaderSize: number): Promise<void> {
-        const ret = this.wasm.set_max_block_header_size(maxBlockHeaderSize);
-        return ret;
+        return this.wasm.set_max_block_header_size(maxBlockHeaderSize);
       }
 
       maxBlockHeaderSize(): Promise<Optional<number>> {
-        const ret = this.wasm.max_block_header_size();
-        return ret;
+        return this.wasm.max_block_header_size();
       }
 
       setKeyDeposit(keyDeposit: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_key_deposit(keyDeposit.wasm);
-        return ret;
+        return this.wasm.set_key_deposit(keyDeposit.wasm);
       }
 
       async keyDeposit(): Promise<Optional<WasmContract.BigNum>> {
@@ -7027,8 +6626,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setPoolDeposit(poolDeposit: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_pool_deposit(poolDeposit.wasm);
-        return ret;
+        return this.wasm.set_pool_deposit(poolDeposit.wasm);
       }
 
       async poolDeposit(): Promise<Optional<WasmContract.BigNum>> {
@@ -7038,28 +6636,23 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMaxEpoch(maxEpoch: number): Promise<void> {
-        const ret = this.wasm.set_max_epoch(maxEpoch);
-        return ret;
+        return this.wasm.set_max_epoch(maxEpoch);
       }
 
       maxEpoch(): Promise<Optional<number>> {
-        const ret = this.wasm.max_epoch();
-        return ret;
+        return this.wasm.max_epoch();
       }
 
       setNOpt(nOpt: number): Promise<void> {
-        const ret = this.wasm.set_n_opt(nOpt);
-        return ret;
+        return this.wasm.set_n_opt(nOpt);
       }
 
       nOpt(): Promise<Optional<number>> {
-        const ret = this.wasm.n_opt();
-        return ret;
+        return this.wasm.n_opt();
       }
 
       setPoolPledgeInfluence(poolPledgeInfluence: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_pool_pledge_influence(poolPledgeInfluence.wasm);
-        return ret;
+        return this.wasm.set_pool_pledge_influence(poolPledgeInfluence.wasm);
       }
 
       async poolPledgeInfluence(): Promise<Optional<WasmContract.UnitInterval>> {
@@ -7069,8 +6662,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setExpansionRate(expansionRate: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_expansion_rate(expansionRate.wasm);
-        return ret;
+        return this.wasm.set_expansion_rate(expansionRate.wasm);
       }
 
       async expansionRate(): Promise<Optional<WasmContract.UnitInterval>> {
@@ -7080,8 +6672,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setTreasuryGrowthRate(treasuryGrowthRate: WasmContract.UnitInterval): Promise<void> {
-        const ret = this.wasm.set_treasury_growth_rate(treasuryGrowthRate.wasm);
-        return ret;
+        return this.wasm.set_treasury_growth_rate(treasuryGrowthRate.wasm);
       }
 
       async treasuryGrowthRate(): Promise<Optional<WasmContract.UnitInterval>> {
@@ -7103,8 +6694,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setProtocolVersion(protocolVersion: WasmContract.ProtocolVersion): Promise<void> {
-        const ret = this.wasm.set_protocol_version(protocolVersion.wasm);
-        return ret;
+        return this.wasm.set_protocol_version(protocolVersion.wasm);
       }
 
       async protocolVersion(): Promise<Optional<WasmContract.ProtocolVersion>> {
@@ -7114,8 +6704,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMinPoolCost(minPoolCost: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_min_pool_cost(minPoolCost.wasm);
-        return ret;
+        return this.wasm.set_min_pool_cost(minPoolCost.wasm);
       }
 
       async minPoolCost(): Promise<Optional<WasmContract.BigNum>> {
@@ -7125,8 +6714,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setAdaPerUtxoByte(adaPerUtxoByte: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_ada_per_utxo_byte(adaPerUtxoByte.wasm);
-        return ret;
+        return this.wasm.set_ada_per_utxo_byte(adaPerUtxoByte.wasm);
       }
 
       async adaPerUtxoByte(): Promise<Optional<WasmContract.BigNum>> {
@@ -7136,8 +6724,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCostModels(costModels: WasmContract.Costmdls): Promise<void> {
-        const ret = this.wasm.set_cost_models(costModels.wasm);
-        return ret;
+        return this.wasm.set_cost_models(costModels.wasm);
       }
 
       async costModels(): Promise<Optional<WasmContract.Costmdls>> {
@@ -7147,8 +6734,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setExecutionCosts(executionCosts: WasmContract.ExUnitPrices): Promise<void> {
-        const ret = this.wasm.set_execution_costs(executionCosts.wasm);
-        return ret;
+        return this.wasm.set_execution_costs(executionCosts.wasm);
       }
 
       async executionCosts(): Promise<Optional<WasmContract.ExUnitPrices>> {
@@ -7158,8 +6744,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMaxTxExUnits(maxTxExUnits: WasmContract.ExUnits): Promise<void> {
-        const ret = this.wasm.set_max_tx_ex_units(maxTxExUnits.wasm);
-        return ret;
+        return this.wasm.set_max_tx_ex_units(maxTxExUnits.wasm);
       }
 
       async maxTxExUnits(): Promise<Optional<WasmContract.ExUnits>> {
@@ -7169,8 +6754,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMaxBlockExUnits(maxBlockExUnits: WasmContract.ExUnits): Promise<void> {
-        const ret = this.wasm.set_max_block_ex_units(maxBlockExUnits.wasm);
-        return ret;
+        return this.wasm.set_max_block_ex_units(maxBlockExUnits.wasm);
       }
 
       async maxBlockExUnits(): Promise<Optional<WasmContract.ExUnits>> {
@@ -7180,38 +6764,31 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMaxValueSize(maxValueSize: number): Promise<void> {
-        const ret = this.wasm.set_max_value_size(maxValueSize);
-        return ret;
+        return this.wasm.set_max_value_size(maxValueSize);
       }
 
       maxValueSize(): Promise<Optional<number>> {
-        const ret = this.wasm.max_value_size();
-        return ret;
+        return this.wasm.max_value_size();
       }
 
       setCollateralPercentage(collateralPercentage: number): Promise<void> {
-        const ret = this.wasm.set_collateral_percentage(collateralPercentage);
-        return ret;
+        return this.wasm.set_collateral_percentage(collateralPercentage);
       }
 
       collateralPercentage(): Promise<Optional<number>> {
-        const ret = this.wasm.collateral_percentage();
-        return ret;
+        return this.wasm.collateral_percentage();
       }
 
       setMaxCollateralInputs(maxCollateralInputs: number): Promise<void> {
-        const ret = this.wasm.set_max_collateral_inputs(maxCollateralInputs);
-        return ret;
+        return this.wasm.set_max_collateral_inputs(maxCollateralInputs);
       }
 
       maxCollateralInputs(): Promise<Optional<number>> {
-        const ret = this.wasm.max_collateral_inputs();
-        return ret;
+        return this.wasm.max_collateral_inputs();
       }
 
       setPoolVotingThresholds(poolVotingThresholds: WasmContract.PoolVotingThresholds): Promise<void> {
-        const ret = this.wasm.set_pool_voting_thresholds(poolVotingThresholds.wasm);
-        return ret;
+        return this.wasm.set_pool_voting_thresholds(poolVotingThresholds.wasm);
       }
 
       async poolVotingThresholds(): Promise<Optional<WasmContract.PoolVotingThresholds>> {
@@ -7221,8 +6798,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setDrepVotingThresholds(drepVotingThresholds: WasmContract.DrepVotingThresholds): Promise<void> {
-        const ret = this.wasm.set_drep_voting_thresholds(drepVotingThresholds.wasm);
-        return ret;
+        return this.wasm.set_drep_voting_thresholds(drepVotingThresholds.wasm);
       }
 
       async drepVotingThresholds(): Promise<Optional<WasmContract.DrepVotingThresholds>> {
@@ -7232,38 +6808,31 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMinCommitteeSize(minCommitteeSize: number): Promise<void> {
-        const ret = this.wasm.set_min_committee_size(minCommitteeSize);
-        return ret;
+        return this.wasm.set_min_committee_size(minCommitteeSize);
       }
 
       minCommitteeSize(): Promise<Optional<number>> {
-        const ret = this.wasm.min_committee_size();
-        return ret;
+        return this.wasm.min_committee_size();
       }
 
       setCommitteeTermLimit(committeeTermLimit: number): Promise<void> {
-        const ret = this.wasm.set_committee_term_limit(committeeTermLimit);
-        return ret;
+        return this.wasm.set_committee_term_limit(committeeTermLimit);
       }
 
       committeeTermLimit(): Promise<Optional<number>> {
-        const ret = this.wasm.committee_term_limit();
-        return ret;
+        return this.wasm.committee_term_limit();
       }
 
       setGovernanceActionValidityPeriod(governanceActionValidityPeriod: number): Promise<void> {
-        const ret = this.wasm.set_governance_action_validity_period(governanceActionValidityPeriod);
-        return ret;
+        return this.wasm.set_governance_action_validity_period(governanceActionValidityPeriod);
       }
 
       governanceActionValidityPeriod(): Promise<Optional<number>> {
-        const ret = this.wasm.governance_action_validity_period();
-        return ret;
+        return this.wasm.governance_action_validity_period();
       }
 
       setGovernanceActionDeposit(governanceActionDeposit: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_governance_action_deposit(governanceActionDeposit.wasm);
-        return ret;
+        return this.wasm.set_governance_action_deposit(governanceActionDeposit.wasm);
       }
 
       async governanceActionDeposit(): Promise<Optional<WasmContract.BigNum>> {
@@ -7273,8 +6842,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setDrepDeposit(drepDeposit: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_drep_deposit(drepDeposit.wasm);
-        return ret;
+        return this.wasm.set_drep_deposit(drepDeposit.wasm);
       }
 
       async drepDeposit(): Promise<Optional<WasmContract.BigNum>> {
@@ -7284,13 +6852,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setDrepInactivityPeriod(drepInactivityPeriod: number): Promise<void> {
-        const ret = this.wasm.set_drep_inactivity_period(drepInactivityPeriod);
-        return ret;
+        return this.wasm.set_drep_inactivity_period(drepInactivityPeriod);
       }
 
       drepInactivityPeriod(): Promise<Optional<number>> {
-        const ret = this.wasm.drep_inactivity_period();
-        return ret;
+        return this.wasm.drep_inactivity_period();
       }
 
       static async new(): Promise<WasmContract.ProtocolParamUpdate> {
@@ -7311,8 +6877,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ProtocolVersion> {
@@ -7321,8 +6886,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ProtocolVersion> {
@@ -7331,8 +6895,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ProtocolVersion> {
@@ -7341,13 +6904,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       major(): Promise<number> {
-        const ret = this.wasm.major();
-        return ret;
+        return this.wasm.major();
       }
 
       minor(): Promise<number> {
-        const ret = this.wasm.minor();
-        return ret;
+        return this.wasm.minor();
       }
 
       static async new(major: number, minor: number): Promise<WasmContract.ProtocolVersion> {
@@ -7373,13 +6934,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBech32(): Promise<string> {
-        const ret = this.wasm.to_bech32();
-        return ret;
+        return this.wasm.to_bech32();
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PublicKey> {
@@ -7388,8 +6947,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       verify(data: Uint8Array, signature: WasmContract.Ed25519Signature): Promise<boolean> {
-        const ret = this.wasm.verify(data, signature.wasm);
-        return ret;
+        return this.wasm.verify(data, signature.wasm);
       }
 
       async hash(): Promise<WasmContract.Ed25519KeyHash> {
@@ -7398,8 +6956,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.PublicKey> {
@@ -7425,8 +6982,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       size(): Promise<number> {
-        const ret = this.wasm.size();
-        return ret;
+        return this.wasm.size();
       }
 
       async get(index: number): Promise<WasmContract.PublicKey> {
@@ -7435,8 +6991,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(key: WasmContract.PublicKey): Promise<void> {
-        const ret = this.wasm.add(key.wasm);
-        return ret;
+        return this.wasm.add(key.wasm);
       }
 
     }
@@ -7452,8 +7007,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Redeemer> {
@@ -7462,8 +7016,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Redeemer> {
@@ -7472,8 +7025,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Redeemer> {
@@ -7519,8 +7071,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.RedeemerTag> {
@@ -7529,8 +7080,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.RedeemerTag> {
@@ -7539,8 +7089,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.RedeemerTag> {
@@ -7579,8 +7128,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.RedeemerTagKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
     }
@@ -7596,8 +7144,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Redeemers> {
@@ -7606,8 +7153,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Redeemers> {
@@ -7616,8 +7162,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Redeemers> {
@@ -7631,8 +7176,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Redeemer> {
@@ -7641,8 +7185,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Redeemer): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
       async totalExUnits(): Promise<WasmContract.ExUnits> {
@@ -7663,8 +7206,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Relay> {
@@ -7673,8 +7215,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Relay> {
@@ -7683,8 +7224,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Relay> {
@@ -7708,8 +7248,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.RelayKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asSingleHostAddr(): Promise<Optional<WasmContract.SingleHostAddr>> {
@@ -7743,8 +7282,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Relays> {
@@ -7753,8 +7291,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Relays> {
@@ -7763,8 +7300,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Relays> {
@@ -7778,8 +7314,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Relay> {
@@ -7788,8 +7323,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Relay): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -7838,8 +7372,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.RewardAddresses> {
@@ -7848,8 +7381,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.RewardAddresses> {
@@ -7858,8 +7390,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.RewardAddresses> {
@@ -7873,8 +7404,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.RewardAddress> {
@@ -7883,8 +7413,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.RewardAddress): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -7900,8 +7429,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptAll> {
@@ -7910,8 +7438,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptAll> {
@@ -7920,8 +7447,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptAll> {
@@ -7952,8 +7478,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptAny> {
@@ -7962,8 +7487,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptAny> {
@@ -7972,8 +7496,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptAny> {
@@ -8009,13 +7532,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.ScriptDataHash> {
@@ -8024,8 +7545,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.ScriptDataHash> {
@@ -8051,13 +7571,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.ScriptHash> {
@@ -8066,8 +7584,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.ScriptHash> {
@@ -8088,8 +7605,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptHashes> {
@@ -8098,8 +7614,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptHashes> {
@@ -8108,8 +7623,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptHashes> {
@@ -8123,8 +7637,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.ScriptHash> {
@@ -8133,8 +7646,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.ScriptHash): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -8150,8 +7662,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptNOfK> {
@@ -8160,8 +7671,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptNOfK> {
@@ -8170,8 +7680,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptNOfK> {
@@ -8180,8 +7689,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       n(): Promise<number> {
-        const ret = this.wasm.n();
-        return ret;
+        return this.wasm.n();
       }
 
       async nativeScripts(): Promise<WasmContract.NativeScripts> {
@@ -8207,8 +7715,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptPubkey> {
@@ -8217,8 +7724,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptPubkey> {
@@ -8227,8 +7733,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptPubkey> {
@@ -8259,8 +7764,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.ScriptRef> {
@@ -8269,8 +7773,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.ScriptRef> {
@@ -8279,8 +7782,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.ScriptRef> {
@@ -8299,13 +7801,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isNativeScript(): Promise<boolean> {
-        const ret = this.wasm.is_native_script();
-        return ret;
+        return this.wasm.is_native_script();
       }
 
       isPlutusScript(): Promise<boolean> {
-        const ret = this.wasm.is_plutus_script();
-        return ret;
+        return this.wasm.is_plutus_script();
       }
 
       async nativeScript(): Promise<Optional<WasmContract.NativeScript>> {
@@ -8333,8 +7833,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.SingleHostAddr> {
@@ -8343,8 +7842,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.SingleHostAddr> {
@@ -8353,8 +7851,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.SingleHostAddr> {
@@ -8363,8 +7860,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       port(): Promise<Optional<number>> {
-        const ret = this.wasm.port();
-        return ret;
+        return this.wasm.port();
       }
 
       async ipv4(): Promise<Optional<WasmContract.Ipv4>> {
@@ -8397,8 +7893,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.SingleHostName> {
@@ -8407,8 +7902,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.SingleHostName> {
@@ -8417,8 +7911,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.SingleHostName> {
@@ -8427,8 +7920,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       port(): Promise<Optional<number>> {
-        const ret = this.wasm.port();
-        return ret;
+        return this.wasm.port();
       }
 
       async dnsName(): Promise<WasmContract.DNSRecordAorAAAA> {
@@ -8454,8 +7946,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeAndVoteDelegation> {
@@ -8464,8 +7955,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeAndVoteDelegation> {
@@ -8474,8 +7964,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeAndVoteDelegation> {
@@ -8504,8 +7993,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8521,8 +8009,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeDelegation> {
@@ -8531,8 +8018,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeDelegation> {
@@ -8541,8 +8027,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeDelegation> {
@@ -8566,8 +8051,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8583,8 +8067,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeDeregistration> {
@@ -8593,8 +8076,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeDeregistration> {
@@ -8603,8 +8085,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeDeregistration> {
@@ -8634,8 +8115,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8651,8 +8131,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeRegistration> {
@@ -8661,8 +8140,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeRegistration> {
@@ -8671,8 +8149,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeRegistration> {
@@ -8702,8 +8179,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8719,8 +8195,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeRegistrationAndDelegation> {
@@ -8729,8 +8204,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeRegistrationAndDelegation> {
@@ -8739,8 +8213,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeRegistrationAndDelegation> {
@@ -8769,8 +8242,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8786,8 +8258,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.StakeVoteRegistrationAndDelegation> {
@@ -8796,8 +8267,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.StakeVoteRegistrationAndDelegation> {
@@ -8806,8 +8276,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.StakeVoteRegistrationAndDelegation> {
@@ -8841,8 +8310,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -8863,18 +8331,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       get(index: number): Promise<string> {
-        const ret = this.wasm.get(index);
-        return ret;
+        return this.wasm.get(index);
       }
 
       add(elem: string): Promise<void> {
-        const ret = this.wasm.add(elem);
-        return ret;
+        return this.wasm.add(elem);
       }
 
     }
@@ -8890,8 +8355,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TimelockExpiry> {
@@ -8900,8 +8364,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TimelockExpiry> {
@@ -8910,8 +8373,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TimelockExpiry> {
@@ -8920,8 +8382,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       slot(): Promise<number> {
-        const ret = this.wasm.slot();
-        return ret;
+        return this.wasm.slot();
       }
 
       async slotBignum(): Promise<WasmContract.BigNum> {
@@ -8952,8 +8413,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TimelockStart> {
@@ -8962,8 +8422,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TimelockStart> {
@@ -8972,8 +8431,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TimelockStart> {
@@ -8982,8 +8440,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       slot(): Promise<number> {
-        const ret = this.wasm.slot();
-        return ret;
+        return this.wasm.slot();
       }
 
       async slotBignum(): Promise<WasmContract.BigNum> {
@@ -9014,8 +8471,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Transaction> {
@@ -9024,8 +8480,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Transaction> {
@@ -9034,8 +8489,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Transaction> {
@@ -9054,8 +8508,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isValid(): Promise<boolean> {
-        const ret = this.wasm.is_valid();
-        return ret;
+        return this.wasm.is_valid();
       }
 
       async auxiliaryData(): Promise<Optional<WasmContract.AuxiliaryData>> {
@@ -9065,8 +8518,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setIsValid(valid: boolean): Promise<void> {
-        const ret = this.wasm.set_is_valid(valid);
-        return ret;
+        return this.wasm.set_is_valid(valid);
       }
 
       static async new(body: WasmContract.TransactionBody, witnessSet: WasmContract.TransactionWitnessSet, auxiliaryData: Optional<WasmContract.AuxiliaryData>): Promise<WasmContract.Transaction> {
@@ -9087,8 +8539,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Transaction> {
@@ -9109,8 +8560,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionBatch> {
@@ -9131,8 +8581,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionBodies> {
@@ -9141,8 +8590,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionBodies> {
@@ -9151,8 +8599,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionBodies> {
@@ -9166,8 +8613,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionBody> {
@@ -9176,8 +8622,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionBody): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -9193,8 +8638,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionBody> {
@@ -9203,8 +8647,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionBody> {
@@ -9213,8 +8656,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionBody> {
@@ -9238,8 +8680,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       ttl(): Promise<Optional<number>> {
-        const ret = this.wasm.ttl();
-        return ret;
+        return this.wasm.ttl();
       }
 
       async ttlBignum(): Promise<Optional<WasmContract.BigNum>> {
@@ -9249,18 +8690,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setTtl(ttl: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_ttl(ttl.wasm);
-        return ret;
+        return this.wasm.set_ttl(ttl.wasm);
       }
 
       removeTtl(): Promise<void> {
-        const ret = this.wasm.remove_ttl();
-        return ret;
+        return this.wasm.remove_ttl();
       }
 
       setCerts(certs: WasmContract.Certificates): Promise<void> {
-        const ret = this.wasm.set_certs(certs.wasm);
-        return ret;
+        return this.wasm.set_certs(certs.wasm);
       }
 
       async certs(): Promise<Optional<WasmContract.Certificates>> {
@@ -9270,8 +8708,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setWithdrawals(withdrawals: WasmContract.Withdrawals): Promise<void> {
-        const ret = this.wasm.set_withdrawals(withdrawals.wasm);
-        return ret;
+        return this.wasm.set_withdrawals(withdrawals.wasm);
       }
 
       async withdrawals(): Promise<Optional<WasmContract.Withdrawals>> {
@@ -9281,8 +8718,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setUpdate(update: WasmContract.Update): Promise<void> {
-        const ret = this.wasm.set_update(update.wasm);
-        return ret;
+        return this.wasm.set_update(update.wasm);
       }
 
       async update(): Promise<Optional<WasmContract.Update>> {
@@ -9292,8 +8728,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setAuxiliaryDataHash(auxiliaryDataHash: WasmContract.AuxiliaryDataHash): Promise<void> {
-        const ret = this.wasm.set_auxiliary_data_hash(auxiliaryDataHash.wasm);
-        return ret;
+        return this.wasm.set_auxiliary_data_hash(auxiliaryDataHash.wasm);
       }
 
       async auxiliaryDataHash(): Promise<Optional<WasmContract.AuxiliaryDataHash>> {
@@ -9303,13 +8738,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setValidityStartInterval(validityStartInterval: number): Promise<void> {
-        const ret = this.wasm.set_validity_start_interval(validityStartInterval);
-        return ret;
+        return this.wasm.set_validity_start_interval(validityStartInterval);
       }
 
       setValidityStartIntervalBignum(validityStartInterval: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_validity_start_interval_bignum(validityStartInterval.wasm);
-        return ret;
+        return this.wasm.set_validity_start_interval_bignum(validityStartInterval.wasm);
       }
 
       async validityStartIntervalBignum(): Promise<Optional<WasmContract.BigNum>> {
@@ -9319,13 +8752,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       validityStartInterval(): Promise<Optional<number>> {
-        const ret = this.wasm.validity_start_interval();
-        return ret;
+        return this.wasm.validity_start_interval();
       }
 
       setMint(mint: WasmContract.Mint): Promise<void> {
-        const ret = this.wasm.set_mint(mint.wasm);
-        return ret;
+        return this.wasm.set_mint(mint.wasm);
       }
 
       async mint(): Promise<Optional<WasmContract.Mint>> {
@@ -9341,8 +8772,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setReferenceInputs(referenceInputs: WasmContract.TransactionInputs): Promise<void> {
-        const ret = this.wasm.set_reference_inputs(referenceInputs.wasm);
-        return ret;
+        return this.wasm.set_reference_inputs(referenceInputs.wasm);
       }
 
       async referenceInputs(): Promise<Optional<WasmContract.TransactionInputs>> {
@@ -9352,8 +8782,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): Promise<void> {
-        const ret = this.wasm.set_script_data_hash(scriptDataHash.wasm);
-        return ret;
+        return this.wasm.set_script_data_hash(scriptDataHash.wasm);
       }
 
       async scriptDataHash(): Promise<Optional<WasmContract.ScriptDataHash>> {
@@ -9363,8 +8792,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCollateral(collateral: WasmContract.TransactionInputs): Promise<void> {
-        const ret = this.wasm.set_collateral(collateral.wasm);
-        return ret;
+        return this.wasm.set_collateral(collateral.wasm);
       }
 
       async collateral(): Promise<Optional<WasmContract.TransactionInputs>> {
@@ -9374,8 +8802,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setRequiredSigners(requiredSigners: WasmContract.Ed25519KeyHashes): Promise<void> {
-        const ret = this.wasm.set_required_signers(requiredSigners.wasm);
-        return ret;
+        return this.wasm.set_required_signers(requiredSigners.wasm);
       }
 
       async requiredSigners(): Promise<Optional<WasmContract.Ed25519KeyHashes>> {
@@ -9385,8 +8812,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setNetworkId(networkId: WasmContract.NetworkId): Promise<void> {
-        const ret = this.wasm.set_network_id(networkId.wasm);
-        return ret;
+        return this.wasm.set_network_id(networkId.wasm);
       }
 
       async networkId(): Promise<Optional<WasmContract.NetworkId>> {
@@ -9396,8 +8822,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCollateralReturn(collateralReturn: WasmContract.TransactionOutput): Promise<void> {
-        const ret = this.wasm.set_collateral_return(collateralReturn.wasm);
-        return ret;
+        return this.wasm.set_collateral_return(collateralReturn.wasm);
       }
 
       async collateralReturn(): Promise<Optional<WasmContract.TransactionOutput>> {
@@ -9407,8 +8832,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setTotalCollateral(totalCollateral: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_total_collateral(totalCollateral.wasm);
-        return ret;
+        return this.wasm.set_total_collateral(totalCollateral.wasm);
       }
 
       async totalCollateral(): Promise<Optional<WasmContract.BigNum>> {
@@ -9418,8 +8842,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setVotingProcedures(votingProcedures: WasmContract.VotingProcedures): Promise<void> {
-        const ret = this.wasm.set_voting_procedures(votingProcedures.wasm);
-        return ret;
+        return this.wasm.set_voting_procedures(votingProcedures.wasm);
       }
 
       async votingProcedures(): Promise<Optional<WasmContract.VotingProcedures>> {
@@ -9429,8 +8852,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setVotingProposals(votingProposals: WasmContract.VotingProposals): Promise<void> {
-        const ret = this.wasm.set_voting_proposals(votingProposals.wasm);
-        return ret;
+        return this.wasm.set_voting_proposals(votingProposals.wasm);
       }
 
       async votingProposals(): Promise<Optional<WasmContract.VotingProposals>> {
@@ -9440,8 +8862,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setDonation(donation: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_donation(donation.wasm);
-        return ret;
+        return this.wasm.set_donation(donation.wasm);
       }
 
       async donation(): Promise<Optional<WasmContract.BigNum>> {
@@ -9451,8 +8872,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCurrentTreasuryValue(currentTreasuryValue: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_current_treasury_value(currentTreasuryValue.wasm);
-        return ret;
+        return this.wasm.set_current_treasury_value(currentTreasuryValue.wasm);
       }
 
       async currentTreasuryValue(): Promise<Optional<WasmContract.BigNum>> {
@@ -9484,88 +8904,71 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       addInputsFrom(inputs: WasmContract.TransactionUnspentOutputs, strategy: WasmContract.CoinSelectionStrategyCIP2): Promise<void> {
-        const ret = this.wasm.add_inputs_from(inputs.wasm, strategy);
-        return ret;
+        return this.wasm.add_inputs_from(inputs.wasm, strategy);
       }
 
       setInputs(inputs: WasmContract.TxInputsBuilder): Promise<void> {
-        const ret = this.wasm.set_inputs(inputs.wasm);
-        return ret;
+        return this.wasm.set_inputs(inputs.wasm);
       }
 
       setCollateral(collateral: WasmContract.TxInputsBuilder): Promise<void> {
-        const ret = this.wasm.set_collateral(collateral.wasm);
-        return ret;
+        return this.wasm.set_collateral(collateral.wasm);
       }
 
       setCollateralReturn(collateralReturn: WasmContract.TransactionOutput): Promise<void> {
-        const ret = this.wasm.set_collateral_return(collateralReturn.wasm);
-        return ret;
+        return this.wasm.set_collateral_return(collateralReturn.wasm);
       }
 
       setCollateralReturnAndTotal(collateralReturn: WasmContract.TransactionOutput): Promise<void> {
-        const ret = this.wasm.set_collateral_return_and_total(collateralReturn.wasm);
-        return ret;
+        return this.wasm.set_collateral_return_and_total(collateralReturn.wasm);
       }
 
       setTotalCollateral(totalCollateral: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_total_collateral(totalCollateral.wasm);
-        return ret;
+        return this.wasm.set_total_collateral(totalCollateral.wasm);
       }
 
       setTotalCollateralAndReturn(totalCollateral: WasmContract.BigNum, returnAddress: WasmContract.Address): Promise<void> {
-        const ret = this.wasm.set_total_collateral_and_return(totalCollateral.wasm, returnAddress.wasm);
-        return ret;
+        return this.wasm.set_total_collateral_and_return(totalCollateral.wasm, returnAddress.wasm);
       }
 
       addReferenceInput(referenceInput: WasmContract.TransactionInput): Promise<void> {
-        const ret = this.wasm.add_reference_input(referenceInput.wasm);
-        return ret;
+        return this.wasm.add_reference_input(referenceInput.wasm);
       }
 
       addKeyInput(hash: WasmContract.Ed25519KeyHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addScriptInput(hash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addNativeScriptInput(script: WasmContract.NativeScript, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
       }
 
       addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
       addBootstrapInput(hash: WasmContract.ByronAddress, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
       }
 
       countMissingInputScripts(): Promise<number> {
-        const ret = this.wasm.count_missing_input_scripts();
-        return ret;
+        return this.wasm.count_missing_input_scripts();
       }
 
       addRequiredNativeInputScripts(scripts: WasmContract.NativeScripts): Promise<number> {
-        const ret = this.wasm.add_required_native_input_scripts(scripts.wasm);
-        return ret;
+        return this.wasm.add_required_native_input_scripts(scripts.wasm);
       }
 
       addRequiredPlutusInputScripts(scripts: WasmContract.PlutusWitnesses): Promise<number> {
-        const ret = this.wasm.add_required_plutus_input_scripts(scripts.wasm);
-        return ret;
+        return this.wasm.add_required_plutus_input_scripts(scripts.wasm);
       }
 
       async getNativeInputScripts(): Promise<Optional<WasmContract.NativeScripts>> {
@@ -9586,8 +8989,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addOutput(output: WasmContract.TransactionOutput): Promise<void> {
-        const ret = this.wasm.add_output(output.wasm);
-        return ret;
+        return this.wasm.add_output(output.wasm);
       }
 
       async feeForOutput(output: WasmContract.TransactionOutput): Promise<WasmContract.BigNum> {
@@ -9596,58 +8998,47 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setFee(fee: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_fee(fee.wasm);
-        return ret;
+        return this.wasm.set_fee(fee.wasm);
       }
 
       setTtl(ttl: number): Promise<void> {
-        const ret = this.wasm.set_ttl(ttl);
-        return ret;
+        return this.wasm.set_ttl(ttl);
       }
 
       setTtlBignum(ttl: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_ttl_bignum(ttl.wasm);
-        return ret;
+        return this.wasm.set_ttl_bignum(ttl.wasm);
       }
 
       setValidityStartInterval(validityStartInterval: number): Promise<void> {
-        const ret = this.wasm.set_validity_start_interval(validityStartInterval);
-        return ret;
+        return this.wasm.set_validity_start_interval(validityStartInterval);
       }
 
       setValidityStartIntervalBignum(validityStartInterval: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_validity_start_interval_bignum(validityStartInterval.wasm);
-        return ret;
+        return this.wasm.set_validity_start_interval_bignum(validityStartInterval.wasm);
       }
 
       setCerts(certs: WasmContract.Certificates): Promise<void> {
-        const ret = this.wasm.set_certs(certs.wasm);
-        return ret;
+        return this.wasm.set_certs(certs.wasm);
       }
 
       setCertsBuilder(certs: WasmContract.CertificatesBuilder): Promise<void> {
-        const ret = this.wasm.set_certs_builder(certs.wasm);
-        return ret;
+        return this.wasm.set_certs_builder(certs.wasm);
       }
 
       setWithdrawals(withdrawals: WasmContract.Withdrawals): Promise<void> {
-        const ret = this.wasm.set_withdrawals(withdrawals.wasm);
-        return ret;
+        return this.wasm.set_withdrawals(withdrawals.wasm);
       }
 
       setWithdrawalsBuilder(withdrawals: WasmContract.WithdrawalsBuilder): Promise<void> {
-        const ret = this.wasm.set_withdrawals_builder(withdrawals.wasm);
-        return ret;
+        return this.wasm.set_withdrawals_builder(withdrawals.wasm);
       }
 
       setVotingBuilder(votingBuilder: WasmContract.VotingBuilder): Promise<void> {
-        const ret = this.wasm.set_voting_builder(votingBuilder.wasm);
-        return ret;
+        return this.wasm.set_voting_builder(votingBuilder.wasm);
       }
 
       setVotingProposalBuilder(votingProposalBuilder: WasmContract.VotingProposalBuilder): Promise<void> {
-        const ret = this.wasm.set_voting_proposal_builder(votingProposalBuilder.wasm);
-        return ret;
+        return this.wasm.set_voting_proposal_builder(votingProposalBuilder.wasm);
       }
 
       async getAuxiliaryData(): Promise<Optional<WasmContract.AuxiliaryData>> {
@@ -9657,33 +9048,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): Promise<void> {
-        const ret = this.wasm.set_auxiliary_data(auxiliaryData.wasm);
-        return ret;
+        return this.wasm.set_auxiliary_data(auxiliaryData.wasm);
       }
 
       setMetadata(metadata: WasmContract.GeneralTransactionMetadata): Promise<void> {
-        const ret = this.wasm.set_metadata(metadata.wasm);
-        return ret;
+        return this.wasm.set_metadata(metadata.wasm);
       }
 
       addMetadatum(key: WasmContract.BigNum, val: WasmContract.TransactionMetadatum): Promise<void> {
-        const ret = this.wasm.add_metadatum(key.wasm, val.wasm);
-        return ret;
+        return this.wasm.add_metadatum(key.wasm, val.wasm);
       }
 
       addJsonMetadatum(key: WasmContract.BigNum, val: string): Promise<void> {
-        const ret = this.wasm.add_json_metadatum(key.wasm, val);
-        return ret;
+        return this.wasm.add_json_metadatum(key.wasm, val);
       }
 
       addJsonMetadatumWithSchema(key: WasmContract.BigNum, val: string, schema: WasmContract.MetadataJsonSchema): Promise<void> {
-        const ret = this.wasm.add_json_metadatum_with_schema(key.wasm, val, schema);
-        return ret;
+        return this.wasm.add_json_metadatum_with_schema(key.wasm, val, schema);
       }
 
       setMintBuilder(mintBuilder: WasmContract.MintBuilder): Promise<void> {
-        const ret = this.wasm.set_mint_builder(mintBuilder.wasm);
-        return ret;
+        return this.wasm.set_mint_builder(mintBuilder.wasm);
       }
 
       async getMintBuilder(): Promise<Optional<WasmContract.MintBuilder>> {
@@ -9693,8 +9078,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMint(mint: WasmContract.Mint, mintScripts: WasmContract.NativeScripts): Promise<void> {
-        const ret = this.wasm.set_mint(mint.wasm, mintScripts.wasm);
-        return ret;
+        return this.wasm.set_mint(mint.wasm, mintScripts.wasm);
       }
 
       async getMint(): Promise<Optional<WasmContract.Mint>> {
@@ -9710,28 +9094,23 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMintAsset(policyScript: WasmContract.NativeScript, mintAssets: WasmContract.MintAssets): Promise<void> {
-        const ret = this.wasm.set_mint_asset(policyScript.wasm, mintAssets.wasm);
-        return ret;
+        return this.wasm.set_mint_asset(policyScript.wasm, mintAssets.wasm);
       }
 
       addMintAsset(policyScript: WasmContract.NativeScript, assetName: WasmContract.AssetName, amount: WasmContract.Int): Promise<void> {
-        const ret = this.wasm.add_mint_asset(policyScript.wasm, assetName.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_mint_asset(policyScript.wasm, assetName.wasm, amount.wasm);
       }
 
       addMintAssetAndOutput(policyScript: WasmContract.NativeScript, assetName: WasmContract.AssetName, amount: WasmContract.Int, outputBuilder: WasmContract.TransactionOutputAmountBuilder, outputCoin: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.add_mint_asset_and_output(policyScript.wasm, assetName.wasm, amount.wasm, outputBuilder.wasm, outputCoin.wasm);
-        return ret;
+        return this.wasm.add_mint_asset_and_output(policyScript.wasm, assetName.wasm, amount.wasm, outputBuilder.wasm, outputCoin.wasm);
       }
 
       addMintAssetAndOutputMinRequiredCoin(policyScript: WasmContract.NativeScript, assetName: WasmContract.AssetName, amount: WasmContract.Int, outputBuilder: WasmContract.TransactionOutputAmountBuilder): Promise<void> {
-        const ret = this.wasm.add_mint_asset_and_output_min_required_coin(policyScript.wasm, assetName.wasm, amount.wasm, outputBuilder.wasm);
-        return ret;
+        return this.wasm.add_mint_asset_and_output_min_required_coin(policyScript.wasm, assetName.wasm, amount.wasm, outputBuilder.wasm);
       }
 
       addExtraWitnessDatum(datum: WasmContract.PlutusData): Promise<void> {
-        const ret = this.wasm.add_extra_witness_datum(datum.wasm);
-        return ret;
+        return this.wasm.add_extra_witness_datum(datum.wasm);
       }
 
       async getExtraWitnessDatums(): Promise<Optional<WasmContract.PlutusList>> {
@@ -9741,8 +9120,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setDonation(donation: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_donation(donation.wasm);
-        return ret;
+        return this.wasm.set_donation(donation.wasm);
       }
 
       async getDonation(): Promise<Optional<WasmContract.BigNum>> {
@@ -9752,8 +9130,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCurrentTreasuryValue(currentTreasuryValue: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_current_treasury_value(currentTreasuryValue.wasm);
-        return ret;
+        return this.wasm.set_current_treasury_value(currentTreasuryValue.wasm);
       }
 
       async getCurrentTreasuryValue(): Promise<Optional<WasmContract.BigNum>> {
@@ -9809,43 +9186,35 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addChangeIfNeeded(address: WasmContract.Address): Promise<boolean> {
-        const ret = this.wasm.add_change_if_needed(address.wasm);
-        return ret;
+        return this.wasm.add_change_if_needed(address.wasm);
       }
 
       addChangeIfNeededWithDatum(address: WasmContract.Address, plutusData: WasmContract.OutputDatum): Promise<boolean> {
-        const ret = this.wasm.add_change_if_needed_with_datum(address.wasm, plutusData.wasm);
-        return ret;
+        return this.wasm.add_change_if_needed_with_datum(address.wasm, plutusData.wasm);
       }
 
       calcScriptDataHash(costModels: WasmContract.Costmdls): Promise<void> {
-        const ret = this.wasm.calc_script_data_hash(costModels.wasm);
-        return ret;
+        return this.wasm.calc_script_data_hash(costModels.wasm);
       }
 
       setScriptDataHash(hash: WasmContract.ScriptDataHash): Promise<void> {
-        const ret = this.wasm.set_script_data_hash(hash.wasm);
-        return ret;
+        return this.wasm.set_script_data_hash(hash.wasm);
       }
 
       removeScriptDataHash(): Promise<void> {
-        const ret = this.wasm.remove_script_data_hash();
-        return ret;
+        return this.wasm.remove_script_data_hash();
       }
 
       addRequiredSigner(key: WasmContract.Ed25519KeyHash): Promise<void> {
-        const ret = this.wasm.add_required_signer(key.wasm);
-        return ret;
+        return this.wasm.add_required_signer(key.wasm);
       }
 
       fullSize(): Promise<number> {
-        const ret = this.wasm.full_size();
-        return ret;
+        return this.wasm.full_size();
       }
 
       outputSizes(): Promise<Uint32Array> {
-        const ret = this.wasm.output_sizes();
-        return ret;
+        return this.wasm.output_sizes();
       }
 
       async build(): Promise<WasmContract.TransactionBody> {
@@ -9965,13 +9334,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.TransactionHash> {
@@ -9980,8 +9347,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.TransactionHash> {
@@ -10002,8 +9368,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionInput> {
@@ -10012,8 +9377,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionInput> {
@@ -10022,8 +9386,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionInput> {
@@ -10037,8 +9400,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       index(): Promise<number> {
-        const ret = this.wasm.index();
-        return ret;
+        return this.wasm.index();
       }
 
       static async new(transactionId: WasmContract.TransactionHash, index: number): Promise<WasmContract.TransactionInput> {
@@ -10059,8 +9421,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionInputs> {
@@ -10069,8 +9430,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionInputs> {
@@ -10079,8 +9439,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionInputs> {
@@ -10094,8 +9453,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionInput> {
@@ -10104,8 +9462,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionInput): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
       async toOption(): Promise<Optional<WasmContract.TransactionInputs>> {
@@ -10127,8 +9484,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionMetadatum> {
@@ -10137,8 +9493,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionMetadatum> {
@@ -10172,8 +9527,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.TransactionMetadatumKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async asMap(): Promise<WasmContract.MetadataMap> {
@@ -10192,13 +9546,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       asBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.as_bytes();
-        return ret;
+        return this.wasm.as_bytes();
       }
 
       asText(): Promise<string> {
-        const ret = this.wasm.as_text();
-        return ret;
+        return this.wasm.as_text();
       }
 
     }
@@ -10214,8 +9566,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionMetadatumLabels> {
@@ -10224,8 +9575,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionMetadatumLabels> {
@@ -10239,8 +9589,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.BigNum> {
@@ -10249,8 +9598,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -10266,8 +9614,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionOutput> {
@@ -10276,8 +9623,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionOutput> {
@@ -10286,8 +9632,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionOutput> {
@@ -10324,33 +9669,27 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setScriptRef(scriptRef: WasmContract.ScriptRef): Promise<void> {
-        const ret = this.wasm.set_script_ref(scriptRef.wasm);
-        return ret;
+        return this.wasm.set_script_ref(scriptRef.wasm);
       }
 
       setPlutusData(data: WasmContract.PlutusData): Promise<void> {
-        const ret = this.wasm.set_plutus_data(data.wasm);
-        return ret;
+        return this.wasm.set_plutus_data(data.wasm);
       }
 
       setDataHash(dataHash: WasmContract.DataHash): Promise<void> {
-        const ret = this.wasm.set_data_hash(dataHash.wasm);
-        return ret;
+        return this.wasm.set_data_hash(dataHash.wasm);
       }
 
       hasPlutusData(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_data();
-        return ret;
+        return this.wasm.has_plutus_data();
       }
 
       hasDataHash(): Promise<boolean> {
-        const ret = this.wasm.has_data_hash();
-        return ret;
+        return this.wasm.has_data_hash();
       }
 
       hasScriptRef(): Promise<boolean> {
-        const ret = this.wasm.has_script_ref();
-        return ret;
+        return this.wasm.has_script_ref();
       }
 
       static async new(address: WasmContract.Address, amount: WasmContract.Value): Promise<WasmContract.TransactionOutput> {
@@ -10359,8 +9698,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       serializationFormat(): Promise<Optional<WasmContract.CborContainerType>> {
-        const ret = this.wasm.serialization_format();
-        return ret;
+        return this.wasm.serialization_format();
       }
 
     }
@@ -10460,8 +9798,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionOutputs> {
@@ -10470,8 +9807,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionOutputs> {
@@ -10480,8 +9816,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionOutputs> {
@@ -10495,8 +9830,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionOutput> {
@@ -10505,8 +9839,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionOutput): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -10522,8 +9855,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionUnspentOutput> {
@@ -10532,8 +9864,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionUnspentOutput> {
@@ -10542,8 +9873,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionUnspentOutput> {
@@ -10579,8 +9909,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionUnspentOutputs> {
@@ -10594,8 +9923,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionUnspentOutput> {
@@ -10604,8 +9932,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionUnspentOutput): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -10621,8 +9948,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionWitnessSet> {
@@ -10631,8 +9957,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionWitnessSet> {
@@ -10641,8 +9966,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionWitnessSet> {
@@ -10651,8 +9975,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setVkeys(vkeys: WasmContract.Vkeywitnesses): Promise<void> {
-        const ret = this.wasm.set_vkeys(vkeys.wasm);
-        return ret;
+        return this.wasm.set_vkeys(vkeys.wasm);
       }
 
       async vkeys(): Promise<Optional<WasmContract.Vkeywitnesses>> {
@@ -10662,8 +9985,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setNativeScripts(nativeScripts: WasmContract.NativeScripts): Promise<void> {
-        const ret = this.wasm.set_native_scripts(nativeScripts.wasm);
-        return ret;
+        return this.wasm.set_native_scripts(nativeScripts.wasm);
       }
 
       async nativeScripts(): Promise<Optional<WasmContract.NativeScripts>> {
@@ -10673,8 +9995,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setBootstraps(bootstraps: WasmContract.BootstrapWitnesses): Promise<void> {
-        const ret = this.wasm.set_bootstraps(bootstraps.wasm);
-        return ret;
+        return this.wasm.set_bootstraps(bootstraps.wasm);
       }
 
       async bootstraps(): Promise<Optional<WasmContract.BootstrapWitnesses>> {
@@ -10684,8 +10005,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setPlutusScripts(plutusScripts: WasmContract.PlutusScripts): Promise<void> {
-        const ret = this.wasm.set_plutus_scripts(plutusScripts.wasm);
-        return ret;
+        return this.wasm.set_plutus_scripts(plutusScripts.wasm);
       }
 
       async plutusScripts(): Promise<Optional<WasmContract.PlutusScripts>> {
@@ -10695,8 +10015,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setPlutusData(plutusData: WasmContract.PlutusList): Promise<void> {
-        const ret = this.wasm.set_plutus_data(plutusData.wasm);
-        return ret;
+        return this.wasm.set_plutus_data(plutusData.wasm);
       }
 
       async plutusData(): Promise<Optional<WasmContract.PlutusList>> {
@@ -10706,8 +10025,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setRedeemers(redeemers: WasmContract.Redeemers): Promise<void> {
-        const ret = this.wasm.set_redeemers(redeemers.wasm);
-        return ret;
+        return this.wasm.set_redeemers(redeemers.wasm);
       }
 
       async redeemers(): Promise<Optional<WasmContract.Redeemers>> {
@@ -10734,8 +10052,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TransactionWitnessSets> {
@@ -10744,8 +10061,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TransactionWitnessSets> {
@@ -10754,8 +10070,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TransactionWitnessSets> {
@@ -10769,8 +10084,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.TransactionWitnessSet> {
@@ -10779,8 +10093,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.TransactionWitnessSet): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -10796,8 +10109,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TreasuryWithdrawals> {
@@ -10817,8 +10129,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       insert(key: WasmContract.RewardAddress, value: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.insert(key.wasm, value.wasm);
-        return ret;
+        return this.wasm.insert(key.wasm, value.wasm);
       }
 
       async keys(): Promise<WasmContract.RewardAddresses> {
@@ -10827,8 +10138,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
     }
@@ -10844,8 +10154,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.TreasuryWithdrawalsAction> {
@@ -10854,8 +10163,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.TreasuryWithdrawalsAction> {
@@ -10864,8 +10172,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.TreasuryWithdrawalsAction> {
@@ -10928,53 +10235,43 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       addKeyInput(hash: WasmContract.Ed25519KeyHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addScriptInput(hash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addNativeScriptInput(script: WasmContract.NativeScript, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
       }
 
       addPlutusScriptInput(witness: WasmContract.PlutusWitness, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
       addBootstrapInput(hash: WasmContract.ByronAddress, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm);
       }
 
       addInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        const ret = this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
-        return ret;
+        return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
       }
 
       countMissingInputScripts(): Promise<number> {
-        const ret = this.wasm.count_missing_input_scripts();
-        return ret;
+        return this.wasm.count_missing_input_scripts();
       }
 
       addRequiredNativeInputScripts(scripts: WasmContract.NativeScripts): Promise<number> {
-        const ret = this.wasm.add_required_native_input_scripts(scripts.wasm);
-        return ret;
+        return this.wasm.add_required_native_input_scripts(scripts.wasm);
       }
 
       addRequiredPlutusInputScripts(scripts: WasmContract.PlutusWitnesses): Promise<number> {
-        const ret = this.wasm.add_required_plutus_input_scripts(scripts.wasm);
-        return ret;
+        return this.wasm.add_required_plutus_input_scripts(scripts.wasm);
       }
 
       addRequiredScriptInputWitnesses(inputsWithWit: WasmContract.InputsWithScriptWitness): Promise<number> {
-        const ret = this.wasm.add_required_script_input_witnesses(inputsWithWit.wasm);
-        return ret;
+        return this.wasm.add_required_script_input_witnesses(inputsWithWit.wasm);
       }
 
       async getRefInputs(): Promise<WasmContract.TransactionInputs> {
@@ -10995,18 +10292,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       addRequiredSigner(key: WasmContract.Ed25519KeyHash): Promise<void> {
-        const ret = this.wasm.add_required_signer(key.wasm);
-        return ret;
+        return this.wasm.add_required_signer(key.wasm);
       }
 
       addRequiredSigners(keys: WasmContract.Ed25519KeyHashes): Promise<void> {
-        const ret = this.wasm.add_required_signers(keys.wasm);
-        return ret;
+        return this.wasm.add_required_signers(keys.wasm);
       }
 
       async totalValue(): Promise<WasmContract.Value> {
@@ -11038,8 +10332,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.URL> {
@@ -11048,8 +10341,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.URL> {
@@ -11058,8 +10350,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.URL> {
@@ -11073,8 +10364,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       url(): Promise<string> {
-        const ret = this.wasm.url();
-        return ret;
+        return this.wasm.url();
       }
 
     }
@@ -11090,8 +10380,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.UnitInterval> {
@@ -11100,8 +10389,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.UnitInterval> {
@@ -11110,8 +10398,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.UnitInterval> {
@@ -11147,8 +10434,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Update> {
@@ -11157,8 +10443,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Update> {
@@ -11167,8 +10452,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Update> {
@@ -11182,8 +10466,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       epoch(): Promise<number> {
-        const ret = this.wasm.epoch();
-        return ret;
+        return this.wasm.epoch();
       }
 
       static async new(proposedProtocolParameterUpdates: WasmContract.ProposedProtocolParameterUpdates, epoch: number): Promise<WasmContract.Update> {
@@ -11204,8 +10487,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.UpdateCommitteeAction> {
@@ -11214,8 +10496,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.UpdateCommitteeAction> {
@@ -11224,8 +10505,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.UpdateCommitteeAction> {
@@ -11272,8 +10552,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VRFCert> {
@@ -11282,8 +10561,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VRFCert> {
@@ -11292,8 +10570,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VRFCert> {
@@ -11302,13 +10579,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       output(): Promise<Uint8Array> {
-        const ret = this.wasm.output();
-        return ret;
+        return this.wasm.output();
       }
 
       proof(): Promise<Uint8Array> {
-        const ret = this.wasm.proof();
-        return ret;
+        return this.wasm.proof();
       }
 
       static async new(output: Uint8Array, proof: Uint8Array): Promise<WasmContract.VRFCert> {
@@ -11334,13 +10609,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.VRFKeyHash> {
@@ -11349,8 +10622,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.VRFKeyHash> {
@@ -11376,13 +10648,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       toBech32(prefix: string): Promise<string> {
-        const ret = this.wasm.to_bech32(prefix);
-        return ret;
+        return this.wasm.to_bech32(prefix);
       }
 
       static async fromBech32(bechStr: string): Promise<WasmContract.VRFVKey> {
@@ -11391,8 +10661,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hex: string): Promise<WasmContract.VRFVKey> {
@@ -11413,8 +10682,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Value> {
@@ -11423,8 +10691,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Value> {
@@ -11433,8 +10700,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Value> {
@@ -11463,8 +10729,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       isZero(): Promise<boolean> {
-        const ret = this.wasm.is_zero();
-        return ret;
+        return this.wasm.is_zero();
       }
 
       async coin(): Promise<WasmContract.BigNum> {
@@ -11473,8 +10738,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setCoin(coin: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.set_coin(coin.wasm);
-        return ret;
+        return this.wasm.set_coin(coin.wasm);
       }
 
       async multiasset(): Promise<Optional<WasmContract.MultiAsset>> {
@@ -11484,8 +10748,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       setMultiasset(multiasset: WasmContract.MultiAsset): Promise<void> {
-        const ret = this.wasm.set_multiasset(multiasset.wasm);
-        return ret;
+        return this.wasm.set_multiasset(multiasset.wasm);
       }
 
       async checkedAdd(rhs: WasmContract.Value): Promise<WasmContract.Value> {
@@ -11504,8 +10767,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       compare(rhsValue: WasmContract.Value): Promise<Optional<number>> {
-        const ret = this.wasm.compare(rhsValue.wasm);
-        return ret;
+        return this.wasm.compare(rhsValue.wasm);
       }
 
     }
@@ -11521,8 +10783,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Vkey> {
@@ -11531,8 +10792,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Vkey> {
@@ -11541,8 +10801,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Vkey> {
@@ -11578,8 +10837,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Vkey> {
@@ -11588,8 +10846,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Vkey): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -11605,8 +10862,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Vkeywitness> {
@@ -11615,8 +10871,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Vkeywitness> {
@@ -11625,8 +10880,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Vkeywitness> {
@@ -11662,8 +10916,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Vkeywitnesses> {
@@ -11672,8 +10925,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Vkeywitnesses> {
@@ -11682,8 +10934,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Vkeywitnesses> {
@@ -11697,8 +10948,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.Vkeywitness> {
@@ -11707,8 +10957,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(elem: WasmContract.Vkeywitness): Promise<void> {
-        const ret = this.wasm.add(elem.wasm);
-        return ret;
+        return this.wasm.add(elem.wasm);
       }
 
     }
@@ -11724,8 +10973,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VoteDelegation> {
@@ -11734,8 +10982,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VoteDelegation> {
@@ -11744,8 +10991,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VoteDelegation> {
@@ -11769,8 +11015,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -11786,8 +11031,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VoteRegistrationAndDelegation> {
@@ -11796,8 +11040,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VoteRegistrationAndDelegation> {
@@ -11806,8 +11049,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VoteRegistrationAndDelegation> {
@@ -11836,8 +11078,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
     }
@@ -11853,8 +11094,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Voter> {
@@ -11863,8 +11103,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Voter> {
@@ -11873,8 +11112,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Voter> {
@@ -11898,8 +11136,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       kind(): Promise<WasmContract.VoterKind> {
-        const ret = this.wasm.kind();
-        return ret;
+        return this.wasm.kind();
       }
 
       async toConstitutionalCommitteeHotCred(): Promise<Optional<WasmContract.Credential>> {
@@ -11921,8 +11158,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasScriptCredentials(): Promise<boolean> {
-        const ret = this.wasm.has_script_credentials();
-        return ret;
+        return this.wasm.has_script_credentials();
       }
 
       async toKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
@@ -11944,8 +11180,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Voters> {
@@ -11959,8 +11194,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(voter: WasmContract.Voter): Promise<void> {
-        const ret = this.wasm.add(voter.wasm);
-        return ret;
+        return this.wasm.add(voter.wasm);
       }
 
       async get(index: number): Promise<Optional<WasmContract.Voter>> {
@@ -11970,8 +11204,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
     }
@@ -11992,18 +11225,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(voter: WasmContract.Voter, govActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure): Promise<void> {
-        const ret = this.wasm.add(voter.wasm, govActionId.wasm, votingProcedure.wasm);
-        return ret;
+        return this.wasm.add(voter.wasm, govActionId.wasm, votingProcedure.wasm);
       }
 
       addWithPlutusWitness(voter: WasmContract.Voter, govActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure, witness: WasmContract.PlutusWitness): Promise<void> {
-        const ret = this.wasm.add_with_plutus_witness(voter.wasm, govActionId.wasm, votingProcedure.wasm, witness.wasm);
-        return ret;
+        return this.wasm.add_with_plutus_witness(voter.wasm, govActionId.wasm, votingProcedure.wasm, witness.wasm);
       }
 
       addWithNativeScript(voter: WasmContract.Voter, govActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure, nativeScriptSource: WasmContract.NativeScriptSource): Promise<void> {
-        const ret = this.wasm.add_with_native_script(voter.wasm, govActionId.wasm, votingProcedure.wasm, nativeScriptSource.wasm);
-        return ret;
+        return this.wasm.add_with_native_script(voter.wasm, govActionId.wasm, votingProcedure.wasm, nativeScriptSource.wasm);
       }
 
       async getPlutusWitnesses(): Promise<WasmContract.PlutusWitnesses> {
@@ -12022,8 +11252,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasPlutusScripts(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_scripts();
-        return ret;
+        return this.wasm.has_plutus_scripts();
       }
 
       async build(): Promise<WasmContract.VotingProcedures> {
@@ -12044,8 +11273,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VotingProcedure> {
@@ -12054,8 +11282,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VotingProcedure> {
@@ -12064,8 +11291,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VotingProcedure> {
@@ -12084,8 +11310,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       voteKind(): Promise<WasmContract.VoteKind> {
-        const ret = this.wasm.vote_kind();
-        return ret;
+        return this.wasm.vote_kind();
       }
 
       async anchor(): Promise<Optional<WasmContract.Anchor>> {
@@ -12107,8 +11332,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VotingProcedures> {
@@ -12117,8 +11341,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VotingProcedures> {
@@ -12127,8 +11350,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VotingProcedures> {
@@ -12142,8 +11364,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       insert(voter: WasmContract.Voter, governanceActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure): Promise<void> {
-        const ret = this.wasm.insert(voter.wasm, governanceActionId.wasm, votingProcedure.wasm);
-        return ret;
+        return this.wasm.insert(voter.wasm, governanceActionId.wasm, votingProcedure.wasm);
       }
 
       async get(voter: WasmContract.Voter, governanceActionId: WasmContract.GovernanceActionId): Promise<Optional<WasmContract.VotingProcedure>> {
@@ -12175,8 +11396,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VotingProposal> {
@@ -12185,8 +11405,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VotingProposal> {
@@ -12195,8 +11414,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VotingProposal> {
@@ -12247,13 +11465,11 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(proposal: WasmContract.VotingProposal): Promise<void> {
-        const ret = this.wasm.add(proposal.wasm);
-        return ret;
+        return this.wasm.add(proposal.wasm);
       }
 
       addWithPlutusWitness(proposal: WasmContract.VotingProposal, witness: WasmContract.PlutusWitness): Promise<void> {
-        const ret = this.wasm.add_with_plutus_witness(proposal.wasm, witness.wasm);
-        return ret;
+        return this.wasm.add_with_plutus_witness(proposal.wasm, witness.wasm);
       }
 
       async getPlutusWitnesses(): Promise<WasmContract.PlutusWitnesses> {
@@ -12267,8 +11483,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasPlutusScripts(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_scripts();
-        return ret;
+        return this.wasm.has_plutus_scripts();
       }
 
       async build(): Promise<WasmContract.VotingProposals> {
@@ -12289,8 +11504,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VotingProposals> {
@@ -12299,8 +11513,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.VotingProposals> {
@@ -12309,8 +11522,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.VotingProposals> {
@@ -12324,8 +11536,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async get(index: number): Promise<WasmContract.VotingProposal> {
@@ -12334,8 +11545,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(proposal: WasmContract.VotingProposal): Promise<void> {
-        const ret = this.wasm.add(proposal.wasm);
-        return ret;
+        return this.wasm.add(proposal.wasm);
       }
 
     }
@@ -12351,8 +11561,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
     {
 
       toBytes(): Promise<Uint8Array> {
-        const ret = this.wasm.to_bytes();
-        return ret;
+        return this.wasm.to_bytes();
       }
 
       static async fromBytes(bytes: Uint8Array): Promise<WasmContract.Withdrawals> {
@@ -12361,8 +11570,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toHex(): Promise<string> {
-        const ret = this.wasm.to_hex();
-        return ret;
+        return this.wasm.to_hex();
       }
 
       static async fromHex(hexStr: string): Promise<WasmContract.Withdrawals> {
@@ -12371,8 +11579,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       toJson(): Promise<string> {
-        const ret = this.wasm.to_json();
-        return ret;
+        return this.wasm.to_json();
       }
 
       static async fromJson(json: string): Promise<WasmContract.Withdrawals> {
@@ -12386,8 +11593,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       len(): Promise<number> {
-        const ret = this.wasm.len();
-        return ret;
+        return this.wasm.len();
       }
 
       async insert(key: WasmContract.RewardAddress, value: WasmContract.BigNum): Promise<Optional<WasmContract.BigNum>> {
@@ -12425,18 +11631,15 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       add(address: WasmContract.RewardAddress, coin: WasmContract.BigNum): Promise<void> {
-        const ret = this.wasm.add(address.wasm, coin.wasm);
-        return ret;
+        return this.wasm.add(address.wasm, coin.wasm);
       }
 
       addWithPlutusWitness(address: WasmContract.RewardAddress, coin: WasmContract.BigNum, witness: WasmContract.PlutusWitness): Promise<void> {
-        const ret = this.wasm.add_with_plutus_witness(address.wasm, coin.wasm, witness.wasm);
-        return ret;
+        return this.wasm.add_with_plutus_witness(address.wasm, coin.wasm, witness.wasm);
       }
 
       addWithNativeScript(address: WasmContract.RewardAddress, coin: WasmContract.BigNum, nativeScriptSource: WasmContract.NativeScriptSource): Promise<void> {
-        const ret = this.wasm.add_with_native_script(address.wasm, coin.wasm, nativeScriptSource.wasm);
-        return ret;
+        return this.wasm.add_with_native_script(address.wasm, coin.wasm, nativeScriptSource.wasm);
       }
 
       async getPlutusWitnesses(): Promise<WasmContract.PlutusWitnesses> {
@@ -12460,8 +11663,7 @@ export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
       hasPlutusScripts(): Promise<boolean> {
-        const ret = this.wasm.has_plutus_scripts();
-        return ret;
+        return this.wasm.has_plutus_scripts();
       }
 
       async build(): Promise<WasmContract.Withdrawals> {
