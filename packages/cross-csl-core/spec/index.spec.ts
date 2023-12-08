@@ -1,6 +1,7 @@
 import { WasmModuleProxy } from '../src/index';
 import { expect } from 'chai';
 
+
 const BECH32_ADRESS =
   'addr_test1qqyu8ymdqng4fysrks40fm67jfurxhya44mnarz3e7pmjqm4nwegal2y04prwsratk06959g84g6ledz2us9ugd8mqesl76grg';
 const PUBLIC_KEY =
