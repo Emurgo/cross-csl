@@ -15,10 +15,10 @@ const wrapByPromise = <T>(f: () => T): Promise<T> => {
 };
 
 export const init = (ctx: string): WasmContract.WasmModuleProxy => {
-  return new MobileWasmModuleProxy(ctx);
+  return new WasmModuleProxy(ctx);
 };
 
-export class MobileWasmModuleProxy implements WasmContract.WasmModuleProxy {
+export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   private _ctx: string;
 
   constructor(ctx: string) {
