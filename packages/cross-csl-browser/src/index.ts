@@ -167,13 +167,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     });
   }
 
-  minAdaRequired(assets: WasmContract.Value, hasDataHash: boolean, coinsPerUtxoWord: WasmContract.BigNum): Promise<WasmContract.BigNum> {
-    return wrapByPromise(() => {
-      const ret = WasmV4.min_ada_required(assets.wasm, hasDataHash, coinsPerUtxoWord.wasm);
-      return new this.BigNum(ret, this._ctx);
-    });
-  }
-
   minFee(tx: WasmContract.Transaction, linearFee: WasmContract.LinearFee): Promise<WasmContract.BigNum> {
     return wrapByPromise(() => {
       const ret = WasmV4.min_fee(tx.wasm, linearFee.wasm);
@@ -1393,6 +1386,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static new(header: WasmContract.Header, transactionBodies: WasmContract.TransactionBodies, transactionWitnessSets: WasmContract.TransactionWitnessSets, auxiliaryDataSet: WasmContract.AuxiliaryDataSet, invalidTransactions: Uint32Array): Promise<WasmContract.Block> {
         return wrapByPromise(() => {
           const ret = WasmV4.Block.new(header.wasm, transactionBodies.wasm, transactionWitnessSets.wasm, auxiliaryDataSet.wasm, invalidTransactions);
+          return new $outer.Block(ret, $outer._ctx);
+        });
+      }
+
+      static fromWrappedBytes(data: Uint8Array): Promise<WasmContract.Block> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.Block.from_wrapped_bytes(data);
           return new $outer.Block(ret, $outer._ctx);
         });
       }
@@ -3104,13 +3104,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.DataCost
     {
 
-      static newCoinsPerWord(coinsPerWord: WasmContract.BigNum): Promise<WasmContract.DataCost> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.DataCost.new_coins_per_word(coinsPerWord.wasm);
-          return new $outer.DataCost(ret, $outer._ctx);
-        });
-      }
-
       static newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<WasmContract.DataCost> {
         return wrapByPromise(() => {
           const ret = WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm);
@@ -3364,6 +3357,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return wrapByPromise(() => {
           const ret = WasmV4.DrepRegistration.new_with_anchor(votingCredential.wasm, coin.wasm, anchor.wasm);
           return new $outer.DrepRegistration(ret, $outer._ctx);
+        });
+      }
+
+      hasScriptCredentials(): Promise<boolean> {
+        return wrapByPromise(() => {
+          return this.wasm.has_script_credentials();
         });
       }
 
@@ -3773,6 +3772,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       add(elem: WasmContract.Ed25519KeyHash): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.add(elem.wasm);
+        });
+      }
+
+      contains(elem: WasmContract.Ed25519KeyHash): Promise<boolean> {
+        return wrapByPromise(() => {
+          return this.wasm.contains(elem.wasm);
         });
       }
 
@@ -5116,77 +5121,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return InfoAction;
   })();
 
-  public InputWithScriptWitness = (() => {
-    const $outer = this;
-
-    class InputWithScriptWitness
-      extends Ptr<WasmV4.InputWithScriptWitness>
-      implements WasmContract.InputWithScriptWitness
-    {
-
-      static newWithNativeScriptWitness(input: WasmContract.TransactionInput, witness: WasmContract.NativeScript): Promise<WasmContract.InputWithScriptWitness> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.InputWithScriptWitness.new_with_native_script_witness(input.wasm, witness.wasm);
-          return new $outer.InputWithScriptWitness(ret, $outer._ctx);
-        });
-      }
-
-      static newWithPlutusWitness(input: WasmContract.TransactionInput, witness: WasmContract.PlutusWitness): Promise<WasmContract.InputWithScriptWitness> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.InputWithScriptWitness.new_with_plutus_witness(input.wasm, witness.wasm);
-          return new $outer.InputWithScriptWitness(ret, $outer._ctx);
-        });
-      }
-
-      input(): Promise<WasmContract.TransactionInput> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.input();
-          return new $outer.TransactionInput(ret, $outer._ctx);
-        });
-      }
-
-    }
-    return InputWithScriptWitness;
-  })();
-
-  public InputsWithScriptWitness = (() => {
-    const $outer = this;
-
-    class InputsWithScriptWitness
-      extends Ptr<WasmV4.InputsWithScriptWitness>
-      implements WasmContract.InputsWithScriptWitness
-    {
-
-      static new(): Promise<WasmContract.InputsWithScriptWitness> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.InputsWithScriptWitness.new();
-          return new $outer.InputsWithScriptWitness(ret, $outer._ctx);
-        });
-      }
-
-      add(input: WasmContract.InputWithScriptWitness): Promise<void> {
-        return wrapByPromise(() => {
-          return this.wasm.add(input.wasm);
-        });
-      }
-
-      get(index: number): Promise<WasmContract.InputWithScriptWitness> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.get(index);
-          return new $outer.InputWithScriptWitness(ret, $outer._ctx);
-        });
-      }
-
-      len(): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.len();
-        });
-      }
-
-    }
-    return InputsWithScriptWitness;
-  })();
-
   public Int = (() => {
     const $outer = this;
 
@@ -6038,17 +5972,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      get(key: WasmContract.ScriptHash): Promise<Optional<WasmContract.MintAssets>> {
+      get(key: WasmContract.ScriptHash): Promise<Optional<WasmContract.MintsAssets>> {
         return wrapByPromise(() => {
           const ret = this.wasm.get(key.wasm);
-          if (ret == null) return undefined;
-          return new $outer.MintAssets(ret, $outer._ctx);
-        });
-      }
-
-      getAll(key: WasmContract.ScriptHash): Promise<Optional<WasmContract.MintsAssets>> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.get_all(key.wasm);
           if (ret == null) return undefined;
           return new $outer.MintsAssets(ret, $outer._ctx);
         });
@@ -6803,6 +6729,45 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      toBytes(): Promise<Uint8Array> {
+        return wrapByPromise(() => {
+          return this.wasm.to_bytes();
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<WasmContract.NativeScripts> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.NativeScripts.from_bytes(bytes);
+          return new $outer.NativeScripts(ret, $outer._ctx);
+        });
+      }
+
+      toHex(): Promise<string> {
+        return wrapByPromise(() => {
+          return this.wasm.to_hex();
+        });
+      }
+
+      static fromHex(hexStr: string): Promise<WasmContract.NativeScripts> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.NativeScripts.from_hex(hexStr);
+          return new $outer.NativeScripts(ret, $outer._ctx);
+        });
+      }
+
+      toJson(): Promise<string> {
+        return wrapByPromise(() => {
+          return this.wasm.to_json();
+        });
+      }
+
+      static fromJson(json: string): Promise<WasmContract.NativeScripts> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.NativeScripts.from_json(json);
+          return new $outer.NativeScripts(ret, $outer._ctx);
+        });
+      }
+
     }
     return NativeScripts;
   })();
@@ -6919,13 +6884,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static testnet(): Promise<WasmContract.NetworkInfo> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.NetworkInfo.testnet();
-          return new $outer.NetworkInfo(ret, $outer._ctx);
-        });
-      }
-
       static mainnet(): Promise<WasmContract.NetworkInfo> {
         return wrapByPromise(() => {
           const ret = WasmV4.NetworkInfo.mainnet();
@@ -7010,6 +6968,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return wrapByPromise(() => {
           const ret = WasmV4.NewConstitutionAction.new_with_action_id(govActionId.wasm, constitution.wasm);
           return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        });
+      }
+
+      hasScriptHash(): Promise<boolean> {
+        return wrapByPromise(() => {
+          return this.wasm.has_script_hash();
         });
       }
 
@@ -7349,6 +7313,14 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      policyHash(): Promise<Optional<WasmContract.ScriptHash>> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.policy_hash();
+          if (ret == null) return undefined;
+          return new $outer.ScriptHash(ret, $outer._ctx);
+        });
+      }
+
       static new(protocolParamUpdates: WasmContract.ProtocolParamUpdate): Promise<WasmContract.ParameterChangeAction> {
         return wrapByPromise(() => {
           const ret = WasmV4.ParameterChangeAction.new(protocolParamUpdates.wasm);
@@ -7359,6 +7331,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static newWithActionId(govActionId: WasmContract.GovernanceActionId, protocolParamUpdates: WasmContract.ProtocolParamUpdate): Promise<WasmContract.ParameterChangeAction> {
         return wrapByPromise(() => {
           const ret = WasmV4.ParameterChangeAction.new_with_action_id(govActionId.wasm, protocolParamUpdates.wasm);
+          return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        });
+      }
+
+      static newWithPolicyHash(protocolParamUpdates: WasmContract.ProtocolParamUpdate, policyHash: WasmContract.ScriptHash): Promise<WasmContract.ParameterChangeAction> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.ParameterChangeAction.new_with_policy_hash(protocolParamUpdates.wasm, policyHash.wasm);
+          return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        });
+      }
+
+      static newWithPolicyHashAndActionId(govActionId: WasmContract.GovernanceActionId, protocolParamUpdates: WasmContract.ProtocolParamUpdate, policyHash: WasmContract.ScriptHash): Promise<WasmContract.ParameterChangeAction> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.ParameterChangeAction.new_with_policy_hash_and_action_id(govActionId.wasm, protocolParamUpdates.wasm, policyHash.wasm);
           return new $outer.ParameterChangeAction(ret, $outer._ctx);
         });
       }
@@ -7785,16 +7771,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<WasmContract.PlutusScriptSource> {
+      static newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<WasmContract.PlutusScriptSource> {
         return wrapByPromise(() => {
-          const ret = WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm);
-          return new $outer.PlutusScriptSource(ret, $outer._ctx);
-        });
-      }
-
-      static newRefInputWithLangVer(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<WasmContract.PlutusScriptSource> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.PlutusScriptSource.new_ref_input_with_lang_ver(scriptHash.wasm, input.wasm, langVer.wasm);
+          const ret = WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm, langVer.wasm);
           return new $outer.PlutusScriptSource(ret, $outer._ctx);
         });
       }
@@ -11745,14 +11724,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      multiassets(): Promise<Optional<WasmContract.Mint>> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.multiassets();
-          if (ret == null) return undefined;
-          return new $outer.Mint(ret, $outer._ctx);
-        });
-      }
-
       setReferenceInputs(referenceInputs: WasmContract.TransactionInputs): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.set_reference_inputs(referenceInputs.wasm);
@@ -11987,12 +11958,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      addScriptInput(hash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        return wrapByPromise(() => {
-          return this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
-        });
-      }
-
       addNativeScriptInput(script: WasmContract.NativeScript, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
@@ -12011,27 +11976,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      addInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+      addRegularInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return wrapByPromise(() => {
-          return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
-        });
-      }
-
-      countMissingInputScripts(): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.count_missing_input_scripts();
-        });
-      }
-
-      addRequiredNativeInputScripts(scripts: WasmContract.NativeScripts): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.add_required_native_input_scripts(scripts.wasm);
-        });
-      }
-
-      addRequiredPlutusInputScripts(scripts: WasmContract.PlutusWitnesses): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.add_required_plutus_input_scripts(scripts.wasm);
+          return this.wasm.add_regular_input(address.wasm, input.wasm, amount.wasm);
         });
       }
 
@@ -12451,13 +12398,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       feeAlgo(feeAlgo: WasmContract.LinearFee): Promise<WasmContract.TransactionBuilderConfigBuilder> {
         return wrapByPromise(() => {
           const ret = this.wasm.fee_algo(feeAlgo.wasm);
-          return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
-        });
-      }
-
-      coinsPerUtxoWord(coinsPerUtxoWord: WasmContract.BigNum): Promise<WasmContract.TransactionBuilderConfigBuilder> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.coins_per_utxo_word(coinsPerUtxoWord.wasm);
           return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
         });
       }
@@ -13072,13 +13012,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      withAssetAndMinRequiredCoin(multiasset: WasmContract.MultiAsset, coinsPerUtxoWord: WasmContract.BigNum): Promise<WasmContract.TransactionOutputAmountBuilder> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.with_asset_and_min_required_coin(multiasset.wasm, coinsPerUtxoWord.wasm);
-          return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
-        });
-      }
-
       withAssetAndMinRequiredCoinByUtxoCost(multiasset: WasmContract.MultiAsset, dataCost: WasmContract.DataCost): Promise<WasmContract.TransactionOutputAmountBuilder> {
         return wrapByPromise(() => {
           const ret = this.wasm.with_asset_and_min_required_coin_by_utxo_cost(multiasset.wasm, dataCost.wasm);
@@ -13683,9 +13616,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      policyHash(): Promise<Optional<WasmContract.ScriptHash>> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.policy_hash();
+          if (ret == null) return undefined;
+          return new $outer.ScriptHash(ret, $outer._ctx);
+        });
+      }
+
       static new(withdrawals: WasmContract.TreasuryWithdrawals): Promise<WasmContract.TreasuryWithdrawalsAction> {
         return wrapByPromise(() => {
           const ret = WasmV4.TreasuryWithdrawalsAction.new(withdrawals.wasm);
+          return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        });
+      }
+
+      static newWithPolicyHash(withdrawals: WasmContract.TreasuryWithdrawals, policyHash: WasmContract.ScriptHash): Promise<WasmContract.TreasuryWithdrawalsAction> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.TreasuryWithdrawalsAction.new_with_policy_hash(withdrawals.wasm, policyHash.wasm);
           return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
         });
       }
@@ -13748,12 +13696,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      addScriptInput(hash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        return wrapByPromise(() => {
-          return this.wasm.add_script_input(hash.wasm, input.wasm, amount.wasm);
-        });
-      }
-
       addNativeScriptInput(script: WasmContract.NativeScript, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
@@ -13772,33 +13714,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      addInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+      addRegularInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return wrapByPromise(() => {
-          return this.wasm.add_input(address.wasm, input.wasm, amount.wasm);
-        });
-      }
-
-      countMissingInputScripts(): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.count_missing_input_scripts();
-        });
-      }
-
-      addRequiredNativeInputScripts(scripts: WasmContract.NativeScripts): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.add_required_native_input_scripts(scripts.wasm);
-        });
-      }
-
-      addRequiredPlutusInputScripts(scripts: WasmContract.PlutusWitnesses): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.add_required_plutus_input_scripts(scripts.wasm);
-        });
-      }
-
-      addRequiredScriptInputWitnesses(inputsWithWit: WasmContract.InputsWithScriptWitness): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.add_required_script_input_witnesses(inputsWithWit.wasm);
+          return this.wasm.add_regular_input(address.wasm, input.wasm, amount.wasm);
         });
       }
 

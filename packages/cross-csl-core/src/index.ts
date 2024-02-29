@@ -134,7 +134,6 @@ export interface WasmModuleProxy {
   makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): Promise<BootstrapWitness>;
   makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
   minAdaForOutput(output: TransactionOutput, dataCost: DataCost): Promise<BigNum>;
-  minAdaRequired(assets: Value, hasDataHash: boolean, coinsPerUtxoWord: BigNum): Promise<BigNum>;
   minFee(tx: Transaction, linearFee: LinearFee): Promise<BigNum>;
   minScriptFee(tx: Transaction, exUnitPrices: ExUnitPrices): Promise<BigNum>;
   Address: typeof Address;
@@ -197,8 +196,6 @@ export interface WasmModuleProxy {
   Header: typeof Header;
   HeaderBody: typeof HeaderBody;
   InfoAction: typeof InfoAction;
-  InputWithScriptWitness: typeof InputWithScriptWitness;
-  InputsWithScriptWitness: typeof InputsWithScriptWitness;
   Int: typeof Int;
   Ipv4: typeof Ipv4;
   Ipv6: typeof Ipv6;
@@ -1365,6 +1362,14 @@ export abstract class Block extends _Ptr {
   * @returns {Promise<Block>}
   */
   static new(header: Header, transactionBodies: TransactionBodies, transactionWitnessSets: TransactionWitnessSets, auxiliaryDataSet: AuxiliaryDataSet, invalidTransactions: Uint32Array): Promise<Block> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Uint8Array} data
+  * @returns {Promise<Block>}
+  */
+  static fromWrappedBytes(data: Uint8Array): Promise<Block> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2809,14 +2814,6 @@ export abstract class DRep extends _Ptr {
 
 export abstract class DataCost extends _Ptr {
   /**
-  * @param {BigNum} coinsPerWord
-  * @returns {Promise<DataCost>}
-  */
-  static newCoinsPerWord(coinsPerWord: BigNum): Promise<DataCost> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
   * @param {BigNum} coinsPerByte
   * @returns {Promise<DataCost>}
   */
@@ -3032,6 +3029,11 @@ export abstract class DrepRegistration extends _Ptr {
   static newWithAnchor(votingCredential: Credential, coin: BigNum, anchor: Anchor): Promise<DrepRegistration> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @returns {Promise<boolean>}
+  */
+  abstract hasScriptCredentials(): Promise<boolean>;
 
 }
 
@@ -3380,6 +3382,12 @@ export abstract class Ed25519KeyHashes extends _Ptr {
   * @param {Ed25519KeyHash} elem
   */
   abstract add(elem: Ed25519KeyHash): Promise<void>;
+
+  /**
+  * @param {Ed25519KeyHash} elem
+  * @returns {Promise<boolean>}
+  */
+  abstract contains(elem: Ed25519KeyHash): Promise<boolean>;
 
   /**
   * @returns {Promise<Optional<Ed25519KeyHashes>>}
@@ -4509,58 +4517,6 @@ export abstract class InfoAction extends _Ptr {
 
 }
 
-export abstract class InputWithScriptWitness extends _Ptr {
-  /**
-  * @param {TransactionInput} input
-  * @param {NativeScript} witness
-  * @returns {Promise<InputWithScriptWitness>}
-  */
-  static newWithNativeScriptWitness(input: TransactionInput, witness: NativeScript): Promise<InputWithScriptWitness> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {TransactionInput} input
-  * @param {PlutusWitness} witness
-  * @returns {Promise<InputWithScriptWitness>}
-  */
-  static newWithPlutusWitness(input: TransactionInput, witness: PlutusWitness): Promise<InputWithScriptWitness> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<TransactionInput>}
-  */
-  abstract input(): Promise<TransactionInput>;
-
-}
-
-export abstract class InputsWithScriptWitness extends _Ptr {
-  /**
-  * @returns {Promise<InputsWithScriptWitness>}
-  */
-  static new(): Promise<InputsWithScriptWitness> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {InputWithScriptWitness} input
-  */
-  abstract add(input: InputWithScriptWitness): Promise<void>;
-
-  /**
-  * @param {number} index
-  * @returns {Promise<InputWithScriptWitness>}
-  */
-  abstract get(index: number): Promise<InputWithScriptWitness>;
-
-  /**
-  * @returns {Promise<number>}
-  */
-  abstract len(): Promise<number>;
-
-}
-
 export abstract class Int extends _Ptr {
   /**
   * @returns {Promise<Uint8Array>}
@@ -5268,15 +5224,9 @@ export abstract class Mint extends _Ptr {
 
   /**
   * @param {ScriptHash} key
-  * @returns {Promise<Optional<MintAssets>>}
-  */
-  abstract get(key: ScriptHash): Promise<Optional<MintAssets>>;
-
-  /**
-  * @param {ScriptHash} key
   * @returns {Promise<Optional<MintsAssets>>}
   */
-  abstract getAll(key: ScriptHash): Promise<Optional<MintsAssets>>;
+  abstract get(key: ScriptHash): Promise<Optional<MintsAssets>>;
 
   /**
   * @returns {Promise<ScriptHashes>}
@@ -5884,6 +5834,45 @@ export abstract class NativeScripts extends _Ptr {
   */
   abstract add(elem: NativeScript): Promise<void>;
 
+  /**
+  * @returns {Promise<Uint8Array>}
+  */
+  abstract toBytes(): Promise<Uint8Array>;
+
+  /**
+  * @param {Uint8Array} bytes
+  * @returns {Promise<NativeScripts>}
+  */
+  static fromBytes(bytes: Uint8Array): Promise<NativeScripts> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Promise<string>}
+  */
+  abstract toHex(): Promise<string>;
+
+  /**
+  * @param {string} hexStr
+  * @returns {Promise<NativeScripts>}
+  */
+  static fromHex(hexStr: string): Promise<NativeScripts> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Promise<string>}
+  */
+  abstract toJson(): Promise<string>;
+
+  /**
+  * @param {string} json
+  * @returns {Promise<NativeScripts>}
+  */
+  static fromJson(json: string): Promise<NativeScripts> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
 }
 
 export abstract class NetworkId extends _Ptr {
@@ -5984,13 +5973,6 @@ export abstract class NetworkInfo extends _Ptr {
   /**
   * @returns {Promise<NetworkInfo>}
   */
-  static testnet(): Promise<NetworkInfo> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<NetworkInfo>}
-  */
   static mainnet(): Promise<NetworkInfo> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
@@ -6063,6 +6045,11 @@ export abstract class NewConstitutionAction extends _Ptr {
   static newWithActionId(govActionId: GovernanceActionId, constitution: Constitution): Promise<NewConstitutionAction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @returns {Promise<boolean>}
+  */
+  abstract hasScriptHash(): Promise<boolean>;
 
 }
 
@@ -6343,6 +6330,11 @@ export abstract class ParameterChangeAction extends _Ptr {
   abstract protocolParamUpdates(): Promise<ProtocolParamUpdate>;
 
   /**
+  * @returns {Promise<Optional<ScriptHash>>}
+  */
+  abstract policyHash(): Promise<Optional<ScriptHash>>;
+
+  /**
   * @param {ProtocolParamUpdate} protocolParamUpdates
   * @returns {Promise<ParameterChangeAction>}
   */
@@ -6356,6 +6348,25 @@ export abstract class ParameterChangeAction extends _Ptr {
   * @returns {Promise<ParameterChangeAction>}
   */
   static newWithActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate): Promise<ParameterChangeAction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {ProtocolParamUpdate} protocolParamUpdates
+  * @param {ScriptHash} policyHash
+  * @returns {Promise<ParameterChangeAction>}
+  */
+  static newWithPolicyHash(protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): Promise<ParameterChangeAction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {GovernanceActionId} govActionId
+  * @param {ProtocolParamUpdate} protocolParamUpdates
+  * @param {ScriptHash} policyHash
+  * @returns {Promise<ParameterChangeAction>}
+  */
+  static newWithPolicyHashAndActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): Promise<ParameterChangeAction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6734,19 +6745,10 @@ export abstract class PlutusScriptSource extends _Ptr {
   /**
   * @param {ScriptHash} scriptHash
   * @param {TransactionInput} input
-  * @returns {Promise<PlutusScriptSource>}
-  */
-  static newRefInput(scriptHash: ScriptHash, input: TransactionInput): Promise<PlutusScriptSource> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {ScriptHash} scriptHash
-  * @param {TransactionInput} input
   * @param {Language} langVer
   * @returns {Promise<PlutusScriptSource>}
   */
-  static newRefInputWithLangVer(scriptHash: ScriptHash, input: TransactionInput, langVer: Language): Promise<PlutusScriptSource> {
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, langVer: Language): Promise<PlutusScriptSource> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10005,11 +10007,6 @@ export abstract class TransactionBody extends _Ptr {
   abstract mint(): Promise<Optional<Mint>>;
 
   /**
-  * @returns {Promise<Optional<Mint>>}
-  */
-  abstract multiassets(): Promise<Optional<Mint>>;
-
-  /**
   * @param {TransactionInputs} referenceInputs
   */
   abstract setReferenceInputs(referenceInputs: TransactionInputs): Promise<void>;
@@ -10196,13 +10193,6 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): Promise<void>;
 
   /**
-  * @param {ScriptHash} hash
-  * @param {TransactionInput} input
-  * @param {Value} amount
-  */
-  abstract addScriptInput(hash: ScriptHash, input: TransactionInput, amount: Value): Promise<void>;
-
-  /**
   * @param {NativeScript} script
   * @param {TransactionInput} input
   * @param {Value} amount
@@ -10227,25 +10217,9 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {Address} address
   * @param {TransactionInput} input
   * @param {Value} amount
+  * @returns {Promise<void>}
   */
-  abstract addInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
-
-  /**
-  * @returns {Promise<number>}
-  */
-  abstract countMissingInputScripts(): Promise<number>;
-
-  /**
-  * @param {NativeScripts} scripts
-  * @returns {Promise<number>}
-  */
-  abstract addRequiredNativeInputScripts(scripts: NativeScripts): Promise<number>;
-
-  /**
-  * @param {PlutusWitnesses} scripts
-  * @returns {Promise<number>}
-  */
-  abstract addRequiredPlutusInputScripts(scripts: PlutusWitnesses): Promise<number>;
+  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
 
   /**
   * @returns {Promise<Optional<NativeScripts>>}
@@ -10589,12 +10563,6 @@ export abstract class TransactionBuilderConfigBuilder extends _Ptr {
   * @returns {Promise<TransactionBuilderConfigBuilder>}
   */
   abstract feeAlgo(feeAlgo: LinearFee): Promise<TransactionBuilderConfigBuilder>;
-
-  /**
-  * @param {BigNum} coinsPerUtxoWord
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
-  */
-  abstract coinsPerUtxoWord(coinsPerUtxoWord: BigNum): Promise<TransactionBuilderConfigBuilder>;
 
   /**
   * @param {BigNum} coinsPerUtxoByte
@@ -11103,13 +11071,6 @@ export abstract class TransactionOutputAmountBuilder extends _Ptr {
 
   /**
   * @param {MultiAsset} multiasset
-  * @param {BigNum} coinsPerUtxoWord
-  * @returns {Promise<TransactionOutputAmountBuilder>}
-  */
-  abstract withAssetAndMinRequiredCoin(multiasset: MultiAsset, coinsPerUtxoWord: BigNum): Promise<TransactionOutputAmountBuilder>;
-
-  /**
-  * @param {MultiAsset} multiasset
   * @param {DataCost} dataCost
   * @returns {Promise<TransactionOutputAmountBuilder>}
   */
@@ -11591,10 +11552,24 @@ export abstract class TreasuryWithdrawalsAction extends _Ptr {
   abstract withdrawals(): Promise<TreasuryWithdrawals>;
 
   /**
+  * @returns {Promise<Optional<ScriptHash>>}
+  */
+  abstract policyHash(): Promise<Optional<ScriptHash>>;
+
+  /**
   * @param {TreasuryWithdrawals} withdrawals
   * @returns {Promise<TreasuryWithdrawalsAction>}
   */
   static new(withdrawals: TreasuryWithdrawals): Promise<TreasuryWithdrawalsAction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {TreasuryWithdrawals} withdrawals
+  * @param {ScriptHash} policyHash
+  * @returns {Promise<TreasuryWithdrawalsAction>}
+  */
+  static newWithPolicyHash(withdrawals: TreasuryWithdrawals, policyHash: ScriptHash): Promise<TreasuryWithdrawalsAction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -11640,13 +11615,6 @@ export abstract class TxInputsBuilder extends _Ptr {
   abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): Promise<void>;
 
   /**
-  * @param {ScriptHash} hash
-  * @param {TransactionInput} input
-  * @param {Value} amount
-  */
-  abstract addScriptInput(hash: ScriptHash, input: TransactionInput, amount: Value): Promise<void>;
-
-  /**
   * @param {NativeScript} script
   * @param {TransactionInput} input
   * @param {Value} amount
@@ -11671,31 +11639,9 @@ export abstract class TxInputsBuilder extends _Ptr {
   * @param {Address} address
   * @param {TransactionInput} input
   * @param {Value} amount
+  * @returns {Promise<void>}
   */
-  abstract addInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
-
-  /**
-  * @returns {Promise<number>}
-  */
-  abstract countMissingInputScripts(): Promise<number>;
-
-  /**
-  * @param {NativeScripts} scripts
-  * @returns {Promise<number>}
-  */
-  abstract addRequiredNativeInputScripts(scripts: NativeScripts): Promise<number>;
-
-  /**
-  * @param {PlutusWitnesses} scripts
-  * @returns {Promise<number>}
-  */
-  abstract addRequiredPlutusInputScripts(scripts: PlutusWitnesses): Promise<number>;
-
-  /**
-  * @param {InputsWithScriptWitness} inputsWithWit
-  * @returns {Promise<number>}
-  */
-  abstract addRequiredScriptInputWitnesses(inputsWithWit: InputsWithScriptWitness): Promise<number>;
+  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
 
   /**
   * @returns {Promise<TransactionInputs>}
