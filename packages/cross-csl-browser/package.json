@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/cross-csl-browser",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -21,8 +21,8 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
-    "@emurgo/cardano-serialization-lib-browser": "12.0.0-alpha.15",
-    "@emurgo/cross-csl-core": "4.1.0"
+    "@emurgo/cardano-serialization-lib-browser": "12.0.0-alpha.18",
+    "@emurgo/cross-csl-core": "4.2.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",

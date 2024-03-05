@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@emurgo/csl-mobile-bridge": "^5.1.0",
+    "@emurgo/csl-mobile-bridge": "6.0.0-alpha.3",
     "@tradle/react-native-http": "^2.0.1",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
@@ -45,7 +45,8 @@
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
     "rn-nodeify": "^10.3.0",
-    "typescript": "~4.0.0"
+    "typescript": "~4.0.0",
+    "@babel/preset-typescript": "^7.9.0"
   },
   "private": true,
   "react-native": {
@@ -100,6 +101,13 @@
     "vm": "vm-browserify",
     "tls": false
   },
+
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
+    ]
+  },
+
   "name": "test-app-mobile",
   "version": "1.0.0"
 }
