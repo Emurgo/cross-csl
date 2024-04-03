@@ -206,6 +206,7 @@ export interface WasmModuleProxy {
   LegacyDaedalusPrivateKey: typeof LegacyDaedalusPrivateKey;
   LinearFee: typeof LinearFee;
   MIRToStakeCredentials: typeof MIRToStakeCredentials;
+  MalformedAddress: typeof MalformedAddress;
   MetadataList: typeof MetadataList;
   MetadataMap: typeof MetadataMap;
   Mint: typeof Mint;
@@ -369,6 +370,11 @@ export abstract class Address extends _Ptr {
   static fromJson(json: string): Promise<Address> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @returns {Promise<boolean>}
+  */
+  abstract isMalformed(): Promise<boolean>;
 
   /**
   * @returns {Promise<string>}
@@ -5011,6 +5017,27 @@ export abstract class MIRToStakeCredentials extends _Ptr {
 
 }
 
+export abstract class MalformedAddress extends _Ptr {
+  /**
+  * @returns {Promise<Uint8Array>}
+  */
+  abstract originalBytes(): Promise<Uint8Array>;
+
+  /**
+  * @returns {Promise<Address>}
+  */
+  abstract toAddress(): Promise<Address>;
+
+  /**
+  * @param {Address} addr
+  * @returns {Promise<Optional<MalformedAddress>>}
+  */
+  static fromAddress(addr: Address): Promise<Optional<MalformedAddress>> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+}
+
 export abstract class MetadataList extends _Ptr {
   /**
   * @returns {Promise<Uint8Array>}
@@ -5334,7 +5361,7 @@ export abstract class MintBuilder extends _Ptr {
   /**
   * @returns {Promise<Redeemers>}
   */
-  abstract getRedeeemers(): Promise<Redeemers>;
+  abstract getRedeemers(): Promise<Redeemers>;
 
   /**
   * @returns {Promise<boolean>}
@@ -5369,6 +5396,42 @@ export abstract class MintWitness extends _Ptr {
 }
 
 export abstract class MintsAssets extends _Ptr {
+  /**
+  * @returns {Promise<string>}
+  */
+  abstract toJson(): Promise<string>;
+
+  /**
+  * @param {string} json
+  * @returns {Promise<MintsAssets>}
+  */
+  static fromJson(json: string): Promise<MintsAssets> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Promise<MintsAssets>}
+  */
+  static new(): Promise<MintsAssets> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {MintAssets} mintAssets
+  */
+  abstract add(mintAssets: MintAssets): Promise<void>;
+
+  /**
+  * @param {number} index
+  * @returns {Promise<Optional<MintAssets>>}
+  */
+  abstract get(index: number): Promise<Optional<MintAssets>>;
+
+  /**
+  * @returns {Promise<number>}
+  */
+  abstract len(): Promise<number>;
+
 }
 
 export abstract class MoveInstantaneousReward extends _Ptr {
@@ -7358,9 +7421,10 @@ export abstract class PoolVotingThresholds extends _Ptr {
   * @param {UnitInterval} committeeNormal
   * @param {UnitInterval} committeeNoConfidence
   * @param {UnitInterval} hardForkInitiation
+  * @param {UnitInterval} securityRelevantThreshold
   * @returns {Promise<PoolVotingThresholds>}
   */
-  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, hardForkInitiation: UnitInterval): Promise<PoolVotingThresholds> {
+  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, hardForkInitiation: UnitInterval, securityRelevantThreshold: UnitInterval): Promise<PoolVotingThresholds> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -8239,6 +8303,15 @@ export abstract class Redeemers extends _Ptr {
   * @returns {Promise<Redeemers>}
   */
   static new(): Promise<Redeemers> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Redeemer} redeemers
+  * @param {CborContainerType} serializationFormat
+  * @returns {Promise<Redeemers>}
+  */
+  static newWithSerializationFormat(redeemers: Redeemer, serializationFormat: CborContainerType): Promise<Redeemers> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 

@@ -36,7 +36,7 @@ export const setupTests = (
         .then((b) => b.feeAlgo(linearFee))
         .then((b) => b.poolDeposit(bigNum))
         .then((b) => b.keyDeposit(bigNum))
-        .then((b) => b.coinsPerUtxoWord(bigNum))
+        .then((b) => b.coinsPerUtxoByte(bigNum))
         .then((b) => b.maxValueSize(5000))
         .then((b) => b.maxTxSize(16384))
         .then(async (b) =>
@@ -2362,7 +2362,7 @@ export const setupTests = (
         expect(n.hasValue()).to.be.true;
       });
       it('.testnet()', async () => {
-        const n = await wasm.NetworkInfo.testnet();
+        const n = await wasm.NetworkInfo.testnetPreprod();
         expect(n.hasValue()).to.be.true;
       });
       it('.new()', async () => {
@@ -2370,11 +2370,11 @@ export const setupTests = (
         expect(n.hasValue()).to.be.true;
       });
       it('.networkId()', async () => {
-        const n = await wasm.NetworkInfo.testnet();
+        const n = await wasm.NetworkInfo.testnetPreprod();
         expect(await n.networkId()).to.be.equal(0);
       });
       it('.protocolMagic()', async () => {
-        const n = await wasm.NetworkInfo.testnet();
+        const n = await wasm.NetworkInfo.testnetPreprod();
         expect(await n.protocolMagic()).to.be.equal(1097911063);
       });
     });
