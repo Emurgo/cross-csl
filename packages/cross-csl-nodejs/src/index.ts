@@ -209,6 +209,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      isMalformed(): Promise<boolean> {
+        return wrapByPromise(() => {
+          return this.wasm.is_malformed();
+        });
+      }
+
       toHex(): Promise<string> {
         return wrapByPromise(() => {
           return this.wasm.to_hex();
@@ -5724,6 +5730,39 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return MIRToStakeCredentials;
   })();
 
+  public MalformedAddress = (() => {
+    const $outer = this;
+
+    class MalformedAddress
+      extends Ptr<WasmV4.MalformedAddress>
+      implements WasmContract.MalformedAddress
+    {
+
+      originalBytes(): Promise<Uint8Array> {
+        return wrapByPromise(() => {
+          return this.wasm.original_bytes();
+        });
+      }
+
+      toAddress(): Promise<WasmContract.Address> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.to_address();
+          return new $outer.Address(ret, $outer._ctx);
+        });
+      }
+
+      static fromAddress(addr: WasmContract.Address): Promise<Optional<WasmContract.MalformedAddress>> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.MalformedAddress.from_address(addr.wasm);
+          if (ret == null) return undefined;
+          return new $outer.MalformedAddress(ret, $outer._ctx);
+        });
+      }
+
+    }
+    return MalformedAddress;
+  })();
+
   public MetadataList = (() => {
     const $outer = this;
 
@@ -6115,9 +6154,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      getRedeeemers(): Promise<WasmContract.Redeemers> {
+      getRedeemers(): Promise<WasmContract.Redeemers> {
         return wrapByPromise(() => {
-          const ret = this.wasm.get_redeeemers();
+          const ret = this.wasm.get_redeemers();
           return new $outer.Redeemers(ret, $outer._ctx);
         });
       }
@@ -6171,6 +6210,46 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.MintsAssets>
       implements WasmContract.MintsAssets
     {
+
+      toJson(): Promise<string> {
+        return wrapByPromise(() => {
+          return this.wasm.to_json();
+        });
+      }
+
+      static fromJson(json: string): Promise<WasmContract.MintsAssets> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.MintsAssets.from_json(json);
+          return new $outer.MintsAssets(ret, $outer._ctx);
+        });
+      }
+
+      static new(): Promise<WasmContract.MintsAssets> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.MintsAssets.new();
+          return new $outer.MintsAssets(ret, $outer._ctx);
+        });
+      }
+
+      add(mintAssets: WasmContract.MintAssets): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add(mintAssets.wasm);
+        });
+      }
+
+      get(index: number): Promise<Optional<WasmContract.MintAssets>> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.get(index);
+          if (ret == null) return undefined;
+          return new $outer.MintAssets(ret, $outer._ctx);
+        });
+      }
+
+      len(): Promise<number> {
+        return wrapByPromise(() => {
+          return this.wasm.len();
+        });
+      }
 
     }
     return MintsAssets;
@@ -8501,9 +8580,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval): Promise<WasmContract.PoolVotingThresholds> {
+      static new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval, securityRelevantThreshold: WasmContract.UnitInterval): Promise<WasmContract.PoolVotingThresholds> {
         return wrapByPromise(() => {
-          const ret = WasmV4.PoolVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, hardForkInitiation.wasm);
+          const ret = WasmV4.PoolVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, hardForkInitiation.wasm, securityRelevantThreshold.wasm);
           return new $outer.PoolVotingThresholds(ret, $outer._ctx);
         });
       }
@@ -9590,6 +9669,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static new(): Promise<WasmContract.Redeemers> {
         return wrapByPromise(() => {
           const ret = WasmV4.Redeemers.new();
+          return new $outer.Redeemers(ret, $outer._ctx);
+        });
+      }
+
+      static newWithSerializationFormat(redeemers: WasmContract.Redeemer, serializationFormat: WasmContract.CborContainerType): Promise<WasmContract.Redeemers> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.Redeemers.new_with_serialization_format(redeemers.wasm, serializationFormat);
           return new $outer.Redeemers(ret, $outer._ctx);
         });
       }
