@@ -120,6 +120,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return new this.BigNum(ret, this._ctx);
   }
 
+  async minRefScriptFee(totalRefScriptsSize: number, refScriptCoinsPerByte: WasmContract.UnitInterval): Promise<WasmContract.BigNum> {
+    const ret = await WasmV4.min_ref_script_fee(totalRefScriptsSize, refScriptCoinsPerByte.wasm);
+    return new this.BigNum(ret, this._ctx);
+  }
+
   async minScriptFee(tx: WasmContract.Transaction, exUnitPrices: WasmContract.ExUnitPrices): Promise<WasmContract.BigNum> {
     const ret = await WasmV4.min_script_fee(tx.wasm, exUnitPrices.wasm);
     return new this.BigNum(ret, this._ctx);
@@ -145,6 +150,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async fromJson(json: string): Promise<WasmContract.Address> {
         const ret = await WasmV4.Address.from_json(json);
         return new $outer.Address(ret, $outer._ctx);
+      }
+
+      kind(): Promise<WasmContract.AddressKind> {
+        return this.wasm.kind();
+      }
+
+      async paymentCred(): Promise<Optional<WasmContract.Credential>> {
+        const ret = await this.wasm.payment_cred();
+        if (ret == null) return undefined;
+        return new $outer.Credential(ret, $outer._ctx);
       }
 
       isMalformed(): Promise<boolean> {
@@ -1582,6 +1597,38 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return CertificatesBuilder;
+  })();
+
+  public ChangeConfig = (() => {
+    const $outer = this;
+
+    class ChangeConfig
+      extends Ptr<WasmV4.ChangeConfig>
+      implements WasmContract.ChangeConfig
+    {
+
+      static async new(address: WasmContract.Address): Promise<WasmContract.ChangeConfig> {
+        const ret = await WasmV4.ChangeConfig.new(address.wasm);
+        return new $outer.ChangeConfig(ret, $outer._ctx);
+      }
+
+      async changeAddress(address: WasmContract.Address): Promise<WasmContract.ChangeConfig> {
+        const ret = await this.wasm.change_address(address.wasm);
+        return new $outer.ChangeConfig(ret, $outer._ctx);
+      }
+
+      async changePlutusData(plutusData: WasmContract.OutputDatum): Promise<WasmContract.ChangeConfig> {
+        const ret = await this.wasm.change_plutus_data(plutusData.wasm);
+        return new $outer.ChangeConfig(ret, $outer._ctx);
+      }
+
+      async changeScriptRef(scriptRef: WasmContract.ScriptRef): Promise<WasmContract.ChangeConfig> {
+        const ret = await this.wasm.change_script_ref(scriptRef.wasm);
+        return new $outer.ChangeConfig(ret, $outer._ctx);
+      }
+
+    }
+    return ChangeConfig;
   })();
 
   public Committee = (() => {
@@ -5047,9 +5094,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.NativeScriptSource(ret, $outer._ctx);
       }
 
-      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, requiredSigners: WasmContract.Ed25519KeyHashes): Promise<WasmContract.NativeScriptSource> {
-        const ret = await WasmV4.NativeScriptSource.new_ref_input(scriptHash.wasm, input.wasm, requiredSigners.wasm);
+      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<WasmContract.NativeScriptSource> {
+        const ret = await WasmV4.NativeScriptSource.new_ref_input(scriptHash.wasm, input.wasm);
         return new $outer.NativeScriptSource(ret, $outer._ctx);
+      }
+
+      setRequiredSigners(keyHashes: WasmContract.Ed25519KeyHashes): Promise<void> {
+        return this.wasm.set_required_signers(keyHashes.wasm);
       }
 
     }
@@ -5862,9 +5913,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.PlutusScriptSource(ret, $outer._ctx);
       }
 
-      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language): Promise<WasmContract.PlutusScriptSource> {
-        const ret = await WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm, langVer.wasm);
+      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language, scriptSize: number): Promise<WasmContract.PlutusScriptSource> {
+        const ret = await WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm, langVer.wasm, scriptSize);
         return new $outer.PlutusScriptSource(ret, $outer._ctx);
+      }
+
+      setRequiredSigners(keyHashes: WasmContract.Ed25519KeyHashes): Promise<void> {
+        return this.wasm.set_required_signers(keyHashes.wasm);
+      }
+
+      getRefScriptSize(): Promise<Optional<number>> {
+        return this.wasm.get_ref_script_size();
       }
 
     }
@@ -6895,6 +6954,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.drep_inactivity_period();
       }
 
+      setRefScriptCoinsPerByte(refScriptCoinsPerByte: WasmContract.UnitInterval): Promise<void> {
+        return this.wasm.set_ref_script_coins_per_byte(refScriptCoinsPerByte.wasm);
+      }
+
+      async refScriptCoinsPerByte(): Promise<Optional<WasmContract.UnitInterval>> {
+        const ret = await this.wasm.ref_script_coins_per_byte();
+        if (ret == null) return undefined;
+        return new $outer.UnitInterval(ret, $outer._ctx);
+      }
+
       static async new(): Promise<WasmContract.ProtocolParamUpdate> {
         const ret = await WasmV4.ProtocolParamUpdate.new();
         return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
@@ -7208,11 +7277,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async new(): Promise<WasmContract.Redeemers> {
         const ret = await WasmV4.Redeemers.new();
-        return new $outer.Redeemers(ret, $outer._ctx);
-      }
-
-      static async newWithSerializationFormat(redeemers: WasmContract.Redeemer, serializationFormat: WasmContract.CborContainerType): Promise<WasmContract.Redeemers> {
-        const ret = await WasmV4.Redeemers.new_with_serialization_format(redeemers.wasm, serializationFormat);
         return new $outer.Redeemers(ret, $outer._ctx);
       }
 
@@ -8954,6 +9018,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_collateral_return(collateralReturn.wasm);
       }
 
+      removeCollateralReturn(): Promise<void> {
+        return this.wasm.remove_collateral_return();
+      }
+
       setCollateralReturnAndTotal(collateralReturn: WasmContract.TransactionOutput): Promise<void> {
         return this.wasm.set_collateral_return_and_total(collateralReturn.wasm);
       }
@@ -8962,12 +9030,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_total_collateral(totalCollateral.wasm);
       }
 
+      removeTotalCollateral(): Promise<void> {
+        return this.wasm.remove_total_collateral();
+      }
+
       setTotalCollateralAndReturn(totalCollateral: WasmContract.BigNum, returnAddress: WasmContract.Address): Promise<void> {
         return this.wasm.set_total_collateral_and_return(totalCollateral.wasm, returnAddress.wasm);
       }
 
       addReferenceInput(referenceInput: WasmContract.TransactionInput): Promise<void> {
         return this.wasm.add_reference_input(referenceInput.wasm);
+      }
+
+      addScriptReferenceInput(referenceInput: WasmContract.TransactionInput, scriptSize: number): Promise<void> {
+        return this.wasm.add_script_reference_input(referenceInput.wasm, scriptSize);
       }
 
       addKeyInput(hash: WasmContract.Ed25519KeyHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
@@ -8988,6 +9064,14 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       addRegularInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return this.wasm.add_regular_input(address.wasm, input.wasm, amount.wasm);
+      }
+
+      addInputsFromAndChange(inputs: WasmContract.TransactionUnspentOutputs, strategy: WasmContract.CoinSelectionStrategyCIP2, changeConfig: WasmContract.ChangeConfig): Promise<boolean> {
+        return this.wasm.add_inputs_from_and_change(inputs.wasm, strategy, changeConfig.wasm);
+      }
+
+      addInputsFromAndChangeWithCollateralReturn(inputs: WasmContract.TransactionUnspentOutputs, strategy: WasmContract.CoinSelectionStrategyCIP2, changeConfig: WasmContract.ChangeConfig, collateralPercentage: number): Promise<boolean> {
+        return this.wasm.add_inputs_from_and_change_with_collateral_return(inputs.wasm, strategy, changeConfig.wasm, collateralPercentage);
       }
 
       async getNativeInputScripts(): Promise<Optional<WasmContract.NativeScripts>> {
@@ -9028,6 +9112,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_ttl_bignum(ttl.wasm);
       }
 
+      removeTtl(): Promise<void> {
+        return this.wasm.remove_ttl();
+      }
+
       setValidityStartInterval(validityStartInterval: number): Promise<void> {
         return this.wasm.set_validity_start_interval(validityStartInterval);
       }
@@ -9036,8 +9124,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_validity_start_interval_bignum(validityStartInterval.wasm);
       }
 
+      removeValidityStartInterval(): Promise<void> {
+        return this.wasm.remove_validity_start_interval();
+      }
+
       setCerts(certs: WasmContract.Certificates): Promise<void> {
         return this.wasm.set_certs(certs.wasm);
+      }
+
+      removeCerts(): Promise<void> {
+        return this.wasm.remove_certs();
       }
 
       setCertsBuilder(certs: WasmContract.CertificatesBuilder): Promise<void> {
@@ -9060,6 +9156,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_voting_proposal_builder(votingProposalBuilder.wasm);
       }
 
+      removeWithdrawals(): Promise<void> {
+        return this.wasm.remove_withdrawals();
+      }
+
       async getAuxiliaryData(): Promise<Optional<WasmContract.AuxiliaryData>> {
         const ret = await this.wasm.get_auxiliary_data();
         if (ret == null) return undefined;
@@ -9068,6 +9168,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       setAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): Promise<void> {
         return this.wasm.set_auxiliary_data(auxiliaryData.wasm);
+      }
+
+      removeAuxiliaryData(): Promise<void> {
+        return this.wasm.remove_auxiliary_data();
       }
 
       setMetadata(metadata: WasmContract.GeneralTransactionMetadata): Promise<void> {
@@ -9088,6 +9192,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       setMintBuilder(mintBuilder: WasmContract.MintBuilder): Promise<void> {
         return this.wasm.set_mint_builder(mintBuilder.wasm);
+      }
+
+      removeMintBuilder(): Promise<void> {
+        return this.wasm.remove_mint_builder();
       }
 
       async getMintBuilder(): Promise<Optional<WasmContract.MintBuilder>> {
@@ -9317,6 +9425,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async maxTxSize(maxTxSize: number): Promise<WasmContract.TransactionBuilderConfigBuilder> {
         const ret = await this.wasm.max_tx_size(maxTxSize);
+        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+      }
+
+      async refScriptCoinsPerByte(refScriptCoinsPerByte: WasmContract.UnitInterval): Promise<WasmContract.TransactionBuilderConfigBuilder> {
+        const ret = await this.wasm.ref_script_coins_per_byte(refScriptCoinsPerByte.wasm);
         return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
       }
 
@@ -11674,6 +11787,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     }
     return WithdrawalsBuilder;
   })();
+
+  public AddressKind = (() => { return WasmContract.AddressKind; })();
 
   public CborContainerType = (() => { return WasmContract.CborContainerType; })();
 
