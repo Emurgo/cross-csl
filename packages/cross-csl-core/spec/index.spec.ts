@@ -2283,6 +2283,13 @@ export const setupTests = (
       it('.vkeys()', async () => {
         const t = await wasm.TransactionWitnessSet.new();
         const v = await wasm.Vkeywitnesses.new();
+        const vkey = await wasm.Vkey.new(
+            await wasm.PublicKey.fromBytes(Buffer.from(PUBLIC_KEY, 'hex'))
+            );
+        const e = await wasm.Ed25519Signature.fromBytes(
+            Buffer.from(Array(64).fill(0))
+            );
+        v.add(await wasm.Vkeywitness.new(vkey, e));
         await t.setVkeys(v);
         expect(await t.vkeys()).to.be.instanceOf(wasm.Vkeywitnesses);
       });
@@ -2375,7 +2382,7 @@ export const setupTests = (
       });
       it('.protocolMagic()', async () => {
         const n = await wasm.NetworkInfo.testnetPreprod();
-        expect(await n.protocolMagic()).to.be.equal(1097911063);
+        expect(await n.protocolMagic()).to.be.equal(1);
       });
     });
     describe('MetadataList', () => {

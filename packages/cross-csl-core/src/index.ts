@@ -135,6 +135,7 @@ export interface WasmModuleProxy {
   makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
   minAdaForOutput(output: TransactionOutput, dataCost: DataCost): Promise<BigNum>;
   minFee(tx: Transaction, linearFee: LinearFee): Promise<BigNum>;
+  minRefScriptFee(totalRefScriptsSize: number, refScriptCoinsPerByte: UnitInterval): Promise<BigNum>;
   minScriptFee(tx: Transaction, exUnitPrices: ExUnitPrices): Promise<BigNum>;
   Address: typeof Address;
   Anchor: typeof Anchor;
@@ -158,6 +159,7 @@ export interface WasmModuleProxy {
   Certificate: typeof Certificate;
   Certificates: typeof Certificates;
   CertificatesBuilder: typeof CertificatesBuilder;
+  ChangeConfig: typeof ChangeConfig;
   Committee: typeof Committee;
   CommitteeColdResign: typeof CommitteeColdResign;
   CommitteeHotAuth: typeof CommitteeHotAuth;
@@ -326,6 +328,7 @@ export interface WasmModuleProxy {
   VotingProposals: typeof VotingProposals;
   Withdrawals: typeof Withdrawals;
   WithdrawalsBuilder: typeof WithdrawalsBuilder;
+  AddressKind: typeof AddressKind;
   CborContainerType: typeof CborContainerType;
   CertificateKind: typeof CertificateKind;
   CoinSelectionStrategyCIP2: typeof CoinSelectionStrategyCIP2;
@@ -370,6 +373,16 @@ export abstract class Address extends _Ptr {
   static fromJson(json: string): Promise<Address> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @returns {Promise<AddressKind>}
+  */
+  abstract kind(): Promise<AddressKind>;
+
+  /**
+  * @returns {Promise<Optional<Credential>>}
+  */
+  abstract paymentCred(): Promise<Optional<Credential>>;
 
   /**
   * @returns {Promise<boolean>}
@@ -2001,6 +2014,35 @@ export abstract class CertificatesBuilder extends _Ptr {
   * @returns {Promise<Certificates>}
   */
   abstract build(): Promise<Certificates>;
+
+}
+
+export abstract class ChangeConfig extends _Ptr {
+  /**
+  * @param {Address} address
+  * @returns {Promise<ChangeConfig>}
+  */
+  static new(address: Address): Promise<ChangeConfig> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Address} address
+  * @returns {Promise<ChangeConfig>}
+  */
+  abstract changeAddress(address: Address): Promise<ChangeConfig>;
+
+  /**
+  * @param {OutputDatum} plutusData
+  * @returns {Promise<ChangeConfig>}
+  */
+  abstract changePlutusData(plutusData: OutputDatum): Promise<ChangeConfig>;
+
+  /**
+  * @param {ScriptRef} scriptRef
+  * @returns {Promise<ChangeConfig>}
+  */
+  abstract changeScriptRef(scriptRef: ScriptRef): Promise<ChangeConfig>;
 
 }
 
@@ -5864,12 +5906,16 @@ export abstract class NativeScriptSource extends _Ptr {
   /**
   * @param {ScriptHash} scriptHash
   * @param {TransactionInput} input
-  * @param {Ed25519KeyHashes} requiredSigners
   * @returns {Promise<NativeScriptSource>}
   */
-  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, requiredSigners: Ed25519KeyHashes): Promise<NativeScriptSource> {
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput): Promise<NativeScriptSource> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @param {Ed25519KeyHashes} keyHashes
+  */
+  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): Promise<void>;
 
 }
 
@@ -6809,11 +6855,22 @@ export abstract class PlutusScriptSource extends _Ptr {
   * @param {ScriptHash} scriptHash
   * @param {TransactionInput} input
   * @param {Language} langVer
+  * @param {number} scriptSize
   * @returns {Promise<PlutusScriptSource>}
   */
-  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, langVer: Language): Promise<PlutusScriptSource> {
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, langVer: Language, scriptSize: number): Promise<PlutusScriptSource> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @param {Ed25519KeyHashes} keyHashes
+  */
+  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): Promise<void>;
+
+  /**
+  * @returns {Promise<Optional<number>>}
+  */
+  abstract getRefScriptSize(): Promise<Optional<number>>;
 
 }
 
@@ -7948,6 +8005,16 @@ export abstract class ProtocolParamUpdate extends _Ptr {
   abstract drepInactivityPeriod(): Promise<Optional<number>>;
 
   /**
+  * @param {UnitInterval} refScriptCoinsPerByte
+  */
+  abstract setRefScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): Promise<void>;
+
+  /**
+  * @returns {Promise<Optional<UnitInterval>>}
+  */
+  abstract refScriptCoinsPerByte(): Promise<Optional<UnitInterval>>;
+
+  /**
   * @returns {Promise<ProtocolParamUpdate>}
   */
   static new(): Promise<ProtocolParamUpdate> {
@@ -8303,15 +8370,6 @@ export abstract class Redeemers extends _Ptr {
   * @returns {Promise<Redeemers>}
   */
   static new(): Promise<Redeemers> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {Redeemer} redeemers
-  * @param {CborContainerType} serializationFormat
-  * @returns {Promise<Redeemers>}
-  */
-  static newWithSerializationFormat(redeemers: Redeemer, serializationFormat: CborContainerType): Promise<Redeemers> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10236,6 +10294,10 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract setCollateralReturn(collateralReturn: TransactionOutput): Promise<void>;
 
   /**
+  */
+  abstract removeCollateralReturn(): Promise<void>;
+
+  /**
   * @param {TransactionOutput} collateralReturn
   * @returns {Promise<void>}
   */
@@ -10245,6 +10307,10 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {BigNum} totalCollateral
   */
   abstract setTotalCollateral(totalCollateral: BigNum): Promise<void>;
+
+  /**
+  */
+  abstract removeTotalCollateral(): Promise<void>;
 
   /**
   * @param {BigNum} totalCollateral
@@ -10257,6 +10323,12 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {TransactionInput} referenceInput
   */
   abstract addReferenceInput(referenceInput: TransactionInput): Promise<void>;
+
+  /**
+  * @param {TransactionInput} referenceInput
+  * @param {number} scriptSize
+  */
+  abstract addScriptReferenceInput(referenceInput: TransactionInput, scriptSize: number): Promise<void>;
 
   /**
   * @param {Ed25519KeyHash} hash
@@ -10293,6 +10365,23 @@ export abstract class TransactionBuilder extends _Ptr {
   * @returns {Promise<void>}
   */
   abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
+
+  /**
+  * @param {TransactionUnspentOutputs} inputs
+  * @param {CoinSelectionStrategyCIP2} strategy
+  * @param {ChangeConfig} changeConfig
+  * @returns {Promise<boolean>}
+  */
+  abstract addInputsFromAndChange(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig): Promise<boolean>;
+
+  /**
+  * @param {TransactionUnspentOutputs} inputs
+  * @param {CoinSelectionStrategyCIP2} strategy
+  * @param {ChangeConfig} changeConfig
+  * @param {number} collateralPercentage
+  * @returns {Promise<boolean>}
+  */
+  abstract addInputsFromAndChangeWithCollateralReturn(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig, collateralPercentage: number): Promise<boolean>;
 
   /**
   * @returns {Promise<Optional<NativeScripts>>}
@@ -10340,6 +10429,10 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract setTtlBignum(ttl: BigNum): Promise<void>;
 
   /**
+  */
+  abstract removeTtl(): Promise<void>;
+
+  /**
   * @param {number} validityStartInterval
   */
   abstract setValidityStartInterval(validityStartInterval: number): Promise<void>;
@@ -10350,10 +10443,18 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract setValidityStartIntervalBignum(validityStartInterval: BigNum): Promise<void>;
 
   /**
+  */
+  abstract removeValidityStartInterval(): Promise<void>;
+
+  /**
   * @param {Certificates} certs
   * @returns {Promise<void>}
   */
   abstract setCerts(certs: Certificates): Promise<void>;
+
+  /**
+  */
+  abstract removeCerts(): Promise<void>;
 
   /**
   * @param {CertificatesBuilder} certs
@@ -10382,6 +10483,10 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract setVotingProposalBuilder(votingProposalBuilder: VotingProposalBuilder): Promise<void>;
 
   /**
+  */
+  abstract removeWithdrawals(): Promise<void>;
+
+  /**
   * @returns {Promise<Optional<AuxiliaryData>>}
   */
   abstract getAuxiliaryData(): Promise<Optional<AuxiliaryData>>;
@@ -10390,6 +10495,10 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {AuxiliaryData} auxiliaryData
   */
   abstract setAuxiliaryData(auxiliaryData: AuxiliaryData): Promise<void>;
+
+  /**
+  */
+  abstract removeAuxiliaryData(): Promise<void>;
 
   /**
   * @param {GeneralTransactionMetadata} metadata
@@ -10421,6 +10530,10 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {MintBuilder} mintBuilder
   */
   abstract setMintBuilder(mintBuilder: MintBuilder): Promise<void>;
+
+  /**
+  */
+  abstract removeMintBuilder(): Promise<void>;
 
   /**
   * @returns {Promise<Optional<MintBuilder>>}
@@ -10672,6 +10785,12 @@ export abstract class TransactionBuilderConfigBuilder extends _Ptr {
   * @returns {Promise<TransactionBuilderConfigBuilder>}
   */
   abstract maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder>;
+
+  /**
+  * @param {UnitInterval} refScriptCoinsPerByte
+  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  */
+  abstract refScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): Promise<TransactionBuilderConfigBuilder>;
 
   /**
   * @param {boolean} preferPureChange
@@ -13284,6 +13403,15 @@ export abstract class WithdrawalsBuilder extends _Ptr {
   */
   abstract build(): Promise<Withdrawals>;
 
+}
+
+export enum AddressKind {
+  Base = 0,
+  Pointer = 1,
+  Enterprise = 2,
+  Reward = 3,
+  Byron = 4,
+  Malformed = 5,
 }
 
 export enum CborContainerType {
