@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@emurgo/csl-mobile-bridge": "6.0.0-alpha.8",
+    "@emurgo/csl-mobile-bridge": "6.0.0-beta.1",
     "@tradle/react-native-http": "^2.0.1",
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
