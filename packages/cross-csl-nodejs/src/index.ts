@@ -2439,9 +2439,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      committeeColdKey(): Promise<WasmContract.Credential> {
+      committeeColdCredential(): Promise<WasmContract.Credential> {
         return wrapByPromise(() => {
-          const ret = this.wasm.committee_cold_key();
+          const ret = this.wasm.committee_cold_credential();
           return new $outer.Credential(ret, $outer._ctx);
         });
       }
@@ -2454,16 +2454,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static new(committeeColdKey: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
+      static new(committeeColdCredential: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
         return wrapByPromise(() => {
-          const ret = WasmV4.CommitteeColdResign.new(committeeColdKey.wasm);
+          const ret = WasmV4.CommitteeColdResign.new(committeeColdCredential.wasm);
           return new $outer.CommitteeColdResign(ret, $outer._ctx);
         });
       }
 
-      static newWithAnchor(committeeColdKey: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
+      static newWithAnchor(committeeColdCredential: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
         return wrapByPromise(() => {
-          const ret = WasmV4.CommitteeColdResign.new_with_anchor(committeeColdKey.wasm, anchor.wasm);
+          const ret = WasmV4.CommitteeColdResign.new_with_anchor(committeeColdCredential.wasm, anchor.wasm);
           return new $outer.CommitteeColdResign(ret, $outer._ctx);
         });
       }
@@ -2525,23 +2525,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      committeeColdKey(): Promise<WasmContract.Credential> {
+      committeeColdCredential(): Promise<WasmContract.Credential> {
         return wrapByPromise(() => {
-          const ret = this.wasm.committee_cold_key();
+          const ret = this.wasm.committee_cold_credential();
           return new $outer.Credential(ret, $outer._ctx);
         });
       }
 
-      committeeHotKey(): Promise<WasmContract.Credential> {
+      committeeHotCredential(): Promise<WasmContract.Credential> {
         return wrapByPromise(() => {
-          const ret = this.wasm.committee_hot_key();
+          const ret = this.wasm.committee_hot_credential();
           return new $outer.Credential(ret, $outer._ctx);
         });
       }
 
-      static new(committeeColdKey: WasmContract.Credential, committeeHotKey: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
+      static new(committeeColdCredential: WasmContract.Credential, committeeHotCredential: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
         return wrapByPromise(() => {
-          const ret = WasmV4.CommitteeHotAuth.new(committeeColdKey.wasm, committeeHotKey.wasm);
+          const ret = WasmV4.CommitteeHotAuth.new(committeeColdCredential.wasm, committeeHotCredential.wasm);
           return new $outer.CommitteeHotAuth(ret, $outer._ctx);
         });
       }
@@ -15580,23 +15580,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      static newConstitutionalCommitteeHotKey(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+      static newConstitutionalCommitteeHotCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
         return wrapByPromise(() => {
-          const ret = WasmV4.Voter.new_constitutional_committee_hot_key(cred.wasm);
+          const ret = WasmV4.Voter.new_constitutional_committee_hot_credential(cred.wasm);
           return new $outer.Voter(ret, $outer._ctx);
         });
       }
 
-      static newDrep(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+      static newDrepCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
         return wrapByPromise(() => {
-          const ret = WasmV4.Voter.new_drep(cred.wasm);
+          const ret = WasmV4.Voter.new_drep_credential(cred.wasm);
           return new $outer.Voter(ret, $outer._ctx);
         });
       }
 
-      static newStakingPool(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
+      static newStakePoolKeyHash(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
         return wrapByPromise(() => {
-          const ret = WasmV4.Voter.new_staking_pool(keyHash.wasm);
+          const ret = WasmV4.Voter.new_stake_pool_key_hash(keyHash.wasm);
           return new $outer.Voter(ret, $outer._ctx);
         });
       }
@@ -15607,25 +15607,25 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      toConstitutionalCommitteeHotKey(): Promise<Optional<WasmContract.Credential>> {
+      toConstitutionalCommitteeHotCredential(): Promise<Optional<WasmContract.Credential>> {
         return wrapByPromise(() => {
-          const ret = this.wasm.to_constitutional_committee_hot_key();
+          const ret = this.wasm.to_constitutional_committee_hot_credential();
           if (ret == null) return undefined;
           return new $outer.Credential(ret, $outer._ctx);
         });
       }
 
-      toDrepCred(): Promise<Optional<WasmContract.Credential>> {
+      toDrepCredential(): Promise<Optional<WasmContract.Credential>> {
         return wrapByPromise(() => {
-          const ret = this.wasm.to_drep_cred();
+          const ret = this.wasm.to_drep_credential();
           if (ret == null) return undefined;
           return new $outer.Credential(ret, $outer._ctx);
         });
       }
 
-      toStakingPoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
+      toStakePoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
         return wrapByPromise(() => {
-          const ret = this.wasm.to_staking_pool_key_hash();
+          const ret = this.wasm.to_stake_pool_key_hash();
           if (ret == null) return undefined;
           return new $outer.Ed25519KeyHash(ret, $outer._ctx);
         });

@@ -2262,7 +2262,7 @@ export abstract class CommitteeColdResign extends _Ptr {
   /**
   * @returns {Promise<Credential>}
   */
-  abstract committeeColdKey(): Promise<Credential>;
+  abstract committeeColdCredential(): Promise<Credential>;
 
   /**
   * @returns {Promise<Optional<Anchor>>}
@@ -2270,19 +2270,19 @@ export abstract class CommitteeColdResign extends _Ptr {
   abstract anchor(): Promise<Optional<Anchor>>;
 
   /**
-  * @param {Credential} committeeColdKey
+  * @param {Credential} committeeColdCredential
   * @returns {Promise<CommitteeColdResign>}
   */
-  static new(committeeColdKey: Credential): Promise<CommitteeColdResign> {
+  static new(committeeColdCredential: Credential): Promise<CommitteeColdResign> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @param {Credential} committeeColdKey
+  * @param {Credential} committeeColdCredential
   * @param {Anchor} anchor
   * @returns {Promise<CommitteeColdResign>}
   */
-  static newWithAnchor(committeeColdKey: Credential, anchor: Anchor): Promise<CommitteeColdResign> {
+  static newWithAnchor(committeeColdCredential: Credential, anchor: Anchor): Promise<CommitteeColdResign> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2336,19 +2336,19 @@ export abstract class CommitteeHotAuth extends _Ptr {
   /**
   * @returns {Promise<Credential>}
   */
-  abstract committeeColdKey(): Promise<Credential>;
+  abstract committeeColdCredential(): Promise<Credential>;
 
   /**
   * @returns {Promise<Credential>}
   */
-  abstract committeeHotKey(): Promise<Credential>;
+  abstract committeeHotCredential(): Promise<Credential>;
 
   /**
-  * @param {Credential} committeeColdKey
-  * @param {Credential} committeeHotKey
+  * @param {Credential} committeeColdCredential
+  * @param {Credential} committeeHotCredential
   * @returns {Promise<CommitteeHotAuth>}
   */
-  static new(committeeColdKey: Credential, committeeHotKey: Credential): Promise<CommitteeHotAuth> {
+  static new(committeeColdCredential: Credential, committeeHotCredential: Credential): Promise<CommitteeHotAuth> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13200,7 +13200,7 @@ export abstract class Voter extends _Ptr {
   * @param {Credential} cred
   * @returns {Promise<Voter>}
   */
-  static newConstitutionalCommitteeHotKey(cred: Credential): Promise<Voter> {
+  static newConstitutionalCommitteeHotCredential(cred: Credential): Promise<Voter> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13208,7 +13208,7 @@ export abstract class Voter extends _Ptr {
   * @param {Credential} cred
   * @returns {Promise<Voter>}
   */
-  static newDrep(cred: Credential): Promise<Voter> {
+  static newDrepCredential(cred: Credential): Promise<Voter> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13216,7 +13216,7 @@ export abstract class Voter extends _Ptr {
   * @param {Ed25519KeyHash} keyHash
   * @returns {Promise<Voter>}
   */
-  static newStakingPool(keyHash: Ed25519KeyHash): Promise<Voter> {
+  static newStakePoolKeyHash(keyHash: Ed25519KeyHash): Promise<Voter> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13228,17 +13228,17 @@ export abstract class Voter extends _Ptr {
   /**
   * @returns {Promise<Optional<Credential>>}
   */
-  abstract toConstitutionalCommitteeHotKey(): Promise<Optional<Credential>>;
+  abstract toConstitutionalCommitteeHotCredential(): Promise<Optional<Credential>>;
 
   /**
   * @returns {Promise<Optional<Credential>>}
   */
-  abstract toDrepCred(): Promise<Optional<Credential>>;
+  abstract toDrepCredential(): Promise<Optional<Credential>>;
 
   /**
   * @returns {Promise<Optional<Ed25519KeyHash>>}
   */
-  abstract toStakingPoolKeyHash(): Promise<Optional<Ed25519KeyHash>>;
+  abstract toStakePoolKeyHash(): Promise<Optional<Ed25519KeyHash>>;
 
   /**
   * @returns {Promise<boolean>}

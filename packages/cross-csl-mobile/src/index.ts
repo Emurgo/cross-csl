@@ -1801,8 +1801,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
-      async committeeColdKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_cold_key();
+      async committeeColdCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_cold_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
@@ -1812,13 +1812,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Anchor(ret, $outer._ctx);
       }
 
-      static async new(committeeColdKey: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
-        const ret = await WasmV4.CommitteeColdResign.new(committeeColdKey.wasm);
+      static async new(committeeColdCredential: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
+        const ret = await WasmV4.CommitteeColdResign.new(committeeColdCredential.wasm);
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
-      static async newWithAnchor(committeeColdKey: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
-        const ret = await WasmV4.CommitteeColdResign.new_with_anchor(committeeColdKey.wasm, anchor.wasm);
+      static async newWithAnchor(committeeColdCredential: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
+        const ret = await WasmV4.CommitteeColdResign.new_with_anchor(committeeColdCredential.wasm, anchor.wasm);
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
@@ -1865,18 +1865,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.CommitteeHotAuth(ret, $outer._ctx);
       }
 
-      async committeeColdKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_cold_key();
+      async committeeColdCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_cold_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async committeeHotKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_hot_key();
+      async committeeHotCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_hot_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      static async new(committeeColdKey: WasmContract.Credential, committeeHotKey: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
-        const ret = await WasmV4.CommitteeHotAuth.new(committeeColdKey.wasm, committeeHotKey.wasm);
+      static async new(committeeColdCredential: WasmContract.Credential, committeeHotCredential: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
+        const ret = await WasmV4.CommitteeHotAuth.new(committeeColdCredential.wasm, committeeHotCredential.wasm);
         return new $outer.CommitteeHotAuth(ret, $outer._ctx);
       }
 
@@ -11592,18 +11592,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newConstitutionalCommitteeHotKey(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_constitutional_committee_hot_key(cred.wasm);
+      static async newConstitutionalCommitteeHotCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_constitutional_committee_hot_credential(cred.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newDrep(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_drep(cred.wasm);
+      static async newDrepCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_drep_credential(cred.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newStakingPool(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_staking_pool(keyHash.wasm);
+      static async newStakePoolKeyHash(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_stake_pool_key_hash(keyHash.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
@@ -11611,20 +11611,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.kind();
       }
 
-      async toConstitutionalCommitteeHotKey(): Promise<Optional<WasmContract.Credential>> {
-        const ret = await this.wasm.to_constitutional_committee_hot_key();
+      async toConstitutionalCommitteeHotCredential(): Promise<Optional<WasmContract.Credential>> {
+        const ret = await this.wasm.to_constitutional_committee_hot_credential();
         if (ret == null) return undefined;
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async toDrepCred(): Promise<Optional<WasmContract.Credential>> {
-        const ret = await this.wasm.to_drep_cred();
+      async toDrepCredential(): Promise<Optional<WasmContract.Credential>> {
+        const ret = await this.wasm.to_drep_credential();
         if (ret == null) return undefined;
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async toStakingPoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
-        const ret = await this.wasm.to_staking_pool_key_hash();
+      async toStakePoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
+        const ret = await this.wasm.to_stake_pool_key_hash();
         if (ret == null) return undefined;
         return new $outer.Ed25519KeyHash(ret, $outer._ctx);
       }
