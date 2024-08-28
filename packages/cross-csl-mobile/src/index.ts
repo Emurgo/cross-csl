@@ -651,6 +651,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BaseAddress(ret, $outer._ctx);
       }
 
+      networkId(): Promise<number> {
+        return this.wasm.network_id();
+      }
+
     }
     return BaseAddress;
   })();
@@ -720,13 +724,33 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BigInt(ret, $outer._ctx);
       }
 
+      async sub(other: WasmContract.BigInt): Promise<WasmContract.BigInt> {
+        const ret = await this.wasm.sub(other.wasm);
+        return new $outer.BigInt(ret, $outer._ctx);
+      }
+
       async mul(other: WasmContract.BigInt): Promise<WasmContract.BigInt> {
         const ret = await this.wasm.mul(other.wasm);
         return new $outer.BigInt(ret, $outer._ctx);
       }
 
+      async pow(exp: number): Promise<WasmContract.BigInt> {
+        const ret = await this.wasm.pow(exp);
+        return new $outer.BigInt(ret, $outer._ctx);
+      }
+
       static async one(): Promise<WasmContract.BigInt> {
         const ret = await WasmV4.BigInt.one();
+        return new $outer.BigInt(ret, $outer._ctx);
+      }
+
+      static async zero(): Promise<WasmContract.BigInt> {
+        const ret = await WasmV4.BigInt.zero();
+        return new $outer.BigInt(ret, $outer._ctx);
+      }
+
+      async abs(): Promise<WasmContract.BigInt> {
+        const ret = await this.wasm.abs();
         return new $outer.BigInt(ret, $outer._ctx);
       }
 
@@ -737,6 +761,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async divCeil(other: WasmContract.BigInt): Promise<WasmContract.BigInt> {
         const ret = await this.wasm.div_ceil(other.wasm);
+        return new $outer.BigInt(ret, $outer._ctx);
+      }
+
+      async divFloor(other: WasmContract.BigInt): Promise<WasmContract.BigInt> {
+        const ret = await this.wasm.div_floor(other.wasm);
         return new $outer.BigInt(ret, $outer._ctx);
       }
 
@@ -1043,11 +1072,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Block(ret, $outer._ctx);
       }
 
-      static async fromWrappedBytes(data: Uint8Array): Promise<WasmContract.Block> {
-        const ret = await WasmV4.Block.from_wrapped_bytes(data);
-        return new $outer.Block(ret, $outer._ctx);
-      }
-
     }
     return Block;
   })();
@@ -1161,6 +1185,33 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.BootstrapWitnesses
     {
 
+      toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.BootstrapWitnesses> {
+        const ret = await WasmV4.BootstrapWitnesses.from_bytes(bytes);
+        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+      }
+
+      toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.BootstrapWitnesses> {
+        const ret = await WasmV4.BootstrapWitnesses.from_hex(hexStr);
+        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+      }
+
+      toJson(): Promise<string> {
+        return this.wasm.to_json();
+      }
+
+      static async fromJson(json: string): Promise<WasmContract.BootstrapWitnesses> {
+        const ret = await WasmV4.BootstrapWitnesses.from_json(json);
+        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+      }
+
       static async new(): Promise<WasmContract.BootstrapWitnesses> {
         const ret = await WasmV4.BootstrapWitnesses.new();
         return new $outer.BootstrapWitnesses(ret, $outer._ctx);
@@ -1175,7 +1226,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BootstrapWitness(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.BootstrapWitness): Promise<void> {
+      add(elem: WasmContract.BootstrapWitness): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -1285,8 +1336,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
+      static async newRegCert(stakeRegistration: WasmContract.StakeRegistration): Promise<WasmContract.Certificate> {
+        const ret = await WasmV4.Certificate.new_reg_cert(stakeRegistration.wasm);
+        return new $outer.Certificate(ret, $outer._ctx);
+      }
+
       static async newStakeDeregistration(stakeDeregistration: WasmContract.StakeDeregistration): Promise<WasmContract.Certificate> {
         const ret = await WasmV4.Certificate.new_stake_deregistration(stakeDeregistration.wasm);
+        return new $outer.Certificate(ret, $outer._ctx);
+      }
+
+      static async newUnregCert(stakeDeregistration: WasmContract.StakeDeregistration): Promise<WasmContract.Certificate> {
+        const ret = await WasmV4.Certificate.new_unreg_cert(stakeDeregistration.wasm);
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
@@ -1325,17 +1386,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
-      static async newDrepDeregistration(drepDeregistration: WasmContract.DrepDeregistration): Promise<WasmContract.Certificate> {
+      static async newDrepDeregistration(drepDeregistration: WasmContract.DRepDeregistration): Promise<WasmContract.Certificate> {
         const ret = await WasmV4.Certificate.new_drep_deregistration(drepDeregistration.wasm);
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
-      static async newDrepRegistration(drepRegistration: WasmContract.DrepRegistration): Promise<WasmContract.Certificate> {
+      static async newDrepRegistration(drepRegistration: WasmContract.DRepRegistration): Promise<WasmContract.Certificate> {
         const ret = await WasmV4.Certificate.new_drep_registration(drepRegistration.wasm);
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
-      static async newDrepUpdate(drepUpdate: WasmContract.DrepUpdate): Promise<WasmContract.Certificate> {
+      static async newDrepUpdate(drepUpdate: WasmContract.DRepUpdate): Promise<WasmContract.Certificate> {
         const ret = await WasmV4.Certificate.new_drep_update(drepUpdate.wasm);
         return new $outer.Certificate(ret, $outer._ctx);
       }
@@ -1375,8 +1436,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.StakeRegistration(ret, $outer._ctx);
       }
 
+      async asRegCert(): Promise<Optional<WasmContract.StakeRegistration>> {
+        const ret = await this.wasm.as_reg_cert();
+        if (ret == null) return undefined;
+        return new $outer.StakeRegistration(ret, $outer._ctx);
+      }
+
       async asStakeDeregistration(): Promise<Optional<WasmContract.StakeDeregistration>> {
         const ret = await this.wasm.as_stake_deregistration();
+        if (ret == null) return undefined;
+        return new $outer.StakeDeregistration(ret, $outer._ctx);
+      }
+
+      async asUnregCert(): Promise<Optional<WasmContract.StakeDeregistration>> {
+        const ret = await this.wasm.as_unreg_cert();
         if (ret == null) return undefined;
         return new $outer.StakeDeregistration(ret, $outer._ctx);
       }
@@ -1423,22 +1496,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
-      async asDrepDeregistration(): Promise<Optional<WasmContract.DrepDeregistration>> {
+      async asDrepDeregistration(): Promise<Optional<WasmContract.DRepDeregistration>> {
         const ret = await this.wasm.as_drep_deregistration();
         if (ret == null) return undefined;
-        return new $outer.DrepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret, $outer._ctx);
       }
 
-      async asDrepRegistration(): Promise<Optional<WasmContract.DrepRegistration>> {
+      async asDrepRegistration(): Promise<Optional<WasmContract.DRepRegistration>> {
         const ret = await this.wasm.as_drep_registration();
         if (ret == null) return undefined;
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
-      async asDrepUpdate(): Promise<Optional<WasmContract.DrepUpdate>> {
+      async asDrepUpdate(): Promise<Optional<WasmContract.DRepUpdate>> {
         const ret = await this.wasm.as_drep_update();
         if (ret == null) return undefined;
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
       async asStakeAndVoteDelegation(): Promise<Optional<WasmContract.StakeAndVoteDelegation>> {
@@ -1528,7 +1601,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Certificate(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Certificate): Promise<void> {
+      add(elem: WasmContract.Certificate): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -1728,8 +1801,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
-      async committeeColdKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_cold_key();
+      async committeeColdCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_cold_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
@@ -1739,13 +1812,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Anchor(ret, $outer._ctx);
       }
 
-      static async new(committeeColdKey: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
-        const ret = await WasmV4.CommitteeColdResign.new(committeeColdKey.wasm);
+      static async new(committeeColdCredential: WasmContract.Credential): Promise<WasmContract.CommitteeColdResign> {
+        const ret = await WasmV4.CommitteeColdResign.new(committeeColdCredential.wasm);
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
-      static async newWithAnchor(committeeColdKey: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
-        const ret = await WasmV4.CommitteeColdResign.new_with_anchor(committeeColdKey.wasm, anchor.wasm);
+      static async newWithAnchor(committeeColdCredential: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.CommitteeColdResign> {
+        const ret = await WasmV4.CommitteeColdResign.new_with_anchor(committeeColdCredential.wasm, anchor.wasm);
         return new $outer.CommitteeColdResign(ret, $outer._ctx);
       }
 
@@ -1792,18 +1865,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.CommitteeHotAuth(ret, $outer._ctx);
       }
 
-      async committeeColdKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_cold_key();
+      async committeeColdCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_cold_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async committeeHotKey(): Promise<WasmContract.Credential> {
-        const ret = await this.wasm.committee_hot_key();
+      async committeeHotCredential(): Promise<WasmContract.Credential> {
+        const ret = await this.wasm.committee_hot_credential();
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      static async new(committeeColdKey: WasmContract.Credential, committeeHotKey: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
-        const ret = await WasmV4.CommitteeHotAuth.new(committeeColdKey.wasm, committeeHotKey.wasm);
+      static async new(committeeColdCredential: WasmContract.Credential, committeeHotCredential: WasmContract.Credential): Promise<WasmContract.CommitteeHotAuth> {
+        const ret = await WasmV4.CommitteeHotAuth.new(committeeColdCredential.wasm, committeeHotCredential.wasm);
         return new $outer.CommitteeHotAuth(ret, $outer._ctx);
       }
 
@@ -2166,7 +2239,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Credential): Promise<void> {
+      add(elem: WasmContract.Credential): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -2325,6 +2398,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.DRep(ret, $outer._ctx);
       }
 
+      static async newFromCredential(cred: WasmContract.Credential): Promise<WasmContract.DRep> {
+        const ret = await WasmV4.DRep.new_from_credential(cred.wasm);
+        return new $outer.DRep(ret, $outer._ctx);
+      }
+
       kind(): Promise<WasmContract.DRepKind> {
         return this.wasm.kind();
       }
@@ -2341,126 +2419,52 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.ScriptHash(ret, $outer._ctx);
       }
 
+      toBech32(): Promise<string> {
+        return this.wasm.to_bech32();
+      }
+
+      static async fromBech32(bech32Str: string): Promise<WasmContract.DRep> {
+        const ret = await WasmV4.DRep.from_bech32(bech32Str);
+        return new $outer.DRep(ret, $outer._ctx);
+      }
+
     }
     return DRep;
   })();
 
-  public DataCost = (() => {
+  public DRepDeregistration = (() => {
     const $outer = this;
 
-    class DataCost
-      extends Ptr<WasmV4.DataCost>
-      implements WasmContract.DataCost
-    {
-
-      static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<WasmContract.DataCost> {
-        const ret = await WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm);
-        return new $outer.DataCost(ret, $outer._ctx);
-      }
-
-      async coinsPerByte(): Promise<WasmContract.BigNum> {
-        const ret = await this.wasm.coins_per_byte();
-        return new $outer.BigNum(ret, $outer._ctx);
-      }
-
-    }
-    return DataCost;
-  })();
-
-  public DataHash = (() => {
-    const $outer = this;
-
-    class DataHash
-      extends Ptr<WasmV4.DataHash>
-      implements WasmContract.DataHash
-    {
-
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DataHash> {
-        const ret = await WasmV4.DataHash.from_bytes(bytes);
-        return new $outer.DataHash(ret, $outer._ctx);
-      }
-
-      toBytes(): Promise<Uint8Array> {
-        return this.wasm.to_bytes();
-      }
-
-      toBech32(prefix: string): Promise<string> {
-        return this.wasm.to_bech32(prefix);
-      }
-
-      static async fromBech32(bechStr: string): Promise<WasmContract.DataHash> {
-        const ret = await WasmV4.DataHash.from_bech32(bechStr);
-        return new $outer.DataHash(ret, $outer._ctx);
-      }
-
-      toHex(): Promise<string> {
-        return this.wasm.to_hex();
-      }
-
-      static async fromHex(hex: string): Promise<WasmContract.DataHash> {
-        const ret = await WasmV4.DataHash.from_hex(hex);
-        return new $outer.DataHash(ret, $outer._ctx);
-      }
-
-    }
-    return DataHash;
-  })();
-
-  public DatumSource = (() => {
-    const $outer = this;
-
-    class DatumSource
-      extends Ptr<WasmV4.DatumSource>
-      implements WasmContract.DatumSource
-    {
-
-      static async new(datum: WasmContract.PlutusData): Promise<WasmContract.DatumSource> {
-        const ret = await WasmV4.DatumSource.new(datum.wasm);
-        return new $outer.DatumSource(ret, $outer._ctx);
-      }
-
-      static async newRefInput(input: WasmContract.TransactionInput): Promise<WasmContract.DatumSource> {
-        const ret = await WasmV4.DatumSource.new_ref_input(input.wasm);
-        return new $outer.DatumSource(ret, $outer._ctx);
-      }
-
-    }
-    return DatumSource;
-  })();
-
-  public DrepDeregistration = (() => {
-    const $outer = this;
-
-    class DrepDeregistration
-      extends Ptr<WasmV4.DrepDeregistration>
-      implements WasmContract.DrepDeregistration
+    class DRepDeregistration
+      extends Ptr<WasmV4.DRepDeregistration>
+      implements WasmContract.DRepDeregistration
     {
 
       toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepDeregistration> {
-        const ret = await WasmV4.DrepDeregistration.from_bytes(bytes);
-        return new $outer.DrepDeregistration(ret, $outer._ctx);
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DRepDeregistration> {
+        const ret = await WasmV4.DRepDeregistration.from_bytes(bytes);
+        return new $outer.DRepDeregistration(ret, $outer._ctx);
       }
 
       toHex(): Promise<string> {
         return this.wasm.to_hex();
       }
 
-      static async fromHex(hexStr: string): Promise<WasmContract.DrepDeregistration> {
-        const ret = await WasmV4.DrepDeregistration.from_hex(hexStr);
-        return new $outer.DrepDeregistration(ret, $outer._ctx);
+      static async fromHex(hexStr: string): Promise<WasmContract.DRepDeregistration> {
+        const ret = await WasmV4.DRepDeregistration.from_hex(hexStr);
+        return new $outer.DRepDeregistration(ret, $outer._ctx);
       }
 
       toJson(): Promise<string> {
         return this.wasm.to_json();
       }
 
-      static async fromJson(json: string): Promise<WasmContract.DrepDeregistration> {
-        const ret = await WasmV4.DrepDeregistration.from_json(json);
-        return new $outer.DrepDeregistration(ret, $outer._ctx);
+      static async fromJson(json: string): Promise<WasmContract.DRepDeregistration> {
+        const ret = await WasmV4.DRepDeregistration.from_json(json);
+        return new $outer.DRepDeregistration(ret, $outer._ctx);
       }
 
       async votingCredential(): Promise<WasmContract.Credential> {
@@ -2473,9 +2477,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BigNum(ret, $outer._ctx);
       }
 
-      static async new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.DrepDeregistration> {
-        const ret = await WasmV4.DrepDeregistration.new(votingCredential.wasm, coin.wasm);
-        return new $outer.DrepDeregistration(ret, $outer._ctx);
+      static async new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.DRepDeregistration> {
+        const ret = await WasmV4.DRepDeregistration.new(votingCredential.wasm, coin.wasm);
+        return new $outer.DRepDeregistration(ret, $outer._ctx);
       }
 
       hasScriptCredentials(): Promise<boolean> {
@@ -2483,42 +2487,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
     }
-    return DrepDeregistration;
+    return DRepDeregistration;
   })();
 
-  public DrepRegistration = (() => {
+  public DRepRegistration = (() => {
     const $outer = this;
 
-    class DrepRegistration
-      extends Ptr<WasmV4.DrepRegistration>
-      implements WasmContract.DrepRegistration
+    class DRepRegistration
+      extends Ptr<WasmV4.DRepRegistration>
+      implements WasmContract.DRepRegistration
     {
 
       toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepRegistration> {
-        const ret = await WasmV4.DrepRegistration.from_bytes(bytes);
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DRepRegistration> {
+        const ret = await WasmV4.DRepRegistration.from_bytes(bytes);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
       toHex(): Promise<string> {
         return this.wasm.to_hex();
       }
 
-      static async fromHex(hexStr: string): Promise<WasmContract.DrepRegistration> {
-        const ret = await WasmV4.DrepRegistration.from_hex(hexStr);
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+      static async fromHex(hexStr: string): Promise<WasmContract.DRepRegistration> {
+        const ret = await WasmV4.DRepRegistration.from_hex(hexStr);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
       toJson(): Promise<string> {
         return this.wasm.to_json();
       }
 
-      static async fromJson(json: string): Promise<WasmContract.DrepRegistration> {
-        const ret = await WasmV4.DrepRegistration.from_json(json);
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+      static async fromJson(json: string): Promise<WasmContract.DRepRegistration> {
+        const ret = await WasmV4.DRepRegistration.from_json(json);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
       async votingCredential(): Promise<WasmContract.Credential> {
@@ -2537,14 +2541,14 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Anchor(ret, $outer._ctx);
       }
 
-      static async new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.DrepRegistration> {
-        const ret = await WasmV4.DrepRegistration.new(votingCredential.wasm, coin.wasm);
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+      static async new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.DRepRegistration> {
+        const ret = await WasmV4.DRepRegistration.new(votingCredential.wasm, coin.wasm);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
-      static async newWithAnchor(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum, anchor: WasmContract.Anchor): Promise<WasmContract.DrepRegistration> {
-        const ret = await WasmV4.DrepRegistration.new_with_anchor(votingCredential.wasm, coin.wasm, anchor.wasm);
-        return new $outer.DrepRegistration(ret, $outer._ctx);
+      static async newWithAnchor(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum, anchor: WasmContract.Anchor): Promise<WasmContract.DRepRegistration> {
+        const ret = await WasmV4.DRepRegistration.new_with_anchor(votingCredential.wasm, coin.wasm, anchor.wasm);
+        return new $outer.DRepRegistration(ret, $outer._ctx);
       }
 
       hasScriptCredentials(): Promise<boolean> {
@@ -2552,42 +2556,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
     }
-    return DrepRegistration;
+    return DRepRegistration;
   })();
 
-  public DrepUpdate = (() => {
+  public DRepUpdate = (() => {
     const $outer = this;
 
-    class DrepUpdate
-      extends Ptr<WasmV4.DrepUpdate>
-      implements WasmContract.DrepUpdate
+    class DRepUpdate
+      extends Ptr<WasmV4.DRepUpdate>
+      implements WasmContract.DRepUpdate
     {
 
       toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepUpdate> {
-        const ret = await WasmV4.DrepUpdate.from_bytes(bytes);
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DRepUpdate> {
+        const ret = await WasmV4.DRepUpdate.from_bytes(bytes);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
       toHex(): Promise<string> {
         return this.wasm.to_hex();
       }
 
-      static async fromHex(hexStr: string): Promise<WasmContract.DrepUpdate> {
-        const ret = await WasmV4.DrepUpdate.from_hex(hexStr);
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+      static async fromHex(hexStr: string): Promise<WasmContract.DRepUpdate> {
+        const ret = await WasmV4.DRepUpdate.from_hex(hexStr);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
       toJson(): Promise<string> {
         return this.wasm.to_json();
       }
 
-      static async fromJson(json: string): Promise<WasmContract.DrepUpdate> {
-        const ret = await WasmV4.DrepUpdate.from_json(json);
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+      static async fromJson(json: string): Promise<WasmContract.DRepUpdate> {
+        const ret = await WasmV4.DRepUpdate.from_json(json);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
       async votingCredential(): Promise<WasmContract.Credential> {
@@ -2601,14 +2605,14 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Anchor(ret, $outer._ctx);
       }
 
-      static async new(votingCredential: WasmContract.Credential): Promise<WasmContract.DrepUpdate> {
-        const ret = await WasmV4.DrepUpdate.new(votingCredential.wasm);
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+      static async new(votingCredential: WasmContract.Credential): Promise<WasmContract.DRepUpdate> {
+        const ret = await WasmV4.DRepUpdate.new(votingCredential.wasm);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
-      static async newWithAnchor(votingCredential: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.DrepUpdate> {
-        const ret = await WasmV4.DrepUpdate.new_with_anchor(votingCredential.wasm, anchor.wasm);
-        return new $outer.DrepUpdate(ret, $outer._ctx);
+      static async newWithAnchor(votingCredential: WasmContract.Credential, anchor: WasmContract.Anchor): Promise<WasmContract.DRepUpdate> {
+        const ret = await WasmV4.DRepUpdate.new_with_anchor(votingCredential.wasm, anchor.wasm);
+        return new $outer.DRepUpdate(ret, $outer._ctx);
       }
 
       hasScriptCredentials(): Promise<boolean> {
@@ -2616,52 +2620,47 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
     }
-    return DrepUpdate;
+    return DRepUpdate;
   })();
 
-  public DrepVotingThresholds = (() => {
+  public DRepVotingThresholds = (() => {
     const $outer = this;
 
-    class DrepVotingThresholds
-      extends Ptr<WasmV4.DrepVotingThresholds>
-      implements WasmContract.DrepVotingThresholds
+    class DRepVotingThresholds
+      extends Ptr<WasmV4.DRepVotingThresholds>
+      implements WasmContract.DRepVotingThresholds
     {
 
       toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
       }
 
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DrepVotingThresholds> {
-        const ret = await WasmV4.DrepVotingThresholds.from_bytes(bytes);
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DRepVotingThresholds> {
+        const ret = await WasmV4.DRepVotingThresholds.from_bytes(bytes);
+        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
       }
 
       toHex(): Promise<string> {
         return this.wasm.to_hex();
       }
 
-      static async fromHex(hexStr: string): Promise<WasmContract.DrepVotingThresholds> {
-        const ret = await WasmV4.DrepVotingThresholds.from_hex(hexStr);
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
+      static async fromHex(hexStr: string): Promise<WasmContract.DRepVotingThresholds> {
+        const ret = await WasmV4.DRepVotingThresholds.from_hex(hexStr);
+        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
       }
 
       toJson(): Promise<string> {
         return this.wasm.to_json();
       }
 
-      static async fromJson(json: string): Promise<WasmContract.DrepVotingThresholds> {
-        const ret = await WasmV4.DrepVotingThresholds.from_json(json);
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
+      static async fromJson(json: string): Promise<WasmContract.DRepVotingThresholds> {
+        const ret = await WasmV4.DRepVotingThresholds.from_json(json);
+        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
       }
 
-      static async new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, updateConstitution: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval, ppNetworkGroup: WasmContract.UnitInterval, ppEconomicGroup: WasmContract.UnitInterval, ppTechnicalGroup: WasmContract.UnitInterval, ppGovernanceGroup: WasmContract.UnitInterval, treasuryWithdrawal: WasmContract.UnitInterval): Promise<WasmContract.DrepVotingThresholds> {
-        const ret = await WasmV4.DrepVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, updateConstitution.wasm, hardForkInitiation.wasm, ppNetworkGroup.wasm, ppEconomicGroup.wasm, ppTechnicalGroup.wasm, ppGovernanceGroup.wasm, treasuryWithdrawal.wasm);
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
-      }
-
-      static async newDefault(): Promise<WasmContract.DrepVotingThresholds> {
-        const ret = await WasmV4.DrepVotingThresholds.new_default();
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
+      static async new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, updateConstitution: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval, ppNetworkGroup: WasmContract.UnitInterval, ppEconomicGroup: WasmContract.UnitInterval, ppTechnicalGroup: WasmContract.UnitInterval, ppGovernanceGroup: WasmContract.UnitInterval, treasuryWithdrawal: WasmContract.UnitInterval): Promise<WasmContract.DRepVotingThresholds> {
+        const ret = await WasmV4.DRepVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, updateConstitution.wasm, hardForkInitiation.wasm, ppNetworkGroup.wasm, ppEconomicGroup.wasm, ppTechnicalGroup.wasm, ppGovernanceGroup.wasm, treasuryWithdrawal.wasm);
+        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
       }
 
       setMotionNoConfidence(motionNoConfidence: WasmContract.UnitInterval): Promise<void> {
@@ -2755,7 +2754,90 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       }
 
     }
-    return DrepVotingThresholds;
+    return DRepVotingThresholds;
+  })();
+
+  public DataCost = (() => {
+    const $outer = this;
+
+    class DataCost
+      extends Ptr<WasmV4.DataCost>
+      implements WasmContract.DataCost
+    {
+
+      static async newCoinsPerByte(coinsPerByte: WasmContract.BigNum): Promise<WasmContract.DataCost> {
+        const ret = await WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm);
+        return new $outer.DataCost(ret, $outer._ctx);
+      }
+
+      async coinsPerByte(): Promise<WasmContract.BigNum> {
+        const ret = await this.wasm.coins_per_byte();
+        return new $outer.BigNum(ret, $outer._ctx);
+      }
+
+    }
+    return DataCost;
+  })();
+
+  public DataHash = (() => {
+    const $outer = this;
+
+    class DataHash
+      extends Ptr<WasmV4.DataHash>
+      implements WasmContract.DataHash
+    {
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.DataHash> {
+        const ret = await WasmV4.DataHash.from_bytes(bytes);
+        return new $outer.DataHash(ret, $outer._ctx);
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
+      }
+
+      toBech32(prefix: string): Promise<string> {
+        return this.wasm.to_bech32(prefix);
+      }
+
+      static async fromBech32(bechStr: string): Promise<WasmContract.DataHash> {
+        const ret = await WasmV4.DataHash.from_bech32(bechStr);
+        return new $outer.DataHash(ret, $outer._ctx);
+      }
+
+      toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static async fromHex(hex: string): Promise<WasmContract.DataHash> {
+        const ret = await WasmV4.DataHash.from_hex(hex);
+        return new $outer.DataHash(ret, $outer._ctx);
+      }
+
+    }
+    return DataHash;
+  })();
+
+  public DatumSource = (() => {
+    const $outer = this;
+
+    class DatumSource
+      extends Ptr<WasmV4.DatumSource>
+      implements WasmContract.DatumSource
+    {
+
+      static async new(datum: WasmContract.PlutusData): Promise<WasmContract.DatumSource> {
+        const ret = await WasmV4.DatumSource.new(datum.wasm);
+        return new $outer.DatumSource(ret, $outer._ctx);
+      }
+
+      static async newRefInput(input: WasmContract.TransactionInput): Promise<WasmContract.DatumSource> {
+        const ret = await WasmV4.DatumSource.new_ref_input(input.wasm);
+        return new $outer.DatumSource(ret, $outer._ctx);
+      }
+
+    }
+    return DatumSource;
   })();
 
   public Ed25519KeyHash = (() => {
@@ -2846,7 +2928,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Ed25519KeyHash(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Ed25519KeyHash): Promise<void> {
+      add(elem: WasmContract.Ed25519KeyHash): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -2930,6 +3012,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         const ret = await WasmV4.EnterpriseAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
         return new $outer.EnterpriseAddress(ret, $outer._ctx);
+      }
+
+      networkId(): Promise<number> {
+        return this.wasm.network_id();
       }
 
     }
@@ -3044,6 +3130,57 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return ExUnits;
   })();
 
+  public FixedBlock = (() => {
+    const $outer = this;
+
+    class FixedBlock
+      extends Ptr<WasmV4.FixedBlock>
+      implements WasmContract.FixedBlock
+    {
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.FixedBlock> {
+        const ret = await WasmV4.FixedBlock.from_bytes(bytes);
+        return new $outer.FixedBlock(ret, $outer._ctx);
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.FixedBlock> {
+        const ret = await WasmV4.FixedBlock.from_hex(hexStr);
+        return new $outer.FixedBlock(ret, $outer._ctx);
+      }
+
+      async header(): Promise<WasmContract.Header> {
+        const ret = await this.wasm.header();
+        return new $outer.Header(ret, $outer._ctx);
+      }
+
+      async transactionBodies(): Promise<WasmContract.FixedTransactionBodies> {
+        const ret = await this.wasm.transaction_bodies();
+        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+      }
+
+      async transactionWitnessSets(): Promise<WasmContract.TransactionWitnessSets> {
+        const ret = await this.wasm.transaction_witness_sets();
+        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+      }
+
+      async auxiliaryDataSet(): Promise<WasmContract.AuxiliaryDataSet> {
+        const ret = await this.wasm.auxiliary_data_set();
+        return new $outer.AuxiliaryDataSet(ret, $outer._ctx);
+      }
+
+      invalidTransactions(): Promise<Uint32Array> {
+        return this.wasm.invalid_transactions();
+      }
+
+      async blockHash(): Promise<WasmContract.BlockHash> {
+        const ret = await this.wasm.block_hash();
+        return new $outer.BlockHash(ret, $outer._ctx);
+      }
+
+    }
+    return FixedBlock;
+  })();
+
   public FixedTransaction = (() => {
     const $outer = this;
 
@@ -3130,6 +3267,113 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return FixedTransaction;
+  })();
+
+  public FixedTransactionBodies = (() => {
+    const $outer = this;
+
+    class FixedTransactionBodies
+      extends Ptr<WasmV4.FixedTransactionBodies>
+      implements WasmContract.FixedTransactionBodies
+    {
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.FixedTransactionBodies> {
+        const ret = await WasmV4.FixedTransactionBodies.from_bytes(bytes);
+        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.FixedTransactionBodies> {
+        const ret = await WasmV4.FixedTransactionBodies.from_hex(hexStr);
+        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+      }
+
+      static async new(): Promise<WasmContract.FixedTransactionBodies> {
+        const ret = await WasmV4.FixedTransactionBodies.new();
+        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+      }
+
+      len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.FixedTransactionBody> {
+        const ret = await this.wasm.get(index);
+        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+      }
+
+      add(elem: WasmContract.FixedTransactionBody): Promise<void> {
+        return this.wasm.add(elem.wasm);
+      }
+
+    }
+    return FixedTransactionBodies;
+  })();
+
+  public FixedTransactionBody = (() => {
+    const $outer = this;
+
+    class FixedTransactionBody
+      extends Ptr<WasmV4.FixedTransactionBody>
+      implements WasmContract.FixedTransactionBody
+    {
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.FixedTransactionBody> {
+        const ret = await WasmV4.FixedTransactionBody.from_bytes(bytes);
+        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.FixedTransactionBody> {
+        const ret = await WasmV4.FixedTransactionBody.from_hex(hexStr);
+        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+      }
+
+      async transactionBody(): Promise<WasmContract.TransactionBody> {
+        const ret = await this.wasm.transaction_body();
+        return new $outer.TransactionBody(ret, $outer._ctx);
+      }
+
+      async txHash(): Promise<WasmContract.TransactionHash> {
+        const ret = await this.wasm.tx_hash();
+        return new $outer.TransactionHash(ret, $outer._ctx);
+      }
+
+      originalBytes(): Promise<Uint8Array> {
+        return this.wasm.original_bytes();
+      }
+
+    }
+    return FixedTransactionBody;
+  })();
+
+  public FixedVersionedBlock = (() => {
+    const $outer = this;
+
+    class FixedVersionedBlock
+      extends Ptr<WasmV4.FixedVersionedBlock>
+      implements WasmContract.FixedVersionedBlock
+    {
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.FixedVersionedBlock> {
+        const ret = await WasmV4.FixedVersionedBlock.from_bytes(bytes);
+        return new $outer.FixedVersionedBlock(ret, $outer._ctx);
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.FixedVersionedBlock> {
+        const ret = await WasmV4.FixedVersionedBlock.from_hex(hexStr);
+        return new $outer.FixedVersionedBlock(ret, $outer._ctx);
+      }
+
+      async block(): Promise<WasmContract.FixedBlock> {
+        const ret = await this.wasm.block();
+        return new $outer.FixedBlock(ret, $outer._ctx);
+      }
+
+      era(): Promise<WasmContract.BlockEra> {
+        return this.wasm.era();
+      }
+
+    }
+    return FixedVersionedBlock;
   })();
 
   public GeneralTransactionMetadata = (() => {
@@ -4660,7 +4904,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.MintWitness
     {
 
-      static async newNativeScript(nativeScript: WasmContract.NativeScript): Promise<WasmContract.MintWitness> {
+      static async newNativeScript(nativeScript: WasmContract.NativeScriptSource): Promise<WasmContract.MintWitness> {
         const ret = await WasmV4.MintWitness.new_native_script(nativeScript.wasm);
         return new $outer.MintWitness(ret, $outer._ctx);
       }
@@ -5094,13 +5338,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.NativeScriptSource(ret, $outer._ctx);
       }
 
-      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput): Promise<WasmContract.NativeScriptSource> {
-        const ret = await WasmV4.NativeScriptSource.new_ref_input(scriptHash.wasm, input.wasm);
+      static async newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, scriptSize: number): Promise<WasmContract.NativeScriptSource> {
+        const ret = await WasmV4.NativeScriptSource.new_ref_input(scriptHash.wasm, input.wasm, scriptSize);
         return new $outer.NativeScriptSource(ret, $outer._ctx);
       }
 
       setRequiredSigners(keyHashes: WasmContract.Ed25519KeyHashes): Promise<void> {
         return this.wasm.set_required_signers(keyHashes.wasm);
+      }
+
+      getRefScriptSize(): Promise<Optional<number>> {
+        return this.wasm.get_ref_script_size();
       }
 
     }
@@ -5795,16 +6043,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.len();
       }
 
-      async insert(key: WasmContract.PlutusData, value: WasmContract.PlutusData): Promise<Optional<WasmContract.PlutusData>> {
-        const ret = await this.wasm.insert(key.wasm, value.wasm);
+      async insert(key: WasmContract.PlutusData, values: WasmContract.PlutusMapValues): Promise<Optional<WasmContract.PlutusMapValues>> {
+        const ret = await this.wasm.insert(key.wasm, values.wasm);
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusMapValues(ret, $outer._ctx);
       }
 
-      async get(key: WasmContract.PlutusData): Promise<Optional<WasmContract.PlutusData>> {
+      async get(key: WasmContract.PlutusData): Promise<Optional<WasmContract.PlutusMapValues>> {
         const ret = await this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusMapValues(ret, $outer._ctx);
       }
 
       async keys(): Promise<WasmContract.PlutusList> {
@@ -5814,6 +6062,37 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return PlutusMap;
+  })();
+
+  public PlutusMapValues = (() => {
+    const $outer = this;
+
+    class PlutusMapValues
+      extends Ptr<WasmV4.PlutusMapValues>
+      implements WasmContract.PlutusMapValues
+    {
+
+      static async new(): Promise<WasmContract.PlutusMapValues> {
+        const ret = await WasmV4.PlutusMapValues.new();
+        return new $outer.PlutusMapValues(ret, $outer._ctx);
+      }
+
+      len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(index: number): Promise<Optional<WasmContract.PlutusData>> {
+        const ret = await this.wasm.get(index);
+        if (ret == null) return undefined;
+        return new $outer.PlutusData(ret, $outer._ctx);
+      }
+
+      add(elem: WasmContract.PlutusData): Promise<void> {
+        return this.wasm.add(elem.wasm);
+      }
+
+    }
+    return PlutusMapValues;
   })();
 
   public PlutusScript = (() => {
@@ -6147,6 +6426,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         const ret = await WasmV4.PointerAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
         return new $outer.PointerAddress(ret, $outer._ctx);
+      }
+
+      networkId(): Promise<number> {
+        return this.wasm.network_id();
       }
 
     }
@@ -6495,6 +6778,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       async hardForkInitiation(): Promise<WasmContract.UnitInterval> {
         const ret = await this.wasm.hard_fork_initiation();
+        return new $outer.UnitInterval(ret, $outer._ctx);
+      }
+
+      async securityRelevantThreshold(): Promise<WasmContract.UnitInterval> {
+        const ret = await this.wasm.security_relevant_threshold();
         return new $outer.UnitInterval(ret, $outer._ctx);
       }
 
@@ -6892,14 +7180,14 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.PoolVotingThresholds(ret, $outer._ctx);
       }
 
-      setDrepVotingThresholds(drepVotingThresholds: WasmContract.DrepVotingThresholds): Promise<void> {
+      setDrepVotingThresholds(drepVotingThresholds: WasmContract.DRepVotingThresholds): Promise<void> {
         return this.wasm.set_drep_voting_thresholds(drepVotingThresholds.wasm);
       }
 
-      async drepVotingThresholds(): Promise<Optional<WasmContract.DrepVotingThresholds>> {
+      async drepVotingThresholds(): Promise<Optional<WasmContract.DRepVotingThresholds>> {
         const ret = await this.wasm.drep_voting_thresholds();
         if (ret == null) return undefined;
-        return new $outer.DrepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
       }
 
       setMinCommitteeSize(minCommitteeSize: number): Promise<void> {
@@ -7464,6 +7752,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.RewardAddress(ret, $outer._ctx);
       }
 
+      networkId(): Promise<number> {
+        return this.wasm.network_id();
+      }
+
     }
     return RewardAddress;
   })();
@@ -7925,6 +8217,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.PlutusScript(ret, $outer._ctx);
       }
 
+      toUnwrappedBytes(): Promise<Uint8Array> {
+        return this.wasm.to_unwrapped_bytes();
+      }
+
     }
     return ScriptRef;
   })();
@@ -8214,8 +8510,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.StakeDeregistration(ret, $outer._ctx);
       }
 
-      static async newWithCoin(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.StakeDeregistration> {
-        const ret = await WasmV4.StakeDeregistration.new_with_coin(stakeCredential.wasm, coin.wasm);
+      static async newWithExplicitRefund(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.StakeDeregistration> {
+        const ret = await WasmV4.StakeDeregistration.new_with_explicit_refund(stakeCredential.wasm, coin.wasm);
         return new $outer.StakeDeregistration(ret, $outer._ctx);
       }
 
@@ -8278,8 +8574,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.StakeRegistration(ret, $outer._ctx);
       }
 
-      static async newWithCoin(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.StakeRegistration> {
-        const ret = await WasmV4.StakeRegistration.new_with_coin(stakeCredential.wasm, coin.wasm);
+      static async newWithExplicitDeposit(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): Promise<WasmContract.StakeRegistration> {
+        const ret = await WasmV4.StakeRegistration.new_with_explicit_deposit(stakeCredential.wasm, coin.wasm);
         return new $outer.StakeRegistration(ret, $outer._ctx);
       }
 
@@ -9070,8 +9366,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.add_inputs_from_and_change(inputs.wasm, strategy, changeConfig.wasm);
       }
 
-      addInputsFromAndChangeWithCollateralReturn(inputs: WasmContract.TransactionUnspentOutputs, strategy: WasmContract.CoinSelectionStrategyCIP2, changeConfig: WasmContract.ChangeConfig, collateralPercentage: number): Promise<boolean> {
-        return this.wasm.add_inputs_from_and_change_with_collateral_return(inputs.wasm, strategy, changeConfig.wasm, collateralPercentage);
+      addInputsFromAndChangeWithCollateralReturn(inputs: WasmContract.TransactionUnspentOutputs, strategy: WasmContract.CoinSelectionStrategyCIP2, changeConfig: WasmContract.ChangeConfig, collateralPercentage: WasmContract.BigNum): Promise<void> {
+        return this.wasm.add_inputs_from_and_change_with_collateral_return(inputs.wasm, strategy, changeConfig.wasm, collateralPercentage.wasm);
       }
 
       async getNativeInputScripts(): Promise<Optional<WasmContract.NativeScripts>> {
@@ -9438,6 +9734,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
       }
 
+      async deduplicateExplicitRefInputsWithRegularInputs(deduplicateExplicitRefInputsWithRegularInputs: boolean): Promise<WasmContract.TransactionBuilderConfigBuilder> {
+        const ret = await this.wasm.deduplicate_explicit_ref_inputs_with_regular_inputs(deduplicateExplicitRefInputsWithRegularInputs);
+        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+      }
+
       async build(): Promise<WasmContract.TransactionBuilderConfig> {
         const ret = await this.wasm.build();
         return new $outer.TransactionBuilderConfig(ret, $outer._ctx);
@@ -9588,7 +9889,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionInput(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.TransactionInput): Promise<void> {
+      add(elem: WasmContract.TransactionInput): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -10350,6 +10651,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Costmdls(ret, $outer._ctx);
       }
 
+      static async plutusConwayCostModels(): Promise<WasmContract.Costmdls> {
+        const ret = await WasmV4.TxBuilderConstants.plutus_conway_cost_models();
+        return new $outer.Costmdls(ret, $outer._ctx);
+      }
+
     }
     return TxBuilderConstants;
   })();
@@ -10371,7 +10677,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.add_key_input(hash.wasm, input.wasm, amount.wasm);
       }
 
-      addNativeScriptInput(script: WasmContract.NativeScript, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+      addNativeScriptInput(script: WasmContract.NativeScriptSource, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
         return this.wasm.add_native_script_input(script.wasm, input.wasm, amount.wasm);
       }
 
@@ -10379,8 +10685,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.add_plutus_script_input(witness.wasm, input.wasm, amount.wasm);
       }
 
-      addBootstrapInput(hash: WasmContract.ByronAddress, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
-        return this.wasm.add_bootstrap_input(hash.wasm, input.wasm, amount.wasm);
+      addBootstrapInput(address: WasmContract.ByronAddress, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
+        return this.wasm.add_bootstrap_input(address.wasm, input.wasm, amount.wasm);
       }
 
       addRegularInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {
@@ -10887,6 +11193,59 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return Value;
   })();
 
+  public VersionedBlock = (() => {
+    const $outer = this;
+
+    class VersionedBlock
+      extends Ptr<WasmV4.VersionedBlock>
+      implements WasmContract.VersionedBlock
+    {
+
+      toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.VersionedBlock> {
+        const ret = await WasmV4.VersionedBlock.from_bytes(bytes);
+        return new $outer.VersionedBlock(ret, $outer._ctx);
+      }
+
+      toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.VersionedBlock> {
+        const ret = await WasmV4.VersionedBlock.from_hex(hexStr);
+        return new $outer.VersionedBlock(ret, $outer._ctx);
+      }
+
+      toJson(): Promise<string> {
+        return this.wasm.to_json();
+      }
+
+      static async fromJson(json: string): Promise<WasmContract.VersionedBlock> {
+        const ret = await WasmV4.VersionedBlock.from_json(json);
+        return new $outer.VersionedBlock(ret, $outer._ctx);
+      }
+
+      static async new(block: WasmContract.Block, eraCode: number): Promise<WasmContract.VersionedBlock> {
+        const ret = await WasmV4.VersionedBlock.new(block.wasm, eraCode);
+        return new $outer.VersionedBlock(ret, $outer._ctx);
+      }
+
+      async block(): Promise<WasmContract.Block> {
+        const ret = await this.wasm.block();
+        return new $outer.Block(ret, $outer._ctx);
+      }
+
+      era(): Promise<WasmContract.BlockEra> {
+        return this.wasm.era();
+      }
+
+    }
+    return VersionedBlock;
+  })();
+
   public Vkey = (() => {
     const $outer = this;
 
@@ -11069,7 +11428,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Vkeywitness(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Vkeywitness): Promise<void> {
+      add(elem: WasmContract.Vkeywitness): Promise<boolean> {
         return this.wasm.add(elem.wasm);
       }
 
@@ -11233,18 +11592,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newConstitutionalCommitteeHotKey(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_constitutional_committee_hot_key(cred.wasm);
+      static async newConstitutionalCommitteeHotCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_constitutional_committee_hot_credential(cred.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newDrep(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_drep(cred.wasm);
+      static async newDrepCredential(cred: WasmContract.Credential): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_drep_credential(cred.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
-      static async newStakingPool(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
-        const ret = await WasmV4.Voter.new_staking_pool(keyHash.wasm);
+      static async newStakePoolKeyHash(keyHash: WasmContract.Ed25519KeyHash): Promise<WasmContract.Voter> {
+        const ret = await WasmV4.Voter.new_stake_pool_key_hash(keyHash.wasm);
         return new $outer.Voter(ret, $outer._ctx);
       }
 
@@ -11252,20 +11611,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.kind();
       }
 
-      async toConstitutionalCommitteeHotCred(): Promise<Optional<WasmContract.Credential>> {
-        const ret = await this.wasm.to_constitutional_committee_hot_cred();
+      async toConstitutionalCommitteeHotCredential(): Promise<Optional<WasmContract.Credential>> {
+        const ret = await this.wasm.to_constitutional_committee_hot_credential();
         if (ret == null) return undefined;
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async toDrepCred(): Promise<Optional<WasmContract.Credential>> {
-        const ret = await this.wasm.to_drep_cred();
+      async toDrepCredential(): Promise<Optional<WasmContract.Credential>> {
+        const ret = await this.wasm.to_drep_credential();
         if (ret == null) return undefined;
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      async toStakingPoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
-        const ret = await this.wasm.to_staking_pool_key_hash();
+      async toStakePoolKeyHash(): Promise<Optional<WasmContract.Ed25519KeyHash>> {
+        const ret = await this.wasm.to_stake_pool_key_hash();
         if (ret == null) return undefined;
         return new $outer.Ed25519KeyHash(ret, $outer._ctx);
       }
@@ -11657,7 +12016,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.VotingProposal(ret, $outer._ctx);
       }
 
-      add(proposal: WasmContract.VotingProposal): Promise<void> {
+      add(proposal: WasmContract.VotingProposal): Promise<boolean> {
         return this.wasm.add(proposal.wasm);
       }
 
@@ -11789,6 +12148,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   })();
 
   public AddressKind = (() => { return WasmContract.AddressKind; })();
+
+  public BlockEra = (() => { return WasmContract.BlockEra; })();
 
   public CborContainerType = (() => { return WasmContract.CborContainerType; })();
 
