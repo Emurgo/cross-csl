@@ -3265,6 +3265,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.raw_auxiliary_data();
       }
 
+      signAndAddVkeySignature(privateKey: WasmContract.PrivateKey): Promise<void> {
+        return this.wasm.sign_and_add_vkey_signature(privateKey.wasm);
+      }
+
+      signAndAddIcarusBootstrapSignature(addr: WasmContract.ByronAddress, privateKey: WasmContract.Bip32PrivateKey): Promise<void> {
+        return this.wasm.sign_and_add_icarus_bootstrap_signature(addr.wasm, privateKey.wasm);
+      }
+
+      signAndAddDaedalusBootstrapSignature(addr: WasmContract.ByronAddress, privateKey: WasmContract.LegacyDaedalusPrivateKey): Promise<void> {
+        return this.wasm.sign_and_add_daedalus_bootstrap_signature(addr.wasm, privateKey.wasm);
+      }
+
     }
     return FixedTransaction;
   })();

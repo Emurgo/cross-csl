@@ -3915,6 +3915,26 @@ export abstract class FixedTransaction extends _Ptr {
   */
   abstract rawAuxiliaryData(): Promise<Optional<Uint8Array>>;
 
+  /**
+  * @param {PrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddVkeySignature(privateKey: PrivateKey): Promise<void>;
+
+  /**
+  * @param {ByronAddress} addr
+  * @param {Bip32PrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddIcarusBootstrapSignature(addr: ByronAddress, privateKey: Bip32PrivateKey): Promise<void>;
+
+  /**
+  * @param {ByronAddress} addr
+  * @param {LegacyDaedalusPrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddDaedalusBootstrapSignature(addr: ByronAddress, privateKey: LegacyDaedalusPrivateKey): Promise<void>;
+
 }
 
 export abstract class FixedTransactionBodies extends _Ptr {
