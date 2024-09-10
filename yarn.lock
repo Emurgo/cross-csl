@@ -980,20 +980,20 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@emurgo/cardano-serialization-lib-browser@12.1.0-beta.1":
-  version "12.1.0-beta.1"
-  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.1.0-beta.1.tgz"
-  integrity sha512-F4cS4BYM5IGBXz4zcOxahptsu+qqG6lBdIj4qP6VNA7N5QKvsEKawaopsnpKzxhZPRGFQy8mjuH6buadbS7aNw==
+"@emurgo/cardano-serialization-lib-browser@12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.1.0.tgz#53698074f9e307585f40dd0d3f10263ae2b039cb"
+  integrity sha512-9Ka4cEV0I0Yk0msCNa4dv3M2XbOaUGXgGMzU5XtPIggP1V4pXmdfn0LJA2AAJAenvZhQzeX8uRzryyFioPF9Gw==
 
-"@emurgo/cardano-serialization-lib-nodejs@12.1.0-beta.1":
-  version "12.1.0-beta.1"
-  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.1.0-beta.1.tgz"
-  integrity sha512-7O5t8iab8cM6UIu51CRIpIOj8CzYRpbY7o2ddY8ozMu10mfSqE4vIT8BaN7q5fEk56BsVmkZckA4nwjtPZ1Vxg==
+"@emurgo/cardano-serialization-lib-nodejs@12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.1.0.tgz#052376d149b99e08352bf3410a293c91da457279"
+  integrity sha512-S2zu5bi13GNhr8/V7PpalP7VPsUIRjRKAPLMVRFpnfWu8ruD5CHAAa7Ka7+SMj4M09YLKQM+Vmx7b94v6mgCXQ==
 
-"@emurgo/csl-mobile-bridge@6.1.0-beta.1":
-  version "6.1.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.1.0-beta.1.tgz#96b1c05da987aa0715409eaec97572c424614b36"
-  integrity sha512-CF+yaCcc0+v5yuKJr6hV3FOJx0OpeAa1AaqCmhsvtbDv0Q6w0KF7GGbdAmjJrd4kDQ956LJL/15jqUo1y4i1yw==
+"@emurgo/csl-mobile-bridge@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.1.0.tgz#26348bd94fecfca1dcc5037933b7d00d7a3a737c"
+  integrity sha512-/qvsEjViUE83/u1MoCdQMUMgv8o6dW2BO5WTAgE6pcTwWECNTxswQ/EFRfpJhnLPnvN+mNcmhIkLseu0MfYX6w==
   dependencies:
     base-64 "0.1.0"
 
