@@ -189,6 +189,7 @@ export interface WasmModuleProxy {
   FixedTransaction: typeof FixedTransaction;
   FixedTransactionBodies: typeof FixedTransactionBodies;
   FixedTransactionBody: typeof FixedTransactionBody;
+  FixedTxWitnessesSet: typeof FixedTxWitnessesSet;
   FixedVersionedBlock: typeof FixedVersionedBlock;
   GeneralTransactionMetadata: typeof GeneralTransactionMetadata;
   GenesisDelegateHash: typeof GenesisDelegateHash;
@@ -3915,6 +3916,41 @@ export abstract class FixedTransaction extends _Ptr {
   */
   abstract rawAuxiliaryData(): Promise<Optional<Uint8Array>>;
 
+  /**
+  * @returns {Promise<TransactionHash>}
+  */
+  abstract transactionHash(): Promise<TransactionHash>;
+
+  /**
+  * @param {Vkeywitness} vkeyWitness
+  */
+  abstract addVkeyWitness(vkeyWitness: Vkeywitness): Promise<void>;
+
+  /**
+  * @param {BootstrapWitness} bootstrapWitness
+  */
+  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): Promise<void>;
+
+  /**
+  * @param {PrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddVkeySignature(privateKey: PrivateKey): Promise<void>;
+
+  /**
+  * @param {ByronAddress} addr
+  * @param {Bip32PrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddIcarusBootstrapSignature(addr: ByronAddress, privateKey: Bip32PrivateKey): Promise<void>;
+
+  /**
+  * @param {ByronAddress} addr
+  * @param {LegacyDaedalusPrivateKey} privateKey
+  * @returns {Promise<void>}
+  */
+  abstract signAndAddDaedalusBootstrapSignature(addr: ByronAddress, privateKey: LegacyDaedalusPrivateKey): Promise<void>;
+
 }
 
 export abstract class FixedTransactionBodies extends _Ptr {
@@ -3990,6 +4026,37 @@ export abstract class FixedTransactionBody extends _Ptr {
   * @returns {Promise<Uint8Array>}
   */
   abstract originalBytes(): Promise<Uint8Array>;
+
+}
+
+export abstract class FixedTxWitnessesSet extends _Ptr {
+  /**
+  * @returns {Promise<TransactionWitnessSet>}
+  */
+  abstract txWitnessesSet(): Promise<TransactionWitnessSet>;
+
+  /**
+  * @param {Vkeywitness} vkeyWitness
+  */
+  abstract addVkeyWitness(vkeyWitness: Vkeywitness): Promise<void>;
+
+  /**
+  * @param {BootstrapWitness} bootstrapWitness
+  */
+  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): Promise<void>;
+
+  /**
+  * @returns {Promise<Uint8Array>}
+  */
+  abstract toBytes(): Promise<Uint8Array>;
+
+  /**
+  * @param {Uint8Array} data
+  * @returns {Promise<FixedTxWitnessesSet>}
+  */
+  static fromBytes(data: Uint8Array): Promise<FixedTxWitnessesSet> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
 
 }
 

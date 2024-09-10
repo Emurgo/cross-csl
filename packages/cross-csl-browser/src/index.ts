@@ -4403,6 +4403,43 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      transactionHash(): Promise<WasmContract.TransactionHash> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.transaction_hash();
+          return new $outer.TransactionHash(ret, $outer._ctx);
+        });
+      }
+
+      addVkeyWitness(vkeyWitness: WasmContract.Vkeywitness): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_vkey_witness(vkeyWitness.wasm);
+        });
+      }
+
+      addBootstrapWitness(bootstrapWitness: WasmContract.BootstrapWitness): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_bootstrap_witness(bootstrapWitness.wasm);
+        });
+      }
+
+      signAndAddVkeySignature(privateKey: WasmContract.PrivateKey): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.sign_and_add_vkey_signature(privateKey.wasm);
+        });
+      }
+
+      signAndAddIcarusBootstrapSignature(addr: WasmContract.ByronAddress, privateKey: WasmContract.Bip32PrivateKey): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.sign_and_add_icarus_bootstrap_signature(addr.wasm, privateKey.wasm);
+        });
+      }
+
+      signAndAddDaedalusBootstrapSignature(addr: WasmContract.ByronAddress, privateKey: WasmContract.LegacyDaedalusPrivateKey): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.sign_and_add_daedalus_bootstrap_signature(addr.wasm, privateKey.wasm);
+        });
+      }
+
     }
     return FixedTransaction;
   })();
@@ -4503,6 +4540,50 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
     }
     return FixedTransactionBody;
+  })();
+
+  public FixedTxWitnessesSet = (() => {
+    const $outer = this;
+
+    class FixedTxWitnessesSet
+      extends Ptr<WasmV4.FixedTxWitnessesSet>
+      implements WasmContract.FixedTxWitnessesSet
+    {
+
+      txWitnessesSet(): Promise<WasmContract.TransactionWitnessSet> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.tx_witnesses_set();
+          return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        });
+      }
+
+      addVkeyWitness(vkeyWitness: WasmContract.Vkeywitness): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_vkey_witness(vkeyWitness.wasm);
+        });
+      }
+
+      addBootstrapWitness(bootstrapWitness: WasmContract.BootstrapWitness): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_bootstrap_witness(bootstrapWitness.wasm);
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return wrapByPromise(() => {
+          return this.wasm.to_bytes();
+        });
+      }
+
+      static fromBytes(data: Uint8Array): Promise<WasmContract.FixedTxWitnessesSet> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.FixedTxWitnessesSet.from_bytes(data);
+          return new $outer.FixedTxWitnessesSet(ret, $outer._ctx);
+        });
+      }
+
+    }
+    return FixedTxWitnessesSet;
   })();
 
   public FixedVersionedBlock = (() => {

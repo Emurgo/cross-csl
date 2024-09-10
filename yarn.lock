@@ -980,20 +980,20 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@emurgo/cardano-serialization-lib-browser@12.0.1":
-  version "12.0.1"
-  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.0.1.tgz"
-  integrity sha512-3Hoi7pzGyTAjtd7CXmUiUG9i+TOv8QMlSU/KgTwPeZkUFfdNT9syt572FCaM4fBeagiR3LRhQeNE5TMUo07VBA==
+"@emurgo/cardano-serialization-lib-browser@12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.1.0.tgz#53698074f9e307585f40dd0d3f10263ae2b039cb"
+  integrity sha512-9Ka4cEV0I0Yk0msCNa4dv3M2XbOaUGXgGMzU5XtPIggP1V4pXmdfn0LJA2AAJAenvZhQzeX8uRzryyFioPF9Gw==
 
-"@emurgo/cardano-serialization-lib-nodejs@12.0.1":
-  version "12.0.1"
-  resolved "https://registry.npmjs.org/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.0.1.tgz"
-  integrity sha512-QWvMgBHgoSAGbfAtKIeNV1wpRBzivbboeUjF8cBOGl/TS9OSYmLEVhNacbPoFqT1iqMhVRlAYoyXXTW/RmNC0w==
+"@emurgo/cardano-serialization-lib-nodejs@12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.1.0.tgz#052376d149b99e08352bf3410a293c91da457279"
+  integrity sha512-S2zu5bi13GNhr8/V7PpalP7VPsUIRjRKAPLMVRFpnfWu8ruD5CHAAa7Ka7+SMj4M09YLKQM+Vmx7b94v6mgCXQ==
 
-"@emurgo/csl-mobile-bridge@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.npmjs.org/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.0.0.tgz"
-  integrity sha512-tW+Sb2UYEIG1MChdandhVStGkFTZ/A/IOds4hToBu9F4rGb36XCMFlBiOr7IGtR27Qrug6TMDnRWBqDVP6dxSQ==
+"@emurgo/csl-mobile-bridge@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.1.0.tgz#26348bd94fecfca1dcc5037933b7d00d7a3a737c"
+  integrity sha512-/qvsEjViUE83/u1MoCdQMUMgv8o6dW2BO5WTAgE6pcTwWECNTxswQ/EFRfpJhnLPnvN+mNcmhIkLseu0MfYX6w==
   dependencies:
     base-64 "0.1.0"
 
@@ -1959,7 +1959,7 @@ balanced-match@^1.0.0:
 
 base-64@0.1.0:
   version "0.1.0"
-  resolved "https://registry.npmjs.org/base-64/-/base-64-0.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
   integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
 
 base-x@^3.0.5:
