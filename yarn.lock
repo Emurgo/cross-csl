@@ -968,20 +968,20 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@emurgo/cardano-serialization-lib-browser@12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.1.0.tgz#53698074f9e307585f40dd0d3f10263ae2b039cb"
-  integrity sha512-9Ka4cEV0I0Yk0msCNa4dv3M2XbOaUGXgGMzU5XtPIggP1V4pXmdfn0LJA2AAJAenvZhQzeX8uRzryyFioPF9Gw==
+"@emurgo/cardano-serialization-lib-browser@12.1.1":
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-12.1.1.tgz#632a4fe4ff323e1fcba2344dabb36b2b4217fb79"
+  integrity sha512-DANl1Jr3LdmA0aDW/meEgnF6JLGjIZ3rgo4KLFNGtch0cuG53uzj3LXzslHLofYTEuNBRaBJFPMmG2xnd1uQAg==
 
-"@emurgo/cardano-serialization-lib-nodejs@12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-12.1.0.tgz#052376d149b99e08352bf3410a293c91da457279"
-  integrity sha512-S2zu5bi13GNhr8/V7PpalP7VPsUIRjRKAPLMVRFpnfWu8ruD5CHAAa7Ka7+SMj4M09YLKQM+Vmx7b94v6mgCXQ==
+"@emurgo/cardano-serialization-lib-nodejs-gc@12.1.1":
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs-gc/-/cardano-serialization-lib-nodejs-gc-12.1.1.tgz#09340d7292588d63d9566bbcd5c54098aa6f8829"
+  integrity sha512-PRay6ceSQhH8OsOOUG4QwPU6u1wXFDMoxcHv4KENnIjLk8pKb0ggLr6S1GZ603YJRi9KLh+pw97yL08a8ZG0PA==
 
-"@emurgo/csl-mobile-bridge@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.1.0.tgz#26348bd94fecfca1dcc5037933b7d00d7a3a737c"
-  integrity sha512-/qvsEjViUE83/u1MoCdQMUMgv8o6dW2BO5WTAgE6pcTwWECNTxswQ/EFRfpJhnLPnvN+mNcmhIkLseu0MfYX6w==
+"@emurgo/csl-mobile-bridge@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@emurgo/csl-mobile-bridge/-/csl-mobile-bridge-6.1.1.tgz#5f23d6b89221eff26ab2cd95258febb92354c8c4"
+  integrity sha512-eSlgpmw5RJ2pfDvBTW4S2bklWssxlUMUJ7SiU1XZiLKSSSLuVkO/1Q/PvdeDutLjchox+kYq2d2L8HmsJOuuiA==
   dependencies:
     base-64 "0.1.0"
 
