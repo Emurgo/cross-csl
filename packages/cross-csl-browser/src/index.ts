@@ -111,6 +111,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     });
   }
 
+  hasTransactionSetTag(txBytes: Uint8Array): Promise<WasmContract.TransactionSetsState> {
+    return wrapByPromise(() => {
+      return WasmV4.has_transaction_set_tag(txBytes);
+    });
+  }
+
   hashAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): Promise<WasmContract.AuxiliaryDataHash> {
     return wrapByPromise(() => {
       const ret = WasmV4.hash_auxiliary_data(auxiliaryData.wasm);
@@ -129,13 +135,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return wrapByPromise(() => {
       const ret = WasmV4.hash_script_data(redeemers.wasm, costModels.wasm, datums?.wasm);
       return new this.ScriptDataHash(ret, this._ctx);
-    });
-  }
-
-  hashTransaction(txBody: WasmContract.TransactionBody): Promise<WasmContract.TransactionHash> {
-    return wrapByPromise(() => {
-      const ret = WasmV4.hash_transaction(txBody.wasm);
-      return new this.TransactionHash(ret, this._ctx);
     });
   }
 
@@ -1664,9 +1663,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      add(elem: WasmContract.BootstrapWitness): Promise<boolean> {
+      add(witness: WasmContract.BootstrapWitness): Promise<boolean> {
         return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
+          return this.wasm.add(witness.wasm);
         });
       }
 
@@ -3027,9 +3026,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      add(elem: WasmContract.Credential): Promise<boolean> {
+      add(credential: WasmContract.Credential): Promise<boolean> {
         return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
+          return this.wasm.add(credential.wasm);
         });
       }
 
@@ -3952,9 +3951,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      add(elem: WasmContract.Ed25519KeyHash): Promise<boolean> {
+      add(keyhash: WasmContract.Ed25519KeyHash): Promise<boolean> {
         return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
+          return this.wasm.add(keyhash.wasm);
         });
       }
 
@@ -4329,6 +4328,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<WasmContract.FixedTransaction> {
         return wrapByPromise(() => {
           const ret = WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
+          return new $outer.FixedTransaction(ret, $outer._ctx);
+        });
+      }
+
+      static newFromBodyBytes(rawBody: Uint8Array): Promise<WasmContract.FixedTransaction> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.FixedTransaction.new_from_body_bytes(rawBody);
           return new $outer.FixedTransaction(ret, $outer._ctx);
         });
       }
@@ -8071,32 +8077,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.PlutusList
     {
 
-      toBytes(): Promise<Uint8Array> {
-        return wrapByPromise(() => {
-          return this.wasm.to_bytes();
-        });
-      }
-
-      static fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusList> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.PlutusList.from_bytes(bytes);
-          return new $outer.PlutusList(ret, $outer._ctx);
-        });
-      }
-
-      toHex(): Promise<string> {
-        return wrapByPromise(() => {
-          return this.wasm.to_hex();
-        });
-      }
-
-      static fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.PlutusList.from_hex(hexStr);
-          return new $outer.PlutusList(ret, $outer._ctx);
-        });
-      }
-
       static new(): Promise<WasmContract.PlutusList> {
         return wrapByPromise(() => {
           const ret = WasmV4.PlutusList.new();
@@ -8120,6 +8100,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       add(elem: WasmContract.PlutusData): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.add(elem.wasm);
+        });
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return wrapByPromise(() => {
+          return this.wasm.to_bytes();
+        });
+      }
+
+      static fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusList> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.PlutusList.from_bytes(bytes);
+          return new $outer.PlutusList(ret, $outer._ctx);
+        });
+      }
+
+      toHex(): Promise<string> {
+        return wrapByPromise(() => {
+          return this.wasm.to_hex();
+        });
+      }
+
+      static fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.PlutusList.from_hex(hexStr);
+          return new $outer.PlutusList(ret, $outer._ctx);
         });
       }
 
@@ -10247,6 +10253,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       add(elem: WasmContract.Redeemer): Promise<void> {
         return wrapByPromise(() => {
           return this.wasm.add(elem.wasm);
+        });
+      }
+
+      getContainerType(): Promise<WasmContract.CborContainerType> {
+        return wrapByPromise(() => {
+          return this.wasm.get_container_type();
         });
       }
 
@@ -13380,9 +13392,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      add(elem: WasmContract.TransactionInput): Promise<boolean> {
+      add(input: WasmContract.TransactionInput): Promise<boolean> {
         return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
+          return this.wasm.add(input.wasm);
         });
       }
 
@@ -15441,9 +15453,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      add(elem: WasmContract.Vkeywitness): Promise<boolean> {
+      add(witness: WasmContract.Vkeywitness): Promise<boolean> {
         return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
+          return this.wasm.add(witness.wasm);
         });
       }
 
@@ -16235,6 +16247,20 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      contains(elem: WasmContract.VotingProposal): Promise<boolean> {
+        return wrapByPromise(() => {
+          return this.wasm.contains(elem.wasm);
+        });
+      }
+
+      toOption(): Promise<Optional<WasmContract.VotingProposals>> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.to_option();
+          if (ret == null) return undefined;
+          return new $outer.VotingProposals(ret, $outer._ctx);
+        });
+      }
+
     }
     return VotingProposals;
   })();
@@ -16410,6 +16436,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   public CborContainerType = (() => { return WasmContract.CborContainerType; })();
 
+  public CborSetType = (() => { return WasmContract.CborSetType; })();
+
   public CertificateKind = (() => { return WasmContract.CertificateKind; })();
 
   public CoinSelectionStrategyCIP2 = (() => { return WasmContract.CoinSelectionStrategyCIP2; })();
@@ -16445,6 +16473,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   public ScriptSchema = (() => { return WasmContract.ScriptSchema; })();
 
   public TransactionMetadatumKind = (() => { return WasmContract.TransactionMetadatumKind; })();
+
+  public TransactionSetsState = (() => { return WasmContract.TransactionSetsState; })();
 
   public VoteKind = (() => { return WasmContract.VoteKind; })();
 

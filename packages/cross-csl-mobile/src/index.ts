@@ -75,6 +75,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return new this.Value(ret, this._ctx);
   }
 
+  hasTransactionSetTag(txBytes: Uint8Array): Promise<WasmContract.TransactionSetsState> {
+    return WasmV4.has_transaction_set_tag(txBytes);
+  }
+
   async hashAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): Promise<WasmContract.AuxiliaryDataHash> {
     const ret = await WasmV4.hash_auxiliary_data(auxiliaryData.wasm);
     return new this.AuxiliaryDataHash(ret, this._ctx);
@@ -88,11 +92,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   async hashScriptData(redeemers: WasmContract.Redeemers, costModels: WasmContract.Costmdls, datums: Optional<WasmContract.PlutusList>): Promise<WasmContract.ScriptDataHash> {
     const ret = await WasmV4.hash_script_data(redeemers.wasm, costModels.wasm, datums?.wasm);
     return new this.ScriptDataHash(ret, this._ctx);
-  }
-
-  async hashTransaction(txBody: WasmContract.TransactionBody): Promise<WasmContract.TransactionHash> {
-    const ret = await WasmV4.hash_transaction(txBody.wasm);
-    return new this.TransactionHash(ret, this._ctx);
   }
 
   async makeDaedalusBootstrapWitness(txBodyHash: WasmContract.TransactionHash, addr: WasmContract.ByronAddress, key: WasmContract.LegacyDaedalusPrivateKey): Promise<WasmContract.BootstrapWitness> {
@@ -1226,8 +1225,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.BootstrapWitness(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.BootstrapWitness): Promise<boolean> {
-        return this.wasm.add(elem.wasm);
+      add(witness: WasmContract.BootstrapWitness): Promise<boolean> {
+        return this.wasm.add(witness.wasm);
       }
 
     }
@@ -2239,8 +2238,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Credential(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Credential): Promise<boolean> {
-        return this.wasm.add(elem.wasm);
+      add(credential: WasmContract.Credential): Promise<boolean> {
+        return this.wasm.add(credential.wasm);
       }
 
     }
@@ -2928,8 +2927,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Ed25519KeyHash(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Ed25519KeyHash): Promise<boolean> {
-        return this.wasm.add(elem.wasm);
+      add(keyhash: WasmContract.Ed25519KeyHash): Promise<boolean> {
+        return this.wasm.add(keyhash.wasm);
       }
 
       contains(elem: WasmContract.Ed25519KeyHash): Promise<boolean> {
@@ -3214,6 +3213,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static async newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<WasmContract.FixedTransaction> {
         const ret = await WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
+        return new $outer.FixedTransaction(ret, $outer._ctx);
+      }
+
+      static async newFromBodyBytes(rawBody: Uint8Array): Promise<WasmContract.FixedTransaction> {
+        const ret = await WasmV4.FixedTransaction.new_from_body_bytes(rawBody);
         return new $outer.FixedTransaction(ret, $outer._ctx);
       }
 
@@ -6027,24 +6031,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       implements WasmContract.PlutusList
     {
 
-      toBytes(): Promise<Uint8Array> {
-        return this.wasm.to_bytes();
-      }
-
-      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusList> {
-        const ret = await WasmV4.PlutusList.from_bytes(bytes);
-        return new $outer.PlutusList(ret, $outer._ctx);
-      }
-
-      toHex(): Promise<string> {
-        return this.wasm.to_hex();
-      }
-
-      static async fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
-        const ret = await WasmV4.PlutusList.from_hex(hexStr);
-        return new $outer.PlutusList(ret, $outer._ctx);
-      }
-
       static async new(): Promise<WasmContract.PlutusList> {
         const ret = await WasmV4.PlutusList.new();
         return new $outer.PlutusList(ret, $outer._ctx);
@@ -6061,6 +6047,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       add(elem: WasmContract.PlutusData): Promise<void> {
         return this.wasm.add(elem.wasm);
+      }
+
+      toBytes(): Promise<Uint8Array> {
+        return this.wasm.to_bytes();
+      }
+
+      static async fromBytes(bytes: Uint8Array): Promise<WasmContract.PlutusList> {
+        const ret = await WasmV4.PlutusList.from_bytes(bytes);
+        return new $outer.PlutusList(ret, $outer._ctx);
+      }
+
+      toHex(): Promise<string> {
+        return this.wasm.to_hex();
+      }
+
+      static async fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
+        const ret = await WasmV4.PlutusList.from_hex(hexStr);
+        return new $outer.PlutusList(ret, $outer._ctx);
       }
 
     }
@@ -7638,6 +7642,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       add(elem: WasmContract.Redeemer): Promise<void> {
         return this.wasm.add(elem.wasm);
+      }
+
+      getContainerType(): Promise<WasmContract.CborContainerType> {
+        return this.wasm.get_container_type();
       }
 
       async totalExUnits(): Promise<WasmContract.ExUnits> {
@@ -9948,8 +9956,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionInput(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.TransactionInput): Promise<boolean> {
-        return this.wasm.add(elem.wasm);
+      add(input: WasmContract.TransactionInput): Promise<boolean> {
+        return this.wasm.add(input.wasm);
       }
 
       async toOption(): Promise<Optional<WasmContract.TransactionInputs>> {
@@ -11487,8 +11495,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.Vkeywitness(ret, $outer._ctx);
       }
 
-      add(elem: WasmContract.Vkeywitness): Promise<boolean> {
-        return this.wasm.add(elem.wasm);
+      add(witness: WasmContract.Vkeywitness): Promise<boolean> {
+        return this.wasm.add(witness.wasm);
       }
 
     }
@@ -12079,6 +12087,16 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.add(proposal.wasm);
       }
 
+      contains(elem: WasmContract.VotingProposal): Promise<boolean> {
+        return this.wasm.contains(elem.wasm);
+      }
+
+      async toOption(): Promise<Optional<WasmContract.VotingProposals>> {
+        const ret = await this.wasm.to_option();
+        if (ret == null) return undefined;
+        return new $outer.VotingProposals(ret, $outer._ctx);
+      }
+
     }
     return VotingProposals;
   })();
@@ -12212,6 +12230,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   public CborContainerType = (() => { return WasmContract.CborContainerType; })();
 
+  public CborSetType = (() => { return WasmContract.CborSetType; })();
+
   public CertificateKind = (() => { return WasmContract.CertificateKind; })();
 
   public CoinSelectionStrategyCIP2 = (() => { return WasmContract.CoinSelectionStrategyCIP2; })();
@@ -12247,6 +12267,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   public ScriptSchema = (() => { return WasmContract.ScriptSchema; })();
 
   public TransactionMetadatumKind = (() => { return WasmContract.TransactionMetadatumKind; })();
+
+  public TransactionSetsState = (() => { return WasmContract.TransactionSetsState; })();
 
   public VoteKind = (() => { return WasmContract.VoteKind; })();
 
