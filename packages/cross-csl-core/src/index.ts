@@ -126,10 +126,10 @@ export interface WasmModuleProxy {
   encryptWithPassword(password: string, salt: string, nonce: string, data: string): Promise<string>;
   getDeposit(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): Promise<BigNum>;
   getImplicitInput(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): Promise<Value>;
+  hasTransactionSetTag(txBytes: Uint8Array): Promise<TransactionSetsState>;
   hashAuxiliaryData(auxiliaryData: AuxiliaryData): Promise<AuxiliaryDataHash>;
   hashPlutusData(plutusData: PlutusData): Promise<DataHash>;
   hashScriptData(redeemers: Redeemers, costModels: Costmdls, datums: Optional<PlutusList>): Promise<ScriptDataHash>;
-  hashTransaction(txBody: TransactionBody): Promise<TransactionHash>;
   makeDaedalusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: LegacyDaedalusPrivateKey): Promise<BootstrapWitness>;
   makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): Promise<BootstrapWitness>;
   makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
@@ -338,6 +338,7 @@ export interface WasmModuleProxy {
   AddressKind: typeof AddressKind;
   BlockEra: typeof BlockEra;
   CborContainerType: typeof CborContainerType;
+  CborSetType: typeof CborSetType;
   CertificateKind: typeof CertificateKind;
   CoinSelectionStrategyCIP2: typeof CoinSelectionStrategyCIP2;
   CredKind: typeof CredKind;
@@ -356,6 +357,7 @@ export interface WasmModuleProxy {
   ScriptHashNamespace: typeof ScriptHashNamespace;
   ScriptSchema: typeof ScriptSchema;
   TransactionMetadatumKind: typeof TransactionMetadatumKind;
+  TransactionSetsState: typeof TransactionSetsState;
   VoteKind: typeof VoteKind;
   VoterKind: typeof VoterKind;
 }
@@ -1604,10 +1606,10 @@ export abstract class BootstrapWitnesses extends _Ptr {
   abstract get(index: number): Promise<BootstrapWitness>;
 
   /**
-  * @param {BootstrapWitness} elem
+  * @param {BootstrapWitness} witness
   * @returns {Promise<boolean>}
   */
-  abstract add(elem: BootstrapWitness): Promise<boolean>;
+  abstract add(witness: BootstrapWitness): Promise<boolean>;
 
 }
 
@@ -2759,10 +2761,10 @@ export abstract class Credentials extends _Ptr {
   abstract get(index: number): Promise<Credential>;
 
   /**
-  * @param {Credential} elem
+  * @param {Credential} credential
   * @returns {Promise<boolean>}
   */
-  abstract add(elem: Credential): Promise<boolean>;
+  abstract add(credential: Credential): Promise<boolean>;
 
 }
 
@@ -3544,10 +3546,10 @@ export abstract class Ed25519KeyHashes extends _Ptr {
   abstract get(index: number): Promise<Ed25519KeyHash>;
 
   /**
-  * @param {Ed25519KeyHash} elem
+  * @param {Ed25519KeyHash} keyhash
   * @returns {Promise<boolean>}
   */
-  abstract add(elem: Ed25519KeyHash): Promise<boolean>;
+  abstract add(keyhash: Ed25519KeyHash): Promise<boolean>;
 
   /**
   * @param {Ed25519KeyHash} elem
@@ -3855,6 +3857,14 @@ export abstract class FixedTransaction extends _Ptr {
   * @returns {Promise<FixedTransaction>}
   */
   static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Uint8Array} rawBody
+  * @returns {Promise<FixedTransaction>}
+  */
+  static newFromBodyBytes(rawBody: Uint8Array): Promise<FixedTransaction> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6971,6 +6981,29 @@ export abstract class PlutusData extends _Ptr {
 
 export abstract class PlutusList extends _Ptr {
   /**
+  * @returns {Promise<PlutusList>}
+  */
+  static new(): Promise<PlutusList> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Promise<number>}
+  */
+  abstract len(): Promise<number>;
+
+  /**
+  * @param {number} index
+  * @returns {Promise<PlutusData>}
+  */
+  abstract get(index: number): Promise<PlutusData>;
+
+  /**
+  * @param {PlutusData} elem
+  */
+  abstract add(elem: PlutusData): Promise<void>;
+
+  /**
   * @returns {Promise<Uint8Array>}
   */
   abstract toBytes(): Promise<Uint8Array>;
@@ -6995,29 +7028,6 @@ export abstract class PlutusList extends _Ptr {
   static fromHex(hexStr: string): Promise<PlutusList> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
-
-  /**
-  * @returns {Promise<PlutusList>}
-  */
-  static new(): Promise<PlutusList> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<number>}
-  */
-  abstract len(): Promise<number>;
-
-  /**
-  * @param {number} index
-  * @returns {Promise<PlutusData>}
-  */
-  abstract get(index: number): Promise<PlutusData>;
-
-  /**
-  * @param {PlutusData} elem
-  */
-  abstract add(elem: PlutusData): Promise<void>;
 
 }
 
@@ -8773,6 +8783,11 @@ export abstract class Redeemers extends _Ptr {
   * @param {Redeemer} elem
   */
   abstract add(elem: Redeemer): Promise<void>;
+
+  /**
+  * @returns {Promise<CborContainerType>}
+  */
+  abstract getContainerType(): Promise<CborContainerType>;
 
   /**
   * @returns {Promise<ExUnits>}
@@ -11371,10 +11386,10 @@ export abstract class TransactionInputs extends _Ptr {
   abstract get(index: number): Promise<TransactionInput>;
 
   /**
-  * @param {TransactionInput} elem
+  * @param {TransactionInput} input
   * @returns {Promise<boolean>}
   */
-  abstract add(elem: TransactionInput): Promise<boolean>;
+  abstract add(input: TransactionInput): Promise<boolean>;
 
   /**
   * @returns {Promise<Optional<TransactionInputs>>}
@@ -13078,10 +13093,10 @@ export abstract class Vkeywitnesses extends _Ptr {
   abstract get(index: number): Promise<Vkeywitness>;
 
   /**
-  * @param {Vkeywitness} elem
+  * @param {Vkeywitness} witness
   * @returns {Promise<boolean>}
   */
-  abstract add(elem: Vkeywitness): Promise<boolean>;
+  abstract add(witness: Vkeywitness): Promise<boolean>;
 
 }
 
@@ -13742,6 +13757,17 @@ export abstract class VotingProposals extends _Ptr {
   */
   abstract add(proposal: VotingProposal): Promise<boolean>;
 
+  /**
+  * @param {VotingProposal} elem
+  * @returns {Promise<boolean>}
+  */
+  abstract contains(elem: VotingProposal): Promise<boolean>;
+
+  /**
+  * @returns {Promise<Optional<VotingProposals>>}
+  */
+  abstract toOption(): Promise<Optional<VotingProposals>>;
+
 }
 
 export abstract class Withdrawals extends _Ptr {
@@ -13904,6 +13930,11 @@ export enum CborContainerType {
   Map = 1,
 }
 
+export enum CborSetType {
+  Tagged = 0,
+  Untagged = 1,
+}
+
 export enum CertificateKind {
   StakeRegistration = 0,
   StakeDeregistration = 1,
@@ -14035,6 +14066,12 @@ export enum TransactionMetadatumKind {
   Int = 2,
   Bytes = 3,
   Text = 4,
+}
+
+export enum TransactionSetsState {
+  AllSetsHaveTag = 0,
+  AllSetsHaveNoTag = 1,
+  MixedSets = 2,
 }
 
 export enum VoteKind {
