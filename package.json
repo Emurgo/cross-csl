@@ -12,8 +12,7 @@
   },
   "private": true,
   "workspaces": [
-    "packages/*",
-    "../csl-mobile-bridge"
+    "packages/*"
   ],
   "devDependencies": {
     "@types/node": "^16.9.1",
