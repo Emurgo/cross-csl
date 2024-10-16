@@ -6019,6 +6019,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.PlutusData(ret, $outer._ctx);
       }
 
+      async asAddress(network: WasmContract.NetworkInfo): Promise<WasmContract.Address> {
+        const ret = await this.wasm.as_address(network.wasm);
+        return new $outer.Address(ret, $outer._ctx);
+      }
+
     }
     return PlutusData;
   })();
@@ -6030,24 +6035,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.PlutusList>
       implements WasmContract.PlutusList
     {
-
-      static async new(): Promise<WasmContract.PlutusList> {
-        const ret = await WasmV4.PlutusList.new();
-        return new $outer.PlutusList(ret, $outer._ctx);
-      }
-
-      len(): Promise<number> {
-        return this.wasm.len();
-      }
-
-      async get(index: number): Promise<WasmContract.PlutusData> {
-        const ret = await this.wasm.get(index);
-        return new $outer.PlutusData(ret, $outer._ctx);
-      }
-
-      add(elem: WasmContract.PlutusData): Promise<void> {
-        return this.wasm.add(elem.wasm);
-      }
 
       toBytes(): Promise<Uint8Array> {
         return this.wasm.to_bytes();
@@ -6065,6 +6052,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async fromHex(hexStr: string): Promise<WasmContract.PlutusList> {
         const ret = await WasmV4.PlutusList.from_hex(hexStr);
         return new $outer.PlutusList(ret, $outer._ctx);
+      }
+
+      static async new(): Promise<WasmContract.PlutusList> {
+        const ret = await WasmV4.PlutusList.new();
+        return new $outer.PlutusList(ret, $outer._ctx);
+      }
+
+      len(): Promise<number> {
+        return this.wasm.len();
+      }
+
+      async get(index: number): Promise<WasmContract.PlutusData> {
+        const ret = await this.wasm.get(index);
+        return new $outer.PlutusData(ret, $outer._ctx);
+      }
+
+      add(elem: WasmContract.PlutusData): Promise<void> {
+        return this.wasm.add(elem.wasm);
       }
 
     }

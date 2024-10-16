@@ -6977,32 +6977,15 @@ export abstract class PlutusData extends _Ptr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
+  /**
+  * @param {NetworkInfo} network
+  * @returns {Promise<Address>}
+  */
+  abstract asAddress(network: NetworkInfo): Promise<Address>;
+
 }
 
 export abstract class PlutusList extends _Ptr {
-  /**
-  * @returns {Promise<PlutusList>}
-  */
-  static new(): Promise<PlutusList> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<number>}
-  */
-  abstract len(): Promise<number>;
-
-  /**
-  * @param {number} index
-  * @returns {Promise<PlutusData>}
-  */
-  abstract get(index: number): Promise<PlutusData>;
-
-  /**
-  * @param {PlutusData} elem
-  */
-  abstract add(elem: PlutusData): Promise<void>;
-
   /**
   * @returns {Promise<Uint8Array>}
   */
@@ -7028,6 +7011,29 @@ export abstract class PlutusList extends _Ptr {
   static fromHex(hexStr: string): Promise<PlutusList> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @returns {Promise<PlutusList>}
+  */
+  static new(): Promise<PlutusList> {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Promise<number>}
+  */
+  abstract len(): Promise<number>;
+
+  /**
+  * @param {number} index
+  * @returns {Promise<PlutusData>}
+  */
+  abstract get(index: number): Promise<PlutusData>;
+
+  /**
+  * @param {PlutusData} elem
+  */
+  abstract add(elem: PlutusData): Promise<void>;
 
 }
 

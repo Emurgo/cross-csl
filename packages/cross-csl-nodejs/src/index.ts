@@ -8065,6 +8065,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      asAddress(network: WasmContract.NetworkInfo): Promise<WasmContract.Address> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.as_address(network.wasm);
+          return new $outer.Address(ret, $outer._ctx);
+        });
+      }
+
     }
     return PlutusData;
   })();
@@ -8076,32 +8083,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       extends Ptr<WasmV4.PlutusList>
       implements WasmContract.PlutusList
     {
-
-      static new(): Promise<WasmContract.PlutusList> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.PlutusList.new();
-          return new $outer.PlutusList(ret, $outer._ctx);
-        });
-      }
-
-      len(): Promise<number> {
-        return wrapByPromise(() => {
-          return this.wasm.len();
-        });
-      }
-
-      get(index: number): Promise<WasmContract.PlutusData> {
-        return wrapByPromise(() => {
-          const ret = this.wasm.get(index);
-          return new $outer.PlutusData(ret, $outer._ctx);
-        });
-      }
-
-      add(elem: WasmContract.PlutusData): Promise<void> {
-        return wrapByPromise(() => {
-          return this.wasm.add(elem.wasm);
-        });
-      }
 
       toBytes(): Promise<Uint8Array> {
         return wrapByPromise(() => {
@@ -8126,6 +8107,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return wrapByPromise(() => {
           const ret = WasmV4.PlutusList.from_hex(hexStr);
           return new $outer.PlutusList(ret, $outer._ctx);
+        });
+      }
+
+      static new(): Promise<WasmContract.PlutusList> {
+        return wrapByPromise(() => {
+          const ret = WasmV4.PlutusList.new();
+          return new $outer.PlutusList(ret, $outer._ctx);
+        });
+      }
+
+      len(): Promise<number> {
+        return wrapByPromise(() => {
+          return this.wasm.len();
+        });
+      }
+
+      get(index: number): Promise<WasmContract.PlutusData> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.get(index);
+          return new $outer.PlutusData(ret, $outer._ctx);
+        });
+      }
+
+      add(elem: WasmContract.PlutusData): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add(elem.wasm);
         });
       }
 
