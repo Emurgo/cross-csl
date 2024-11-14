@@ -9472,6 +9472,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.set_fee(fee.wasm);
       }
 
+      setMinFee(fee: WasmContract.BigNum): Promise<void> {
+        return this.wasm.set_min_fee(fee.wasm);
+      }
+
       setTtl(ttl: number): Promise<void> {
         return this.wasm.set_ttl(ttl);
       }

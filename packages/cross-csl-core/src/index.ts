@@ -10835,6 +10835,11 @@ export abstract class TransactionBuilder extends _Ptr {
   abstract setFee(fee: BigNum): Promise<void>;
 
   /**
+  * @param {BigNum} fee
+  */
+  abstract setMinFee(fee: BigNum): Promise<void>;
+
+  /**
   * @param {number} ttl
   */
   abstract setTtl(ttl: number): Promise<void>;
