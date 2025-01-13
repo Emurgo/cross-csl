@@ -1,6 +1,6 @@
 {
   "name": "@emurgo/cross-csl-mobile",
-  "version": "6.2.1",
+  "version": "6.2.2",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -21,10 +21,10 @@
   "license": "MIT",
   "dependencies": {
     "@emurgo/cross-csl-core": "6.2.1",
-    "@emurgo/csl-mobile-bridge": "^7.3.1"
+    "@emurgo/csl-mobile-bridge": "^7.3.2"
   },
   "peerDependencies": {
-    "@emurgo/csl-mobile-bridge": "^7.3.1"
+    "@emurgo/csl-mobile-bridge": "^7.3.2"
   },
   "devDependencies": {
     "install-peers-cli": "^2.2.0",
