@@ -2418,8 +2418,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.ScriptHash(ret, $outer._ctx);
       }
 
-      toBech32(): Promise<string> {
-        return this.wasm.to_bech32();
+      toBech32(cip_129Format: boolean): Promise<string> {
+        return this.wasm.to_bech32(cip_129Format);
       }
 
       static async fromBech32(bech32Str: string): Promise<WasmContract.DRep> {
@@ -9815,6 +9815,11 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
       }
 
+      async doNotBurnExtraChange(doNotBurnExtraChange: boolean): Promise<WasmContract.TransactionBuilderConfigBuilder> {
+        const ret = await this.wasm.do_not_burn_extra_change(doNotBurnExtraChange);
+        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+      }
+
       async build(): Promise<WasmContract.TransactionBuilderConfig> {
         const ret = await this.wasm.build();
         return new $outer.TransactionBuilderConfig(ret, $outer._ctx);
@@ -10704,38 +10709,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return TreasuryWithdrawalsAction;
   })();
 
-  public TxBuilderConstants = (() => {
-    const $outer = this;
-
-    class TxBuilderConstants
-      extends Ptr<WasmV4.TxBuilderConstants>
-      implements WasmContract.TxBuilderConstants
-    {
-
-      static async plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
-        const ret = await WasmV4.TxBuilderConstants.plutus_default_cost_models();
-        return new $outer.Costmdls(ret, $outer._ctx);
-      }
-
-      static async plutusAlonzoCostModels(): Promise<WasmContract.Costmdls> {
-        const ret = await WasmV4.TxBuilderConstants.plutus_alonzo_cost_models();
-        return new $outer.Costmdls(ret, $outer._ctx);
-      }
-
-      static async plutusVasilCostModels(): Promise<WasmContract.Costmdls> {
-        const ret = await WasmV4.TxBuilderConstants.plutus_vasil_cost_models();
-        return new $outer.Costmdls(ret, $outer._ctx);
-      }
-
-      static async plutusConwayCostModels(): Promise<WasmContract.Costmdls> {
-        const ret = await WasmV4.TxBuilderConstants.plutus_conway_cost_models();
-        return new $outer.Costmdls(ret, $outer._ctx);
-      }
-
-    }
-    return TxBuilderConstants;
-  })();
-
   public TxInputsBuilder = (() => {
     const $outer = this;
 
@@ -10747,6 +10720,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       static async new(): Promise<WasmContract.TxInputsBuilder> {
         const ret = await WasmV4.TxInputsBuilder.new();
         return new $outer.TxInputsBuilder(ret, $outer._ctx);
+      }
+
+      addRegularUtxo(utxo: WasmContract.TransactionUnspentOutput): Promise<void> {
+        return this.wasm.add_regular_utxo(utxo.wasm);
+      }
+
+      addPlutusScriptUtxo(utxo: WasmContract.TransactionUnspentOutput, witness: WasmContract.PlutusWitness): Promise<void> {
+        return this.wasm.add_plutus_script_utxo(utxo.wasm, witness.wasm);
+      }
+
+      addNativeScriptUtxo(utxo: WasmContract.TransactionUnspentOutput, witness: WasmContract.NativeScriptSource): Promise<void> {
+        return this.wasm.add_native_script_utxo(utxo.wasm, witness.wasm);
       }
 
       addKeyInput(hash: WasmContract.Ed25519KeyHash, input: WasmContract.TransactionInput, amount: WasmContract.Value): Promise<void> {

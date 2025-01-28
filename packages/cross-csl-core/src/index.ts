@@ -308,7 +308,6 @@ export interface WasmModuleProxy {
   TransactionWitnessSets: typeof TransactionWitnessSets;
   TreasuryWithdrawals: typeof TreasuryWithdrawals;
   TreasuryWithdrawalsAction: typeof TreasuryWithdrawalsAction;
-  TxBuilderConstants: typeof TxBuilderConstants;
   TxInputsBuilder: typeof TxInputsBuilder;
   URL: typeof URL;
   UnitInterval: typeof UnitInterval;
@@ -2972,9 +2971,10 @@ export abstract class DRep extends _Ptr {
   abstract toScriptHash(): Promise<Optional<ScriptHash>>;
 
   /**
+  * @param {boolean} cip_129Format
   * @returns {Promise<string>}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(cip_129Format: boolean): Promise<string>;
 
   /**
   * @param {string} bech32Str
@@ -11228,6 +11228,12 @@ export abstract class TransactionBuilderConfigBuilder extends _Ptr {
   abstract deduplicateExplicitRefInputsWithRegularInputs(deduplicateExplicitRefInputsWithRegularInputs: boolean): Promise<TransactionBuilderConfigBuilder>;
 
   /**
+  * @param {boolean} doNotBurnExtraChange
+  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  */
+  abstract doNotBurnExtraChange(doNotBurnExtraChange: boolean): Promise<TransactionBuilderConfigBuilder>;
+
+  /**
   * @returns {Promise<TransactionBuilderConfig>}
   */
   abstract build(): Promise<TransactionBuilderConfig>;
@@ -12197,37 +12203,6 @@ export abstract class TreasuryWithdrawalsAction extends _Ptr {
 
 }
 
-export abstract class TxBuilderConstants extends _Ptr {
-  /**
-  * @returns {Promise<Costmdls>}
-  */
-  static plutusDefaultCostModels(): Promise<Costmdls> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<Costmdls>}
-  */
-  static plutusAlonzoCostModels(): Promise<Costmdls> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<Costmdls>}
-  */
-  static plutusVasilCostModels(): Promise<Costmdls> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<Costmdls>}
-  */
-  static plutusConwayCostModels(): Promise<Costmdls> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-}
-
 export abstract class TxInputsBuilder extends _Ptr {
   /**
   * @returns {Promise<TxInputsBuilder>}
@@ -12235,6 +12210,26 @@ export abstract class TxInputsBuilder extends _Ptr {
   static new(): Promise<TxInputsBuilder> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
+
+  /**
+  * @param {TransactionUnspentOutput} utxo
+  * @returns {Promise<void>}
+  */
+  abstract addRegularUtxo(utxo: TransactionUnspentOutput): Promise<void>;
+
+  /**
+  * @param {TransactionUnspentOutput} utxo
+  * @param {PlutusWitness} witness
+  * @returns {Promise<void>}
+  */
+  abstract addPlutusScriptUtxo(utxo: TransactionUnspentOutput, witness: PlutusWitness): Promise<void>;
+
+  /**
+  * @param {TransactionUnspentOutput} utxo
+  * @param {NativeScriptSource} witness
+  * @returns {Promise<void>}
+  */
+  abstract addNativeScriptUtxo(utxo: TransactionUnspentOutput, witness: NativeScriptSource): Promise<void>;
 
   /**
   * @param {Ed25519KeyHash} hash
