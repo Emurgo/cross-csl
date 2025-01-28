@@ -3268,9 +3268,9 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
-      toBech32(): Promise<string> {
+      toBech32(cip_129Format: boolean): Promise<string> {
         return wrapByPromise(() => {
-          return this.wasm.to_bech32();
+          return this.wasm.to_bech32(cip_129Format);
         });
       }
 
@@ -13205,6 +13205,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         });
       }
 
+      doNotBurnExtraChange(doNotBurnExtraChange: boolean): Promise<WasmContract.TransactionBuilderConfigBuilder> {
+        return wrapByPromise(() => {
+          const ret = this.wasm.do_not_burn_extra_change(doNotBurnExtraChange);
+          return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        });
+      }
+
       build(): Promise<WasmContract.TransactionBuilderConfig> {
         return wrapByPromise(() => {
           const ret = this.wasm.build();
@@ -14396,46 +14403,6 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
     return TreasuryWithdrawalsAction;
   })();
 
-  public TxBuilderConstants = (() => {
-    const $outer = this;
-
-    class TxBuilderConstants
-      extends Ptr<WasmV4.TxBuilderConstants>
-      implements WasmContract.TxBuilderConstants
-    {
-
-      static plutusDefaultCostModels(): Promise<WasmContract.Costmdls> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.TxBuilderConstants.plutus_default_cost_models();
-          return new $outer.Costmdls(ret, $outer._ctx);
-        });
-      }
-
-      static plutusAlonzoCostModels(): Promise<WasmContract.Costmdls> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.TxBuilderConstants.plutus_alonzo_cost_models();
-          return new $outer.Costmdls(ret, $outer._ctx);
-        });
-      }
-
-      static plutusVasilCostModels(): Promise<WasmContract.Costmdls> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.TxBuilderConstants.plutus_vasil_cost_models();
-          return new $outer.Costmdls(ret, $outer._ctx);
-        });
-      }
-
-      static plutusConwayCostModels(): Promise<WasmContract.Costmdls> {
-        return wrapByPromise(() => {
-          const ret = WasmV4.TxBuilderConstants.plutus_conway_cost_models();
-          return new $outer.Costmdls(ret, $outer._ctx);
-        });
-      }
-
-    }
-    return TxBuilderConstants;
-  })();
-
   public TxInputsBuilder = (() => {
     const $outer = this;
 
@@ -14448,6 +14415,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return wrapByPromise(() => {
           const ret = WasmV4.TxInputsBuilder.new();
           return new $outer.TxInputsBuilder(ret, $outer._ctx);
+        });
+      }
+
+      addRegularUtxo(utxo: WasmContract.TransactionUnspentOutput): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_regular_utxo(utxo.wasm);
+        });
+      }
+
+      addPlutusScriptUtxo(utxo: WasmContract.TransactionUnspentOutput, witness: WasmContract.PlutusWitness): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_plutus_script_utxo(utxo.wasm, witness.wasm);
+        });
+      }
+
+      addNativeScriptUtxo(utxo: WasmContract.TransactionUnspentOutput, witness: WasmContract.NativeScriptSource): Promise<void> {
+        return wrapByPromise(() => {
+          return this.wasm.add_native_script_utxo(utxo.wasm, witness.wasm);
         });
       }
 
