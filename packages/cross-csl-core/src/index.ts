@@ -336,6 +336,7 @@ export interface WasmModuleProxy {
   WithdrawalsBuilder: typeof WithdrawalsBuilder;
   AddressKind: typeof AddressKind;
   BlockEra: typeof BlockEra;
+  ByronAddressType: typeof ByronAddressType;
   CborContainerType: typeof CborContainerType;
   CborSetType: typeof CborSetType;
   CertificateKind: typeof CertificateKind;
@@ -1635,6 +1636,11 @@ export abstract class ByronAddress extends _Ptr {
   * @returns {Promise<number>}
   */
   abstract byronProtocolMagic(): Promise<number>;
+
+  /**
+  * @returns {Promise<ByronAddressType>}
+  */
+  abstract byronAddressKind(): Promise<ByronAddressType>;
 
   /**
   * @returns {Promise<Uint8Array>}
@@ -13929,6 +13935,12 @@ export enum BlockEra {
   Babbage = 5,
   Conway = 6,
   Unknown = 7,
+}
+
+export enum ByronAddressType {
+  ATPubKey = 0,
+  ATScript = 1,
+  ATRedeem = 2,
 }
 
 export enum CborContainerType {
