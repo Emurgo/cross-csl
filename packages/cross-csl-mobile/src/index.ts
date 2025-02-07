@@ -1258,6 +1258,10 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
         return this.wasm.byron_protocol_magic();
       }
 
+      byronAddressKind(): Promise<WasmContract.ByronAddressType> {
+        return this.wasm.byron_address_kind();
+      }
+
       attributes(): Promise<Uint8Array> {
         return this.wasm.attributes();
       }
@@ -12221,6 +12225,8 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
   public AddressKind = (() => { return WasmContract.AddressKind; })();
 
   public BlockEra = (() => { return WasmContract.BlockEra; })();
+
+  public ByronAddressType = (() => { return WasmContract.ByronAddressType; })();
 
   public CborContainerType = (() => { return WasmContract.CborContainerType; })();
 
