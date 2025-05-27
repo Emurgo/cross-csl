@@ -1413,15 +1413,15 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@emurgo/cardano-serialization-lib-browser@14.1.0":
-  version "14.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-14.1.0.tgz#477f5b56cd07220781644545d46ba4a26403802b"
-  integrity sha512-BNAYjn0xIAhi4qdqZ4i5+fdNJyhOy21PV8YF7LvO56ck9VEqDs/z3Ji/y2EK0MMcqzYMyiJY7pZNV5CPh7+2qw==
+"@emurgo/cardano-serialization-lib-browser@14.1.2":
+  version "14.1.2"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-browser/-/cardano-serialization-lib-browser-14.1.2.tgz#b3a00c7586c4aa5fbb0831a479e2ac54e0431989"
+  integrity sha512-qtGbi7EP6u0DiiD+CMA5TZVfqgGBDDHsWCXplC7LuuyGbKXT53T9LOvi1BcqV6qaZYeajmwm2HbP6bdVqpwinw==
 
-"@emurgo/cardano-serialization-lib-nodejs@14.1.0":
-  version "14.1.0"
-  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-14.1.0.tgz#9788a95ed5a12f2e073b60b929899302c523b446"
-  integrity sha512-Bp33WSx+wg2LD4KRbD/ZopV3alcysFnAbcjWLdYWlpWlwe/6yA08PSIgBtpgI+z9gRMJcz6j79rLb/cJBRyeHw==
+"@emurgo/cardano-serialization-lib-nodejs@14.1.2":
+  version "14.1.2"
+  resolved "https://registry.yarnpkg.com/@emurgo/cardano-serialization-lib-nodejs/-/cardano-serialization-lib-nodejs-14.1.2.tgz#c788fee446c624b6d9f974ec40599d66b058b79b"
+  integrity sha512-g8sxCEaQXqRt4A3zmhebuo+pMucVDs/4FlkUD+J+awJCJMAkK7eCFBEb09d8+jREec687D5fY+FG9NemExSQhQ==
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
