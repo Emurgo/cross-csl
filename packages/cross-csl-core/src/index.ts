@@ -14,18 +14,18 @@ export const EXCEPTIONS = {
 };
 const pointers: Record<string, any[]> = {};
 
-export const freeContext = async (context: string) => {
+export const freeContext = (context: string) => {
   if (pointers[context]) {
     for (const pointer of pointers[context]) {
       if (pointer.free) {
-        await pointer.free();
+        pointer.free();
       }
     }
     delete pointers[context];
   }
 };
 
-export const switchContext = async (from: string, to: string) => {
+export const switchContext = (from: string, to: string) => {
   if (pointers[from]) {
     if (!pointers[to]) {
       pointers[to] = [];
@@ -88,9 +88,9 @@ export abstract class _Ptr extends _WasmProxy {
   }
   /**
    * Frees the pointer
-   * @returns {Promise<void>}
+   * @returns {void}
    */
-  abstract free(): Promise<void>;
+  abstract free(): void;
 }
 
 export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
@@ -98,8 +98,8 @@ export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
     super(wasm, ctx);
   }
 
-  free(): Promise<void> {
-    return Promise.resolve(this.wasm.free());
+  free(): void {
+    return this.wasm.free();
   }
 }
 
@@ -113,30 +113,30 @@ export type Optional<T> = T | undefined;
     to explicitly know that by calling factory methods or other overheads.
 */
 export interface WasmModuleProxy {
-  calculateExUnitsCeilCost(exUnits: ExUnits, exUnitPrices: ExUnitPrices): Promise<BigNum>;
-  createSendAll(address: Address, utxos: TransactionUnspentOutputs, config: TransactionBuilderConfig): Promise<TransactionBatchList>;
-  decodeArbitraryBytesFromMetadatum(metadata: TransactionMetadatum): Promise<Uint8Array>;
-  decodeMetadatumToJsonStr(metadatum: TransactionMetadatum, schema: MetadataJsonSchema): Promise<string>;
-  decodePlutusDatumToJsonStr(datum: PlutusData, schema: PlutusDatumSchema): Promise<string>;
-  decryptWithPassword(password: string, data: string): Promise<string>;
-  encodeArbitraryBytesAsMetadatum(bytes: Uint8Array): Promise<TransactionMetadatum>;
-  encodeJsonStrToMetadatum(json: string, schema: MetadataJsonSchema): Promise<TransactionMetadatum>;
-  encodeJsonStrToNativeScript(json: string, selfXpub: string, schema: ScriptSchema): Promise<NativeScript>;
-  encodeJsonStrToPlutusDatum(json: string, schema: PlutusDatumSchema): Promise<PlutusData>;
-  encryptWithPassword(password: string, salt: string, nonce: string, data: string): Promise<string>;
-  getDeposit(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): Promise<BigNum>;
-  getImplicitInput(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): Promise<Value>;
-  hasTransactionSetTag(txBytes: Uint8Array): Promise<TransactionSetsState>;
-  hashAuxiliaryData(auxiliaryData: AuxiliaryData): Promise<AuxiliaryDataHash>;
-  hashPlutusData(plutusData: PlutusData): Promise<DataHash>;
-  hashScriptData(redeemers: Redeemers, costModels: Costmdls, datums: Optional<PlutusList>): Promise<ScriptDataHash>;
-  makeDaedalusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: LegacyDaedalusPrivateKey): Promise<BootstrapWitness>;
-  makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): Promise<BootstrapWitness>;
-  makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Promise<Vkeywitness>;
-  minAdaForOutput(output: TransactionOutput, dataCost: DataCost): Promise<BigNum>;
-  minFee(tx: Transaction, linearFee: LinearFee): Promise<BigNum>;
-  minRefScriptFee(totalRefScriptsSize: number, refScriptCoinsPerByte: UnitInterval): Promise<BigNum>;
-  minScriptFee(tx: Transaction, exUnitPrices: ExUnitPrices): Promise<BigNum>;
+  calculateExUnitsCeilCost(exUnits: ExUnits, exUnitPrices: ExUnitPrices): BigNum;
+  createSendAll(address: Address, utxos: TransactionUnspentOutputs, config: TransactionBuilderConfig): TransactionBatchList;
+  decodeArbitraryBytesFromMetadatum(metadata: TransactionMetadatum): Uint8Array;
+  decodeMetadatumToJsonStr(metadatum: TransactionMetadatum, schema: MetadataJsonSchema): string;
+  decodePlutusDatumToJsonStr(datum: PlutusData, schema: PlutusDatumSchema): string;
+  decryptWithPassword(password: string, data: string): string;
+  encodeArbitraryBytesAsMetadatum(bytes: Uint8Array): TransactionMetadatum;
+  encodeJsonStrToMetadatum(json: string, schema: MetadataJsonSchema): TransactionMetadatum;
+  encodeJsonStrToNativeScript(json: string, selfXpub: string, schema: ScriptSchema): NativeScript;
+  encodeJsonStrToPlutusDatum(json: string, schema: PlutusDatumSchema): PlutusData;
+  encryptWithPassword(password: string, salt: string, nonce: string, data: string): string;
+  getDeposit(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): BigNum;
+  getImplicitInput(txbody: TransactionBody, poolDeposit: BigNum, keyDeposit: BigNum): Value;
+  hasTransactionSetTag(txBytes: Uint8Array): TransactionSetsState;
+  hashAuxiliaryData(auxiliaryData: AuxiliaryData): AuxiliaryDataHash;
+  hashPlutusData(plutusData: PlutusData): DataHash;
+  hashScriptData(redeemers: Redeemers, costModels: Costmdls, datums: Optional<PlutusList>): ScriptDataHash;
+  makeDaedalusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: LegacyDaedalusPrivateKey): BootstrapWitness;
+  makeIcarusBootstrapWitness(txBodyHash: TransactionHash, addr: ByronAddress, key: Bip32PrivateKey): BootstrapWitness;
+  makeVkeyWitness(txBodyHash: TransactionHash, sk: PrivateKey): Vkeywitness;
+  minAdaForOutput(output: TransactionOutput, dataCost: DataCost): BigNum;
+  minFee(tx: Transaction, linearFee: LinearFee): BigNum;
+  minRefScriptFee(totalRefScriptsSize: number, refScriptCoinsPerByte: UnitInterval): BigNum;
+  minScriptFee(tx: Transaction, exUnitPrices: ExUnitPrices): BigNum;
   Address: typeof Address;
   Anchor: typeof Anchor;
   AnchorDataHash: typeof AnchorDataHash;
@@ -365,135 +365,135 @@ export interface WasmModuleProxy {
 export abstract class Address extends _Ptr {
   /**
   * @param {Uint8Array} data
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  static fromBytes(data: Uint8Array): Promise<Address> {
+  static fromBytes(data: Uint8Array): Address {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  static fromJson(json: string): Promise<Address> {
+  static fromJson(json: string): Address {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<AddressKind>}
+  * @returns {AddressKind}
   */
-  abstract kind(): Promise<AddressKind>;
+  abstract kind(): AddressKind;
 
   /**
-  * @returns {Promise<Optional<Credential>>}
+  * @returns {Optional<Credential>}
   */
-  abstract paymentCred(): Promise<Optional<Credential>>;
+  abstract paymentCred(): Optional<Credential>;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isMalformed(): Promise<boolean>;
+  abstract isMalformed(): boolean;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  static fromHex(hexStr: string): Promise<Address> {
+  static fromHex(hexStr: string): Address {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Optional<string>} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: Optional<string>): Promise<string>;
+  abstract toBech32(prefix: Optional<string>): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  static fromBech32(bechStr: string): Promise<Address> {
+  static fromBech32(bechStr: string): Address {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
 }
 
 export abstract class Anchor extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Anchor> {
+  static fromBytes(bytes: Uint8Array): Anchor {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  static fromHex(hexStr: string): Promise<Anchor> {
+  static fromHex(hexStr: string): Anchor {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  static fromJson(json: string): Promise<Anchor> {
+  static fromJson(json: string): Anchor {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  abstract url(): Promise<URL>;
+  abstract url(): URL;
 
   /**
-  * @returns {Promise<AnchorDataHash>}
+  * @returns {AnchorDataHash}
   */
-  abstract anchorDataHash(): Promise<AnchorDataHash>;
+  abstract anchorDataHash(): AnchorDataHash;
 
   /**
   * @param {URL} anchorUrl
   * @param {AnchorDataHash} anchorDataHash
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  static new(anchorUrl: URL, anchorDataHash: AnchorDataHash): Promise<Anchor> {
+  static new(anchorUrl: URL, anchorDataHash: AnchorDataHash): Anchor {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -502,41 +502,41 @@ export abstract class Anchor extends _Ptr {
 export abstract class AnchorDataHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<AnchorDataHash>}
+  * @returns {AnchorDataHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<AnchorDataHash> {
+  static fromBytes(bytes: Uint8Array): AnchorDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<AnchorDataHash>}
+  * @returns {AnchorDataHash}
   */
-  static fromBech32(bechStr: string): Promise<AnchorDataHash> {
+  static fromBech32(bechStr: string): AnchorDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<AnchorDataHash>}
+  * @returns {AnchorDataHash}
   */
-  static fromHex(hex: string): Promise<AnchorDataHash> {
+  static fromHex(hex: string): AnchorDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -544,323 +544,323 @@ export abstract class AnchorDataHash extends _Ptr {
 
 export abstract class AssetName extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<AssetName>}
+  * @returns {AssetName}
   */
-  static fromBytes(bytes: Uint8Array): Promise<AssetName> {
+  static fromBytes(bytes: Uint8Array): AssetName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<AssetName>}
+  * @returns {AssetName}
   */
-  static fromHex(hexStr: string): Promise<AssetName> {
+  static fromHex(hexStr: string): AssetName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<AssetName>}
+  * @returns {AssetName}
   */
-  static fromJson(json: string): Promise<AssetName> {
+  static fromJson(json: string): AssetName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} name
-  * @returns {Promise<AssetName>}
+  * @returns {AssetName}
   */
-  static new(name: Uint8Array): Promise<AssetName> {
+  static new(name: Uint8Array): AssetName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract name(): Promise<Uint8Array>;
+  abstract name(): Uint8Array;
 
 }
 
 export abstract class AssetNames extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  static fromBytes(bytes: Uint8Array): Promise<AssetNames> {
+  static fromBytes(bytes: Uint8Array): AssetNames {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  static fromHex(hexStr: string): Promise<AssetNames> {
+  static fromHex(hexStr: string): AssetNames {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  static fromJson(json: string): Promise<AssetNames> {
+  static fromJson(json: string): AssetNames {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  static new(): Promise<AssetNames> {
+  static new(): AssetNames {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<AssetName>}
+  * @returns {AssetName}
   */
-  abstract get(index: number): Promise<AssetName>;
+  abstract get(index: number): AssetName;
 
   /**
   * @param {AssetName} elem
   */
-  abstract add(elem: AssetName): Promise<void>;
+  abstract add(elem: AssetName): void;
 
 }
 
 export abstract class Assets extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Assets>}
+  * @returns {Assets}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Assets> {
+  static fromBytes(bytes: Uint8Array): Assets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Assets>}
+  * @returns {Assets}
   */
-  static fromHex(hexStr: string): Promise<Assets> {
+  static fromHex(hexStr: string): Assets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Assets>}
+  * @returns {Assets}
   */
-  static fromJson(json: string): Promise<Assets> {
+  static fromJson(json: string): Assets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Assets>}
+  * @returns {Assets}
   */
-  static new(): Promise<Assets> {
+  static new(): Assets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {AssetName} key
   * @param {BigNum} value
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract insert(key: AssetName, value: BigNum): Promise<Optional<BigNum>>;
+  abstract insert(key: AssetName, value: BigNum): Optional<BigNum>;
 
   /**
   * @param {AssetName} key
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract get(key: AssetName): Promise<Optional<BigNum>>;
+  abstract get(key: AssetName): Optional<BigNum>;
 
   /**
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  abstract keys(): Promise<AssetNames>;
+  abstract keys(): AssetNames;
 
 }
 
 export abstract class AuxiliaryData extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<AuxiliaryData>}
+  * @returns {AuxiliaryData}
   */
-  static fromBytes(bytes: Uint8Array): Promise<AuxiliaryData> {
+  static fromBytes(bytes: Uint8Array): AuxiliaryData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<AuxiliaryData>}
+  * @returns {AuxiliaryData}
   */
-  static fromHex(hexStr: string): Promise<AuxiliaryData> {
+  static fromHex(hexStr: string): AuxiliaryData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<AuxiliaryData>}
+  * @returns {AuxiliaryData}
   */
-  static fromJson(json: string): Promise<AuxiliaryData> {
+  static fromJson(json: string): AuxiliaryData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<AuxiliaryData>}
+  * @returns {AuxiliaryData}
   */
-  static new(): Promise<AuxiliaryData> {
+  static new(): AuxiliaryData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GeneralTransactionMetadata>>}
+  * @returns {Optional<GeneralTransactionMetadata>}
   */
-  abstract metadata(): Promise<Optional<GeneralTransactionMetadata>>;
+  abstract metadata(): Optional<GeneralTransactionMetadata>;
 
   /**
   * @param {GeneralTransactionMetadata} metadata
   */
-  abstract setMetadata(metadata: GeneralTransactionMetadata): Promise<void>;
+  abstract setMetadata(metadata: GeneralTransactionMetadata): void;
 
   /**
-  * @returns {Promise<Optional<NativeScripts>>}
+  * @returns {Optional<NativeScripts>}
   */
-  abstract nativeScripts(): Promise<Optional<NativeScripts>>;
+  abstract nativeScripts(): Optional<NativeScripts>;
 
   /**
   * @param {NativeScripts} nativeScripts
   */
-  abstract setNativeScripts(nativeScripts: NativeScripts): Promise<void>;
+  abstract setNativeScripts(nativeScripts: NativeScripts): void;
 
   /**
-  * @returns {Promise<Optional<PlutusScripts>>}
+  * @returns {Optional<PlutusScripts>}
   */
-  abstract plutusScripts(): Promise<Optional<PlutusScripts>>;
+  abstract plutusScripts(): Optional<PlutusScripts>;
 
   /**
   * @param {PlutusScripts} plutusScripts
   */
-  abstract setPlutusScripts(plutusScripts: PlutusScripts): Promise<void>;
+  abstract setPlutusScripts(plutusScripts: PlutusScripts): void;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract preferAlonzoFormat(): Promise<boolean>;
+  abstract preferAlonzoFormat(): boolean;
 
   /**
   * @param {boolean} prefer
   */
-  abstract setPreferAlonzoFormat(prefer: boolean): Promise<void>;
+  abstract setPreferAlonzoFormat(prefer: boolean): void;
 
 }
 
 export abstract class AuxiliaryDataHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<AuxiliaryDataHash>}
+  * @returns {AuxiliaryDataHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<AuxiliaryDataHash> {
+  static fromBytes(bytes: Uint8Array): AuxiliaryDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<AuxiliaryDataHash>}
+  * @returns {AuxiliaryDataHash}
   */
-  static fromBech32(bechStr: string): Promise<AuxiliaryDataHash> {
+  static fromBech32(bechStr: string): AuxiliaryDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<AuxiliaryDataHash>}
+  * @returns {AuxiliaryDataHash}
   */
-  static fromHex(hex: string): Promise<AuxiliaryDataHash> {
+  static fromHex(hex: string): AuxiliaryDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -868,34 +868,34 @@ export abstract class AuxiliaryDataHash extends _Ptr {
 
 export abstract class AuxiliaryDataSet extends _Ptr {
   /**
-  * @returns {Promise<AuxiliaryDataSet>}
+  * @returns {AuxiliaryDataSet}
   */
-  static new(): Promise<AuxiliaryDataSet> {
+  static new(): AuxiliaryDataSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} txIndex
   * @param {AuxiliaryData} data
-  * @returns {Promise<Optional<AuxiliaryData>>}
+  * @returns {Optional<AuxiliaryData>}
   */
-  abstract insert(txIndex: number, data: AuxiliaryData): Promise<Optional<AuxiliaryData>>;
+  abstract insert(txIndex: number, data: AuxiliaryData): Optional<AuxiliaryData>;
 
   /**
   * @param {number} txIndex
-  * @returns {Promise<Optional<AuxiliaryData>>}
+  * @returns {Optional<AuxiliaryData>}
   */
-  abstract get(txIndex: number): Promise<Optional<AuxiliaryData>>;
+  abstract get(txIndex: number): Optional<AuxiliaryData>;
 
   /**
-  * @returns {Promise<Uint32Array>}
+  * @returns {Uint32Array}
   */
-  abstract indices(): Promise<Uint32Array>;
+  abstract indices(): Uint32Array;
 
 }
 
@@ -904,299 +904,299 @@ export abstract class BaseAddress extends _Ptr {
   * @param {number} network
   * @param {Credential} payment
   * @param {Credential} stake
-  * @returns {Promise<BaseAddress>}
+  * @returns {BaseAddress}
   */
-  static new(network: number, payment: Credential, stake: Credential): Promise<BaseAddress> {
+  static new(network: number, payment: Credential, stake: Credential): BaseAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract paymentCred(): Promise<Credential>;
+  abstract paymentCred(): Credential;
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCred(): Promise<Credential>;
+  abstract stakeCred(): Credential;
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<BaseAddress>>}
+  * @returns {Optional<BaseAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<BaseAddress>> {
+  static fromAddress(addr: Address): Optional<BaseAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
 }
 
 export abstract class BigInt extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static fromBytes(bytes: Uint8Array): Promise<BigInt> {
+  static fromBytes(bytes: Uint8Array): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static fromHex(hexStr: string): Promise<BigInt> {
+  static fromHex(hexStr: string): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static fromJson(json: string): Promise<BigInt> {
+  static fromJson(json: string): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isZero(): Promise<boolean>;
+  abstract isZero(): boolean;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract asU64(): Promise<Optional<BigNum>>;
+  abstract asU64(): Optional<BigNum>;
 
   /**
-  * @returns {Promise<Optional<Int>>}
+  * @returns {Optional<Int>}
   */
-  abstract asInt(): Promise<Optional<Int>>;
+  abstract asInt(): Optional<Int>;
 
   /**
   * @param {string} text
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static fromStr(text: string): Promise<BigInt> {
+  static fromStr(text: string): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toStr(): Promise<string>;
+  abstract toStr(): string;
 
   /**
   * @param {BigInt} other
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract add(other: BigInt): Promise<BigInt>;
+  abstract add(other: BigInt): BigInt;
 
   /**
   * @param {BigInt} other
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract sub(other: BigInt): Promise<BigInt>;
+  abstract sub(other: BigInt): BigInt;
 
   /**
   * @param {BigInt} other
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract mul(other: BigInt): Promise<BigInt>;
+  abstract mul(other: BigInt): BigInt;
 
   /**
   * @param {number} exp
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract pow(exp: number): Promise<BigInt>;
+  abstract pow(exp: number): BigInt;
 
   /**
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static one(): Promise<BigInt> {
+  static one(): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  static zero(): Promise<BigInt> {
+  static zero(): BigInt {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract abs(): Promise<BigInt>;
+  abstract abs(): BigInt;
 
   /**
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract increment(): Promise<BigInt>;
-
-  /**
-  * @param {BigInt} other
-  * @returns {Promise<BigInt>}
-  */
-  abstract divCeil(other: BigInt): Promise<BigInt>;
+  abstract increment(): BigInt;
 
   /**
   * @param {BigInt} other
-  * @returns {Promise<BigInt>}
+  * @returns {BigInt}
   */
-  abstract divFloor(other: BigInt): Promise<BigInt>;
+  abstract divCeil(other: BigInt): BigInt;
+
+  /**
+  * @param {BigInt} other
+  * @returns {BigInt}
+  */
+  abstract divFloor(other: BigInt): BigInt;
 
 }
 
 export abstract class BigNum extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static fromBytes(bytes: Uint8Array): Promise<BigNum> {
+  static fromBytes(bytes: Uint8Array): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static fromHex(hexStr: string): Promise<BigNum> {
+  static fromHex(hexStr: string): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static fromJson(json: string): Promise<BigNum> {
+  static fromJson(json: string): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} string
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static fromStr(string: string): Promise<BigNum> {
+  static fromStr(string: string): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toStr(): Promise<string>;
+  abstract toStr(): string;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static zero(): Promise<BigNum> {
+  static zero(): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static one(): Promise<BigNum> {
+  static one(): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isZero(): Promise<boolean>;
+  abstract isZero(): boolean;
 
   /**
   * @param {BigNum} other
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract divFloor(other: BigNum): Promise<BigNum>;
+  abstract divFloor(other: BigNum): BigNum;
 
   /**
   * @param {BigNum} other
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract checkedMul(other: BigNum): Promise<BigNum>;
+  abstract checkedMul(other: BigNum): BigNum;
 
   /**
   * @param {BigNum} other
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract checkedAdd(other: BigNum): Promise<BigNum>;
+  abstract checkedAdd(other: BigNum): BigNum;
 
   /**
   * @param {BigNum} other
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract checkedSub(other: BigNum): Promise<BigNum>;
+  abstract checkedSub(other: BigNum): BigNum;
 
   /**
   * @param {BigNum} other
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract clampedSub(other: BigNum): Promise<BigNum>;
+  abstract clampedSub(other: BigNum): BigNum;
 
   /**
   * @param {BigNum} rhsValue
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract compare(rhsValue: BigNum): Promise<number>;
+  abstract compare(rhsValue: BigNum): number;
 
   /**
   * @param {BigNum} rhsValue
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract lessThan(rhsValue: BigNum): Promise<boolean>;
+  abstract lessThan(rhsValue: BigNum): boolean;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static maxValue(): Promise<BigNum> {
+  static maxValue(): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} a
   * @param {BigNum} b
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  static max(a: BigNum, b: BigNum): Promise<BigNum> {
+  static max(a: BigNum, b: BigNum): BigNum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1205,90 +1205,90 @@ export abstract class BigNum extends _Ptr {
 export abstract class Bip32PrivateKey extends _Ptr {
   /**
   * @param {number} index
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  abstract derive(index: number): Promise<Bip32PrivateKey>;
+  abstract derive(index: number): Bip32PrivateKey;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static from_128Xprv(bytes: Uint8Array): Promise<Bip32PrivateKey> {
+  static from_128Xprv(bytes: Uint8Array): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract to_128Xprv(): Promise<Uint8Array>;
+  abstract to_128Xprv(): Uint8Array;
 
   /**
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static generateEd25519Bip32(): Promise<Bip32PrivateKey> {
+  static generateEd25519Bip32(): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  abstract toRawKey(): Promise<PrivateKey>;
+  abstract toRawKey(): PrivateKey;
 
   /**
-  * @returns {Promise<Bip32PublicKey>}
+  * @returns {Bip32PublicKey}
   */
-  abstract toPublic(): Promise<Bip32PublicKey>;
+  abstract toPublic(): Bip32PublicKey;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Bip32PrivateKey> {
+  static fromBytes(bytes: Uint8Array): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
   * @param {string} bech32Str
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static fromBech32(bech32Str: string): Promise<Bip32PrivateKey> {
+  static fromBech32(bech32Str: string): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): string;
 
   /**
   * @param {Uint8Array} entropy
   * @param {Uint8Array} password
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Promise<Bip32PrivateKey> {
+  static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract chaincode(): Promise<Uint8Array>;
+  abstract chaincode(): Uint8Array;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Bip32PrivateKey>}
+  * @returns {Bip32PrivateKey}
   */
-  static fromHex(hexStr: string): Promise<Bip32PrivateKey> {
+  static fromHex(hexStr: string): Bip32PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1297,56 +1297,56 @@ export abstract class Bip32PrivateKey extends _Ptr {
 export abstract class Bip32PublicKey extends _Ptr {
   /**
   * @param {number} index
-  * @returns {Promise<Bip32PublicKey>}
+  * @returns {Bip32PublicKey}
   */
-  abstract derive(index: number): Promise<Bip32PublicKey>;
+  abstract derive(index: number): Bip32PublicKey;
 
   /**
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  abstract toRawKey(): Promise<PublicKey>;
+  abstract toRawKey(): PublicKey;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Bip32PublicKey>}
+  * @returns {Bip32PublicKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Bip32PublicKey> {
+  static fromBytes(bytes: Uint8Array): Bip32PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
   * @param {string} bech32Str
-  * @returns {Promise<Bip32PublicKey>}
+  * @returns {Bip32PublicKey}
   */
-  static fromBech32(bech32Str: string): Promise<Bip32PublicKey> {
+  static fromBech32(bech32Str: string): Bip32PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): string;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract chaincode(): Promise<Uint8Array>;
+  abstract chaincode(): Uint8Array;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Bip32PublicKey>}
+  * @returns {Bip32PublicKey}
   */
-  static fromHex(hexStr: string): Promise<Bip32PublicKey> {
+  static fromHex(hexStr: string): Bip32PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1354,68 +1354,68 @@ export abstract class Bip32PublicKey extends _Ptr {
 
 export abstract class Block extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Block>}
+  * @returns {Block}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Block> {
+  static fromBytes(bytes: Uint8Array): Block {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Block>}
+  * @returns {Block}
   */
-  static fromHex(hexStr: string): Promise<Block> {
+  static fromHex(hexStr: string): Block {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Block>}
+  * @returns {Block}
   */
-  static fromJson(json: string): Promise<Block> {
+  static fromJson(json: string): Block {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  abstract header(): Promise<Header>;
+  abstract header(): Header;
 
   /**
-  * @returns {Promise<TransactionBodies>}
+  * @returns {TransactionBodies}
   */
-  abstract transactionBodies(): Promise<TransactionBodies>;
+  abstract transactionBodies(): TransactionBodies;
 
   /**
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  abstract transactionWitnessSets(): Promise<TransactionWitnessSets>;
+  abstract transactionWitnessSets(): TransactionWitnessSets;
 
   /**
-  * @returns {Promise<AuxiliaryDataSet>}
+  * @returns {AuxiliaryDataSet}
   */
-  abstract auxiliaryDataSet(): Promise<AuxiliaryDataSet>;
+  abstract auxiliaryDataSet(): AuxiliaryDataSet;
 
   /**
-  * @returns {Promise<Uint32Array>}
+  * @returns {Uint32Array}
   */
-  abstract invalidTransactions(): Promise<Uint32Array>;
+  abstract invalidTransactions(): Uint32Array;
 
   /**
   * @param {Header} header
@@ -1423,9 +1423,9 @@ export abstract class Block extends _Ptr {
   * @param {TransactionWitnessSets} transactionWitnessSets
   * @param {AuxiliaryDataSet} auxiliaryDataSet
   * @param {Uint32Array} invalidTransactions
-  * @returns {Promise<Block>}
+  * @returns {Block}
   */
-  static new(header: Header, transactionBodies: TransactionBodies, transactionWitnessSets: TransactionWitnessSets, auxiliaryDataSet: AuxiliaryDataSet, invalidTransactions: Uint32Array): Promise<Block> {
+  static new(header: Header, transactionBodies: TransactionBodies, transactionWitnessSets: TransactionWitnessSets, auxiliaryDataSet: AuxiliaryDataSet, invalidTransactions: Uint32Array): Block {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1434,41 +1434,41 @@ export abstract class Block extends _Ptr {
 export abstract class BlockHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<BlockHash>}
+  * @returns {BlockHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<BlockHash> {
+  static fromBytes(bytes: Uint8Array): BlockHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<BlockHash>}
+  * @returns {BlockHash}
   */
-  static fromBech32(bechStr: string): Promise<BlockHash> {
+  static fromBech32(bechStr: string): BlockHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<BlockHash>}
+  * @returns {BlockHash}
   */
-  static fromHex(hex: string): Promise<BlockHash> {
+  static fromHex(hex: string): BlockHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1476,72 +1476,72 @@ export abstract class BlockHash extends _Ptr {
 
 export abstract class BootstrapWitness extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<BootstrapWitness>}
+  * @returns {BootstrapWitness}
   */
-  static fromBytes(bytes: Uint8Array): Promise<BootstrapWitness> {
+  static fromBytes(bytes: Uint8Array): BootstrapWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<BootstrapWitness>}
+  * @returns {BootstrapWitness}
   */
-  static fromHex(hexStr: string): Promise<BootstrapWitness> {
+  static fromHex(hexStr: string): BootstrapWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<BootstrapWitness>}
+  * @returns {BootstrapWitness}
   */
-  static fromJson(json: string): Promise<BootstrapWitness> {
+  static fromJson(json: string): BootstrapWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  abstract vkey(): Promise<Vkey>;
+  abstract vkey(): Vkey;
 
   /**
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  abstract signature(): Promise<Ed25519Signature>;
+  abstract signature(): Ed25519Signature;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract chainCode(): Promise<Uint8Array>;
+  abstract chainCode(): Uint8Array;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract attributes(): Promise<Uint8Array>;
+  abstract attributes(): Uint8Array;
 
   /**
   * @param {Vkey} vkey
   * @param {Ed25519Signature} signature
   * @param {Uint8Array} chainCode
   * @param {Uint8Array} attributes
-  * @returns {Promise<BootstrapWitness>}
+  * @returns {BootstrapWitness}
   */
-  static new(vkey: Vkey, signature: Ed25519Signature, chainCode: Uint8Array, attributes: Uint8Array): Promise<BootstrapWitness> {
+  static new(vkey: Vkey, signature: Ed25519Signature, chainCode: Uint8Array, attributes: Uint8Array): BootstrapWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1549,144 +1549,144 @@ export abstract class BootstrapWitness extends _Ptr {
 
 export abstract class BootstrapWitnesses extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<BootstrapWitnesses>}
+  * @returns {BootstrapWitnesses}
   */
-  static fromBytes(bytes: Uint8Array): Promise<BootstrapWitnesses> {
+  static fromBytes(bytes: Uint8Array): BootstrapWitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<BootstrapWitnesses>}
+  * @returns {BootstrapWitnesses}
   */
-  static fromHex(hexStr: string): Promise<BootstrapWitnesses> {
+  static fromHex(hexStr: string): BootstrapWitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<BootstrapWitnesses>}
+  * @returns {BootstrapWitnesses}
   */
-  static fromJson(json: string): Promise<BootstrapWitnesses> {
+  static fromJson(json: string): BootstrapWitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BootstrapWitnesses>}
+  * @returns {BootstrapWitnesses}
   */
-  static new(): Promise<BootstrapWitnesses> {
+  static new(): BootstrapWitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<BootstrapWitness>}
+  * @returns {BootstrapWitness}
   */
-  abstract get(index: number): Promise<BootstrapWitness>;
+  abstract get(index: number): BootstrapWitness;
 
   /**
   * @param {BootstrapWitness} witness
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(witness: BootstrapWitness): Promise<boolean>;
+  abstract add(witness: BootstrapWitness): boolean;
 
 }
 
 export abstract class ByronAddress extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBase58(): Promise<string>;
+  abstract toBase58(): string;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ByronAddress>}
+  * @returns {ByronAddress}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ByronAddress> {
+  static fromBytes(bytes: Uint8Array): ByronAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract byronProtocolMagic(): Promise<number>;
+  abstract byronProtocolMagic(): number;
 
   /**
-  * @returns {Promise<ByronAddressType>}
+  * @returns {ByronAddressType}
   */
-  abstract byronAddressKind(): Promise<ByronAddressType>;
+  abstract byronAddressKind(): ByronAddressType;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract attributes(): Promise<Uint8Array>;
+  abstract attributes(): Uint8Array;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
   /**
   * @param {string} s
-  * @returns {Promise<ByronAddress>}
+  * @returns {ByronAddress}
   */
-  static fromBase58(s: string): Promise<ByronAddress> {
+  static fromBase58(s: string): ByronAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Bip32PublicKey} key
   * @param {number} protocolMagic
-  * @returns {Promise<ByronAddress>}
+  * @returns {ByronAddress}
   */
-  static icarusFromKey(key: Bip32PublicKey, protocolMagic: number): Promise<ByronAddress> {
+  static icarusFromKey(key: Bip32PublicKey, protocolMagic: number): ByronAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} s
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  static isValid(s: string): Promise<boolean> {
+  static isValid(s: string): boolean {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<ByronAddress>>}
+  * @returns {Optional<ByronAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<ByronAddress>> {
+  static fromAddress(addr: Address): Optional<ByronAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -1694,743 +1694,743 @@ export abstract class ByronAddress extends _Ptr {
 
 export abstract class Certificate extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Certificate> {
+  static fromBytes(bytes: Uint8Array): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static fromHex(hexStr: string): Promise<Certificate> {
+  static fromHex(hexStr: string): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static fromJson(json: string): Promise<Certificate> {
+  static fromJson(json: string): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeRegistration} stakeRegistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeRegistration(stakeRegistration: StakeRegistration): Promise<Certificate> {
+  static newStakeRegistration(stakeRegistration: StakeRegistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeRegistration} stakeRegistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newRegCert(stakeRegistration: StakeRegistration): Promise<Certificate> {
+  static newRegCert(stakeRegistration: StakeRegistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeDeregistration} stakeDeregistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeDeregistration(stakeDeregistration: StakeDeregistration): Promise<Certificate> {
+  static newStakeDeregistration(stakeDeregistration: StakeDeregistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeDeregistration} stakeDeregistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newUnregCert(stakeDeregistration: StakeDeregistration): Promise<Certificate> {
+  static newUnregCert(stakeDeregistration: StakeDeregistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeDelegation} stakeDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeDelegation(stakeDelegation: StakeDelegation): Promise<Certificate> {
+  static newStakeDelegation(stakeDelegation: StakeDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PoolRegistration} poolRegistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newPoolRegistration(poolRegistration: PoolRegistration): Promise<Certificate> {
+  static newPoolRegistration(poolRegistration: PoolRegistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PoolRetirement} poolRetirement
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newPoolRetirement(poolRetirement: PoolRetirement): Promise<Certificate> {
+  static newPoolRetirement(poolRetirement: PoolRetirement): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GenesisKeyDelegation} genesisKeyDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newGenesisKeyDelegation(genesisKeyDelegation: GenesisKeyDelegation): Promise<Certificate> {
+  static newGenesisKeyDelegation(genesisKeyDelegation: GenesisKeyDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MoveInstantaneousRewardsCert} moveInstantaneousRewardsCert
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newMoveInstantaneousRewardsCert(moveInstantaneousRewardsCert: MoveInstantaneousRewardsCert): Promise<Certificate> {
+  static newMoveInstantaneousRewardsCert(moveInstantaneousRewardsCert: MoveInstantaneousRewardsCert): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {CommitteeHotAuth} committeeHotAuth
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newCommitteeHotAuth(committeeHotAuth: CommitteeHotAuth): Promise<Certificate> {
+  static newCommitteeHotAuth(committeeHotAuth: CommitteeHotAuth): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {CommitteeColdResign} committeeColdResign
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newCommitteeColdResign(committeeColdResign: CommitteeColdResign): Promise<Certificate> {
+  static newCommitteeColdResign(committeeColdResign: CommitteeColdResign): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {DRepDeregistration} drepDeregistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newDrepDeregistration(drepDeregistration: DRepDeregistration): Promise<Certificate> {
+  static newDrepDeregistration(drepDeregistration: DRepDeregistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {DRepRegistration} drepRegistration
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newDrepRegistration(drepRegistration: DRepRegistration): Promise<Certificate> {
+  static newDrepRegistration(drepRegistration: DRepRegistration): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {DRepUpdate} drepUpdate
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newDrepUpdate(drepUpdate: DRepUpdate): Promise<Certificate> {
+  static newDrepUpdate(drepUpdate: DRepUpdate): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeAndVoteDelegation} stakeAndVoteDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeAndVoteDelegation(stakeAndVoteDelegation: StakeAndVoteDelegation): Promise<Certificate> {
+  static newStakeAndVoteDelegation(stakeAndVoteDelegation: StakeAndVoteDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeRegistrationAndDelegation} stakeRegistrationAndDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeRegistrationAndDelegation(stakeRegistrationAndDelegation: StakeRegistrationAndDelegation): Promise<Certificate> {
+  static newStakeRegistrationAndDelegation(stakeRegistrationAndDelegation: StakeRegistrationAndDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {StakeVoteRegistrationAndDelegation} stakeVoteRegistrationAndDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newStakeVoteRegistrationAndDelegation(stakeVoteRegistrationAndDelegation: StakeVoteRegistrationAndDelegation): Promise<Certificate> {
+  static newStakeVoteRegistrationAndDelegation(stakeVoteRegistrationAndDelegation: StakeVoteRegistrationAndDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {VoteDelegation} voteDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newVoteDelegation(voteDelegation: VoteDelegation): Promise<Certificate> {
+  static newVoteDelegation(voteDelegation: VoteDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {VoteRegistrationAndDelegation} voteRegistrationAndDelegation
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  static newVoteRegistrationAndDelegation(voteRegistrationAndDelegation: VoteRegistrationAndDelegation): Promise<Certificate> {
+  static newVoteRegistrationAndDelegation(voteRegistrationAndDelegation: VoteRegistrationAndDelegation): Certificate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<CertificateKind>}
+  * @returns {CertificateKind}
   */
-  abstract kind(): Promise<CertificateKind>;
+  abstract kind(): CertificateKind;
 
   /**
-  * @returns {Promise<Optional<StakeRegistration>>}
+  * @returns {Optional<StakeRegistration>}
   */
-  abstract asStakeRegistration(): Promise<Optional<StakeRegistration>>;
+  abstract asStakeRegistration(): Optional<StakeRegistration>;
 
   /**
-  * @returns {Promise<Optional<StakeRegistration>>}
+  * @returns {Optional<StakeRegistration>}
   */
-  abstract asRegCert(): Promise<Optional<StakeRegistration>>;
+  abstract asRegCert(): Optional<StakeRegistration>;
 
   /**
-  * @returns {Promise<Optional<StakeDeregistration>>}
+  * @returns {Optional<StakeDeregistration>}
   */
-  abstract asStakeDeregistration(): Promise<Optional<StakeDeregistration>>;
+  abstract asStakeDeregistration(): Optional<StakeDeregistration>;
 
   /**
-  * @returns {Promise<Optional<StakeDeregistration>>}
+  * @returns {Optional<StakeDeregistration>}
   */
-  abstract asUnregCert(): Promise<Optional<StakeDeregistration>>;
+  abstract asUnregCert(): Optional<StakeDeregistration>;
 
   /**
-  * @returns {Promise<Optional<StakeDelegation>>}
+  * @returns {Optional<StakeDelegation>}
   */
-  abstract asStakeDelegation(): Promise<Optional<StakeDelegation>>;
+  abstract asStakeDelegation(): Optional<StakeDelegation>;
 
   /**
-  * @returns {Promise<Optional<PoolRegistration>>}
+  * @returns {Optional<PoolRegistration>}
   */
-  abstract asPoolRegistration(): Promise<Optional<PoolRegistration>>;
+  abstract asPoolRegistration(): Optional<PoolRegistration>;
 
   /**
-  * @returns {Promise<Optional<PoolRetirement>>}
+  * @returns {Optional<PoolRetirement>}
   */
-  abstract asPoolRetirement(): Promise<Optional<PoolRetirement>>;
+  abstract asPoolRetirement(): Optional<PoolRetirement>;
 
   /**
-  * @returns {Promise<Optional<GenesisKeyDelegation>>}
+  * @returns {Optional<GenesisKeyDelegation>}
   */
-  abstract asGenesisKeyDelegation(): Promise<Optional<GenesisKeyDelegation>>;
+  abstract asGenesisKeyDelegation(): Optional<GenesisKeyDelegation>;
 
   /**
-  * @returns {Promise<Optional<MoveInstantaneousRewardsCert>>}
+  * @returns {Optional<MoveInstantaneousRewardsCert>}
   */
-  abstract asMoveInstantaneousRewardsCert(): Promise<Optional<MoveInstantaneousRewardsCert>>;
+  abstract asMoveInstantaneousRewardsCert(): Optional<MoveInstantaneousRewardsCert>;
 
   /**
-  * @returns {Promise<Optional<CommitteeHotAuth>>}
+  * @returns {Optional<CommitteeHotAuth>}
   */
-  abstract asCommitteeHotAuth(): Promise<Optional<CommitteeHotAuth>>;
+  abstract asCommitteeHotAuth(): Optional<CommitteeHotAuth>;
 
   /**
-  * @returns {Promise<Optional<CommitteeColdResign>>}
+  * @returns {Optional<CommitteeColdResign>}
   */
-  abstract asCommitteeColdResign(): Promise<Optional<CommitteeColdResign>>;
+  abstract asCommitteeColdResign(): Optional<CommitteeColdResign>;
 
   /**
-  * @returns {Promise<Optional<DRepDeregistration>>}
+  * @returns {Optional<DRepDeregistration>}
   */
-  abstract asDrepDeregistration(): Promise<Optional<DRepDeregistration>>;
+  abstract asDrepDeregistration(): Optional<DRepDeregistration>;
 
   /**
-  * @returns {Promise<Optional<DRepRegistration>>}
+  * @returns {Optional<DRepRegistration>}
   */
-  abstract asDrepRegistration(): Promise<Optional<DRepRegistration>>;
+  abstract asDrepRegistration(): Optional<DRepRegistration>;
 
   /**
-  * @returns {Promise<Optional<DRepUpdate>>}
+  * @returns {Optional<DRepUpdate>}
   */
-  abstract asDrepUpdate(): Promise<Optional<DRepUpdate>>;
+  abstract asDrepUpdate(): Optional<DRepUpdate>;
 
   /**
-  * @returns {Promise<Optional<StakeAndVoteDelegation>>}
+  * @returns {Optional<StakeAndVoteDelegation>}
   */
-  abstract asStakeAndVoteDelegation(): Promise<Optional<StakeAndVoteDelegation>>;
+  abstract asStakeAndVoteDelegation(): Optional<StakeAndVoteDelegation>;
 
   /**
-  * @returns {Promise<Optional<StakeRegistrationAndDelegation>>}
+  * @returns {Optional<StakeRegistrationAndDelegation>}
   */
-  abstract asStakeRegistrationAndDelegation(): Promise<Optional<StakeRegistrationAndDelegation>>;
+  abstract asStakeRegistrationAndDelegation(): Optional<StakeRegistrationAndDelegation>;
 
   /**
-  * @returns {Promise<Optional<StakeVoteRegistrationAndDelegation>>}
+  * @returns {Optional<StakeVoteRegistrationAndDelegation>}
   */
-  abstract asStakeVoteRegistrationAndDelegation(): Promise<Optional<StakeVoteRegistrationAndDelegation>>;
+  abstract asStakeVoteRegistrationAndDelegation(): Optional<StakeVoteRegistrationAndDelegation>;
 
   /**
-  * @returns {Promise<Optional<VoteDelegation>>}
+  * @returns {Optional<VoteDelegation>}
   */
-  abstract asVoteDelegation(): Promise<Optional<VoteDelegation>>;
+  abstract asVoteDelegation(): Optional<VoteDelegation>;
 
   /**
-  * @returns {Promise<Optional<VoteRegistrationAndDelegation>>}
+  * @returns {Optional<VoteRegistrationAndDelegation>}
   */
-  abstract asVoteRegistrationAndDelegation(): Promise<Optional<VoteRegistrationAndDelegation>>;
+  abstract asVoteRegistrationAndDelegation(): Optional<VoteRegistrationAndDelegation>;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasRequiredScriptWitness(): Promise<boolean>;
+  abstract hasRequiredScriptWitness(): boolean;
 
 }
 
 export abstract class Certificates extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Certificates>}
+  * @returns {Certificates}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Certificates> {
+  static fromBytes(bytes: Uint8Array): Certificates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Certificates>}
+  * @returns {Certificates}
   */
-  static fromHex(hexStr: string): Promise<Certificates> {
+  static fromHex(hexStr: string): Certificates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Certificates>}
+  * @returns {Certificates}
   */
-  static fromJson(json: string): Promise<Certificates> {
+  static fromJson(json: string): Certificates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Certificates>}
+  * @returns {Certificates}
   */
-  static new(): Promise<Certificates> {
+  static new(): Certificates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Certificate>}
+  * @returns {Certificate}
   */
-  abstract get(index: number): Promise<Certificate>;
+  abstract get(index: number): Certificate;
 
   /**
   * @param {Certificate} elem
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(elem: Certificate): Promise<boolean>;
+  abstract add(elem: Certificate): boolean;
 
 }
 
 export abstract class CertificatesBuilder extends _Ptr {
   /**
-  * @returns {Promise<CertificatesBuilder>}
+  * @returns {CertificatesBuilder}
   */
-  static new(): Promise<CertificatesBuilder> {
+  static new(): CertificatesBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Certificate} cert
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract add(cert: Certificate): Promise<void>;
+  abstract add(cert: Certificate): void;
 
   /**
   * @param {Certificate} cert
   * @param {PlutusWitness} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithPlutusWitness(cert: Certificate, witness: PlutusWitness): Promise<void>;
+  abstract addWithPlutusWitness(cert: Certificate, witness: PlutusWitness): void;
 
   /**
   * @param {Certificate} cert
   * @param {NativeScriptSource} nativeScriptSource
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithNativeScript(cert: Certificate, nativeScriptSource: NativeScriptSource): Promise<void>;
+  abstract addWithNativeScript(cert: Certificate, nativeScriptSource: NativeScriptSource): void;
 
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  abstract getPlutusWitnesses(): Promise<PlutusWitnesses>;
+  abstract getPlutusWitnesses(): PlutusWitnesses;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract getNativeScripts(): Promise<NativeScripts>;
-
-  /**
-  * @param {BigNum} poolDeposit
-  * @param {BigNum} keyDeposit
-  * @returns {Promise<Value>}
-  */
-  abstract getCertificatesRefund(poolDeposit: BigNum, keyDeposit: BigNum): Promise<Value>;
+  abstract getNativeScripts(): NativeScripts;
 
   /**
   * @param {BigNum} poolDeposit
   * @param {BigNum} keyDeposit
-  * @returns {Promise<BigNum>}
+  * @returns {Value}
   */
-  abstract getCertificatesDeposit(poolDeposit: BigNum, keyDeposit: BigNum): Promise<BigNum>;
+  abstract getCertificatesRefund(poolDeposit: BigNum, keyDeposit: BigNum): Value;
 
   /**
-  * @returns {Promise<boolean>}
+  * @param {BigNum} poolDeposit
+  * @param {BigNum} keyDeposit
+  * @returns {BigNum}
   */
-  abstract hasPlutusScripts(): Promise<boolean>;
+  abstract getCertificatesDeposit(poolDeposit: BigNum, keyDeposit: BigNum): BigNum;
 
   /**
-  * @returns {Promise<Certificates>}
+  * @returns {boolean}
   */
-  abstract build(): Promise<Certificates>;
+  abstract hasPlutusScripts(): boolean;
+
+  /**
+  * @returns {Certificates}
+  */
+  abstract build(): Certificates;
 
 }
 
 export abstract class ChangeConfig extends _Ptr {
   /**
   * @param {Address} address
-  * @returns {Promise<ChangeConfig>}
+  * @returns {ChangeConfig}
   */
-  static new(address: Address): Promise<ChangeConfig> {
+  static new(address: Address): ChangeConfig {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Address} address
-  * @returns {Promise<ChangeConfig>}
+  * @returns {ChangeConfig}
   */
-  abstract changeAddress(address: Address): Promise<ChangeConfig>;
+  abstract changeAddress(address: Address): ChangeConfig;
 
   /**
   * @param {OutputDatum} plutusData
-  * @returns {Promise<ChangeConfig>}
+  * @returns {ChangeConfig}
   */
-  abstract changePlutusData(plutusData: OutputDatum): Promise<ChangeConfig>;
+  abstract changePlutusData(plutusData: OutputDatum): ChangeConfig;
 
   /**
   * @param {ScriptRef} scriptRef
-  * @returns {Promise<ChangeConfig>}
+  * @returns {ChangeConfig}
   */
-  abstract changeScriptRef(scriptRef: ScriptRef): Promise<ChangeConfig>;
+  abstract changeScriptRef(scriptRef: ScriptRef): ChangeConfig;
 
 }
 
 export abstract class Committee extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Committee>}
+  * @returns {Committee}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Committee> {
+  static fromBytes(bytes: Uint8Array): Committee {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Committee>}
+  * @returns {Committee}
   */
-  static fromHex(hexStr: string): Promise<Committee> {
+  static fromHex(hexStr: string): Committee {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Committee>}
+  * @returns {Committee}
   */
-  static fromJson(json: string): Promise<Committee> {
+  static fromJson(json: string): Committee {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {UnitInterval} quorumThreshold
-  * @returns {Promise<Committee>}
+  * @returns {Committee}
   */
-  static new(quorumThreshold: UnitInterval): Promise<Committee> {
+  static new(quorumThreshold: UnitInterval): Committee {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  abstract membersKeys(): Promise<Credentials>;
+  abstract membersKeys(): Credentials;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract quorumThreshold(): Promise<UnitInterval>;
+  abstract quorumThreshold(): UnitInterval;
 
   /**
   * @param {Credential} committeeColdCredential
   * @param {number} epoch
   */
-  abstract addMember(committeeColdCredential: Credential, epoch: number): Promise<void>;
+  abstract addMember(committeeColdCredential: Credential, epoch: number): void;
 
   /**
   * @param {Credential} committeeColdCredential
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract getMemberEpoch(committeeColdCredential: Credential): Promise<Optional<number>>;
+  abstract getMemberEpoch(committeeColdCredential: Credential): Optional<number>;
 
 }
 
 export abstract class CommitteeColdResign extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<CommitteeColdResign>}
+  * @returns {CommitteeColdResign}
   */
-  static fromBytes(bytes: Uint8Array): Promise<CommitteeColdResign> {
+  static fromBytes(bytes: Uint8Array): CommitteeColdResign {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<CommitteeColdResign>}
+  * @returns {CommitteeColdResign}
   */
-  static fromHex(hexStr: string): Promise<CommitteeColdResign> {
+  static fromHex(hexStr: string): CommitteeColdResign {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<CommitteeColdResign>}
+  * @returns {CommitteeColdResign}
   */
-  static fromJson(json: string): Promise<CommitteeColdResign> {
+  static fromJson(json: string): CommitteeColdResign {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract committeeColdCredential(): Promise<Credential>;
+  abstract committeeColdCredential(): Credential;
 
   /**
-  * @returns {Promise<Optional<Anchor>>}
+  * @returns {Optional<Anchor>}
   */
-  abstract anchor(): Promise<Optional<Anchor>>;
+  abstract anchor(): Optional<Anchor>;
 
   /**
   * @param {Credential} committeeColdCredential
-  * @returns {Promise<CommitteeColdResign>}
+  * @returns {CommitteeColdResign}
   */
-  static new(committeeColdCredential: Credential): Promise<CommitteeColdResign> {
+  static new(committeeColdCredential: Credential): CommitteeColdResign {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} committeeColdCredential
   * @param {Anchor} anchor
-  * @returns {Promise<CommitteeColdResign>}
+  * @returns {CommitteeColdResign}
   */
-  static newWithAnchor(committeeColdCredential: Credential, anchor: Anchor): Promise<CommitteeColdResign> {
+  static newWithAnchor(committeeColdCredential: Credential, anchor: Anchor): CommitteeColdResign {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class CommitteeHotAuth extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<CommitteeHotAuth>}
+  * @returns {CommitteeHotAuth}
   */
-  static fromBytes(bytes: Uint8Array): Promise<CommitteeHotAuth> {
+  static fromBytes(bytes: Uint8Array): CommitteeHotAuth {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<CommitteeHotAuth>}
+  * @returns {CommitteeHotAuth}
   */
-  static fromHex(hexStr: string): Promise<CommitteeHotAuth> {
+  static fromHex(hexStr: string): CommitteeHotAuth {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<CommitteeHotAuth>}
+  * @returns {CommitteeHotAuth}
   */
-  static fromJson(json: string): Promise<CommitteeHotAuth> {
+  static fromJson(json: string): CommitteeHotAuth {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract committeeColdCredential(): Promise<Credential>;
+  abstract committeeColdCredential(): Credential;
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract committeeHotCredential(): Promise<Credential>;
+  abstract committeeHotCredential(): Credential;
 
   /**
   * @param {Credential} committeeColdCredential
   * @param {Credential} committeeHotCredential
-  * @returns {Promise<CommitteeHotAuth>}
+  * @returns {CommitteeHotAuth}
   */
-  static new(committeeColdCredential: Credential, committeeHotCredential: Credential): Promise<CommitteeHotAuth> {
+  static new(committeeColdCredential: Credential, committeeHotCredential: Credential): CommitteeHotAuth {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class Constitution extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Constitution> {
+  static fromBytes(bytes: Uint8Array): Constitution {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  static fromHex(hexStr: string): Promise<Constitution> {
+  static fromHex(hexStr: string): Constitution {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  static fromJson(json: string): Promise<Constitution> {
+  static fromJson(json: string): Constitution {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  abstract anchor(): Promise<Anchor>;
+  abstract anchor(): Anchor;
 
   /**
-  * @returns {Promise<Optional<ScriptHash>>}
+  * @returns {Optional<ScriptHash>}
   */
-  abstract scriptHash(): Promise<Optional<ScriptHash>>;
+  abstract scriptHash(): Optional<ScriptHash>;
 
   /**
   * @param {Anchor} anchor
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  static new(anchor: Anchor): Promise<Constitution> {
+  static new(anchor: Anchor): Constitution {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Anchor} anchor
   * @param {ScriptHash} scriptHash
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  static newWithScriptHash(anchor: Anchor, scriptHash: ScriptHash): Promise<Constitution> {
+  static newWithScriptHash(anchor: Anchor, scriptHash: ScriptHash): Constitution {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2438,47 +2438,47 @@ export abstract class Constitution extends _Ptr {
 
 export abstract class ConstrPlutusData extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ConstrPlutusData>}
+  * @returns {ConstrPlutusData}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ConstrPlutusData> {
+  static fromBytes(bytes: Uint8Array): ConstrPlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ConstrPlutusData>}
+  * @returns {ConstrPlutusData}
   */
-  static fromHex(hexStr: string): Promise<ConstrPlutusData> {
+  static fromHex(hexStr: string): ConstrPlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract alternative(): Promise<BigNum>;
+  abstract alternative(): BigNum;
 
   /**
-  * @returns {Promise<PlutusList>}
+  * @returns {PlutusList}
   */
-  abstract data(): Promise<PlutusList>;
+  abstract data(): PlutusList;
 
   /**
   * @param {BigNum} alternative
   * @param {PlutusList} data
-  * @returns {Promise<ConstrPlutusData>}
+  * @returns {ConstrPlutusData}
   */
-  static new(alternative: BigNum, data: PlutusList): Promise<ConstrPlutusData> {
+  static new(alternative: BigNum, data: PlutusList): ConstrPlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2486,222 +2486,222 @@ export abstract class ConstrPlutusData extends _Ptr {
 
 export abstract class CostModel extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<CostModel>}
+  * @returns {CostModel}
   */
-  static fromBytes(bytes: Uint8Array): Promise<CostModel> {
+  static fromBytes(bytes: Uint8Array): CostModel {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<CostModel>}
+  * @returns {CostModel}
   */
-  static fromHex(hexStr: string): Promise<CostModel> {
+  static fromHex(hexStr: string): CostModel {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<CostModel>}
+  * @returns {CostModel}
   */
-  static fromJson(json: string): Promise<CostModel> {
+  static fromJson(json: string): CostModel {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<CostModel>}
+  * @returns {CostModel}
   */
-  static new(): Promise<CostModel> {
+  static new(): CostModel {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {number} operation
   * @param {Int} cost
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  abstract set(operation: number, cost: Int): Promise<Int>;
+  abstract set(operation: number, cost: Int): Int;
 
   /**
   * @param {number} operation
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  abstract get(operation: number): Promise<Int>;
+  abstract get(operation: number): Int;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
 }
 
 export abstract class Costmdls extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Costmdls>}
+  * @returns {Costmdls}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Costmdls> {
+  static fromBytes(bytes: Uint8Array): Costmdls {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Costmdls>}
+  * @returns {Costmdls}
   */
-  static fromHex(hexStr: string): Promise<Costmdls> {
+  static fromHex(hexStr: string): Costmdls {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Costmdls>}
+  * @returns {Costmdls}
   */
-  static fromJson(json: string): Promise<Costmdls> {
+  static fromJson(json: string): Costmdls {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Costmdls>}
+  * @returns {Costmdls}
   */
-  static new(): Promise<Costmdls> {
+  static new(): Costmdls {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {Language} key
   * @param {CostModel} value
-  * @returns {Promise<Optional<CostModel>>}
+  * @returns {Optional<CostModel>}
   */
-  abstract insert(key: Language, value: CostModel): Promise<Optional<CostModel>>;
+  abstract insert(key: Language, value: CostModel): Optional<CostModel>;
 
   /**
   * @param {Language} key
-  * @returns {Promise<Optional<CostModel>>}
+  * @returns {Optional<CostModel>}
   */
-  abstract get(key: Language): Promise<Optional<CostModel>>;
+  abstract get(key: Language): Optional<CostModel>;
 
   /**
-  * @returns {Promise<Languages>}
+  * @returns {Languages}
   */
-  abstract keys(): Promise<Languages>;
+  abstract keys(): Languages;
 
   /**
   * @param {Languages} languages
-  * @returns {Promise<Costmdls>}
+  * @returns {Costmdls}
   */
-  abstract retainLanguageVersions(languages: Languages): Promise<Costmdls>;
+  abstract retainLanguageVersions(languages: Languages): Costmdls;
 
 }
 
 export abstract class Credential extends _Ptr {
   /**
   * @param {Ed25519KeyHash} hash
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  static fromKeyhash(hash: Ed25519KeyHash): Promise<Credential> {
+  static fromKeyhash(hash: Ed25519KeyHash): Credential {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptHash} hash
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  static fromScripthash(hash: ScriptHash): Promise<Credential> {
+  static fromScripthash(hash: ScriptHash): Credential {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHash>>}
+  * @returns {Optional<Ed25519KeyHash>}
   */
-  abstract toKeyhash(): Promise<Optional<Ed25519KeyHash>>;
+  abstract toKeyhash(): Optional<Ed25519KeyHash>;
 
   /**
-  * @returns {Promise<Optional<ScriptHash>>}
+  * @returns {Optional<ScriptHash>}
   */
-  abstract toScripthash(): Promise<Optional<ScriptHash>>;
+  abstract toScripthash(): Optional<ScriptHash>;
 
   /**
-  * @returns {Promise<CredKind>}
+  * @returns {CredKind}
   */
-  abstract kind(): Promise<CredKind>;
+  abstract kind(): CredKind;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptHash(): Promise<boolean>;
+  abstract hasScriptHash(): boolean;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Credential> {
+  static fromBytes(bytes: Uint8Array): Credential {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  static fromHex(hexStr: string): Promise<Credential> {
+  static fromHex(hexStr: string): Credential {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  static fromJson(json: string): Promise<Credential> {
+  static fromJson(json: string): Credential {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2709,284 +2709,284 @@ export abstract class Credential extends _Ptr {
 
 export abstract class Credentials extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Credentials> {
+  static fromBytes(bytes: Uint8Array): Credentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  static fromHex(hexStr: string): Promise<Credentials> {
+  static fromHex(hexStr: string): Credentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  static fromJson(json: string): Promise<Credentials> {
+  static fromJson(json: string): Credentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  static new(): Promise<Credentials> {
+  static new(): Credentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract get(index: number): Promise<Credential>;
+  abstract get(index: number): Credential;
 
   /**
   * @param {Credential} credential
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(credential: Credential): Promise<boolean>;
+  abstract add(credential: Credential): boolean;
 
 }
 
 export abstract class DNSRecordAorAAAA extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DNSRecordAorAAAA>}
+  * @returns {DNSRecordAorAAAA}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DNSRecordAorAAAA> {
+  static fromBytes(bytes: Uint8Array): DNSRecordAorAAAA {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DNSRecordAorAAAA>}
+  * @returns {DNSRecordAorAAAA}
   */
-  static fromHex(hexStr: string): Promise<DNSRecordAorAAAA> {
+  static fromHex(hexStr: string): DNSRecordAorAAAA {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DNSRecordAorAAAA>}
+  * @returns {DNSRecordAorAAAA}
   */
-  static fromJson(json: string): Promise<DNSRecordAorAAAA> {
+  static fromJson(json: string): DNSRecordAorAAAA {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} dnsName
-  * @returns {Promise<DNSRecordAorAAAA>}
+  * @returns {DNSRecordAorAAAA}
   */
-  static new(dnsName: string): Promise<DNSRecordAorAAAA> {
+  static new(dnsName: string): DNSRecordAorAAAA {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract record(): Promise<string>;
+  abstract record(): string;
 
 }
 
 export abstract class DNSRecordSRV extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DNSRecordSRV>}
+  * @returns {DNSRecordSRV}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DNSRecordSRV> {
+  static fromBytes(bytes: Uint8Array): DNSRecordSRV {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DNSRecordSRV>}
+  * @returns {DNSRecordSRV}
   */
-  static fromHex(hexStr: string): Promise<DNSRecordSRV> {
+  static fromHex(hexStr: string): DNSRecordSRV {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DNSRecordSRV>}
+  * @returns {DNSRecordSRV}
   */
-  static fromJson(json: string): Promise<DNSRecordSRV> {
+  static fromJson(json: string): DNSRecordSRV {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} dnsName
-  * @returns {Promise<DNSRecordSRV>}
+  * @returns {DNSRecordSRV}
   */
-  static new(dnsName: string): Promise<DNSRecordSRV> {
+  static new(dnsName: string): DNSRecordSRV {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract record(): Promise<string>;
+  abstract record(): string;
 
 }
 
 export abstract class DRep extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DRep> {
+  static fromBytes(bytes: Uint8Array): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static fromHex(hexStr: string): Promise<DRep> {
+  static fromHex(hexStr: string): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static fromJson(json: string): Promise<DRep> {
+  static fromJson(json: string): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Ed25519KeyHash} keyHash
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static newKeyHash(keyHash: Ed25519KeyHash): Promise<DRep> {
+  static newKeyHash(keyHash: Ed25519KeyHash): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptHash} scriptHash
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static newScriptHash(scriptHash: ScriptHash): Promise<DRep> {
+  static newScriptHash(scriptHash: ScriptHash): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static newAlwaysAbstain(): Promise<DRep> {
+  static newAlwaysAbstain(): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static newAlwaysNoConfidence(): Promise<DRep> {
+  static newAlwaysNoConfidence(): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} cred
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static newFromCredential(cred: Credential): Promise<DRep> {
+  static newFromCredential(cred: Credential): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<DRepKind>}
+  * @returns {DRepKind}
   */
-  abstract kind(): Promise<DRepKind>;
+  abstract kind(): DRepKind;
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHash>>}
+  * @returns {Optional<Ed25519KeyHash>}
   */
-  abstract toKeyHash(): Promise<Optional<Ed25519KeyHash>>;
+  abstract toKeyHash(): Optional<Ed25519KeyHash>;
 
   /**
-  * @returns {Promise<Optional<ScriptHash>>}
+  * @returns {Optional<ScriptHash>}
   */
-  abstract toScriptHash(): Promise<Optional<ScriptHash>>;
+  abstract toScriptHash(): Optional<ScriptHash>;
 
   /**
   * @param {boolean} cip_129Format
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(cip_129Format: boolean): Promise<string>;
+  abstract toBech32(cip_129Format: boolean): string;
 
   /**
   * @param {string} bech32Str
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  static fromBech32(bech32Str: string): Promise<DRep> {
+  static fromBech32(bech32Str: string): DRep {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -2994,131 +2994,131 @@ export abstract class DRep extends _Ptr {
 
 export abstract class DRepDeregistration extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DRepDeregistration>}
+  * @returns {DRepDeregistration}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DRepDeregistration> {
+  static fromBytes(bytes: Uint8Array): DRepDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DRepDeregistration>}
+  * @returns {DRepDeregistration}
   */
-  static fromHex(hexStr: string): Promise<DRepDeregistration> {
+  static fromHex(hexStr: string): DRepDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DRepDeregistration>}
+  * @returns {DRepDeregistration}
   */
-  static fromJson(json: string): Promise<DRepDeregistration> {
+  static fromJson(json: string): DRepDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract votingCredential(): Promise<Credential>;
+  abstract votingCredential(): Credential;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
   * @param {Credential} votingCredential
   * @param {BigNum} coin
-  * @returns {Promise<DRepDeregistration>}
+  * @returns {DRepDeregistration}
   */
-  static new(votingCredential: Credential, coin: BigNum): Promise<DRepDeregistration> {
+  static new(votingCredential: Credential, coin: BigNum): DRepDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class DRepRegistration extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DRepRegistration>}
+  * @returns {DRepRegistration}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DRepRegistration> {
+  static fromBytes(bytes: Uint8Array): DRepRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DRepRegistration>}
+  * @returns {DRepRegistration}
   */
-  static fromHex(hexStr: string): Promise<DRepRegistration> {
+  static fromHex(hexStr: string): DRepRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DRepRegistration>}
+  * @returns {DRepRegistration}
   */
-  static fromJson(json: string): Promise<DRepRegistration> {
+  static fromJson(json: string): DRepRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract votingCredential(): Promise<Credential>;
+  abstract votingCredential(): Credential;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
-  * @returns {Promise<Optional<Anchor>>}
+  * @returns {Optional<Anchor>}
   */
-  abstract anchor(): Promise<Optional<Anchor>>;
+  abstract anchor(): Optional<Anchor>;
 
   /**
   * @param {Credential} votingCredential
   * @param {BigNum} coin
-  * @returns {Promise<DRepRegistration>}
+  * @returns {DRepRegistration}
   */
-  static new(votingCredential: Credential, coin: BigNum): Promise<DRepRegistration> {
+  static new(votingCredential: Credential, coin: BigNum): DRepRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3126,130 +3126,130 @@ export abstract class DRepRegistration extends _Ptr {
   * @param {Credential} votingCredential
   * @param {BigNum} coin
   * @param {Anchor} anchor
-  * @returns {Promise<DRepRegistration>}
+  * @returns {DRepRegistration}
   */
-  static newWithAnchor(votingCredential: Credential, coin: BigNum, anchor: Anchor): Promise<DRepRegistration> {
+  static newWithAnchor(votingCredential: Credential, coin: BigNum, anchor: Anchor): DRepRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class DRepUpdate extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DRepUpdate>}
+  * @returns {DRepUpdate}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DRepUpdate> {
+  static fromBytes(bytes: Uint8Array): DRepUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DRepUpdate>}
+  * @returns {DRepUpdate}
   */
-  static fromHex(hexStr: string): Promise<DRepUpdate> {
+  static fromHex(hexStr: string): DRepUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DRepUpdate>}
+  * @returns {DRepUpdate}
   */
-  static fromJson(json: string): Promise<DRepUpdate> {
+  static fromJson(json: string): DRepUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract votingCredential(): Promise<Credential>;
+  abstract votingCredential(): Credential;
 
   /**
-  * @returns {Promise<Optional<Anchor>>}
+  * @returns {Optional<Anchor>}
   */
-  abstract anchor(): Promise<Optional<Anchor>>;
+  abstract anchor(): Optional<Anchor>;
 
   /**
   * @param {Credential} votingCredential
-  * @returns {Promise<DRepUpdate>}
+  * @returns {DRepUpdate}
   */
-  static new(votingCredential: Credential): Promise<DRepUpdate> {
+  static new(votingCredential: Credential): DRepUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} votingCredential
   * @param {Anchor} anchor
-  * @returns {Promise<DRepUpdate>}
+  * @returns {DRepUpdate}
   */
-  static newWithAnchor(votingCredential: Credential, anchor: Anchor): Promise<DRepUpdate> {
+  static newWithAnchor(votingCredential: Credential, anchor: Anchor): DRepUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class DRepVotingThresholds extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DRepVotingThresholds>}
+  * @returns {DRepVotingThresholds}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DRepVotingThresholds> {
+  static fromBytes(bytes: Uint8Array): DRepVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<DRepVotingThresholds>}
+  * @returns {DRepVotingThresholds}
   */
-  static fromHex(hexStr: string): Promise<DRepVotingThresholds> {
+  static fromHex(hexStr: string): DRepVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<DRepVotingThresholds>}
+  * @returns {DRepVotingThresholds}
   */
-  static fromJson(json: string): Promise<DRepVotingThresholds> {
+  static fromJson(json: string): DRepVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3264,168 +3264,168 @@ export abstract class DRepVotingThresholds extends _Ptr {
   * @param {UnitInterval} ppTechnicalGroup
   * @param {UnitInterval} ppGovernanceGroup
   * @param {UnitInterval} treasuryWithdrawal
-  * @returns {Promise<DRepVotingThresholds>}
+  * @returns {DRepVotingThresholds}
   */
-  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, updateConstitution: UnitInterval, hardForkInitiation: UnitInterval, ppNetworkGroup: UnitInterval, ppEconomicGroup: UnitInterval, ppTechnicalGroup: UnitInterval, ppGovernanceGroup: UnitInterval, treasuryWithdrawal: UnitInterval): Promise<DRepVotingThresholds> {
+  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, updateConstitution: UnitInterval, hardForkInitiation: UnitInterval, ppNetworkGroup: UnitInterval, ppEconomicGroup: UnitInterval, ppTechnicalGroup: UnitInterval, ppGovernanceGroup: UnitInterval, treasuryWithdrawal: UnitInterval): DRepVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {UnitInterval} motionNoConfidence
   */
-  abstract setMotionNoConfidence(motionNoConfidence: UnitInterval): Promise<void>;
+  abstract setMotionNoConfidence(motionNoConfidence: UnitInterval): void;
 
   /**
   * @param {UnitInterval} committeeNormal
   */
-  abstract setCommitteeNormal(committeeNormal: UnitInterval): Promise<void>;
+  abstract setCommitteeNormal(committeeNormal: UnitInterval): void;
 
   /**
   * @param {UnitInterval} committeeNoConfidence
   */
-  abstract setCommitteeNoConfidence(committeeNoConfidence: UnitInterval): Promise<void>;
+  abstract setCommitteeNoConfidence(committeeNoConfidence: UnitInterval): void;
 
   /**
   * @param {UnitInterval} updateConstitution
   */
-  abstract setUpdateConstitution(updateConstitution: UnitInterval): Promise<void>;
+  abstract setUpdateConstitution(updateConstitution: UnitInterval): void;
 
   /**
   * @param {UnitInterval} hardForkInitiation
   */
-  abstract setHardForkInitiation(hardForkInitiation: UnitInterval): Promise<void>;
+  abstract setHardForkInitiation(hardForkInitiation: UnitInterval): void;
 
   /**
   * @param {UnitInterval} ppNetworkGroup
   */
-  abstract setPpNetworkGroup(ppNetworkGroup: UnitInterval): Promise<void>;
+  abstract setPpNetworkGroup(ppNetworkGroup: UnitInterval): void;
 
   /**
   * @param {UnitInterval} ppEconomicGroup
   */
-  abstract setPpEconomicGroup(ppEconomicGroup: UnitInterval): Promise<void>;
+  abstract setPpEconomicGroup(ppEconomicGroup: UnitInterval): void;
 
   /**
   * @param {UnitInterval} ppTechnicalGroup
   */
-  abstract setPpTechnicalGroup(ppTechnicalGroup: UnitInterval): Promise<void>;
+  abstract setPpTechnicalGroup(ppTechnicalGroup: UnitInterval): void;
 
   /**
   * @param {UnitInterval} ppGovernanceGroup
   */
-  abstract setPpGovernanceGroup(ppGovernanceGroup: UnitInterval): Promise<void>;
+  abstract setPpGovernanceGroup(ppGovernanceGroup: UnitInterval): void;
 
   /**
   * @param {UnitInterval} treasuryWithdrawal
   */
-  abstract setTreasuryWithdrawal(treasuryWithdrawal: UnitInterval): Promise<void>;
+  abstract setTreasuryWithdrawal(treasuryWithdrawal: UnitInterval): void;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract motionNoConfidence(): Promise<UnitInterval>;
+  abstract motionNoConfidence(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract committeeNormal(): Promise<UnitInterval>;
+  abstract committeeNormal(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract committeeNoConfidence(): Promise<UnitInterval>;
+  abstract committeeNoConfidence(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract updateConstitution(): Promise<UnitInterval>;
+  abstract updateConstitution(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract hardForkInitiation(): Promise<UnitInterval>;
+  abstract hardForkInitiation(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract ppNetworkGroup(): Promise<UnitInterval>;
+  abstract ppNetworkGroup(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract ppEconomicGroup(): Promise<UnitInterval>;
+  abstract ppEconomicGroup(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract ppTechnicalGroup(): Promise<UnitInterval>;
+  abstract ppTechnicalGroup(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract ppGovernanceGroup(): Promise<UnitInterval>;
+  abstract ppGovernanceGroup(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract treasuryWithdrawal(): Promise<UnitInterval>;
+  abstract treasuryWithdrawal(): UnitInterval;
 
 }
 
 export abstract class DataCost extends _Ptr {
   /**
   * @param {BigNum} coinsPerByte
-  * @returns {Promise<DataCost>}
+  * @returns {DataCost}
   */
-  static newCoinsPerByte(coinsPerByte: BigNum): Promise<DataCost> {
+  static newCoinsPerByte(coinsPerByte: BigNum): DataCost {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coinsPerByte(): Promise<BigNum>;
+  abstract coinsPerByte(): BigNum;
 
 }
 
 export abstract class DataHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<DataHash>}
+  * @returns {DataHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<DataHash> {
+  static fromBytes(bytes: Uint8Array): DataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<DataHash>}
+  * @returns {DataHash}
   */
-  static fromBech32(bechStr: string): Promise<DataHash> {
+  static fromBech32(bechStr: string): DataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<DataHash>}
+  * @returns {DataHash}
   */
-  static fromHex(hex: string): Promise<DataHash> {
+  static fromHex(hex: string): DataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3434,17 +3434,17 @@ export abstract class DataHash extends _Ptr {
 export abstract class DatumSource extends _Ptr {
   /**
   * @param {PlutusData} datum
-  * @returns {Promise<DatumSource>}
+  * @returns {DatumSource}
   */
-  static new(datum: PlutusData): Promise<DatumSource> {
+  static new(datum: PlutusData): DatumSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TransactionInput} input
-  * @returns {Promise<DatumSource>}
+  * @returns {DatumSource}
   */
-  static newRefInput(input: TransactionInput): Promise<DatumSource> {
+  static newRefInput(input: TransactionInput): DatumSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3453,41 +3453,41 @@ export abstract class DatumSource extends _Ptr {
 export abstract class Ed25519KeyHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHash> {
+  static fromBytes(bytes: Uint8Array): Ed25519KeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  static fromBech32(bechStr: string): Promise<Ed25519KeyHash> {
+  static fromBech32(bechStr: string): Ed25519KeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  static fromHex(hex: string): Promise<Ed25519KeyHash> {
+  static fromHex(hex: string): Ed25519KeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3495,118 +3495,118 @@ export abstract class Ed25519KeyHash extends _Ptr {
 
 export abstract class Ed25519KeyHashes extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Ed25519KeyHashes> {
+  static fromBytes(bytes: Uint8Array): Ed25519KeyHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  static fromHex(hexStr: string): Promise<Ed25519KeyHashes> {
+  static fromHex(hexStr: string): Ed25519KeyHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  static fromJson(json: string): Promise<Ed25519KeyHashes> {
+  static fromJson(json: string): Ed25519KeyHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  static new(): Promise<Ed25519KeyHashes> {
+  static new(): Ed25519KeyHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract get(index: number): Promise<Ed25519KeyHash>;
+  abstract get(index: number): Ed25519KeyHash;
 
   /**
   * @param {Ed25519KeyHash} keyhash
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(keyhash: Ed25519KeyHash): Promise<boolean>;
+  abstract add(keyhash: Ed25519KeyHash): boolean;
 
   /**
   * @param {Ed25519KeyHash} elem
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract contains(elem: Ed25519KeyHash): Promise<boolean>;
+  abstract contains(elem: Ed25519KeyHash): boolean;
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHashes>>}
+  * @returns {Optional<Ed25519KeyHashes>}
   */
-  abstract toOption(): Promise<Optional<Ed25519KeyHashes>>;
+  abstract toOption(): Optional<Ed25519KeyHashes>;
 
 }
 
 export abstract class Ed25519Signature extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): string;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} bech32Str
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  static fromBech32(bech32Str: string): Promise<Ed25519Signature> {
+  static fromBech32(bech32Str: string): Ed25519Signature {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} input
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  static fromHex(input: string): Promise<Ed25519Signature> {
+  static fromHex(input: string): Ed25519Signature {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Ed25519Signature> {
+  static fromBytes(bytes: Uint8Array): Ed25519Signature {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3616,93 +3616,93 @@ export abstract class EnterpriseAddress extends _Ptr {
   /**
   * @param {number} network
   * @param {Credential} payment
-  * @returns {Promise<EnterpriseAddress>}
+  * @returns {EnterpriseAddress}
   */
-  static new(network: number, payment: Credential): Promise<EnterpriseAddress> {
+  static new(network: number, payment: Credential): EnterpriseAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract paymentCred(): Promise<Credential>;
+  abstract paymentCred(): Credential;
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<EnterpriseAddress>>}
+  * @returns {Optional<EnterpriseAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<EnterpriseAddress>> {
+  static fromAddress(addr: Address): Optional<EnterpriseAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
 }
 
 export abstract class ExUnitPrices extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ExUnitPrices>}
+  * @returns {ExUnitPrices}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ExUnitPrices> {
+  static fromBytes(bytes: Uint8Array): ExUnitPrices {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ExUnitPrices>}
+  * @returns {ExUnitPrices}
   */
-  static fromHex(hexStr: string): Promise<ExUnitPrices> {
+  static fromHex(hexStr: string): ExUnitPrices {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ExUnitPrices>}
+  * @returns {ExUnitPrices}
   */
-  static fromJson(json: string): Promise<ExUnitPrices> {
+  static fromJson(json: string): ExUnitPrices {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract memPrice(): Promise<UnitInterval>;
+  abstract memPrice(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract stepPrice(): Promise<UnitInterval>;
+  abstract stepPrice(): UnitInterval;
 
   /**
   * @param {UnitInterval} memPrice
   * @param {UnitInterval} stepPrice
-  * @returns {Promise<ExUnitPrices>}
+  * @returns {ExUnitPrices}
   */
-  static new(memPrice: UnitInterval, stepPrice: UnitInterval): Promise<ExUnitPrices> {
+  static new(memPrice: UnitInterval, stepPrice: UnitInterval): ExUnitPrices {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3710,60 +3710,60 @@ export abstract class ExUnitPrices extends _Ptr {
 
 export abstract class ExUnits extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ExUnits> {
+  static fromBytes(bytes: Uint8Array): ExUnits {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  static fromHex(hexStr: string): Promise<ExUnits> {
+  static fromHex(hexStr: string): ExUnits {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  static fromJson(json: string): Promise<ExUnits> {
+  static fromJson(json: string): ExUnits {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract mem(): Promise<BigNum>;
+  abstract mem(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract steps(): Promise<BigNum>;
+  abstract steps(): BigNum;
 
   /**
   * @param {BigNum} mem
   * @param {BigNum} steps
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  static new(mem: BigNum, steps: BigNum): Promise<ExUnits> {
+  static new(mem: BigNum, steps: BigNum): ExUnits {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3772,76 +3772,76 @@ export abstract class ExUnits extends _Ptr {
 export abstract class FixedBlock extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<FixedBlock>}
+  * @returns {FixedBlock}
   */
-  static fromBytes(bytes: Uint8Array): Promise<FixedBlock> {
+  static fromBytes(bytes: Uint8Array): FixedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<FixedBlock>}
+  * @returns {FixedBlock}
   */
-  static fromHex(hexStr: string): Promise<FixedBlock> {
+  static fromHex(hexStr: string): FixedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  abstract header(): Promise<Header>;
+  abstract header(): Header;
 
   /**
-  * @returns {Promise<FixedTransactionBodies>}
+  * @returns {FixedTransactionBodies}
   */
-  abstract transactionBodies(): Promise<FixedTransactionBodies>;
+  abstract transactionBodies(): FixedTransactionBodies;
 
   /**
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  abstract transactionWitnessSets(): Promise<TransactionWitnessSets>;
+  abstract transactionWitnessSets(): TransactionWitnessSets;
 
   /**
-  * @returns {Promise<AuxiliaryDataSet>}
+  * @returns {AuxiliaryDataSet}
   */
-  abstract auxiliaryDataSet(): Promise<AuxiliaryDataSet>;
+  abstract auxiliaryDataSet(): AuxiliaryDataSet;
 
   /**
-  * @returns {Promise<Uint32Array>}
+  * @returns {Uint32Array}
   */
-  abstract invalidTransactions(): Promise<Uint32Array>;
+  abstract invalidTransactions(): Uint32Array;
 
   /**
-  * @returns {Promise<BlockHash>}
+  * @returns {BlockHash}
   */
-  abstract blockHash(): Promise<BlockHash>;
+  abstract blockHash(): BlockHash;
 
 }
 
 export abstract class FixedTransaction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<FixedTransaction>}
+  * @returns {FixedTransaction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<FixedTransaction> {
+  static fromBytes(bytes: Uint8Array): FixedTransaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<FixedTransaction>}
+  * @returns {FixedTransaction}
   */
-  static fromHex(hexStr: string): Promise<FixedTransaction> {
+  static fromHex(hexStr: string): FixedTransaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3849,9 +3849,9 @@ export abstract class FixedTransaction extends _Ptr {
   * @param {Uint8Array} rawBody
   * @param {Uint8Array} rawWitnessSet
   * @param {boolean} isValid
-  * @returns {Promise<FixedTransaction>}
+  * @returns {FixedTransaction}
   */
-  static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
+  static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): FixedTransaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -3860,217 +3860,217 @@ export abstract class FixedTransaction extends _Ptr {
   * @param {Uint8Array} rawWitnessSet
   * @param {Uint8Array} rawAuxiliaryData
   * @param {boolean} isValid
-  * @returns {Promise<FixedTransaction>}
+  * @returns {FixedTransaction}
   */
-  static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): Promise<FixedTransaction> {
+  static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): FixedTransaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} rawBody
-  * @returns {Promise<FixedTransaction>}
+  * @returns {FixedTransaction}
   */
-  static newFromBodyBytes(rawBody: Uint8Array): Promise<FixedTransaction> {
+  static newFromBodyBytes(rawBody: Uint8Array): FixedTransaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  abstract body(): Promise<TransactionBody>;
+  abstract body(): TransactionBody;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract rawBody(): Promise<Uint8Array>;
+  abstract rawBody(): Uint8Array;
 
   /**
   * @param {Uint8Array} rawBody
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setBody(rawBody: Uint8Array): Promise<void>;
+  abstract setBody(rawBody: Uint8Array): void;
 
   /**
   * @param {Uint8Array} rawWitnessSet
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setWitnessSet(rawWitnessSet: Uint8Array): Promise<void>;
+  abstract setWitnessSet(rawWitnessSet: Uint8Array): void;
 
   /**
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  abstract witnessSet(): Promise<TransactionWitnessSet>;
+  abstract witnessSet(): TransactionWitnessSet;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract rawWitnessSet(): Promise<Uint8Array>;
+  abstract rawWitnessSet(): Uint8Array;
 
   /**
   * @param {boolean} valid
   */
-  abstract setIsValid(valid: boolean): Promise<void>;
+  abstract setIsValid(valid: boolean): void;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isValid(): Promise<boolean>;
+  abstract isValid(): boolean;
 
   /**
   * @param {Uint8Array} rawAuxiliaryData
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setAuxiliaryData(rawAuxiliaryData: Uint8Array): Promise<void>;
+  abstract setAuxiliaryData(rawAuxiliaryData: Uint8Array): void;
 
   /**
-  * @returns {Promise<Optional<AuxiliaryData>>}
+  * @returns {Optional<AuxiliaryData>}
   */
-  abstract auxiliaryData(): Promise<Optional<AuxiliaryData>>;
+  abstract auxiliaryData(): Optional<AuxiliaryData>;
 
   /**
-  * @returns {Promise<Optional<Uint8Array>>}
+  * @returns {Optional<Uint8Array>}
   */
-  abstract rawAuxiliaryData(): Promise<Optional<Uint8Array>>;
+  abstract rawAuxiliaryData(): Optional<Uint8Array>;
 
   /**
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  abstract transactionHash(): Promise<TransactionHash>;
+  abstract transactionHash(): TransactionHash;
 
   /**
   * @param {Vkeywitness} vkeyWitness
   */
-  abstract addVkeyWitness(vkeyWitness: Vkeywitness): Promise<void>;
+  abstract addVkeyWitness(vkeyWitness: Vkeywitness): void;
 
   /**
   * @param {BootstrapWitness} bootstrapWitness
   */
-  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): Promise<void>;
+  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): void;
 
   /**
   * @param {PrivateKey} privateKey
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract signAndAddVkeySignature(privateKey: PrivateKey): Promise<void>;
+  abstract signAndAddVkeySignature(privateKey: PrivateKey): void;
 
   /**
   * @param {ByronAddress} addr
   * @param {Bip32PrivateKey} privateKey
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract signAndAddIcarusBootstrapSignature(addr: ByronAddress, privateKey: Bip32PrivateKey): Promise<void>;
+  abstract signAndAddIcarusBootstrapSignature(addr: ByronAddress, privateKey: Bip32PrivateKey): void;
 
   /**
   * @param {ByronAddress} addr
   * @param {LegacyDaedalusPrivateKey} privateKey
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract signAndAddDaedalusBootstrapSignature(addr: ByronAddress, privateKey: LegacyDaedalusPrivateKey): Promise<void>;
+  abstract signAndAddDaedalusBootstrapSignature(addr: ByronAddress, privateKey: LegacyDaedalusPrivateKey): void;
 
 }
 
 export abstract class FixedTransactionBodies extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<FixedTransactionBodies>}
+  * @returns {FixedTransactionBodies}
   */
-  static fromBytes(bytes: Uint8Array): Promise<FixedTransactionBodies> {
+  static fromBytes(bytes: Uint8Array): FixedTransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<FixedTransactionBodies>}
+  * @returns {FixedTransactionBodies}
   */
-  static fromHex(hexStr: string): Promise<FixedTransactionBodies> {
+  static fromHex(hexStr: string): FixedTransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<FixedTransactionBodies>}
+  * @returns {FixedTransactionBodies}
   */
-  static new(): Promise<FixedTransactionBodies> {
+  static new(): FixedTransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<FixedTransactionBody>}
+  * @returns {FixedTransactionBody}
   */
-  abstract get(index: number): Promise<FixedTransactionBody>;
+  abstract get(index: number): FixedTransactionBody;
 
   /**
   * @param {FixedTransactionBody} elem
   */
-  abstract add(elem: FixedTransactionBody): Promise<void>;
+  abstract add(elem: FixedTransactionBody): void;
 
 }
 
 export abstract class FixedTransactionBody extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<FixedTransactionBody>}
+  * @returns {FixedTransactionBody}
   */
-  static fromBytes(bytes: Uint8Array): Promise<FixedTransactionBody> {
+  static fromBytes(bytes: Uint8Array): FixedTransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<FixedTransactionBody>}
+  * @returns {FixedTransactionBody}
   */
-  static fromHex(hexStr: string): Promise<FixedTransactionBody> {
+  static fromHex(hexStr: string): FixedTransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  abstract transactionBody(): Promise<TransactionBody>;
+  abstract transactionBody(): TransactionBody;
 
   /**
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  abstract txHash(): Promise<TransactionHash>;
+  abstract txHash(): TransactionHash;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract originalBytes(): Promise<Uint8Array>;
+  abstract originalBytes(): Uint8Array;
 
 }
 
 export abstract class FixedTxWitnessesSet extends _Ptr {
   /**
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  abstract txWitnessesSet(): Promise<TransactionWitnessSet>;
+  abstract txWitnessesSet(): TransactionWitnessSet;
 
   /**
   * @param {Vkeywitness} vkeyWitness
   */
-  abstract addVkeyWitness(vkeyWitness: Vkeywitness): Promise<void>;
+  abstract addVkeyWitness(vkeyWitness: Vkeywitness): void;
 
   /**
   * @param {BootstrapWitness} bootstrapWitness
   */
-  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): Promise<void>;
+  abstract addBootstrapWitness(bootstrapWitness: BootstrapWitness): void;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} data
-  * @returns {Promise<FixedTxWitnessesSet>}
+  * @returns {FixedTxWitnessesSet}
   */
-  static fromBytes(data: Uint8Array): Promise<FixedTxWitnessesSet> {
+  static fromBytes(data: Uint8Array): FixedTxWitnessesSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4079,142 +4079,142 @@ export abstract class FixedTxWitnessesSet extends _Ptr {
 export abstract class FixedVersionedBlock extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<FixedVersionedBlock>}
+  * @returns {FixedVersionedBlock}
   */
-  static fromBytes(bytes: Uint8Array): Promise<FixedVersionedBlock> {
+  static fromBytes(bytes: Uint8Array): FixedVersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<FixedVersionedBlock>}
+  * @returns {FixedVersionedBlock}
   */
-  static fromHex(hexStr: string): Promise<FixedVersionedBlock> {
+  static fromHex(hexStr: string): FixedVersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<FixedBlock>}
+  * @returns {FixedBlock}
   */
-  abstract block(): Promise<FixedBlock>;
+  abstract block(): FixedBlock;
 
   /**
-  * @returns {Promise<BlockEra>}
+  * @returns {BlockEra}
   */
-  abstract era(): Promise<BlockEra>;
+  abstract era(): BlockEra;
 
 }
 
 export abstract class GeneralTransactionMetadata extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GeneralTransactionMetadata>}
+  * @returns {GeneralTransactionMetadata}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GeneralTransactionMetadata> {
+  static fromBytes(bytes: Uint8Array): GeneralTransactionMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<GeneralTransactionMetadata>}
+  * @returns {GeneralTransactionMetadata}
   */
-  static fromHex(hexStr: string): Promise<GeneralTransactionMetadata> {
+  static fromHex(hexStr: string): GeneralTransactionMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GeneralTransactionMetadata>}
+  * @returns {GeneralTransactionMetadata}
   */
-  static fromJson(json: string): Promise<GeneralTransactionMetadata> {
+  static fromJson(json: string): GeneralTransactionMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GeneralTransactionMetadata>}
+  * @returns {GeneralTransactionMetadata}
   */
-  static new(): Promise<GeneralTransactionMetadata> {
+  static new(): GeneralTransactionMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {BigNum} key
   * @param {TransactionMetadatum} value
-  * @returns {Promise<Optional<TransactionMetadatum>>}
+  * @returns {Optional<TransactionMetadatum>}
   */
-  abstract insert(key: BigNum, value: TransactionMetadatum): Promise<Optional<TransactionMetadatum>>;
+  abstract insert(key: BigNum, value: TransactionMetadatum): Optional<TransactionMetadatum>;
 
   /**
   * @param {BigNum} key
-  * @returns {Promise<Optional<TransactionMetadatum>>}
+  * @returns {Optional<TransactionMetadatum>}
   */
-  abstract get(key: BigNum): Promise<Optional<TransactionMetadatum>>;
+  abstract get(key: BigNum): Optional<TransactionMetadatum>;
 
   /**
-  * @returns {Promise<TransactionMetadatumLabels>}
+  * @returns {TransactionMetadatumLabels}
   */
-  abstract keys(): Promise<TransactionMetadatumLabels>;
+  abstract keys(): TransactionMetadatumLabels;
 
 }
 
 export abstract class GenesisDelegateHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GenesisDelegateHash>}
+  * @returns {GenesisDelegateHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GenesisDelegateHash> {
+  static fromBytes(bytes: Uint8Array): GenesisDelegateHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<GenesisDelegateHash>}
+  * @returns {GenesisDelegateHash}
   */
-  static fromBech32(bechStr: string): Promise<GenesisDelegateHash> {
+  static fromBech32(bechStr: string): GenesisDelegateHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<GenesisDelegateHash>}
+  * @returns {GenesisDelegateHash}
   */
-  static fromHex(hex: string): Promise<GenesisDelegateHash> {
+  static fromHex(hex: string): GenesisDelegateHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4223,41 +4223,41 @@ export abstract class GenesisDelegateHash extends _Ptr {
 export abstract class GenesisHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GenesisHash>}
+  * @returns {GenesisHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GenesisHash> {
+  static fromBytes(bytes: Uint8Array): GenesisHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<GenesisHash>}
+  * @returns {GenesisHash}
   */
-  static fromBech32(bechStr: string): Promise<GenesisHash> {
+  static fromBech32(bechStr: string): GenesisHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<GenesisHash>}
+  * @returns {GenesisHash}
   */
-  static fromHex(hex: string): Promise<GenesisHash> {
+  static fromHex(hex: string): GenesisHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4265,131 +4265,131 @@ export abstract class GenesisHash extends _Ptr {
 
 export abstract class GenesisHashes extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GenesisHashes>}
+  * @returns {GenesisHashes}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GenesisHashes> {
+  static fromBytes(bytes: Uint8Array): GenesisHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<GenesisHashes>}
+  * @returns {GenesisHashes}
   */
-  static fromHex(hexStr: string): Promise<GenesisHashes> {
+  static fromHex(hexStr: string): GenesisHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GenesisHashes>}
+  * @returns {GenesisHashes}
   */
-  static fromJson(json: string): Promise<GenesisHashes> {
+  static fromJson(json: string): GenesisHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GenesisHashes>}
+  * @returns {GenesisHashes}
   */
-  static new(): Promise<GenesisHashes> {
+  static new(): GenesisHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<GenesisHash>}
+  * @returns {GenesisHash}
   */
-  abstract get(index: number): Promise<GenesisHash>;
+  abstract get(index: number): GenesisHash;
 
   /**
   * @param {GenesisHash} elem
   */
-  abstract add(elem: GenesisHash): Promise<void>;
+  abstract add(elem: GenesisHash): void;
 
 }
 
 export abstract class GenesisKeyDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GenesisKeyDelegation>}
+  * @returns {GenesisKeyDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GenesisKeyDelegation> {
+  static fromBytes(bytes: Uint8Array): GenesisKeyDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<GenesisKeyDelegation>}
+  * @returns {GenesisKeyDelegation}
   */
-  static fromHex(hexStr: string): Promise<GenesisKeyDelegation> {
+  static fromHex(hexStr: string): GenesisKeyDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GenesisKeyDelegation>}
+  * @returns {GenesisKeyDelegation}
   */
-  static fromJson(json: string): Promise<GenesisKeyDelegation> {
+  static fromJson(json: string): GenesisKeyDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GenesisHash>}
+  * @returns {GenesisHash}
   */
-  abstract genesishash(): Promise<GenesisHash>;
+  abstract genesishash(): GenesisHash;
 
   /**
-  * @returns {Promise<GenesisDelegateHash>}
+  * @returns {GenesisDelegateHash}
   */
-  abstract genesisDelegateHash(): Promise<GenesisDelegateHash>;
+  abstract genesisDelegateHash(): GenesisDelegateHash;
 
   /**
-  * @returns {Promise<VRFKeyHash>}
+  * @returns {VRFKeyHash}
   */
-  abstract vrfKeyhash(): Promise<VRFKeyHash>;
+  abstract vrfKeyhash(): VRFKeyHash;
 
   /**
   * @param {GenesisHash} genesishash
   * @param {GenesisDelegateHash} genesisDelegateHash
   * @param {VRFKeyHash} vrfKeyhash
-  * @returns {Promise<GenesisKeyDelegation>}
+  * @returns {GenesisKeyDelegation}
   */
-  static new(genesishash: GenesisHash, genesisDelegateHash: GenesisDelegateHash, vrfKeyhash: VRFKeyHash): Promise<GenesisKeyDelegation> {
+  static new(genesishash: GenesisHash, genesisDelegateHash: GenesisDelegateHash, vrfKeyhash: VRFKeyHash): GenesisKeyDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4397,198 +4397,198 @@ export abstract class GenesisKeyDelegation extends _Ptr {
 
 export abstract class GovernanceAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GovernanceAction> {
+  static fromBytes(bytes: Uint8Array): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static fromHex(hexStr: string): Promise<GovernanceAction> {
+  static fromHex(hexStr: string): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static fromJson(json: string): Promise<GovernanceAction> {
+  static fromJson(json: string): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ParameterChangeAction} parameterChangeAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newParameterChangeAction(parameterChangeAction: ParameterChangeAction): Promise<GovernanceAction> {
+  static newParameterChangeAction(parameterChangeAction: ParameterChangeAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {HardForkInitiationAction} hardForkInitiationAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newHardForkInitiationAction(hardForkInitiationAction: HardForkInitiationAction): Promise<GovernanceAction> {
+  static newHardForkInitiationAction(hardForkInitiationAction: HardForkInitiationAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TreasuryWithdrawalsAction} treasuryWithdrawalsAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newTreasuryWithdrawalsAction(treasuryWithdrawalsAction: TreasuryWithdrawalsAction): Promise<GovernanceAction> {
+  static newTreasuryWithdrawalsAction(treasuryWithdrawalsAction: TreasuryWithdrawalsAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {NoConfidenceAction} noConfidenceAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newNoConfidenceAction(noConfidenceAction: NoConfidenceAction): Promise<GovernanceAction> {
+  static newNoConfidenceAction(noConfidenceAction: NoConfidenceAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {UpdateCommitteeAction} newCommitteeAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newNewCommitteeAction(newCommitteeAction: UpdateCommitteeAction): Promise<GovernanceAction> {
+  static newNewCommitteeAction(newCommitteeAction: UpdateCommitteeAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {NewConstitutionAction} newConstitutionAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newNewConstitutionAction(newConstitutionAction: NewConstitutionAction): Promise<GovernanceAction> {
+  static newNewConstitutionAction(newConstitutionAction: NewConstitutionAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {InfoAction} infoAction
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  static newInfoAction(infoAction: InfoAction): Promise<GovernanceAction> {
+  static newInfoAction(infoAction: InfoAction): GovernanceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GovernanceActionKind>}
+  * @returns {GovernanceActionKind}
   */
-  abstract kind(): Promise<GovernanceActionKind>;
+  abstract kind(): GovernanceActionKind;
 
   /**
-  * @returns {Promise<Optional<ParameterChangeAction>>}
+  * @returns {Optional<ParameterChangeAction>}
   */
-  abstract asParameterChangeAction(): Promise<Optional<ParameterChangeAction>>;
+  abstract asParameterChangeAction(): Optional<ParameterChangeAction>;
 
   /**
-  * @returns {Promise<Optional<HardForkInitiationAction>>}
+  * @returns {Optional<HardForkInitiationAction>}
   */
-  abstract asHardForkInitiationAction(): Promise<Optional<HardForkInitiationAction>>;
+  abstract asHardForkInitiationAction(): Optional<HardForkInitiationAction>;
 
   /**
-  * @returns {Promise<Optional<TreasuryWithdrawalsAction>>}
+  * @returns {Optional<TreasuryWithdrawalsAction>}
   */
-  abstract asTreasuryWithdrawalsAction(): Promise<Optional<TreasuryWithdrawalsAction>>;
+  abstract asTreasuryWithdrawalsAction(): Optional<TreasuryWithdrawalsAction>;
 
   /**
-  * @returns {Promise<Optional<NoConfidenceAction>>}
+  * @returns {Optional<NoConfidenceAction>}
   */
-  abstract asNoConfidenceAction(): Promise<Optional<NoConfidenceAction>>;
+  abstract asNoConfidenceAction(): Optional<NoConfidenceAction>;
 
   /**
-  * @returns {Promise<Optional<UpdateCommitteeAction>>}
+  * @returns {Optional<UpdateCommitteeAction>}
   */
-  abstract asNewCommitteeAction(): Promise<Optional<UpdateCommitteeAction>>;
+  abstract asNewCommitteeAction(): Optional<UpdateCommitteeAction>;
 
   /**
-  * @returns {Promise<Optional<NewConstitutionAction>>}
+  * @returns {Optional<NewConstitutionAction>}
   */
-  abstract asNewConstitutionAction(): Promise<Optional<NewConstitutionAction>>;
+  abstract asNewConstitutionAction(): Optional<NewConstitutionAction>;
 
   /**
-  * @returns {Promise<Optional<InfoAction>>}
+  * @returns {Optional<InfoAction>}
   */
-  abstract asInfoAction(): Promise<Optional<InfoAction>>;
+  abstract asInfoAction(): Optional<InfoAction>;
 
 }
 
 export abstract class GovernanceActionId extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<GovernanceActionId>}
+  * @returns {GovernanceActionId}
   */
-  static fromBytes(bytes: Uint8Array): Promise<GovernanceActionId> {
+  static fromBytes(bytes: Uint8Array): GovernanceActionId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<GovernanceActionId>}
+  * @returns {GovernanceActionId}
   */
-  static fromHex(hexStr: string): Promise<GovernanceActionId> {
+  static fromHex(hexStr: string): GovernanceActionId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GovernanceActionId>}
+  * @returns {GovernanceActionId}
   */
-  static fromJson(json: string): Promise<GovernanceActionId> {
+  static fromJson(json: string): GovernanceActionId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  abstract transactionId(): Promise<TransactionHash>;
+  abstract transactionId(): TransactionHash;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract index(): Promise<number>;
+  abstract index(): number;
 
   /**
   * @param {TransactionHash} transactionId
   * @param {number} index
-  * @returns {Promise<GovernanceActionId>}
+  * @returns {GovernanceActionId}
   */
-  static new(transactionId: TransactionHash, index: number): Promise<GovernanceActionId> {
+  static new(transactionId: TransactionHash, index: number): GovernanceActionId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4596,107 +4596,107 @@ export abstract class GovernanceActionId extends _Ptr {
 
 export abstract class GovernanceActionIds extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<GovernanceActionIds>}
+  * @returns {GovernanceActionIds}
   */
-  static fromJson(json: string): Promise<GovernanceActionIds> {
+  static fromJson(json: string): GovernanceActionIds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GovernanceActionIds>}
+  * @returns {GovernanceActionIds}
   */
-  static new(): Promise<GovernanceActionIds> {
+  static new(): GovernanceActionIds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GovernanceActionId} governanceActionId
   */
-  abstract add(governanceActionId: GovernanceActionId): Promise<void>;
+  abstract add(governanceActionId: GovernanceActionId): void;
 
   /**
   * @param {number} index
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract get(index: number): Promise<Optional<GovernanceActionId>>;
+  abstract get(index: number): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
 }
 
 export abstract class HardForkInitiationAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<HardForkInitiationAction>}
+  * @returns {HardForkInitiationAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<HardForkInitiationAction> {
+  static fromBytes(bytes: Uint8Array): HardForkInitiationAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<HardForkInitiationAction>}
+  * @returns {HardForkInitiationAction}
   */
-  static fromHex(hexStr: string): Promise<HardForkInitiationAction> {
+  static fromHex(hexStr: string): HardForkInitiationAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<HardForkInitiationAction>}
+  * @returns {HardForkInitiationAction}
   */
-  static fromJson(json: string): Promise<HardForkInitiationAction> {
+  static fromJson(json: string): HardForkInitiationAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract govActionId(): Promise<Optional<GovernanceActionId>>;
+  abstract govActionId(): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  abstract protocolVersion(): Promise<ProtocolVersion>;
+  abstract protocolVersion(): ProtocolVersion;
 
   /**
   * @param {ProtocolVersion} protocolVersion
-  * @returns {Promise<HardForkInitiationAction>}
+  * @returns {HardForkInitiationAction}
   */
-  static new(protocolVersion: ProtocolVersion): Promise<HardForkInitiationAction> {
+  static new(protocolVersion: ProtocolVersion): HardForkInitiationAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GovernanceActionId} govActionId
   * @param {ProtocolVersion} protocolVersion
-  * @returns {Promise<HardForkInitiationAction>}
+  * @returns {HardForkInitiationAction}
   */
-  static newWithActionId(govActionId: GovernanceActionId, protocolVersion: ProtocolVersion): Promise<HardForkInitiationAction> {
+  static newWithActionId(govActionId: GovernanceActionId, protocolVersion: ProtocolVersion): HardForkInitiationAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4704,60 +4704,60 @@ export abstract class HardForkInitiationAction extends _Ptr {
 
 export abstract class Header extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Header> {
+  static fromBytes(bytes: Uint8Array): Header {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  static fromHex(hexStr: string): Promise<Header> {
+  static fromHex(hexStr: string): Header {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  static fromJson(json: string): Promise<Header> {
+  static fromJson(json: string): Header {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  abstract headerBody(): Promise<HeaderBody>;
+  abstract headerBody(): HeaderBody;
 
   /**
-  * @returns {Promise<KESSignature>}
+  * @returns {KESSignature}
   */
-  abstract bodySignature(): Promise<KESSignature>;
+  abstract bodySignature(): KESSignature;
 
   /**
   * @param {HeaderBody} headerBody
   * @param {KESSignature} bodySignature
-  * @returns {Promise<Header>}
+  * @returns {Header}
   */
-  static new(headerBody: HeaderBody, bodySignature: KESSignature): Promise<Header> {
+  static new(headerBody: HeaderBody, bodySignature: KESSignature): Header {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4765,118 +4765,118 @@ export abstract class Header extends _Ptr {
 
 export abstract class HeaderBody extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  static fromBytes(bytes: Uint8Array): Promise<HeaderBody> {
+  static fromBytes(bytes: Uint8Array): HeaderBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  static fromHex(hexStr: string): Promise<HeaderBody> {
+  static fromHex(hexStr: string): HeaderBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  static fromJson(json: string): Promise<HeaderBody> {
+  static fromJson(json: string): HeaderBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract blockNumber(): Promise<number>;
+  abstract blockNumber(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract slot(): Promise<number>;
+  abstract slot(): number;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract slotBignum(): Promise<BigNum>;
+  abstract slotBignum(): BigNum;
 
   /**
-  * @returns {Promise<Optional<BlockHash>>}
+  * @returns {Optional<BlockHash>}
   */
-  abstract prevHash(): Promise<Optional<BlockHash>>;
+  abstract prevHash(): Optional<BlockHash>;
 
   /**
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  abstract issuerVkey(): Promise<Vkey>;
+  abstract issuerVkey(): Vkey;
 
   /**
-  * @returns {Promise<VRFVKey>}
+  * @returns {VRFVKey}
   */
-  abstract vrfVkey(): Promise<VRFVKey>;
+  abstract vrfVkey(): VRFVKey;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasNonceAndLeaderVrf(): Promise<boolean>;
+  abstract hasNonceAndLeaderVrf(): boolean;
 
   /**
-  * @returns {Promise<Optional<VRFCert>>}
+  * @returns {Optional<VRFCert>}
   */
-  abstract nonceVrfOrNothing(): Promise<Optional<VRFCert>>;
+  abstract nonceVrfOrNothing(): Optional<VRFCert>;
 
   /**
-  * @returns {Promise<Optional<VRFCert>>}
+  * @returns {Optional<VRFCert>}
   */
-  abstract leaderVrfOrNothing(): Promise<Optional<VRFCert>>;
+  abstract leaderVrfOrNothing(): Optional<VRFCert>;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasVrfResult(): Promise<boolean>;
+  abstract hasVrfResult(): boolean;
 
   /**
-  * @returns {Promise<Optional<VRFCert>>}
+  * @returns {Optional<VRFCert>}
   */
-  abstract vrfResultOrNothing(): Promise<Optional<VRFCert>>;
+  abstract vrfResultOrNothing(): Optional<VRFCert>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract blockBodySize(): Promise<number>;
+  abstract blockBodySize(): number;
 
   /**
-  * @returns {Promise<BlockHash>}
+  * @returns {BlockHash}
   */
-  abstract blockBodyHash(): Promise<BlockHash>;
+  abstract blockBodyHash(): BlockHash;
 
   /**
-  * @returns {Promise<OperationalCert>}
+  * @returns {OperationalCert}
   */
-  abstract operationalCert(): Promise<OperationalCert>;
+  abstract operationalCert(): OperationalCert;
 
   /**
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  abstract protocolVersion(): Promise<ProtocolVersion>;
+  abstract protocolVersion(): ProtocolVersion;
 
   /**
   * @param {number} blockNumber
@@ -4889,9 +4889,9 @@ export abstract class HeaderBody extends _Ptr {
   * @param {BlockHash} blockBodyHash
   * @param {OperationalCert} operationalCert
   * @param {ProtocolVersion} protocolVersion
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  static new(blockNumber: number, slot: number, prevHash: Optional<BlockHash>, issuerVkey: Vkey, vrfVkey: VRFVKey, vrfResult: VRFCert, blockBodySize: number, blockBodyHash: BlockHash, operationalCert: OperationalCert, protocolVersion: ProtocolVersion): Promise<HeaderBody> {
+  static new(blockNumber: number, slot: number, prevHash: Optional<BlockHash>, issuerVkey: Vkey, vrfVkey: VRFVKey, vrfResult: VRFCert, blockBodySize: number, blockBodyHash: BlockHash, operationalCert: OperationalCert, protocolVersion: ProtocolVersion): HeaderBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4906,9 +4906,9 @@ export abstract class HeaderBody extends _Ptr {
   * @param {BlockHash} blockBodyHash
   * @param {OperationalCert} operationalCert
   * @param {ProtocolVersion} protocolVersion
-  * @returns {Promise<HeaderBody>}
+  * @returns {HeaderBody}
   */
-  static newHeaderbody(blockNumber: number, slot: BigNum, prevHash: Optional<BlockHash>, issuerVkey: Vkey, vrfVkey: VRFVKey, vrfResult: VRFCert, blockBodySize: number, blockBodyHash: BlockHash, operationalCert: OperationalCert, protocolVersion: ProtocolVersion): Promise<HeaderBody> {
+  static newHeaderbody(blockNumber: number, slot: BigNum, prevHash: Optional<BlockHash>, issuerVkey: Vkey, vrfVkey: VRFVKey, vrfResult: VRFCert, blockBodySize: number, blockBodyHash: BlockHash, operationalCert: OperationalCert, protocolVersion: ProtocolVersion): HeaderBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4916,9 +4916,9 @@ export abstract class HeaderBody extends _Ptr {
 
 export abstract class InfoAction extends _Ptr {
   /**
-  * @returns {Promise<InfoAction>}
+  * @returns {InfoAction}
   */
-  static new(): Promise<InfoAction> {
+  static new(): InfoAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -4926,108 +4926,108 @@ export abstract class InfoAction extends _Ptr {
 
 export abstract class Int extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Int> {
+  static fromBytes(bytes: Uint8Array): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static fromHex(hexStr: string): Promise<Int> {
+  static fromHex(hexStr: string): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static fromJson(json: string): Promise<Int> {
+  static fromJson(json: string): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} x
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static new(x: BigNum): Promise<Int> {
+  static new(x: BigNum): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} x
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static newNegative(x: BigNum): Promise<Int> {
+  static newNegative(x: BigNum): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {number} x
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static newI32(x: number): Promise<Int> {
+  static newI32(x: number): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isPositive(): Promise<boolean>;
+  abstract isPositive(): boolean;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract asPositive(): Promise<Optional<BigNum>>;
+  abstract asPositive(): Optional<BigNum>;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract asNegative(): Promise<Optional<BigNum>>;
+  abstract asNegative(): Optional<BigNum>;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract asI32(): Promise<Optional<number>>;
+  abstract asI32(): Optional<number>;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract asI32OrNothing(): Promise<Optional<number>>;
+  abstract asI32OrNothing(): Optional<number>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract asI32OrFail(): Promise<number>;
+  abstract asI32OrFail(): number;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toStr(): Promise<string>;
+  abstract toStr(): string;
 
   /**
   * @param {string} string
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  static fromStr(string: string): Promise<Int> {
+  static fromStr(string: string): Int {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5035,125 +5035,125 @@ export abstract class Int extends _Ptr {
 
 export abstract class Ipv4 extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Ipv4>}
+  * @returns {Ipv4}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Ipv4> {
+  static fromBytes(bytes: Uint8Array): Ipv4 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Ipv4>}
+  * @returns {Ipv4}
   */
-  static fromHex(hexStr: string): Promise<Ipv4> {
+  static fromHex(hexStr: string): Ipv4 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Ipv4>}
+  * @returns {Ipv4}
   */
-  static fromJson(json: string): Promise<Ipv4> {
+  static fromJson(json: string): Ipv4 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} data
-  * @returns {Promise<Ipv4>}
+  * @returns {Ipv4}
   */
-  static new(data: Uint8Array): Promise<Ipv4> {
+  static new(data: Uint8Array): Ipv4 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract ip(): Promise<Uint8Array>;
+  abstract ip(): Uint8Array;
 
 }
 
 export abstract class Ipv6 extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Ipv6>}
+  * @returns {Ipv6}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Ipv6> {
+  static fromBytes(bytes: Uint8Array): Ipv6 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Ipv6>}
+  * @returns {Ipv6}
   */
-  static fromHex(hexStr: string): Promise<Ipv6> {
+  static fromHex(hexStr: string): Ipv6 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Ipv6>}
+  * @returns {Ipv6}
   */
-  static fromJson(json: string): Promise<Ipv6> {
+  static fromJson(json: string): Ipv6 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} data
-  * @returns {Promise<Ipv6>}
+  * @returns {Ipv6}
   */
-  static new(data: Uint8Array): Promise<Ipv6> {
+  static new(data: Uint8Array): Ipv6 {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract ip(): Promise<Uint8Array>;
+  abstract ip(): Uint8Array;
 
 }
 
 export abstract class KESSignature extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<KESSignature>}
+  * @returns {KESSignature}
   */
-  static fromBytes(bytes: Uint8Array): Promise<KESSignature> {
+  static fromBytes(bytes: Uint8Array): KESSignature {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5162,41 +5162,41 @@ export abstract class KESSignature extends _Ptr {
 export abstract class KESVKey extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<KESVKey>}
+  * @returns {KESVKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<KESVKey> {
+  static fromBytes(bytes: Uint8Array): KESVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<KESVKey>}
+  * @returns {KESVKey}
   */
-  static fromBech32(bechStr: string): Promise<KESVKey> {
+  static fromBech32(bechStr: string): KESVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<KESVKey>}
+  * @returns {KESVKey}
   */
-  static fromHex(hex: string): Promise<KESVKey> {
+  static fromHex(hex: string): KESVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5204,100 +5204,100 @@ export abstract class KESVKey extends _Ptr {
 
 export abstract class Language extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Language> {
+  static fromBytes(bytes: Uint8Array): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static fromHex(hexStr: string): Promise<Language> {
+  static fromHex(hexStr: string): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static fromJson(json: string): Promise<Language> {
+  static fromJson(json: string): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static newPlutusV1(): Promise<Language> {
+  static newPlutusV1(): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static newPlutusV2(): Promise<Language> {
+  static newPlutusV2(): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  static newPlutusV3(): Promise<Language> {
+  static newPlutusV3(): Language {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<LanguageKind>}
+  * @returns {LanguageKind}
   */
-  abstract kind(): Promise<LanguageKind>;
+  abstract kind(): LanguageKind;
 
 }
 
 export abstract class Languages extends _Ptr {
   /**
-  * @returns {Promise<Languages>}
+  * @returns {Languages}
   */
-  static new(): Promise<Languages> {
+  static new(): Languages {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  abstract get(index: number): Promise<Language>;
+  abstract get(index: number): Language;
 
   /**
   * @param {Language} elem
   */
-  abstract add(elem: Language): Promise<void>;
+  abstract add(elem: Language): void;
 
   /**
-  * @returns {Promise<Languages>}
+  * @returns {Languages}
   */
-  static list(): Promise<Languages> {
+  static list(): Languages {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5306,41 +5306,41 @@ export abstract class Languages extends _Ptr {
 export abstract class LegacyDaedalusPrivateKey extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<LegacyDaedalusPrivateKey>}
+  * @returns {LegacyDaedalusPrivateKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<LegacyDaedalusPrivateKey> {
+  static fromBytes(bytes: Uint8Array): LegacyDaedalusPrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract chaincode(): Promise<Uint8Array>;
+  abstract chaincode(): Uint8Array;
 
 }
 
 export abstract class LinearFee extends _Ptr {
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract constant(): Promise<BigNum>;
+  abstract constant(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coefficient(): Promise<BigNum>;
+  abstract coefficient(): BigNum;
 
   /**
   * @param {BigNum} coefficient
   * @param {BigNum} constant
-  * @returns {Promise<LinearFee>}
+  * @returns {LinearFee}
   */
-  static new(coefficient: BigNum, constant: BigNum): Promise<LinearFee> {
+  static new(coefficient: BigNum, constant: BigNum): LinearFee {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5348,92 +5348,92 @@ export abstract class LinearFee extends _Ptr {
 
 export abstract class MIRToStakeCredentials extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MIRToStakeCredentials>}
+  * @returns {MIRToStakeCredentials}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MIRToStakeCredentials> {
+  static fromBytes(bytes: Uint8Array): MIRToStakeCredentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MIRToStakeCredentials>}
+  * @returns {MIRToStakeCredentials}
   */
-  static fromHex(hexStr: string): Promise<MIRToStakeCredentials> {
+  static fromHex(hexStr: string): MIRToStakeCredentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MIRToStakeCredentials>}
+  * @returns {MIRToStakeCredentials}
   */
-  static fromJson(json: string): Promise<MIRToStakeCredentials> {
+  static fromJson(json: string): MIRToStakeCredentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MIRToStakeCredentials>}
+  * @returns {MIRToStakeCredentials}
   */
-  static new(): Promise<MIRToStakeCredentials> {
+  static new(): MIRToStakeCredentials {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {Credential} cred
   * @param {Int} delta
-  * @returns {Promise<Optional<Int>>}
+  * @returns {Optional<Int>}
   */
-  abstract insert(cred: Credential, delta: Int): Promise<Optional<Int>>;
+  abstract insert(cred: Credential, delta: Int): Optional<Int>;
 
   /**
   * @param {Credential} cred
-  * @returns {Promise<Optional<Int>>}
+  * @returns {Optional<Int>}
   */
-  abstract get(cred: Credential): Promise<Optional<Int>>;
+  abstract get(cred: Credential): Optional<Int>;
 
   /**
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  abstract keys(): Promise<Credentials>;
+  abstract keys(): Credentials;
 
 }
 
 export abstract class MalformedAddress extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract originalBytes(): Promise<Uint8Array>;
+  abstract originalBytes(): Uint8Array;
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<MalformedAddress>>}
+  * @returns {Optional<MalformedAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<MalformedAddress>> {
+  static fromAddress(addr: Address): Optional<MalformedAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5441,285 +5441,285 @@ export abstract class MalformedAddress extends _Ptr {
 
 export abstract class MetadataList extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MetadataList>}
+  * @returns {MetadataList}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MetadataList> {
+  static fromBytes(bytes: Uint8Array): MetadataList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MetadataList>}
+  * @returns {MetadataList}
   */
-  static fromHex(hexStr: string): Promise<MetadataList> {
+  static fromHex(hexStr: string): MetadataList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MetadataList>}
+  * @returns {MetadataList}
   */
-  static new(): Promise<MetadataList> {
+  static new(): MetadataList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  abstract get(index: number): Promise<TransactionMetadatum>;
+  abstract get(index: number): TransactionMetadatum;
 
   /**
   * @param {TransactionMetadatum} elem
   */
-  abstract add(elem: TransactionMetadatum): Promise<void>;
+  abstract add(elem: TransactionMetadatum): void;
 
 }
 
 export abstract class MetadataMap extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MetadataMap>}
+  * @returns {MetadataMap}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MetadataMap> {
+  static fromBytes(bytes: Uint8Array): MetadataMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MetadataMap>}
+  * @returns {MetadataMap}
   */
-  static fromHex(hexStr: string): Promise<MetadataMap> {
+  static fromHex(hexStr: string): MetadataMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MetadataMap>}
+  * @returns {MetadataMap}
   */
-  static new(): Promise<MetadataMap> {
+  static new(): MetadataMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {TransactionMetadatum} key
   * @param {TransactionMetadatum} value
-  * @returns {Promise<Optional<TransactionMetadatum>>}
+  * @returns {Optional<TransactionMetadatum>}
   */
-  abstract insert(key: TransactionMetadatum, value: TransactionMetadatum): Promise<Optional<TransactionMetadatum>>;
+  abstract insert(key: TransactionMetadatum, value: TransactionMetadatum): Optional<TransactionMetadatum>;
 
   /**
   * @param {string} key
   * @param {TransactionMetadatum} value
-  * @returns {Promise<Optional<TransactionMetadatum>>}
+  * @returns {Optional<TransactionMetadatum>}
   */
-  abstract insertStr(key: string, value: TransactionMetadatum): Promise<Optional<TransactionMetadatum>>;
+  abstract insertStr(key: string, value: TransactionMetadatum): Optional<TransactionMetadatum>;
 
   /**
   * @param {number} key
   * @param {TransactionMetadatum} value
-  * @returns {Promise<Optional<TransactionMetadatum>>}
+  * @returns {Optional<TransactionMetadatum>}
   */
-  abstract insertI32(key: number, value: TransactionMetadatum): Promise<Optional<TransactionMetadatum>>;
+  abstract insertI32(key: number, value: TransactionMetadatum): Optional<TransactionMetadatum>;
 
   /**
   * @param {TransactionMetadatum} key
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  abstract get(key: TransactionMetadatum): Promise<TransactionMetadatum>;
+  abstract get(key: TransactionMetadatum): TransactionMetadatum;
 
   /**
   * @param {string} key
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  abstract getStr(key: string): Promise<TransactionMetadatum>;
+  abstract getStr(key: string): TransactionMetadatum;
 
   /**
   * @param {number} key
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  abstract getI32(key: number): Promise<TransactionMetadatum>;
+  abstract getI32(key: number): TransactionMetadatum;
 
   /**
   * @param {TransactionMetadatum} key
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract has(key: TransactionMetadatum): Promise<boolean>;
+  abstract has(key: TransactionMetadatum): boolean;
 
   /**
-  * @returns {Promise<MetadataList>}
+  * @returns {MetadataList}
   */
-  abstract keys(): Promise<MetadataList>;
+  abstract keys(): MetadataList;
 
 }
 
 export abstract class Mint extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Mint> {
+  static fromBytes(bytes: Uint8Array): Mint {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  static fromHex(hexStr: string): Promise<Mint> {
+  static fromHex(hexStr: string): Mint {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  static fromJson(json: string): Promise<Mint> {
+  static fromJson(json: string): Mint {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  static new(): Promise<Mint> {
+  static new(): Mint {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptHash} key
   * @param {MintAssets} value
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  static newFromEntry(key: ScriptHash, value: MintAssets): Promise<Mint> {
+  static newFromEntry(key: ScriptHash, value: MintAssets): Mint {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {ScriptHash} key
   * @param {MintAssets} value
-  * @returns {Promise<Optional<MintAssets>>}
+  * @returns {Optional<MintAssets>}
   */
-  abstract insert(key: ScriptHash, value: MintAssets): Promise<Optional<MintAssets>>;
+  abstract insert(key: ScriptHash, value: MintAssets): Optional<MintAssets>;
 
   /**
   * @param {ScriptHash} key
-  * @returns {Promise<Optional<MintsAssets>>}
+  * @returns {Optional<MintsAssets>}
   */
-  abstract get(key: ScriptHash): Promise<Optional<MintsAssets>>;
+  abstract get(key: ScriptHash): Optional<MintsAssets>;
 
   /**
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  abstract keys(): Promise<ScriptHashes>;
+  abstract keys(): ScriptHashes;
 
   /**
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  abstract asPositiveMultiasset(): Promise<MultiAsset>;
+  abstract asPositiveMultiasset(): MultiAsset;
 
   /**
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  abstract asNegativeMultiasset(): Promise<MultiAsset>;
+  abstract asNegativeMultiasset(): MultiAsset;
 
 }
 
 export abstract class MintAssets extends _Ptr {
   /**
-  * @returns {Promise<MintAssets>}
+  * @returns {MintAssets}
   */
-  static new(): Promise<MintAssets> {
+  static new(): MintAssets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {AssetName} key
   * @param {Int} value
-  * @returns {Promise<MintAssets>}
+  * @returns {MintAssets}
   */
-  static newFromEntry(key: AssetName, value: Int): Promise<MintAssets> {
+  static newFromEntry(key: AssetName, value: Int): MintAssets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {AssetName} key
   * @param {Int} value
-  * @returns {Promise<Optional<Int>>}
+  * @returns {Optional<Int>}
   */
-  abstract insert(key: AssetName, value: Int): Promise<Optional<Int>>;
+  abstract insert(key: AssetName, value: Int): Optional<Int>;
 
   /**
   * @param {AssetName} key
-  * @returns {Promise<Optional<Int>>}
+  * @returns {Optional<Int>}
   */
-  abstract get(key: AssetName): Promise<Optional<Int>>;
+  abstract get(key: AssetName): Optional<Int>;
 
   /**
-  * @returns {Promise<AssetNames>}
+  * @returns {AssetNames}
   */
-  abstract keys(): Promise<AssetNames>;
+  abstract keys(): AssetNames;
 
 }
 
 export abstract class MintBuilder extends _Ptr {
   /**
-  * @returns {Promise<MintBuilder>}
+  * @returns {MintBuilder}
   */
-  static new(): Promise<MintBuilder> {
+  static new(): MintBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5727,70 +5727,70 @@ export abstract class MintBuilder extends _Ptr {
   * @param {MintWitness} mint
   * @param {AssetName} assetName
   * @param {Int} amount
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addAsset(mint: MintWitness, assetName: AssetName, amount: Int): Promise<void>;
+  abstract addAsset(mint: MintWitness, assetName: AssetName, amount: Int): void;
 
   /**
   * @param {MintWitness} mint
   * @param {AssetName} assetName
   * @param {Int} amount
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setAsset(mint: MintWitness, assetName: AssetName, amount: Int): Promise<void>;
+  abstract setAsset(mint: MintWitness, assetName: AssetName, amount: Int): void;
 
   /**
-  * @returns {Promise<Mint>}
+  * @returns {Mint}
   */
-  abstract build(): Promise<Mint>;
+  abstract build(): Mint;
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract getNativeScripts(): Promise<NativeScripts>;
+  abstract getNativeScripts(): NativeScripts;
 
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  abstract getPlutusWitnesses(): Promise<PlutusWitnesses>;
+  abstract getPlutusWitnesses(): PlutusWitnesses;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<Redeemers>}
+  * @returns {Redeemers}
   */
-  abstract getRedeemers(): Promise<Redeemers>;
+  abstract getRedeemers(): Redeemers;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasPlutusScripts(): Promise<boolean>;
+  abstract hasPlutusScripts(): boolean;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasNativeScripts(): Promise<boolean>;
+  abstract hasNativeScripts(): boolean;
 
 }
 
 export abstract class MintWitness extends _Ptr {
   /**
   * @param {NativeScriptSource} nativeScript
-  * @returns {Promise<MintWitness>}
+  * @returns {MintWitness}
   */
-  static newNativeScript(nativeScript: NativeScriptSource): Promise<MintWitness> {
+  static newNativeScript(nativeScript: NativeScriptSource): MintWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusScriptSource} plutusScript
   * @param {Redeemer} redeemer
-  * @returns {Promise<MintWitness>}
+  * @returns {MintWitness}
   */
-  static newPlutusScript(plutusScript: PlutusScriptSource, redeemer: Redeemer): Promise<MintWitness> {
+  static newPlutusScript(plutusScript: PlutusScriptSource, redeemer: Redeemer): MintWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5798,173 +5798,173 @@ export abstract class MintWitness extends _Ptr {
 
 export abstract class MintsAssets extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MintsAssets>}
+  * @returns {MintsAssets}
   */
-  static fromJson(json: string): Promise<MintsAssets> {
+  static fromJson(json: string): MintsAssets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MintsAssets>}
+  * @returns {MintsAssets}
   */
-  static new(): Promise<MintsAssets> {
+  static new(): MintsAssets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MintAssets} mintAssets
   */
-  abstract add(mintAssets: MintAssets): Promise<void>;
+  abstract add(mintAssets: MintAssets): void;
 
   /**
   * @param {number} index
-  * @returns {Promise<Optional<MintAssets>>}
+  * @returns {Optional<MintAssets>}
   */
-  abstract get(index: number): Promise<Optional<MintAssets>>;
+  abstract get(index: number): Optional<MintAssets>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
 }
 
 export abstract class MoveInstantaneousReward extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MoveInstantaneousReward> {
+  static fromBytes(bytes: Uint8Array): MoveInstantaneousReward {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  static fromHex(hexStr: string): Promise<MoveInstantaneousReward> {
+  static fromHex(hexStr: string): MoveInstantaneousReward {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  static fromJson(json: string): Promise<MoveInstantaneousReward> {
+  static fromJson(json: string): MoveInstantaneousReward {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MIRPot} pot
   * @param {BigNum} amount
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  static newToOtherPot(pot: MIRPot, amount: BigNum): Promise<MoveInstantaneousReward> {
+  static newToOtherPot(pot: MIRPot, amount: BigNum): MoveInstantaneousReward {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MIRPot} pot
   * @param {MIRToStakeCredentials} amounts
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  static newToStakeCreds(pot: MIRPot, amounts: MIRToStakeCredentials): Promise<MoveInstantaneousReward> {
+  static newToStakeCreds(pot: MIRPot, amounts: MIRToStakeCredentials): MoveInstantaneousReward {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MIRPot>}
+  * @returns {MIRPot}
   */
-  abstract pot(): Promise<MIRPot>;
+  abstract pot(): MIRPot;
 
   /**
-  * @returns {Promise<MIRKind>}
+  * @returns {MIRKind}
   */
-  abstract kind(): Promise<MIRKind>;
+  abstract kind(): MIRKind;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract asToOtherPot(): Promise<Optional<BigNum>>;
+  abstract asToOtherPot(): Optional<BigNum>;
 
   /**
-  * @returns {Promise<Optional<MIRToStakeCredentials>>}
+  * @returns {Optional<MIRToStakeCredentials>}
   */
-  abstract asToStakeCreds(): Promise<Optional<MIRToStakeCredentials>>;
+  abstract asToStakeCreds(): Optional<MIRToStakeCredentials>;
 
 }
 
 export abstract class MoveInstantaneousRewardsCert extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MoveInstantaneousRewardsCert>}
+  * @returns {MoveInstantaneousRewardsCert}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MoveInstantaneousRewardsCert> {
+  static fromBytes(bytes: Uint8Array): MoveInstantaneousRewardsCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MoveInstantaneousRewardsCert>}
+  * @returns {MoveInstantaneousRewardsCert}
   */
-  static fromHex(hexStr: string): Promise<MoveInstantaneousRewardsCert> {
+  static fromHex(hexStr: string): MoveInstantaneousRewardsCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MoveInstantaneousRewardsCert>}
+  * @returns {MoveInstantaneousRewardsCert}
   */
-  static fromJson(json: string): Promise<MoveInstantaneousRewardsCert> {
+  static fromJson(json: string): MoveInstantaneousRewardsCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MoveInstantaneousReward>}
+  * @returns {MoveInstantaneousReward}
   */
-  abstract moveInstantaneousReward(): Promise<MoveInstantaneousReward>;
+  abstract moveInstantaneousReward(): MoveInstantaneousReward;
 
   /**
   * @param {MoveInstantaneousReward} moveInstantaneousReward
-  * @returns {Promise<MoveInstantaneousRewardsCert>}
+  * @returns {MoveInstantaneousRewardsCert}
   */
-  static new(moveInstantaneousReward: MoveInstantaneousReward): Promise<MoveInstantaneousRewardsCert> {
+  static new(moveInstantaneousReward: MoveInstantaneousReward): MoveInstantaneousRewardsCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -5972,147 +5972,147 @@ export abstract class MoveInstantaneousRewardsCert extends _Ptr {
 
 export abstract class MultiAsset extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MultiAsset> {
+  static fromBytes(bytes: Uint8Array): MultiAsset {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  static fromHex(hexStr: string): Promise<MultiAsset> {
+  static fromHex(hexStr: string): MultiAsset {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  static fromJson(json: string): Promise<MultiAsset> {
+  static fromJson(json: string): MultiAsset {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  static new(): Promise<MultiAsset> {
+  static new(): MultiAsset {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {ScriptHash} policyId
   * @param {Assets} assets
-  * @returns {Promise<Optional<Assets>>}
+  * @returns {Optional<Assets>}
   */
-  abstract insert(policyId: ScriptHash, assets: Assets): Promise<Optional<Assets>>;
+  abstract insert(policyId: ScriptHash, assets: Assets): Optional<Assets>;
 
   /**
   * @param {ScriptHash} policyId
-  * @returns {Promise<Optional<Assets>>}
+  * @returns {Optional<Assets>}
   */
-  abstract get(policyId: ScriptHash): Promise<Optional<Assets>>;
+  abstract get(policyId: ScriptHash): Optional<Assets>;
 
   /**
   * @param {ScriptHash} policyId
   * @param {AssetName} assetName
   * @param {BigNum} value
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract setAsset(policyId: ScriptHash, assetName: AssetName, value: BigNum): Promise<Optional<BigNum>>;
+  abstract setAsset(policyId: ScriptHash, assetName: AssetName, value: BigNum): Optional<BigNum>;
 
   /**
   * @param {ScriptHash} policyId
   * @param {AssetName} assetName
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract getAsset(policyId: ScriptHash, assetName: AssetName): Promise<BigNum>;
+  abstract getAsset(policyId: ScriptHash, assetName: AssetName): BigNum;
 
   /**
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  abstract keys(): Promise<ScriptHashes>;
+  abstract keys(): ScriptHashes;
 
   /**
   * @param {MultiAsset} rhsMa
-  * @returns {Promise<MultiAsset>}
+  * @returns {MultiAsset}
   */
-  abstract sub(rhsMa: MultiAsset): Promise<MultiAsset>;
+  abstract sub(rhsMa: MultiAsset): MultiAsset;
 
 }
 
 export abstract class MultiHostName extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<MultiHostName>}
+  * @returns {MultiHostName}
   */
-  static fromBytes(bytes: Uint8Array): Promise<MultiHostName> {
+  static fromBytes(bytes: Uint8Array): MultiHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<MultiHostName>}
+  * @returns {MultiHostName}
   */
-  static fromHex(hexStr: string): Promise<MultiHostName> {
+  static fromHex(hexStr: string): MultiHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<MultiHostName>}
+  * @returns {MultiHostName}
   */
-  static fromJson(json: string): Promise<MultiHostName> {
+  static fromJson(json: string): MultiHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<DNSRecordSRV>}
+  * @returns {DNSRecordSRV}
   */
-  abstract dnsName(): Promise<DNSRecordSRV>;
+  abstract dnsName(): DNSRecordSRV;
 
   /**
   * @param {DNSRecordSRV} dnsName
-  * @returns {Promise<MultiHostName>}
+  * @returns {MultiHostName}
   */
-  static new(dnsName: DNSRecordSRV): Promise<MultiHostName> {
+  static new(dnsName: DNSRecordSRV): MultiHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6120,145 +6120,145 @@ export abstract class MultiHostName extends _Ptr {
 
 export abstract class NativeScript extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static fromBytes(bytes: Uint8Array): Promise<NativeScript> {
+  static fromBytes(bytes: Uint8Array): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static fromHex(hexStr: string): Promise<NativeScript> {
+  static fromHex(hexStr: string): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static fromJson(json: string): Promise<NativeScript> {
+  static fromJson(json: string): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  abstract hash(): Promise<ScriptHash>;
+  abstract hash(): ScriptHash;
 
   /**
   * @param {ScriptPubkey} scriptPubkey
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newScriptPubkey(scriptPubkey: ScriptPubkey): Promise<NativeScript> {
+  static newScriptPubkey(scriptPubkey: ScriptPubkey): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptAll} scriptAll
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newScriptAll(scriptAll: ScriptAll): Promise<NativeScript> {
+  static newScriptAll(scriptAll: ScriptAll): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptAny} scriptAny
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newScriptAny(scriptAny: ScriptAny): Promise<NativeScript> {
+  static newScriptAny(scriptAny: ScriptAny): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ScriptNOfK} scriptNOfK
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newScriptNOfK(scriptNOfK: ScriptNOfK): Promise<NativeScript> {
+  static newScriptNOfK(scriptNOfK: ScriptNOfK): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TimelockStart} timelockStart
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newTimelockStart(timelockStart: TimelockStart): Promise<NativeScript> {
+  static newTimelockStart(timelockStart: TimelockStart): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TimelockExpiry} timelockExpiry
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  static newTimelockExpiry(timelockExpiry: TimelockExpiry): Promise<NativeScript> {
+  static newTimelockExpiry(timelockExpiry: TimelockExpiry): NativeScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NativeScriptKind>}
+  * @returns {NativeScriptKind}
   */
-  abstract kind(): Promise<NativeScriptKind>;
+  abstract kind(): NativeScriptKind;
 
   /**
-  * @returns {Promise<Optional<ScriptPubkey>>}
+  * @returns {Optional<ScriptPubkey>}
   */
-  abstract asScriptPubkey(): Promise<Optional<ScriptPubkey>>;
+  abstract asScriptPubkey(): Optional<ScriptPubkey>;
 
   /**
-  * @returns {Promise<Optional<ScriptAll>>}
+  * @returns {Optional<ScriptAll>}
   */
-  abstract asScriptAll(): Promise<Optional<ScriptAll>>;
+  abstract asScriptAll(): Optional<ScriptAll>;
 
   /**
-  * @returns {Promise<Optional<ScriptAny>>}
+  * @returns {Optional<ScriptAny>}
   */
-  abstract asScriptAny(): Promise<Optional<ScriptAny>>;
+  abstract asScriptAny(): Optional<ScriptAny>;
 
   /**
-  * @returns {Promise<Optional<ScriptNOfK>>}
+  * @returns {Optional<ScriptNOfK>}
   */
-  abstract asScriptNOfK(): Promise<Optional<ScriptNOfK>>;
+  abstract asScriptNOfK(): Optional<ScriptNOfK>;
 
   /**
-  * @returns {Promise<Optional<TimelockStart>>}
+  * @returns {Optional<TimelockStart>}
   */
-  abstract asTimelockStart(): Promise<Optional<TimelockStart>>;
+  abstract asTimelockStart(): Optional<TimelockStart>;
 
   /**
-  * @returns {Promise<Optional<TimelockExpiry>>}
+  * @returns {Optional<TimelockExpiry>}
   */
-  abstract asTimelockExpiry(): Promise<Optional<TimelockExpiry>>;
+  abstract asTimelockExpiry(): Optional<TimelockExpiry>;
 
   /**
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  abstract getRequiredSigners(): Promise<Ed25519KeyHashes>;
+  abstract getRequiredSigners(): Ed25519KeyHashes;
 
 }
 
 export abstract class NativeScriptSource extends _Ptr {
   /**
   * @param {NativeScript} script
-  * @returns {Promise<NativeScriptSource>}
+  * @returns {NativeScriptSource}
   */
-  static new(script: NativeScript): Promise<NativeScriptSource> {
+  static new(script: NativeScript): NativeScriptSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6266,84 +6266,84 @@ export abstract class NativeScriptSource extends _Ptr {
   * @param {ScriptHash} scriptHash
   * @param {TransactionInput} input
   * @param {number} scriptSize
-  * @returns {Promise<NativeScriptSource>}
+  * @returns {NativeScriptSource}
   */
-  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, scriptSize: number): Promise<NativeScriptSource> {
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, scriptSize: number): NativeScriptSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Ed25519KeyHashes} keyHashes
   */
-  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): Promise<void>;
+  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract getRefScriptSize(): Promise<Optional<number>>;
+  abstract getRefScriptSize(): Optional<number>;
 
 }
 
 export abstract class NativeScripts extends _Ptr {
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  static new(): Promise<NativeScripts> {
+  static new(): NativeScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<NativeScript>}
+  * @returns {NativeScript}
   */
-  abstract get(index: number): Promise<NativeScript>;
+  abstract get(index: number): NativeScript;
 
   /**
   * @param {NativeScript} elem
   */
-  abstract add(elem: NativeScript): Promise<void>;
+  abstract add(elem: NativeScript): void;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  static fromBytes(bytes: Uint8Array): Promise<NativeScripts> {
+  static fromBytes(bytes: Uint8Array): NativeScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  static fromHex(hexStr: string): Promise<NativeScripts> {
+  static fromHex(hexStr: string): NativeScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  static fromJson(json: string): Promise<NativeScripts> {
+  static fromJson(json: string): NativeScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6351,62 +6351,62 @@ export abstract class NativeScripts extends _Ptr {
 
 export abstract class NetworkId extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<NetworkId>}
+  * @returns {NetworkId}
   */
-  static fromBytes(bytes: Uint8Array): Promise<NetworkId> {
+  static fromBytes(bytes: Uint8Array): NetworkId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<NetworkId>}
+  * @returns {NetworkId}
   */
-  static fromHex(hexStr: string): Promise<NetworkId> {
+  static fromHex(hexStr: string): NetworkId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<NetworkId>}
+  * @returns {NetworkId}
   */
-  static fromJson(json: string): Promise<NetworkId> {
+  static fromJson(json: string): NetworkId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NetworkId>}
+  * @returns {NetworkId}
   */
-  static testnet(): Promise<NetworkId> {
+  static testnet(): NetworkId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NetworkId>}
+  * @returns {NetworkId}
   */
-  static mainnet(): Promise<NetworkId> {
+  static mainnet(): NetworkId {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NetworkIdKind>}
+  * @returns {NetworkIdKind}
   */
-  abstract kind(): Promise<NetworkIdKind>;
+  abstract kind(): NetworkIdKind;
 
 }
 
@@ -6414,40 +6414,40 @@ export abstract class NetworkInfo extends _Ptr {
   /**
   * @param {number} networkId
   * @param {number} protocolMagic
-  * @returns {Promise<NetworkInfo>}
+  * @returns {NetworkInfo}
   */
-  static new(networkId: number, protocolMagic: number): Promise<NetworkInfo> {
+  static new(networkId: number, protocolMagic: number): NetworkInfo {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract protocolMagic(): Promise<number>;
+  abstract protocolMagic(): number;
 
   /**
-  * @returns {Promise<NetworkInfo>}
+  * @returns {NetworkInfo}
   */
-  static testnetPreview(): Promise<NetworkInfo> {
+  static testnetPreview(): NetworkInfo {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NetworkInfo>}
+  * @returns {NetworkInfo}
   */
-  static testnetPreprod(): Promise<NetworkInfo> {
+  static testnetPreprod(): NetworkInfo {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NetworkInfo>}
+  * @returns {NetworkInfo}
   */
-  static mainnet(): Promise<NetworkInfo> {
+  static mainnet(): NetworkInfo {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6455,135 +6455,135 @@ export abstract class NetworkInfo extends _Ptr {
 
 export abstract class NewConstitutionAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<NewConstitutionAction>}
+  * @returns {NewConstitutionAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<NewConstitutionAction> {
+  static fromBytes(bytes: Uint8Array): NewConstitutionAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<NewConstitutionAction>}
+  * @returns {NewConstitutionAction}
   */
-  static fromHex(hexStr: string): Promise<NewConstitutionAction> {
+  static fromHex(hexStr: string): NewConstitutionAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<NewConstitutionAction>}
+  * @returns {NewConstitutionAction}
   */
-  static fromJson(json: string): Promise<NewConstitutionAction> {
+  static fromJson(json: string): NewConstitutionAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract govActionId(): Promise<Optional<GovernanceActionId>>;
+  abstract govActionId(): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<Constitution>}
+  * @returns {Constitution}
   */
-  abstract constitution(): Promise<Constitution>;
+  abstract constitution(): Constitution;
 
   /**
   * @param {Constitution} constitution
-  * @returns {Promise<NewConstitutionAction>}
+  * @returns {NewConstitutionAction}
   */
-  static new(constitution: Constitution): Promise<NewConstitutionAction> {
+  static new(constitution: Constitution): NewConstitutionAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GovernanceActionId} govActionId
   * @param {Constitution} constitution
-  * @returns {Promise<NewConstitutionAction>}
+  * @returns {NewConstitutionAction}
   */
-  static newWithActionId(govActionId: GovernanceActionId, constitution: Constitution): Promise<NewConstitutionAction> {
+  static newWithActionId(govActionId: GovernanceActionId, constitution: Constitution): NewConstitutionAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptHash(): Promise<boolean>;
+  abstract hasScriptHash(): boolean;
 
 }
 
 export abstract class NoConfidenceAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<NoConfidenceAction>}
+  * @returns {NoConfidenceAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<NoConfidenceAction> {
+  static fromBytes(bytes: Uint8Array): NoConfidenceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<NoConfidenceAction>}
+  * @returns {NoConfidenceAction}
   */
-  static fromHex(hexStr: string): Promise<NoConfidenceAction> {
+  static fromHex(hexStr: string): NoConfidenceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<NoConfidenceAction>}
+  * @returns {NoConfidenceAction}
   */
-  static fromJson(json: string): Promise<NoConfidenceAction> {
+  static fromJson(json: string): NoConfidenceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract govActionId(): Promise<Optional<GovernanceActionId>>;
+  abstract govActionId(): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<NoConfidenceAction>}
+  * @returns {NoConfidenceAction}
   */
-  static new(): Promise<NoConfidenceAction> {
+  static new(): NoConfidenceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GovernanceActionId} govActionId
-  * @returns {Promise<NoConfidenceAction>}
+  * @returns {NoConfidenceAction}
   */
-  static newWithActionId(govActionId: GovernanceActionId): Promise<NoConfidenceAction> {
+  static newWithActionId(govActionId: GovernanceActionId): NoConfidenceAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6591,134 +6591,134 @@ export abstract class NoConfidenceAction extends _Ptr {
 
 export abstract class Nonce extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Nonce>}
+  * @returns {Nonce}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Nonce> {
+  static fromBytes(bytes: Uint8Array): Nonce {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Nonce>}
+  * @returns {Nonce}
   */
-  static fromHex(hexStr: string): Promise<Nonce> {
+  static fromHex(hexStr: string): Nonce {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Nonce>}
+  * @returns {Nonce}
   */
-  static fromJson(json: string): Promise<Nonce> {
+  static fromJson(json: string): Nonce {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Nonce>}
+  * @returns {Nonce}
   */
-  static newIdentity(): Promise<Nonce> {
+  static newIdentity(): Nonce {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} hash
-  * @returns {Promise<Nonce>}
+  * @returns {Nonce}
   */
-  static newFromHash(hash: Uint8Array): Promise<Nonce> {
+  static newFromHash(hash: Uint8Array): Nonce {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<Uint8Array>>}
+  * @returns {Optional<Uint8Array>}
   */
-  abstract getHash(): Promise<Optional<Uint8Array>>;
+  abstract getHash(): Optional<Uint8Array>;
 
 }
 
 export abstract class OperationalCert extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<OperationalCert>}
+  * @returns {OperationalCert}
   */
-  static fromBytes(bytes: Uint8Array): Promise<OperationalCert> {
+  static fromBytes(bytes: Uint8Array): OperationalCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<OperationalCert>}
+  * @returns {OperationalCert}
   */
-  static fromHex(hexStr: string): Promise<OperationalCert> {
+  static fromHex(hexStr: string): OperationalCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<OperationalCert>}
+  * @returns {OperationalCert}
   */
-  static fromJson(json: string): Promise<OperationalCert> {
+  static fromJson(json: string): OperationalCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<KESVKey>}
+  * @returns {KESVKey}
   */
-  abstract hotVkey(): Promise<KESVKey>;
+  abstract hotVkey(): KESVKey;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract sequenceNumber(): Promise<number>;
+  abstract sequenceNumber(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract kesPeriod(): Promise<number>;
+  abstract kesPeriod(): number;
 
   /**
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  abstract sigma(): Promise<Ed25519Signature>;
+  abstract sigma(): Ed25519Signature;
 
   /**
   * @param {KESVKey} hotVkey
   * @param {number} sequenceNumber
   * @param {number} kesPeriod
   * @param {Ed25519Signature} sigma
-  * @returns {Promise<OperationalCert>}
+  * @returns {OperationalCert}
   */
-  static new(hotVkey: KESVKey, sequenceNumber: number, kesPeriod: number, sigma: Ed25519Signature): Promise<OperationalCert> {
+  static new(hotVkey: KESVKey, sequenceNumber: number, kesPeriod: number, sigma: Ed25519Signature): OperationalCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6727,120 +6727,120 @@ export abstract class OperationalCert extends _Ptr {
 export abstract class OutputDatum extends _Ptr {
   /**
   * @param {DataHash} dataHash
-  * @returns {Promise<OutputDatum>}
+  * @returns {OutputDatum}
   */
-  static newDataHash(dataHash: DataHash): Promise<OutputDatum> {
+  static newDataHash(dataHash: DataHash): OutputDatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusData} data
-  * @returns {Promise<OutputDatum>}
+  * @returns {OutputDatum}
   */
-  static newData(data: PlutusData): Promise<OutputDatum> {
+  static newData(data: PlutusData): OutputDatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<DataHash>>}
+  * @returns {Optional<DataHash>}
   */
-  abstract dataHash(): Promise<Optional<DataHash>>;
+  abstract dataHash(): Optional<DataHash>;
 
   /**
-  * @returns {Promise<Optional<PlutusData>>}
+  * @returns {Optional<PlutusData>}
   */
-  abstract data(): Promise<Optional<PlutusData>>;
+  abstract data(): Optional<PlutusData>;
 
 }
 
 export abstract class ParameterChangeAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ParameterChangeAction>}
+  * @returns {ParameterChangeAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ParameterChangeAction> {
+  static fromBytes(bytes: Uint8Array): ParameterChangeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ParameterChangeAction>}
+  * @returns {ParameterChangeAction}
   */
-  static fromHex(hexStr: string): Promise<ParameterChangeAction> {
+  static fromHex(hexStr: string): ParameterChangeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ParameterChangeAction>}
+  * @returns {ParameterChangeAction}
   */
-  static fromJson(json: string): Promise<ParameterChangeAction> {
+  static fromJson(json: string): ParameterChangeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract govActionId(): Promise<Optional<GovernanceActionId>>;
+  abstract govActionId(): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<ProtocolParamUpdate>}
+  * @returns {ProtocolParamUpdate}
   */
-  abstract protocolParamUpdates(): Promise<ProtocolParamUpdate>;
+  abstract protocolParamUpdates(): ProtocolParamUpdate;
 
   /**
-  * @returns {Promise<Optional<ScriptHash>>}
+  * @returns {Optional<ScriptHash>}
   */
-  abstract policyHash(): Promise<Optional<ScriptHash>>;
-
-  /**
-  * @param {ProtocolParamUpdate} protocolParamUpdates
-  * @returns {Promise<ParameterChangeAction>}
-  */
-  static new(protocolParamUpdates: ProtocolParamUpdate): Promise<ParameterChangeAction> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {GovernanceActionId} govActionId
-  * @param {ProtocolParamUpdate} protocolParamUpdates
-  * @returns {Promise<ParameterChangeAction>}
-  */
-  static newWithActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate): Promise<ParameterChangeAction> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
+  abstract policyHash(): Optional<ScriptHash>;
 
   /**
   * @param {ProtocolParamUpdate} protocolParamUpdates
-  * @param {ScriptHash} policyHash
-  * @returns {Promise<ParameterChangeAction>}
+  * @returns {ParameterChangeAction}
   */
-  static newWithPolicyHash(protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): Promise<ParameterChangeAction> {
+  static new(protocolParamUpdates: ProtocolParamUpdate): ParameterChangeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {GovernanceActionId} govActionId
   * @param {ProtocolParamUpdate} protocolParamUpdates
-  * @param {ScriptHash} policyHash
-  * @returns {Promise<ParameterChangeAction>}
+  * @returns {ParameterChangeAction}
   */
-  static newWithPolicyHashAndActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): Promise<ParameterChangeAction> {
+  static newWithActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate): ParameterChangeAction {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {ProtocolParamUpdate} protocolParamUpdates
+  * @param {ScriptHash} policyHash
+  * @returns {ParameterChangeAction}
+  */
+  static newWithPolicyHash(protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): ParameterChangeAction {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {GovernanceActionId} govActionId
+  * @param {ProtocolParamUpdate} protocolParamUpdates
+  * @param {ScriptHash} policyHash
+  * @returns {ParameterChangeAction}
+  */
+  static newWithPolicyHashAndActionId(govActionId: GovernanceActionId, protocolParamUpdates: ProtocolParamUpdate, policyHash: ScriptHash): ParameterChangeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -6848,403 +6848,403 @@ export abstract class ParameterChangeAction extends _Ptr {
 
 export abstract class PlutusData extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PlutusData> {
+  static fromBytes(bytes: Uint8Array): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static fromHex(hexStr: string): Promise<PlutusData> {
+  static fromHex(hexStr: string): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {ConstrPlutusData} constrPlutusData
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newConstrPlutusData(constrPlutusData: ConstrPlutusData): Promise<PlutusData> {
+  static newConstrPlutusData(constrPlutusData: ConstrPlutusData): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} alternative
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newEmptyConstrPlutusData(alternative: BigNum): Promise<PlutusData> {
+  static newEmptyConstrPlutusData(alternative: BigNum): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} alternative
   * @param {PlutusData} plutusData
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newSingleValueConstrPlutusData(alternative: BigNum, plutusData: PlutusData): Promise<PlutusData> {
+  static newSingleValueConstrPlutusData(alternative: BigNum, plutusData: PlutusData): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusMap} map
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newMap(map: PlutusMap): Promise<PlutusData> {
+  static newMap(map: PlutusMap): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusList} list
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newList(list: PlutusList): Promise<PlutusData> {
+  static newList(list: PlutusList): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigInt} integer
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newInteger(integer: BigInt): Promise<PlutusData> {
+  static newInteger(integer: BigInt): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static newBytes(bytes: Uint8Array): Promise<PlutusData> {
+  static newBytes(bytes: Uint8Array): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PlutusDataKind>}
+  * @returns {PlutusDataKind}
   */
-  abstract kind(): Promise<PlutusDataKind>;
+  abstract kind(): PlutusDataKind;
 
   /**
-  * @returns {Promise<Optional<ConstrPlutusData>>}
+  * @returns {Optional<ConstrPlutusData>}
   */
-  abstract asConstrPlutusData(): Promise<Optional<ConstrPlutusData>>;
+  abstract asConstrPlutusData(): Optional<ConstrPlutusData>;
 
   /**
-  * @returns {Promise<Optional<PlutusMap>>}
+  * @returns {Optional<PlutusMap>}
   */
-  abstract asMap(): Promise<Optional<PlutusMap>>;
+  abstract asMap(): Optional<PlutusMap>;
 
   /**
-  * @returns {Promise<Optional<PlutusList>>}
+  * @returns {Optional<PlutusList>}
   */
-  abstract asList(): Promise<Optional<PlutusList>>;
+  abstract asList(): Optional<PlutusList>;
 
   /**
-  * @returns {Promise<Optional<BigInt>>}
+  * @returns {Optional<BigInt>}
   */
-  abstract asInteger(): Promise<Optional<BigInt>>;
+  abstract asInteger(): Optional<BigInt>;
 
   /**
-  * @returns {Promise<Optional<Uint8Array>>}
+  * @returns {Optional<Uint8Array>}
   */
-  abstract asBytes(): Promise<Optional<Uint8Array>>;
+  abstract asBytes(): Optional<Uint8Array>;
 
   /**
   * @param {PlutusDatumSchema} schema
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(schema: PlutusDatumSchema): Promise<string>;
+  abstract toJson(schema: PlutusDatumSchema): string;
 
   /**
   * @param {string} json
   * @param {PlutusDatumSchema} schema
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static fromJson(json: string, schema: PlutusDatumSchema): Promise<PlutusData> {
+  static fromJson(json: string, schema: PlutusDatumSchema): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Address} address
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  static fromAddress(address: Address): Promise<PlutusData> {
+  static fromAddress(address: Address): PlutusData {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {NetworkInfo} network
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract asAddress(network: NetworkInfo): Promise<Address>;
+  abstract asAddress(network: NetworkInfo): Address;
 
 }
 
 export abstract class PlutusList extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusList>}
+  * @returns {PlutusList}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PlutusList> {
+  static fromBytes(bytes: Uint8Array): PlutusList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PlutusList>}
+  * @returns {PlutusList}
   */
-  static fromHex(hexStr: string): Promise<PlutusList> {
+  static fromHex(hexStr: string): PlutusList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PlutusList>}
+  * @returns {PlutusList}
   */
-  static new(): Promise<PlutusList> {
+  static new(): PlutusList {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  abstract get(index: number): Promise<PlutusData>;
+  abstract get(index: number): PlutusData;
 
   /**
   * @param {PlutusData} elem
   */
-  abstract add(elem: PlutusData): Promise<void>;
+  abstract add(elem: PlutusData): void;
 
 }
 
 export abstract class PlutusMap extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusMap>}
+  * @returns {PlutusMap}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PlutusMap> {
+  static fromBytes(bytes: Uint8Array): PlutusMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PlutusMap>}
+  * @returns {PlutusMap}
   */
-  static fromHex(hexStr: string): Promise<PlutusMap> {
+  static fromHex(hexStr: string): PlutusMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PlutusMap>}
+  * @returns {PlutusMap}
   */
-  static new(): Promise<PlutusMap> {
+  static new(): PlutusMap {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {PlutusData} key
   * @param {PlutusMapValues} values
-  * @returns {Promise<Optional<PlutusMapValues>>}
+  * @returns {Optional<PlutusMapValues>}
   */
-  abstract insert(key: PlutusData, values: PlutusMapValues): Promise<Optional<PlutusMapValues>>;
+  abstract insert(key: PlutusData, values: PlutusMapValues): Optional<PlutusMapValues>;
 
   /**
   * @param {PlutusData} key
-  * @returns {Promise<Optional<PlutusMapValues>>}
+  * @returns {Optional<PlutusMapValues>}
   */
-  abstract get(key: PlutusData): Promise<Optional<PlutusMapValues>>;
+  abstract get(key: PlutusData): Optional<PlutusMapValues>;
 
   /**
-  * @returns {Promise<PlutusList>}
+  * @returns {PlutusList}
   */
-  abstract keys(): Promise<PlutusList>;
+  abstract keys(): PlutusList;
 
 }
 
 export abstract class PlutusMapValues extends _Ptr {
   /**
-  * @returns {Promise<PlutusMapValues>}
+  * @returns {PlutusMapValues}
   */
-  static new(): Promise<PlutusMapValues> {
+  static new(): PlutusMapValues {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Optional<PlutusData>>}
+  * @returns {Optional<PlutusData>}
   */
-  abstract get(index: number): Promise<Optional<PlutusData>>;
+  abstract get(index: number): Optional<PlutusData>;
 
   /**
   * @param {PlutusData} elem
   */
-  abstract add(elem: PlutusData): Promise<void>;
+  abstract add(elem: PlutusData): void;
 
 }
 
 export abstract class PlutusScript extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PlutusScript> {
+  static fromBytes(bytes: Uint8Array): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static fromHex(hexStr: string): Promise<PlutusScript> {
+  static fromHex(hexStr: string): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static new(bytes: Uint8Array): Promise<PlutusScript> {
+  static new(bytes: Uint8Array): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static newV2(bytes: Uint8Array): Promise<PlutusScript> {
+  static newV2(bytes: Uint8Array): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static newV3(bytes: Uint8Array): Promise<PlutusScript> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {Uint8Array} bytes
-  * @param {Language} language
-  * @returns {Promise<PlutusScript>}
-  */
-  static newWithVersion(bytes: Uint8Array, language: Language): Promise<PlutusScript> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @returns {Promise<Uint8Array>}
-  */
-  abstract bytes(): Promise<Uint8Array>;
-
-  /**
-  * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
-  */
-  static fromBytesV2(bytes: Uint8Array): Promise<PlutusScript> {
-    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
-  }
-
-  /**
-  * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScript>}
-  */
-  static fromBytesV3(bytes: Uint8Array): Promise<PlutusScript> {
+  static newV3(bytes: Uint8Array): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
   * @param {Language} language
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static fromBytesWithVersion(bytes: Uint8Array, language: Language): Promise<PlutusScript> {
+  static newWithVersion(bytes: Uint8Array, language: Language): PlutusScript {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @returns {Uint8Array}
+  */
+  abstract bytes(): Uint8Array;
+
+  /**
+  * @param {Uint8Array} bytes
+  * @returns {PlutusScript}
+  */
+  static fromBytesV2(bytes: Uint8Array): PlutusScript {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Uint8Array} bytes
+  * @returns {PlutusScript}
+  */
+  static fromBytesV3(bytes: Uint8Array): PlutusScript {
+    throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
+  }
+
+  /**
+  * @param {Uint8Array} bytes
+  * @param {Language} language
+  * @returns {PlutusScript}
+  */
+  static fromBytesWithVersion(bytes: Uint8Array, language: Language): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} hexStr
   * @param {Language} language
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  static fromHexWithVersion(hexStr: string, language: Language): Promise<PlutusScript> {
+  static fromHexWithVersion(hexStr: string, language: Language): PlutusScript {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  abstract hash(): Promise<ScriptHash>;
+  abstract hash(): ScriptHash;
 
   /**
-  * @returns {Promise<Language>}
+  * @returns {Language}
   */
-  abstract languageVersion(): Promise<Language>;
+  abstract languageVersion(): Language;
 
 }
 
 export abstract class PlutusScriptSource extends _Ptr {
   /**
   * @param {PlutusScript} script
-  * @returns {Promise<PlutusScriptSource>}
+  * @returns {PlutusScriptSource}
   */
-  static new(script: PlutusScript): Promise<PlutusScriptSource> {
+  static new(script: PlutusScript): PlutusScriptSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7253,86 +7253,86 @@ export abstract class PlutusScriptSource extends _Ptr {
   * @param {TransactionInput} input
   * @param {Language} langVer
   * @param {number} scriptSize
-  * @returns {Promise<PlutusScriptSource>}
+  * @returns {PlutusScriptSource}
   */
-  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, langVer: Language, scriptSize: number): Promise<PlutusScriptSource> {
+  static newRefInput(scriptHash: ScriptHash, input: TransactionInput, langVer: Language, scriptSize: number): PlutusScriptSource {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Ed25519KeyHashes} keyHashes
   */
-  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): Promise<void>;
+  abstract setRequiredSigners(keyHashes: Ed25519KeyHashes): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract getRefScriptSize(): Promise<Optional<number>>;
+  abstract getRefScriptSize(): Optional<number>;
 
 }
 
 export abstract class PlutusScripts extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PlutusScripts>}
+  * @returns {PlutusScripts}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PlutusScripts> {
+  static fromBytes(bytes: Uint8Array): PlutusScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PlutusScripts>}
+  * @returns {PlutusScripts}
   */
-  static fromHex(hexStr: string): Promise<PlutusScripts> {
+  static fromHex(hexStr: string): PlutusScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PlutusScripts>}
+  * @returns {PlutusScripts}
   */
-  static fromJson(json: string): Promise<PlutusScripts> {
+  static fromJson(json: string): PlutusScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PlutusScripts>}
+  * @returns {PlutusScripts}
   */
-  static new(): Promise<PlutusScripts> {
+  static new(): PlutusScripts {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<PlutusScript>}
+  * @returns {PlutusScript}
   */
-  abstract get(index: number): Promise<PlutusScript>;
+  abstract get(index: number): PlutusScript;
 
   /**
   * @param {PlutusScript} elem
   */
-  abstract add(elem: PlutusScript): Promise<void>;
+  abstract add(elem: PlutusScript): void;
 
 }
 
@@ -7341,9 +7341,9 @@ export abstract class PlutusWitness extends _Ptr {
   * @param {PlutusScript} script
   * @param {PlutusData} datum
   * @param {Redeemer} redeemer
-  * @returns {Promise<PlutusWitness>}
+  * @returns {PlutusWitness}
   */
-  static new(script: PlutusScript, datum: PlutusData, redeemer: Redeemer): Promise<PlutusWitness> {
+  static new(script: PlutusScript, datum: PlutusData, redeemer: Redeemer): PlutusWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7351,70 +7351,70 @@ export abstract class PlutusWitness extends _Ptr {
   * @param {PlutusScriptSource} script
   * @param {DatumSource} datum
   * @param {Redeemer} redeemer
-  * @returns {Promise<PlutusWitness>}
+  * @returns {PlutusWitness}
   */
-  static newWithRef(script: PlutusScriptSource, datum: DatumSource, redeemer: Redeemer): Promise<PlutusWitness> {
+  static newWithRef(script: PlutusScriptSource, datum: DatumSource, redeemer: Redeemer): PlutusWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusScript} script
   * @param {Redeemer} redeemer
-  * @returns {Promise<PlutusWitness>}
+  * @returns {PlutusWitness}
   */
-  static newWithoutDatum(script: PlutusScript, redeemer: Redeemer): Promise<PlutusWitness> {
+  static newWithoutDatum(script: PlutusScript, redeemer: Redeemer): PlutusWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusScriptSource} script
   * @param {Redeemer} redeemer
-  * @returns {Promise<PlutusWitness>}
+  * @returns {PlutusWitness}
   */
-  static newWithRefWithoutDatum(script: PlutusScriptSource, redeemer: Redeemer): Promise<PlutusWitness> {
+  static newWithRefWithoutDatum(script: PlutusScriptSource, redeemer: Redeemer): PlutusWitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<PlutusScript>>}
+  * @returns {Optional<PlutusScript>}
   */
-  abstract script(): Promise<Optional<PlutusScript>>;
+  abstract script(): Optional<PlutusScript>;
 
   /**
-  * @returns {Promise<Optional<PlutusData>>}
+  * @returns {Optional<PlutusData>}
   */
-  abstract datum(): Promise<Optional<PlutusData>>;
+  abstract datum(): Optional<PlutusData>;
 
   /**
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  abstract redeemer(): Promise<Redeemer>;
+  abstract redeemer(): Redeemer;
 
 }
 
 export abstract class PlutusWitnesses extends _Ptr {
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  static new(): Promise<PlutusWitnesses> {
+  static new(): PlutusWitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<PlutusWitness>}
+  * @returns {PlutusWitness}
   */
-  abstract get(index: number): Promise<PlutusWitness>;
+  abstract get(index: number): PlutusWitness;
 
   /**
   * @param {PlutusWitness} elem
   */
-  abstract add(elem: PlutusWitness): Promise<void>;
+  abstract add(elem: PlutusWitness): void;
 
 }
 
@@ -7423,9 +7423,9 @@ export abstract class Pointer extends _Ptr {
   * @param {number} slot
   * @param {number} txIndex
   * @param {number} certIndex
-  * @returns {Promise<Pointer>}
+  * @returns {Pointer}
   */
-  static new(slot: number, txIndex: number, certIndex: number): Promise<Pointer> {
+  static new(slot: number, txIndex: number, certIndex: number): Pointer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7433,41 +7433,41 @@ export abstract class Pointer extends _Ptr {
   * @param {BigNum} slot
   * @param {BigNum} txIndex
   * @param {BigNum} certIndex
-  * @returns {Promise<Pointer>}
+  * @returns {Pointer}
   */
-  static newPointer(slot: BigNum, txIndex: BigNum, certIndex: BigNum): Promise<Pointer> {
+  static newPointer(slot: BigNum, txIndex: BigNum, certIndex: BigNum): Pointer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract slot(): Promise<number>;
+  abstract slot(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract txIndex(): Promise<number>;
+  abstract txIndex(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract certIndex(): Promise<number>;
+  abstract certIndex(): number;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract slotBignum(): Promise<BigNum>;
+  abstract slotBignum(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract txIndexBignum(): Promise<BigNum>;
+  abstract txIndexBignum(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract certIndexBignum(): Promise<BigNum>;
+  abstract certIndexBignum(): BigNum;
 
 }
 
@@ -7476,98 +7476,98 @@ export abstract class PointerAddress extends _Ptr {
   * @param {number} network
   * @param {Credential} payment
   * @param {Pointer} stake
-  * @returns {Promise<PointerAddress>}
+  * @returns {PointerAddress}
   */
-  static new(network: number, payment: Credential, stake: Pointer): Promise<PointerAddress> {
+  static new(network: number, payment: Credential, stake: Pointer): PointerAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract paymentCred(): Promise<Credential>;
+  abstract paymentCred(): Credential;
 
   /**
-  * @returns {Promise<Pointer>}
+  * @returns {Pointer}
   */
-  abstract stakePointer(): Promise<Pointer>;
+  abstract stakePointer(): Pointer;
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<PointerAddress>>}
+  * @returns {Optional<PointerAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<PointerAddress>> {
+  static fromAddress(addr: Address): Optional<PointerAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
 }
 
 export abstract class PoolMetadata extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolMetadata>}
+  * @returns {PoolMetadata}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolMetadata> {
+  static fromBytes(bytes: Uint8Array): PoolMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PoolMetadata>}
+  * @returns {PoolMetadata}
   */
-  static fromHex(hexStr: string): Promise<PoolMetadata> {
+  static fromHex(hexStr: string): PoolMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PoolMetadata>}
+  * @returns {PoolMetadata}
   */
-  static fromJson(json: string): Promise<PoolMetadata> {
+  static fromJson(json: string): PoolMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  abstract url(): Promise<URL>;
+  abstract url(): URL;
 
   /**
-  * @returns {Promise<PoolMetadataHash>}
+  * @returns {PoolMetadataHash}
   */
-  abstract poolMetadataHash(): Promise<PoolMetadataHash>;
+  abstract poolMetadataHash(): PoolMetadataHash;
 
   /**
   * @param {URL} url
   * @param {PoolMetadataHash} poolMetadataHash
-  * @returns {Promise<PoolMetadata>}
+  * @returns {PoolMetadata}
   */
-  static new(url: URL, poolMetadataHash: PoolMetadataHash): Promise<PoolMetadata> {
+  static new(url: URL, poolMetadataHash: PoolMetadataHash): PoolMetadata {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7576,41 +7576,41 @@ export abstract class PoolMetadata extends _Ptr {
 export abstract class PoolMetadataHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolMetadataHash>}
+  * @returns {PoolMetadataHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolMetadataHash> {
+  static fromBytes(bytes: Uint8Array): PoolMetadataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<PoolMetadataHash>}
+  * @returns {PoolMetadataHash}
   */
-  static fromBech32(bechStr: string): Promise<PoolMetadataHash> {
+  static fromBech32(bechStr: string): PoolMetadataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<PoolMetadataHash>}
+  * @returns {PoolMetadataHash}
   */
-  static fromHex(hex: string): Promise<PoolMetadataHash> {
+  static fromHex(hex: string): PoolMetadataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7618,88 +7618,88 @@ export abstract class PoolMetadataHash extends _Ptr {
 
 export abstract class PoolParams extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolParams>}
+  * @returns {PoolParams}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolParams> {
+  static fromBytes(bytes: Uint8Array): PoolParams {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PoolParams>}
+  * @returns {PoolParams}
   */
-  static fromHex(hexStr: string): Promise<PoolParams> {
+  static fromHex(hexStr: string): PoolParams {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PoolParams>}
+  * @returns {PoolParams}
   */
-  static fromJson(json: string): Promise<PoolParams> {
+  static fromJson(json: string): PoolParams {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract operator(): Promise<Ed25519KeyHash>;
+  abstract operator(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<VRFKeyHash>}
+  * @returns {VRFKeyHash}
   */
-  abstract vrfKeyhash(): Promise<VRFKeyHash>;
+  abstract vrfKeyhash(): VRFKeyHash;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract pledge(): Promise<BigNum>;
+  abstract pledge(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract cost(): Promise<BigNum>;
+  abstract cost(): BigNum;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract margin(): Promise<UnitInterval>;
+  abstract margin(): UnitInterval;
 
   /**
-  * @returns {Promise<RewardAddress>}
+  * @returns {RewardAddress}
   */
-  abstract rewardAccount(): Promise<RewardAddress>;
+  abstract rewardAccount(): RewardAddress;
 
   /**
-  * @returns {Promise<Ed25519KeyHashes>}
+  * @returns {Ed25519KeyHashes}
   */
-  abstract poolOwners(): Promise<Ed25519KeyHashes>;
+  abstract poolOwners(): Ed25519KeyHashes;
 
   /**
-  * @returns {Promise<Relays>}
+  * @returns {Relays}
   */
-  abstract relays(): Promise<Relays>;
+  abstract relays(): Relays;
 
   /**
-  * @returns {Promise<Optional<PoolMetadata>>}
+  * @returns {Optional<PoolMetadata>}
   */
-  abstract poolMetadata(): Promise<Optional<PoolMetadata>>;
+  abstract poolMetadata(): Optional<PoolMetadata>;
 
   /**
   * @param {Ed25519KeyHash} operator
@@ -7711,9 +7711,9 @@ export abstract class PoolParams extends _Ptr {
   * @param {Ed25519KeyHashes} poolOwners
   * @param {Relays} relays
   * @param {Optional<PoolMetadata>} poolMetadata
-  * @returns {Promise<PoolParams>}
+  * @returns {PoolParams}
   */
-  static new(operator: Ed25519KeyHash, vrfKeyhash: VRFKeyHash, pledge: BigNum, cost: BigNum, margin: UnitInterval, rewardAccount: RewardAddress, poolOwners: Ed25519KeyHashes, relays: Relays, poolMetadata: Optional<PoolMetadata>): Promise<PoolParams> {
+  static new(operator: Ed25519KeyHash, vrfKeyhash: VRFKeyHash, pledge: BigNum, cost: BigNum, margin: UnitInterval, rewardAccount: RewardAddress, poolOwners: Ed25519KeyHashes, relays: Relays, poolMetadata: Optional<PoolMetadata>): PoolParams {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7721,54 +7721,54 @@ export abstract class PoolParams extends _Ptr {
 
 export abstract class PoolRegistration extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolRegistration>}
+  * @returns {PoolRegistration}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolRegistration> {
+  static fromBytes(bytes: Uint8Array): PoolRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PoolRegistration>}
+  * @returns {PoolRegistration}
   */
-  static fromHex(hexStr: string): Promise<PoolRegistration> {
+  static fromHex(hexStr: string): PoolRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PoolRegistration>}
+  * @returns {PoolRegistration}
   */
-  static fromJson(json: string): Promise<PoolRegistration> {
+  static fromJson(json: string): PoolRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PoolParams>}
+  * @returns {PoolParams}
   */
-  abstract poolParams(): Promise<PoolParams>;
+  abstract poolParams(): PoolParams;
 
   /**
   * @param {PoolParams} poolParams
-  * @returns {Promise<PoolRegistration>}
+  * @returns {PoolRegistration}
   */
-  static new(poolParams: PoolParams): Promise<PoolRegistration> {
+  static new(poolParams: PoolParams): PoolRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7776,60 +7776,60 @@ export abstract class PoolRegistration extends _Ptr {
 
 export abstract class PoolRetirement extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolRetirement>}
+  * @returns {PoolRetirement}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolRetirement> {
+  static fromBytes(bytes: Uint8Array): PoolRetirement {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PoolRetirement>}
+  * @returns {PoolRetirement}
   */
-  static fromHex(hexStr: string): Promise<PoolRetirement> {
+  static fromHex(hexStr: string): PoolRetirement {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PoolRetirement>}
+  * @returns {PoolRetirement}
   */
-  static fromJson(json: string): Promise<PoolRetirement> {
+  static fromJson(json: string): PoolRetirement {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract epoch(): Promise<number>;
+  abstract epoch(): number;
 
   /**
   * @param {Ed25519KeyHash} poolKeyhash
   * @param {number} epoch
-  * @returns {Promise<PoolRetirement>}
+  * @returns {PoolRetirement}
   */
-  static new(poolKeyhash: Ed25519KeyHash, epoch: number): Promise<PoolRetirement> {
+  static new(poolKeyhash: Ed25519KeyHash, epoch: number): PoolRetirement {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7837,41 +7837,41 @@ export abstract class PoolRetirement extends _Ptr {
 
 export abstract class PoolVotingThresholds extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PoolVotingThresholds>}
+  * @returns {PoolVotingThresholds}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PoolVotingThresholds> {
+  static fromBytes(bytes: Uint8Array): PoolVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PoolVotingThresholds>}
+  * @returns {PoolVotingThresholds}
   */
-  static fromHex(hexStr: string): Promise<PoolVotingThresholds> {
+  static fromHex(hexStr: string): PoolVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<PoolVotingThresholds>}
+  * @returns {PoolVotingThresholds}
   */
-  static fromJson(json: string): Promise<PoolVotingThresholds> {
+  static fromJson(json: string): PoolVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7881,109 +7881,109 @@ export abstract class PoolVotingThresholds extends _Ptr {
   * @param {UnitInterval} committeeNoConfidence
   * @param {UnitInterval} hardForkInitiation
   * @param {UnitInterval} securityRelevantThreshold
-  * @returns {Promise<PoolVotingThresholds>}
+  * @returns {PoolVotingThresholds}
   */
-  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, hardForkInitiation: UnitInterval, securityRelevantThreshold: UnitInterval): Promise<PoolVotingThresholds> {
+  static new(motionNoConfidence: UnitInterval, committeeNormal: UnitInterval, committeeNoConfidence: UnitInterval, hardForkInitiation: UnitInterval, securityRelevantThreshold: UnitInterval): PoolVotingThresholds {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract motionNoConfidence(): Promise<UnitInterval>;
+  abstract motionNoConfidence(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract committeeNormal(): Promise<UnitInterval>;
+  abstract committeeNormal(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract committeeNoConfidence(): Promise<UnitInterval>;
+  abstract committeeNoConfidence(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract hardForkInitiation(): Promise<UnitInterval>;
+  abstract hardForkInitiation(): UnitInterval;
 
   /**
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  abstract securityRelevantThreshold(): Promise<UnitInterval>;
+  abstract securityRelevantThreshold(): UnitInterval;
 
 }
 
 export abstract class PrivateKey extends _Ptr {
   /**
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  abstract toPublic(): Promise<PublicKey>;
+  abstract toPublic(): PublicKey;
 
   /**
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static generateEd25519(): Promise<PrivateKey> {
+  static generateEd25519(): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static generateEd25519extended(): Promise<PrivateKey> {
+  static generateEd25519extended(): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} bech32Str
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static fromBech32(bech32Str: string): Promise<PrivateKey> {
+  static fromBech32(bech32Str: string): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): string;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static fromExtendedBytes(bytes: Uint8Array): Promise<PrivateKey> {
+  static fromExtendedBytes(bytes: Uint8Array): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static fromNormalBytes(bytes: Uint8Array): Promise<PrivateKey> {
+  static fromNormalBytes(bytes: Uint8Array): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} message
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  abstract sign(message: Uint8Array): Promise<Ed25519Signature>;
+  abstract sign(message: Uint8Array): Ed25519Signature;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PrivateKey>}
+  * @returns {PrivateKey}
   */
-  static fromHex(hexStr: string): Promise<PrivateKey> {
+  static fromHex(hexStr: string): PrivateKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -7991,440 +7991,440 @@ export abstract class PrivateKey extends _Ptr {
 
 export abstract class ProposedProtocolParameterUpdates extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ProposedProtocolParameterUpdates>}
+  * @returns {ProposedProtocolParameterUpdates}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ProposedProtocolParameterUpdates> {
+  static fromBytes(bytes: Uint8Array): ProposedProtocolParameterUpdates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ProposedProtocolParameterUpdates>}
+  * @returns {ProposedProtocolParameterUpdates}
   */
-  static fromHex(hexStr: string): Promise<ProposedProtocolParameterUpdates> {
+  static fromHex(hexStr: string): ProposedProtocolParameterUpdates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ProposedProtocolParameterUpdates>}
+  * @returns {ProposedProtocolParameterUpdates}
   */
-  static fromJson(json: string): Promise<ProposedProtocolParameterUpdates> {
+  static fromJson(json: string): ProposedProtocolParameterUpdates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<ProposedProtocolParameterUpdates>}
+  * @returns {ProposedProtocolParameterUpdates}
   */
-  static new(): Promise<ProposedProtocolParameterUpdates> {
+  static new(): ProposedProtocolParameterUpdates {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {GenesisHash} key
   * @param {ProtocolParamUpdate} value
-  * @returns {Promise<Optional<ProtocolParamUpdate>>}
+  * @returns {Optional<ProtocolParamUpdate>}
   */
-  abstract insert(key: GenesisHash, value: ProtocolParamUpdate): Promise<Optional<ProtocolParamUpdate>>;
+  abstract insert(key: GenesisHash, value: ProtocolParamUpdate): Optional<ProtocolParamUpdate>;
 
   /**
   * @param {GenesisHash} key
-  * @returns {Promise<Optional<ProtocolParamUpdate>>}
+  * @returns {Optional<ProtocolParamUpdate>}
   */
-  abstract get(key: GenesisHash): Promise<Optional<ProtocolParamUpdate>>;
+  abstract get(key: GenesisHash): Optional<ProtocolParamUpdate>;
 
   /**
-  * @returns {Promise<GenesisHashes>}
+  * @returns {GenesisHashes}
   */
-  abstract keys(): Promise<GenesisHashes>;
+  abstract keys(): GenesisHashes;
 
 }
 
 export abstract class ProtocolParamUpdate extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ProtocolParamUpdate>}
+  * @returns {ProtocolParamUpdate}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ProtocolParamUpdate> {
+  static fromBytes(bytes: Uint8Array): ProtocolParamUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ProtocolParamUpdate>}
+  * @returns {ProtocolParamUpdate}
   */
-  static fromHex(hexStr: string): Promise<ProtocolParamUpdate> {
+  static fromHex(hexStr: string): ProtocolParamUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ProtocolParamUpdate>}
+  * @returns {ProtocolParamUpdate}
   */
-  static fromJson(json: string): Promise<ProtocolParamUpdate> {
+  static fromJson(json: string): ProtocolParamUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} minfeeA
   */
-  abstract setMinfeeA(minfeeA: BigNum): Promise<void>;
+  abstract setMinfeeA(minfeeA: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract minfeeA(): Promise<Optional<BigNum>>;
+  abstract minfeeA(): Optional<BigNum>;
 
   /**
   * @param {BigNum} minfeeB
   */
-  abstract setMinfeeB(minfeeB: BigNum): Promise<void>;
+  abstract setMinfeeB(minfeeB: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract minfeeB(): Promise<Optional<BigNum>>;
+  abstract minfeeB(): Optional<BigNum>;
 
   /**
   * @param {number} maxBlockBodySize
   */
-  abstract setMaxBlockBodySize(maxBlockBodySize: number): Promise<void>;
+  abstract setMaxBlockBodySize(maxBlockBodySize: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxBlockBodySize(): Promise<Optional<number>>;
+  abstract maxBlockBodySize(): Optional<number>;
 
   /**
   * @param {number} maxTxSize
   */
-  abstract setMaxTxSize(maxTxSize: number): Promise<void>;
+  abstract setMaxTxSize(maxTxSize: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxTxSize(): Promise<Optional<number>>;
+  abstract maxTxSize(): Optional<number>;
 
   /**
   * @param {number} maxBlockHeaderSize
   */
-  abstract setMaxBlockHeaderSize(maxBlockHeaderSize: number): Promise<void>;
+  abstract setMaxBlockHeaderSize(maxBlockHeaderSize: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxBlockHeaderSize(): Promise<Optional<number>>;
+  abstract maxBlockHeaderSize(): Optional<number>;
 
   /**
   * @param {BigNum} keyDeposit
   */
-  abstract setKeyDeposit(keyDeposit: BigNum): Promise<void>;
+  abstract setKeyDeposit(keyDeposit: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract keyDeposit(): Promise<Optional<BigNum>>;
+  abstract keyDeposit(): Optional<BigNum>;
 
   /**
   * @param {BigNum} poolDeposit
   */
-  abstract setPoolDeposit(poolDeposit: BigNum): Promise<void>;
+  abstract setPoolDeposit(poolDeposit: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract poolDeposit(): Promise<Optional<BigNum>>;
+  abstract poolDeposit(): Optional<BigNum>;
 
   /**
   * @param {number} maxEpoch
   */
-  abstract setMaxEpoch(maxEpoch: number): Promise<void>;
+  abstract setMaxEpoch(maxEpoch: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxEpoch(): Promise<Optional<number>>;
+  abstract maxEpoch(): Optional<number>;
 
   /**
   * @param {number} nOpt
   */
-  abstract setNOpt(nOpt: number): Promise<void>;
+  abstract setNOpt(nOpt: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract nOpt(): Promise<Optional<number>>;
+  abstract nOpt(): Optional<number>;
 
   /**
   * @param {UnitInterval} poolPledgeInfluence
   */
-  abstract setPoolPledgeInfluence(poolPledgeInfluence: UnitInterval): Promise<void>;
+  abstract setPoolPledgeInfluence(poolPledgeInfluence: UnitInterval): void;
 
   /**
-  * @returns {Promise<Optional<UnitInterval>>}
+  * @returns {Optional<UnitInterval>}
   */
-  abstract poolPledgeInfluence(): Promise<Optional<UnitInterval>>;
+  abstract poolPledgeInfluence(): Optional<UnitInterval>;
 
   /**
   * @param {UnitInterval} expansionRate
   */
-  abstract setExpansionRate(expansionRate: UnitInterval): Promise<void>;
+  abstract setExpansionRate(expansionRate: UnitInterval): void;
 
   /**
-  * @returns {Promise<Optional<UnitInterval>>}
+  * @returns {Optional<UnitInterval>}
   */
-  abstract expansionRate(): Promise<Optional<UnitInterval>>;
+  abstract expansionRate(): Optional<UnitInterval>;
 
   /**
   * @param {UnitInterval} treasuryGrowthRate
   */
-  abstract setTreasuryGrowthRate(treasuryGrowthRate: UnitInterval): Promise<void>;
+  abstract setTreasuryGrowthRate(treasuryGrowthRate: UnitInterval): void;
 
   /**
-  * @returns {Promise<Optional<UnitInterval>>}
+  * @returns {Optional<UnitInterval>}
   */
-  abstract treasuryGrowthRate(): Promise<Optional<UnitInterval>>;
+  abstract treasuryGrowthRate(): Optional<UnitInterval>;
 
   /**
-  * @returns {Promise<Optional<UnitInterval>>}
+  * @returns {Optional<UnitInterval>}
   */
-  abstract d(): Promise<Optional<UnitInterval>>;
+  abstract d(): Optional<UnitInterval>;
 
   /**
-  * @returns {Promise<Optional<Nonce>>}
+  * @returns {Optional<Nonce>}
   */
-  abstract extraEntropy(): Promise<Optional<Nonce>>;
+  abstract extraEntropy(): Optional<Nonce>;
 
   /**
   * @param {ProtocolVersion} protocolVersion
   */
-  abstract setProtocolVersion(protocolVersion: ProtocolVersion): Promise<void>;
+  abstract setProtocolVersion(protocolVersion: ProtocolVersion): void;
 
   /**
-  * @returns {Promise<Optional<ProtocolVersion>>}
+  * @returns {Optional<ProtocolVersion>}
   */
-  abstract protocolVersion(): Promise<Optional<ProtocolVersion>>;
+  abstract protocolVersion(): Optional<ProtocolVersion>;
 
   /**
   * @param {BigNum} minPoolCost
   */
-  abstract setMinPoolCost(minPoolCost: BigNum): Promise<void>;
+  abstract setMinPoolCost(minPoolCost: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract minPoolCost(): Promise<Optional<BigNum>>;
+  abstract minPoolCost(): Optional<BigNum>;
 
   /**
   * @param {BigNum} adaPerUtxoByte
   */
-  abstract setAdaPerUtxoByte(adaPerUtxoByte: BigNum): Promise<void>;
+  abstract setAdaPerUtxoByte(adaPerUtxoByte: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract adaPerUtxoByte(): Promise<Optional<BigNum>>;
+  abstract adaPerUtxoByte(): Optional<BigNum>;
 
   /**
   * @param {Costmdls} costModels
   */
-  abstract setCostModels(costModels: Costmdls): Promise<void>;
+  abstract setCostModels(costModels: Costmdls): void;
 
   /**
-  * @returns {Promise<Optional<Costmdls>>}
+  * @returns {Optional<Costmdls>}
   */
-  abstract costModels(): Promise<Optional<Costmdls>>;
+  abstract costModels(): Optional<Costmdls>;
 
   /**
   * @param {ExUnitPrices} executionCosts
   */
-  abstract setExecutionCosts(executionCosts: ExUnitPrices): Promise<void>;
+  abstract setExecutionCosts(executionCosts: ExUnitPrices): void;
 
   /**
-  * @returns {Promise<Optional<ExUnitPrices>>}
+  * @returns {Optional<ExUnitPrices>}
   */
-  abstract executionCosts(): Promise<Optional<ExUnitPrices>>;
+  abstract executionCosts(): Optional<ExUnitPrices>;
 
   /**
   * @param {ExUnits} maxTxExUnits
   */
-  abstract setMaxTxExUnits(maxTxExUnits: ExUnits): Promise<void>;
+  abstract setMaxTxExUnits(maxTxExUnits: ExUnits): void;
 
   /**
-  * @returns {Promise<Optional<ExUnits>>}
+  * @returns {Optional<ExUnits>}
   */
-  abstract maxTxExUnits(): Promise<Optional<ExUnits>>;
+  abstract maxTxExUnits(): Optional<ExUnits>;
 
   /**
   * @param {ExUnits} maxBlockExUnits
   */
-  abstract setMaxBlockExUnits(maxBlockExUnits: ExUnits): Promise<void>;
+  abstract setMaxBlockExUnits(maxBlockExUnits: ExUnits): void;
 
   /**
-  * @returns {Promise<Optional<ExUnits>>}
+  * @returns {Optional<ExUnits>}
   */
-  abstract maxBlockExUnits(): Promise<Optional<ExUnits>>;
+  abstract maxBlockExUnits(): Optional<ExUnits>;
 
   /**
   * @param {number} maxValueSize
   */
-  abstract setMaxValueSize(maxValueSize: number): Promise<void>;
+  abstract setMaxValueSize(maxValueSize: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxValueSize(): Promise<Optional<number>>;
+  abstract maxValueSize(): Optional<number>;
 
   /**
   * @param {number} collateralPercentage
   */
-  abstract setCollateralPercentage(collateralPercentage: number): Promise<void>;
+  abstract setCollateralPercentage(collateralPercentage: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract collateralPercentage(): Promise<Optional<number>>;
+  abstract collateralPercentage(): Optional<number>;
 
   /**
   * @param {number} maxCollateralInputs
   */
-  abstract setMaxCollateralInputs(maxCollateralInputs: number): Promise<void>;
+  abstract setMaxCollateralInputs(maxCollateralInputs: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract maxCollateralInputs(): Promise<Optional<number>>;
+  abstract maxCollateralInputs(): Optional<number>;
 
   /**
   * @param {PoolVotingThresholds} poolVotingThresholds
   */
-  abstract setPoolVotingThresholds(poolVotingThresholds: PoolVotingThresholds): Promise<void>;
+  abstract setPoolVotingThresholds(poolVotingThresholds: PoolVotingThresholds): void;
 
   /**
-  * @returns {Promise<Optional<PoolVotingThresholds>>}
+  * @returns {Optional<PoolVotingThresholds>}
   */
-  abstract poolVotingThresholds(): Promise<Optional<PoolVotingThresholds>>;
+  abstract poolVotingThresholds(): Optional<PoolVotingThresholds>;
 
   /**
   * @param {DRepVotingThresholds} drepVotingThresholds
   */
-  abstract setDrepVotingThresholds(drepVotingThresholds: DRepVotingThresholds): Promise<void>;
+  abstract setDrepVotingThresholds(drepVotingThresholds: DRepVotingThresholds): void;
 
   /**
-  * @returns {Promise<Optional<DRepVotingThresholds>>}
+  * @returns {Optional<DRepVotingThresholds>}
   */
-  abstract drepVotingThresholds(): Promise<Optional<DRepVotingThresholds>>;
+  abstract drepVotingThresholds(): Optional<DRepVotingThresholds>;
 
   /**
   * @param {number} minCommitteeSize
   */
-  abstract setMinCommitteeSize(minCommitteeSize: number): Promise<void>;
+  abstract setMinCommitteeSize(minCommitteeSize: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract minCommitteeSize(): Promise<Optional<number>>;
+  abstract minCommitteeSize(): Optional<number>;
 
   /**
   * @param {number} committeeTermLimit
   */
-  abstract setCommitteeTermLimit(committeeTermLimit: number): Promise<void>;
+  abstract setCommitteeTermLimit(committeeTermLimit: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract committeeTermLimit(): Promise<Optional<number>>;
+  abstract committeeTermLimit(): Optional<number>;
 
   /**
   * @param {number} governanceActionValidityPeriod
   */
-  abstract setGovernanceActionValidityPeriod(governanceActionValidityPeriod: number): Promise<void>;
+  abstract setGovernanceActionValidityPeriod(governanceActionValidityPeriod: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract governanceActionValidityPeriod(): Promise<Optional<number>>;
+  abstract governanceActionValidityPeriod(): Optional<number>;
 
   /**
   * @param {BigNum} governanceActionDeposit
   */
-  abstract setGovernanceActionDeposit(governanceActionDeposit: BigNum): Promise<void>;
+  abstract setGovernanceActionDeposit(governanceActionDeposit: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract governanceActionDeposit(): Promise<Optional<BigNum>>;
+  abstract governanceActionDeposit(): Optional<BigNum>;
 
   /**
   * @param {BigNum} drepDeposit
   */
-  abstract setDrepDeposit(drepDeposit: BigNum): Promise<void>;
+  abstract setDrepDeposit(drepDeposit: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract drepDeposit(): Promise<Optional<BigNum>>;
+  abstract drepDeposit(): Optional<BigNum>;
 
   /**
   * @param {number} drepInactivityPeriod
   */
-  abstract setDrepInactivityPeriod(drepInactivityPeriod: number): Promise<void>;
+  abstract setDrepInactivityPeriod(drepInactivityPeriod: number): void;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract drepInactivityPeriod(): Promise<Optional<number>>;
+  abstract drepInactivityPeriod(): Optional<number>;
 
   /**
   * @param {UnitInterval} refScriptCoinsPerByte
   */
-  abstract setRefScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): Promise<void>;
+  abstract setRefScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): void;
 
   /**
-  * @returns {Promise<Optional<UnitInterval>>}
+  * @returns {Optional<UnitInterval>}
   */
-  abstract refScriptCoinsPerByte(): Promise<Optional<UnitInterval>>;
+  abstract refScriptCoinsPerByte(): Optional<UnitInterval>;
 
   /**
-  * @returns {Promise<ProtocolParamUpdate>}
+  * @returns {ProtocolParamUpdate}
   */
-  static new(): Promise<ProtocolParamUpdate> {
+  static new(): ProtocolParamUpdate {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -8432,60 +8432,60 @@ export abstract class ProtocolParamUpdate extends _Ptr {
 
 export abstract class ProtocolVersion extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ProtocolVersion> {
+  static fromBytes(bytes: Uint8Array): ProtocolVersion {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  static fromHex(hexStr: string): Promise<ProtocolVersion> {
+  static fromHex(hexStr: string): ProtocolVersion {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  static fromJson(json: string): Promise<ProtocolVersion> {
+  static fromJson(json: string): ProtocolVersion {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract major(): Promise<number>;
+  abstract major(): number;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract minor(): Promise<number>;
+  abstract minor(): number;
 
   /**
   * @param {number} major
   * @param {number} minor
-  * @returns {Promise<ProtocolVersion>}
+  * @returns {ProtocolVersion}
   */
-  static new(major: number, minor: number): Promise<ProtocolVersion> {
+  static new(major: number, minor: number): ProtocolVersion {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -8494,52 +8494,52 @@ export abstract class ProtocolVersion extends _Ptr {
 export abstract class PublicKey extends _Ptr {
   /**
   * @param {string} bech32Str
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  static fromBech32(bech32Str: string): Promise<PublicKey> {
+  static fromBech32(bech32Str: string): PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(): Promise<string>;
+  abstract toBech32(): string;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<PublicKey> {
+  static fromBytes(bytes: Uint8Array): PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} data
   * @param {Ed25519Signature} signature
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract verify(data: Uint8Array, signature: Ed25519Signature): Promise<boolean>;
+  abstract verify(data: Uint8Array, signature: Ed25519Signature): boolean;
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract hash(): Promise<Ed25519KeyHash>;
+  abstract hash(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  static fromHex(hexStr: string): Promise<PublicKey> {
+  static fromHex(hexStr: string): PublicKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -8547,98 +8547,98 @@ export abstract class PublicKey extends _Ptr {
 
 export abstract class PublicKeys extends _Ptr {
   /**
-  * @returns {Promise<PublicKeys>}
+  * @returns {PublicKeys}
   */
-  static new(): Promise<PublicKeys> {
+  static new(): PublicKeys {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract size(): Promise<number>;
+  abstract size(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  abstract get(index: number): Promise<PublicKey>;
+  abstract get(index: number): PublicKey;
 
   /**
   * @param {PublicKey} key
   */
-  abstract add(key: PublicKey): Promise<void>;
+  abstract add(key: PublicKey): void;
 
 }
 
 export abstract class Redeemer extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Redeemer> {
+  static fromBytes(bytes: Uint8Array): Redeemer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  static fromHex(hexStr: string): Promise<Redeemer> {
+  static fromHex(hexStr: string): Redeemer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  static fromJson(json: string): Promise<Redeemer> {
+  static fromJson(json: string): Redeemer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  abstract tag(): Promise<RedeemerTag>;
+  abstract tag(): RedeemerTag;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract index(): Promise<BigNum>;
+  abstract index(): BigNum;
 
   /**
-  * @returns {Promise<PlutusData>}
+  * @returns {PlutusData}
   */
-  abstract data(): Promise<PlutusData>;
+  abstract data(): PlutusData;
 
   /**
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  abstract exUnits(): Promise<ExUnits>;
+  abstract exUnits(): ExUnits;
 
   /**
   * @param {RedeemerTag} tag
   * @param {BigNum} index
   * @param {PlutusData} data
   * @param {ExUnits} exUnits
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  static new(tag: RedeemerTag, index: BigNum, data: PlutusData, exUnits: ExUnits): Promise<Redeemer> {
+  static new(tag: RedeemerTag, index: BigNum, data: PlutusData, exUnits: ExUnits): Redeemer {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -8646,316 +8646,316 @@ export abstract class Redeemer extends _Ptr {
 
 export abstract class RedeemerTag extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static fromBytes(bytes: Uint8Array): Promise<RedeemerTag> {
+  static fromBytes(bytes: Uint8Array): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static fromHex(hexStr: string): Promise<RedeemerTag> {
+  static fromHex(hexStr: string): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static fromJson(json: string): Promise<RedeemerTag> {
+  static fromJson(json: string): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newSpend(): Promise<RedeemerTag> {
+  static newSpend(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newMint(): Promise<RedeemerTag> {
+  static newMint(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newCert(): Promise<RedeemerTag> {
+  static newCert(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newReward(): Promise<RedeemerTag> {
+  static newReward(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newVote(): Promise<RedeemerTag> {
+  static newVote(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTag>}
+  * @returns {RedeemerTag}
   */
-  static newVotingProposal(): Promise<RedeemerTag> {
+  static newVotingProposal(): RedeemerTag {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RedeemerTagKind>}
+  * @returns {RedeemerTagKind}
   */
-  abstract kind(): Promise<RedeemerTagKind>;
+  abstract kind(): RedeemerTagKind;
 
 }
 
 export abstract class Redeemers extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Redeemers>}
+  * @returns {Redeemers}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Redeemers> {
+  static fromBytes(bytes: Uint8Array): Redeemers {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Redeemers>}
+  * @returns {Redeemers}
   */
-  static fromHex(hexStr: string): Promise<Redeemers> {
+  static fromHex(hexStr: string): Redeemers {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Redeemers>}
+  * @returns {Redeemers}
   */
-  static fromJson(json: string): Promise<Redeemers> {
+  static fromJson(json: string): Redeemers {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Redeemers>}
+  * @returns {Redeemers}
   */
-  static new(): Promise<Redeemers> {
+  static new(): Redeemers {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Redeemer>}
+  * @returns {Redeemer}
   */
-  abstract get(index: number): Promise<Redeemer>;
+  abstract get(index: number): Redeemer;
 
   /**
   * @param {Redeemer} elem
   */
-  abstract add(elem: Redeemer): Promise<void>;
+  abstract add(elem: Redeemer): void;
 
   /**
-  * @returns {Promise<CborContainerType>}
+  * @returns {CborContainerType}
   */
-  abstract getContainerType(): Promise<CborContainerType>;
+  abstract getContainerType(): CborContainerType;
 
   /**
-  * @returns {Promise<ExUnits>}
+  * @returns {ExUnits}
   */
-  abstract totalExUnits(): Promise<ExUnits>;
+  abstract totalExUnits(): ExUnits;
 
 }
 
 export abstract class Relay extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Relay> {
+  static fromBytes(bytes: Uint8Array): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static fromHex(hexStr: string): Promise<Relay> {
+  static fromHex(hexStr: string): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static fromJson(json: string): Promise<Relay> {
+  static fromJson(json: string): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {SingleHostAddr} singleHostAddr
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static newSingleHostAddr(singleHostAddr: SingleHostAddr): Promise<Relay> {
+  static newSingleHostAddr(singleHostAddr: SingleHostAddr): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {SingleHostName} singleHostName
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static newSingleHostName(singleHostName: SingleHostName): Promise<Relay> {
+  static newSingleHostName(singleHostName: SingleHostName): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MultiHostName} multiHostName
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  static newMultiHostName(multiHostName: MultiHostName): Promise<Relay> {
+  static newMultiHostName(multiHostName: MultiHostName): Relay {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RelayKind>}
+  * @returns {RelayKind}
   */
-  abstract kind(): Promise<RelayKind>;
+  abstract kind(): RelayKind;
 
   /**
-  * @returns {Promise<Optional<SingleHostAddr>>}
+  * @returns {Optional<SingleHostAddr>}
   */
-  abstract asSingleHostAddr(): Promise<Optional<SingleHostAddr>>;
+  abstract asSingleHostAddr(): Optional<SingleHostAddr>;
 
   /**
-  * @returns {Promise<Optional<SingleHostName>>}
+  * @returns {Optional<SingleHostName>}
   */
-  abstract asSingleHostName(): Promise<Optional<SingleHostName>>;
+  abstract asSingleHostName(): Optional<SingleHostName>;
 
   /**
-  * @returns {Promise<Optional<MultiHostName>>}
+  * @returns {Optional<MultiHostName>}
   */
-  abstract asMultiHostName(): Promise<Optional<MultiHostName>>;
+  abstract asMultiHostName(): Optional<MultiHostName>;
 
 }
 
 export abstract class Relays extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Relays>}
+  * @returns {Relays}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Relays> {
+  static fromBytes(bytes: Uint8Array): Relays {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Relays>}
+  * @returns {Relays}
   */
-  static fromHex(hexStr: string): Promise<Relays> {
+  static fromHex(hexStr: string): Relays {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Relays>}
+  * @returns {Relays}
   */
-  static fromJson(json: string): Promise<Relays> {
+  static fromJson(json: string): Relays {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Relays>}
+  * @returns {Relays}
   */
-  static new(): Promise<Relays> {
+  static new(): Relays {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Relay>}
+  * @returns {Relay}
   */
-  abstract get(index: number): Promise<Relay>;
+  abstract get(index: number): Relay;
 
   /**
   * @param {Relay} elem
   */
-  abstract add(elem: Relay): Promise<void>;
+  abstract add(elem: Relay): void;
 
 }
 
@@ -8963,152 +8963,152 @@ export abstract class RewardAddress extends _Ptr {
   /**
   * @param {number} network
   * @param {Credential} payment
-  * @returns {Promise<RewardAddress>}
+  * @returns {RewardAddress}
   */
-  static new(network: number, payment: Credential): Promise<RewardAddress> {
+  static new(network: number, payment: Credential): RewardAddress {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract paymentCred(): Promise<Credential>;
+  abstract paymentCred(): Credential;
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract toAddress(): Promise<Address>;
+  abstract toAddress(): Address;
 
   /**
   * @param {Address} addr
-  * @returns {Promise<Optional<RewardAddress>>}
+  * @returns {Optional<RewardAddress>}
   */
-  static fromAddress(addr: Address): Promise<Optional<RewardAddress>> {
+  static fromAddress(addr: Address): Optional<RewardAddress> {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract networkId(): Promise<number>;
+  abstract networkId(): number;
 
 }
 
 export abstract class RewardAddresses extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  static fromBytes(bytes: Uint8Array): Promise<RewardAddresses> {
+  static fromBytes(bytes: Uint8Array): RewardAddresses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  static fromHex(hexStr: string): Promise<RewardAddresses> {
+  static fromHex(hexStr: string): RewardAddresses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  static fromJson(json: string): Promise<RewardAddresses> {
+  static fromJson(json: string): RewardAddresses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  static new(): Promise<RewardAddresses> {
+  static new(): RewardAddresses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<RewardAddress>}
+  * @returns {RewardAddress}
   */
-  abstract get(index: number): Promise<RewardAddress>;
+  abstract get(index: number): RewardAddress;
 
   /**
   * @param {RewardAddress} elem
   */
-  abstract add(elem: RewardAddress): Promise<void>;
+  abstract add(elem: RewardAddress): void;
 
 }
 
 export abstract class ScriptAll extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptAll>}
+  * @returns {ScriptAll}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptAll> {
+  static fromBytes(bytes: Uint8Array): ScriptAll {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptAll>}
+  * @returns {ScriptAll}
   */
-  static fromHex(hexStr: string): Promise<ScriptAll> {
+  static fromHex(hexStr: string): ScriptAll {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptAll>}
+  * @returns {ScriptAll}
   */
-  static fromJson(json: string): Promise<ScriptAll> {
+  static fromJson(json: string): ScriptAll {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract nativeScripts(): Promise<NativeScripts>;
+  abstract nativeScripts(): NativeScripts;
 
   /**
   * @param {NativeScripts} nativeScripts
-  * @returns {Promise<ScriptAll>}
+  * @returns {ScriptAll}
   */
-  static new(nativeScripts: NativeScripts): Promise<ScriptAll> {
+  static new(nativeScripts: NativeScripts): ScriptAll {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9116,54 +9116,54 @@ export abstract class ScriptAll extends _Ptr {
 
 export abstract class ScriptAny extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptAny>}
+  * @returns {ScriptAny}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptAny> {
+  static fromBytes(bytes: Uint8Array): ScriptAny {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptAny>}
+  * @returns {ScriptAny}
   */
-  static fromHex(hexStr: string): Promise<ScriptAny> {
+  static fromHex(hexStr: string): ScriptAny {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptAny>}
+  * @returns {ScriptAny}
   */
-  static fromJson(json: string): Promise<ScriptAny> {
+  static fromJson(json: string): ScriptAny {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract nativeScripts(): Promise<NativeScripts>;
+  abstract nativeScripts(): NativeScripts;
 
   /**
   * @param {NativeScripts} nativeScripts
-  * @returns {Promise<ScriptAny>}
+  * @returns {ScriptAny}
   */
-  static new(nativeScripts: NativeScripts): Promise<ScriptAny> {
+  static new(nativeScripts: NativeScripts): ScriptAny {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9172,41 +9172,41 @@ export abstract class ScriptAny extends _Ptr {
 export abstract class ScriptDataHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptDataHash>}
+  * @returns {ScriptDataHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptDataHash> {
+  static fromBytes(bytes: Uint8Array): ScriptDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<ScriptDataHash>}
+  * @returns {ScriptDataHash}
   */
-  static fromBech32(bechStr: string): Promise<ScriptDataHash> {
+  static fromBech32(bechStr: string): ScriptDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<ScriptDataHash>}
+  * @returns {ScriptDataHash}
   */
-  static fromHex(hex: string): Promise<ScriptDataHash> {
+  static fromHex(hex: string): ScriptDataHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9215,41 +9215,41 @@ export abstract class ScriptDataHash extends _Ptr {
 export abstract class ScriptHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptHash> {
+  static fromBytes(bytes: Uint8Array): ScriptHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  static fromBech32(bechStr: string): Promise<ScriptHash> {
+  static fromBech32(bechStr: string): ScriptHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  static fromHex(hex: string): Promise<ScriptHash> {
+  static fromHex(hex: string): ScriptHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9257,125 +9257,125 @@ export abstract class ScriptHash extends _Ptr {
 
 export abstract class ScriptHashes extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptHashes> {
+  static fromBytes(bytes: Uint8Array): ScriptHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  static fromHex(hexStr: string): Promise<ScriptHashes> {
+  static fromHex(hexStr: string): ScriptHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  static fromJson(json: string): Promise<ScriptHashes> {
+  static fromJson(json: string): ScriptHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<ScriptHashes>}
+  * @returns {ScriptHashes}
   */
-  static new(): Promise<ScriptHashes> {
+  static new(): ScriptHashes {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<ScriptHash>}
+  * @returns {ScriptHash}
   */
-  abstract get(index: number): Promise<ScriptHash>;
+  abstract get(index: number): ScriptHash;
 
   /**
   * @param {ScriptHash} elem
   */
-  abstract add(elem: ScriptHash): Promise<void>;
+  abstract add(elem: ScriptHash): void;
 
 }
 
 export abstract class ScriptNOfK extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptNOfK>}
+  * @returns {ScriptNOfK}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptNOfK> {
+  static fromBytes(bytes: Uint8Array): ScriptNOfK {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptNOfK>}
+  * @returns {ScriptNOfK}
   */
-  static fromHex(hexStr: string): Promise<ScriptNOfK> {
+  static fromHex(hexStr: string): ScriptNOfK {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptNOfK>}
+  * @returns {ScriptNOfK}
   */
-  static fromJson(json: string): Promise<ScriptNOfK> {
+  static fromJson(json: string): ScriptNOfK {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract n(): Promise<number>;
+  abstract n(): number;
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract nativeScripts(): Promise<NativeScripts>;
+  abstract nativeScripts(): NativeScripts;
 
   /**
   * @param {number} n
   * @param {NativeScripts} nativeScripts
-  * @returns {Promise<ScriptNOfK>}
+  * @returns {ScriptNOfK}
   */
-  static new(n: number, nativeScripts: NativeScripts): Promise<ScriptNOfK> {
+  static new(n: number, nativeScripts: NativeScripts): ScriptNOfK {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9383,54 +9383,54 @@ export abstract class ScriptNOfK extends _Ptr {
 
 export abstract class ScriptPubkey extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptPubkey>}
+  * @returns {ScriptPubkey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptPubkey> {
+  static fromBytes(bytes: Uint8Array): ScriptPubkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptPubkey>}
+  * @returns {ScriptPubkey}
   */
-  static fromHex(hexStr: string): Promise<ScriptPubkey> {
+  static fromHex(hexStr: string): ScriptPubkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptPubkey>}
+  * @returns {ScriptPubkey}
   */
-  static fromJson(json: string): Promise<ScriptPubkey> {
+  static fromJson(json: string): ScriptPubkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract addrKeyhash(): Promise<Ed25519KeyHash>;
+  abstract addrKeyhash(): Ed25519KeyHash;
 
   /**
   * @param {Ed25519KeyHash} addrKeyhash
-  * @returns {Promise<ScriptPubkey>}
+  * @returns {ScriptPubkey}
   */
-  static new(addrKeyhash: Ed25519KeyHash): Promise<ScriptPubkey> {
+  static new(addrKeyhash: Ed25519KeyHash): ScriptPubkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9438,149 +9438,149 @@ export abstract class ScriptPubkey extends _Ptr {
 
 export abstract class ScriptRef extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<ScriptRef>}
+  * @returns {ScriptRef}
   */
-  static fromBytes(bytes: Uint8Array): Promise<ScriptRef> {
+  static fromBytes(bytes: Uint8Array): ScriptRef {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<ScriptRef>}
+  * @returns {ScriptRef}
   */
-  static fromHex(hexStr: string): Promise<ScriptRef> {
+  static fromHex(hexStr: string): ScriptRef {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<ScriptRef>}
+  * @returns {ScriptRef}
   */
-  static fromJson(json: string): Promise<ScriptRef> {
+  static fromJson(json: string): ScriptRef {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {NativeScript} nativeScript
-  * @returns {Promise<ScriptRef>}
+  * @returns {ScriptRef}
   */
-  static newNativeScript(nativeScript: NativeScript): Promise<ScriptRef> {
+  static newNativeScript(nativeScript: NativeScript): ScriptRef {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PlutusScript} plutusScript
-  * @returns {Promise<ScriptRef>}
+  * @returns {ScriptRef}
   */
-  static newPlutusScript(plutusScript: PlutusScript): Promise<ScriptRef> {
+  static newPlutusScript(plutusScript: PlutusScript): ScriptRef {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isNativeScript(): Promise<boolean>;
+  abstract isNativeScript(): boolean;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isPlutusScript(): Promise<boolean>;
+  abstract isPlutusScript(): boolean;
 
   /**
-  * @returns {Promise<Optional<NativeScript>>}
+  * @returns {Optional<NativeScript>}
   */
-  abstract nativeScript(): Promise<Optional<NativeScript>>;
+  abstract nativeScript(): Optional<NativeScript>;
 
   /**
-  * @returns {Promise<Optional<PlutusScript>>}
+  * @returns {Optional<PlutusScript>}
   */
-  abstract plutusScript(): Promise<Optional<PlutusScript>>;
+  abstract plutusScript(): Optional<PlutusScript>;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toUnwrappedBytes(): Promise<Uint8Array>;
+  abstract toUnwrappedBytes(): Uint8Array;
 
 }
 
 export abstract class SingleHostAddr extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<SingleHostAddr>}
+  * @returns {SingleHostAddr}
   */
-  static fromBytes(bytes: Uint8Array): Promise<SingleHostAddr> {
+  static fromBytes(bytes: Uint8Array): SingleHostAddr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<SingleHostAddr>}
+  * @returns {SingleHostAddr}
   */
-  static fromHex(hexStr: string): Promise<SingleHostAddr> {
+  static fromHex(hexStr: string): SingleHostAddr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<SingleHostAddr>}
+  * @returns {SingleHostAddr}
   */
-  static fromJson(json: string): Promise<SingleHostAddr> {
+  static fromJson(json: string): SingleHostAddr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract port(): Promise<Optional<number>>;
+  abstract port(): Optional<number>;
 
   /**
-  * @returns {Promise<Optional<Ipv4>>}
+  * @returns {Optional<Ipv4>}
   */
-  abstract ipv4(): Promise<Optional<Ipv4>>;
+  abstract ipv4(): Optional<Ipv4>;
 
   /**
-  * @returns {Promise<Optional<Ipv6>>}
+  * @returns {Optional<Ipv6>}
   */
-  abstract ipv6(): Promise<Optional<Ipv6>>;
+  abstract ipv6(): Optional<Ipv6>;
 
   /**
   * @param {Optional<number>} port
   * @param {Optional<Ipv4>} ipv4
   * @param {Optional<Ipv6>} ipv6
-  * @returns {Promise<SingleHostAddr>}
+  * @returns {SingleHostAddr}
   */
-  static new(port: Optional<number>, ipv4: Optional<Ipv4>, ipv6: Optional<Ipv6>): Promise<SingleHostAddr> {
+  static new(port: Optional<number>, ipv4: Optional<Ipv4>, ipv6: Optional<Ipv6>): SingleHostAddr {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9588,60 +9588,60 @@ export abstract class SingleHostAddr extends _Ptr {
 
 export abstract class SingleHostName extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<SingleHostName>}
+  * @returns {SingleHostName}
   */
-  static fromBytes(bytes: Uint8Array): Promise<SingleHostName> {
+  static fromBytes(bytes: Uint8Array): SingleHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<SingleHostName>}
+  * @returns {SingleHostName}
   */
-  static fromHex(hexStr: string): Promise<SingleHostName> {
+  static fromHex(hexStr: string): SingleHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<SingleHostName>}
+  * @returns {SingleHostName}
   */
-  static fromJson(json: string): Promise<SingleHostName> {
+  static fromJson(json: string): SingleHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract port(): Promise<Optional<number>>;
+  abstract port(): Optional<number>;
 
   /**
-  * @returns {Promise<DNSRecordAorAAAA>}
+  * @returns {DNSRecordAorAAAA}
   */
-  abstract dnsName(): Promise<DNSRecordAorAAAA>;
+  abstract dnsName(): DNSRecordAorAAAA;
 
   /**
   * @param {Optional<number>} port
   * @param {DNSRecordAorAAAA} dnsName
-  * @returns {Promise<SingleHostName>}
+  * @returns {SingleHostName}
   */
-  static new(port: Optional<number>, dnsName: DNSRecordAorAAAA): Promise<SingleHostName> {
+  static new(port: Optional<number>, dnsName: DNSRecordAorAAAA): SingleHostName {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -9649,529 +9649,529 @@ export abstract class SingleHostName extends _Ptr {
 
 export abstract class StakeAndVoteDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeAndVoteDelegation>}
+  * @returns {StakeAndVoteDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeAndVoteDelegation> {
+  static fromBytes(bytes: Uint8Array): StakeAndVoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeAndVoteDelegation>}
+  * @returns {StakeAndVoteDelegation}
   */
-  static fromHex(hexStr: string): Promise<StakeAndVoteDelegation> {
+  static fromHex(hexStr: string): StakeAndVoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeAndVoteDelegation>}
+  * @returns {StakeAndVoteDelegation}
   */
-  static fromJson(json: string): Promise<StakeAndVoteDelegation> {
+  static fromJson(json: string): StakeAndVoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  abstract drep(): Promise<DRep>;
+  abstract drep(): DRep;
 
   /**
   * @param {Credential} stakeCredential
   * @param {Ed25519KeyHash} poolKeyhash
   * @param {DRep} drep
-  * @returns {Promise<StakeAndVoteDelegation>}
+  * @returns {StakeAndVoteDelegation}
   */
-  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, drep: DRep): Promise<StakeAndVoteDelegation> {
+  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, drep: DRep): StakeAndVoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class StakeDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeDelegation>}
+  * @returns {StakeDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeDelegation> {
+  static fromBytes(bytes: Uint8Array): StakeDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeDelegation>}
+  * @returns {StakeDelegation}
   */
-  static fromHex(hexStr: string): Promise<StakeDelegation> {
+  static fromHex(hexStr: string): StakeDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeDelegation>}
+  * @returns {StakeDelegation}
   */
-  static fromJson(json: string): Promise<StakeDelegation> {
+  static fromJson(json: string): StakeDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Ed25519KeyHash;
 
   /**
   * @param {Credential} stakeCredential
   * @param {Ed25519KeyHash} poolKeyhash
-  * @returns {Promise<StakeDelegation>}
+  * @returns {StakeDelegation}
   */
-  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash): Promise<StakeDelegation> {
+  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash): StakeDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class StakeDeregistration extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeDeregistration>}
+  * @returns {StakeDeregistration}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeDeregistration> {
+  static fromBytes(bytes: Uint8Array): StakeDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeDeregistration>}
+  * @returns {StakeDeregistration}
   */
-  static fromHex(hexStr: string): Promise<StakeDeregistration> {
+  static fromHex(hexStr: string): StakeDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeDeregistration>}
+  * @returns {StakeDeregistration}
   */
-  static fromJson(json: string): Promise<StakeDeregistration> {
+  static fromJson(json: string): StakeDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract coin(): Promise<Optional<BigNum>>;
+  abstract coin(): Optional<BigNum>;
 
   /**
   * @param {Credential} stakeCredential
-  * @returns {Promise<StakeDeregistration>}
+  * @returns {StakeDeregistration}
   */
-  static new(stakeCredential: Credential): Promise<StakeDeregistration> {
+  static new(stakeCredential: Credential): StakeDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} stakeCredential
   * @param {BigNum} coin
-  * @returns {Promise<StakeDeregistration>}
+  * @returns {StakeDeregistration}
   */
-  static newWithExplicitRefund(stakeCredential: Credential, coin: BigNum): Promise<StakeDeregistration> {
+  static newWithExplicitRefund(stakeCredential: Credential, coin: BigNum): StakeDeregistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class StakeRegistration extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeRegistration>}
+  * @returns {StakeRegistration}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeRegistration> {
+  static fromBytes(bytes: Uint8Array): StakeRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeRegistration>}
+  * @returns {StakeRegistration}
   */
-  static fromHex(hexStr: string): Promise<StakeRegistration> {
+  static fromHex(hexStr: string): StakeRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeRegistration>}
+  * @returns {StakeRegistration}
   */
-  static fromJson(json: string): Promise<StakeRegistration> {
+  static fromJson(json: string): StakeRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract coin(): Promise<Optional<BigNum>>;
+  abstract coin(): Optional<BigNum>;
 
   /**
   * @param {Credential} stakeCredential
-  * @returns {Promise<StakeRegistration>}
+  * @returns {StakeRegistration}
   */
-  static new(stakeCredential: Credential): Promise<StakeRegistration> {
+  static new(stakeCredential: Credential): StakeRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} stakeCredential
   * @param {BigNum} coin
-  * @returns {Promise<StakeRegistration>}
+  * @returns {StakeRegistration}
   */
-  static newWithExplicitDeposit(stakeCredential: Credential, coin: BigNum): Promise<StakeRegistration> {
+  static newWithExplicitDeposit(stakeCredential: Credential, coin: BigNum): StakeRegistration {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class StakeRegistrationAndDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeRegistrationAndDelegation>}
+  * @returns {StakeRegistrationAndDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeRegistrationAndDelegation> {
+  static fromBytes(bytes: Uint8Array): StakeRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeRegistrationAndDelegation>}
+  * @returns {StakeRegistrationAndDelegation}
   */
-  static fromHex(hexStr: string): Promise<StakeRegistrationAndDelegation> {
+  static fromHex(hexStr: string): StakeRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeRegistrationAndDelegation>}
+  * @returns {StakeRegistrationAndDelegation}
   */
-  static fromJson(json: string): Promise<StakeRegistrationAndDelegation> {
+  static fromJson(json: string): StakeRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
   * @param {Credential} stakeCredential
   * @param {Ed25519KeyHash} poolKeyhash
   * @param {BigNum} coin
-  * @returns {Promise<StakeRegistrationAndDelegation>}
+  * @returns {StakeRegistrationAndDelegation}
   */
-  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, coin: BigNum): Promise<StakeRegistrationAndDelegation> {
+  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, coin: BigNum): StakeRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class StakeVoteRegistrationAndDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<StakeVoteRegistrationAndDelegation>}
+  * @returns {StakeVoteRegistrationAndDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<StakeVoteRegistrationAndDelegation> {
+  static fromBytes(bytes: Uint8Array): StakeVoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<StakeVoteRegistrationAndDelegation>}
+  * @returns {StakeVoteRegistrationAndDelegation}
   */
-  static fromHex(hexStr: string): Promise<StakeVoteRegistrationAndDelegation> {
+  static fromHex(hexStr: string): StakeVoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<StakeVoteRegistrationAndDelegation>}
+  * @returns {StakeVoteRegistrationAndDelegation}
   */
-  static fromJson(json: string): Promise<StakeVoteRegistrationAndDelegation> {
+  static fromJson(json: string): StakeVoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<Ed25519KeyHash>}
+  * @returns {Ed25519KeyHash}
   */
-  abstract poolKeyhash(): Promise<Ed25519KeyHash>;
+  abstract poolKeyhash(): Ed25519KeyHash;
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  abstract drep(): Promise<DRep>;
+  abstract drep(): DRep;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
   * @param {Credential} stakeCredential
   * @param {Ed25519KeyHash} poolKeyhash
   * @param {DRep} drep
   * @param {BigNum} coin
-  * @returns {Promise<StakeVoteRegistrationAndDelegation>}
+  * @returns {StakeVoteRegistrationAndDelegation}
   */
-  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, drep: DRep, coin: BigNum): Promise<StakeVoteRegistrationAndDelegation> {
+  static new(stakeCredential: Credential, poolKeyhash: Ed25519KeyHash, drep: DRep, coin: BigNum): StakeVoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class Strings extends _Ptr {
   /**
-  * @returns {Promise<Strings>}
+  * @returns {Strings}
   */
-  static new(): Promise<Strings> {
+  static new(): Strings {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract get(index: number): Promise<string>;
+  abstract get(index: number): string;
 
   /**
   * @param {string} elem
   */
-  abstract add(elem: string): Promise<void>;
+  abstract add(elem: string): void;
 
 }
 
 export abstract class TimelockExpiry extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TimelockExpiry>}
+  * @returns {TimelockExpiry}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TimelockExpiry> {
+  static fromBytes(bytes: Uint8Array): TimelockExpiry {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TimelockExpiry>}
+  * @returns {TimelockExpiry}
   */
-  static fromHex(hexStr: string): Promise<TimelockExpiry> {
+  static fromHex(hexStr: string): TimelockExpiry {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TimelockExpiry>}
+  * @returns {TimelockExpiry}
   */
-  static fromJson(json: string): Promise<TimelockExpiry> {
+  static fromJson(json: string): TimelockExpiry {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract slot(): Promise<number>;
+  abstract slot(): number;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract slotBignum(): Promise<BigNum>;
+  abstract slotBignum(): BigNum;
 
   /**
   * @param {number} slot
-  * @returns {Promise<TimelockExpiry>}
+  * @returns {TimelockExpiry}
   */
-  static new(slot: number): Promise<TimelockExpiry> {
+  static new(slot: number): TimelockExpiry {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} slot
-  * @returns {Promise<TimelockExpiry>}
+  * @returns {TimelockExpiry}
   */
-  static newTimelockexpiry(slot: BigNum): Promise<TimelockExpiry> {
+  static newTimelockexpiry(slot: BigNum): TimelockExpiry {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10179,67 +10179,67 @@ export abstract class TimelockExpiry extends _Ptr {
 
 export abstract class TimelockStart extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TimelockStart>}
+  * @returns {TimelockStart}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TimelockStart> {
+  static fromBytes(bytes: Uint8Array): TimelockStart {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TimelockStart>}
+  * @returns {TimelockStart}
   */
-  static fromHex(hexStr: string): Promise<TimelockStart> {
+  static fromHex(hexStr: string): TimelockStart {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TimelockStart>}
+  * @returns {TimelockStart}
   */
-  static fromJson(json: string): Promise<TimelockStart> {
+  static fromJson(json: string): TimelockStart {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract slot(): Promise<number>;
+  abstract slot(): number;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract slotBignum(): Promise<BigNum>;
+  abstract slotBignum(): BigNum;
 
   /**
   * @param {number} slot
-  * @returns {Promise<TimelockStart>}
+  * @returns {TimelockStart}
   */
-  static new(slot: number): Promise<TimelockStart> {
+  static new(slot: number): TimelockStart {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} slot
-  * @returns {Promise<TimelockStart>}
+  * @returns {TimelockStart}
   */
-  static newTimelockstart(slot: BigNum): Promise<TimelockStart> {
+  static newTimelockstart(slot: BigNum): TimelockStart {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10247,76 +10247,76 @@ export abstract class TimelockStart extends _Ptr {
 
 export abstract class Transaction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Transaction> {
+  static fromBytes(bytes: Uint8Array): Transaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  static fromHex(hexStr: string): Promise<Transaction> {
+  static fromHex(hexStr: string): Transaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  static fromJson(json: string): Promise<Transaction> {
+  static fromJson(json: string): Transaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  abstract body(): Promise<TransactionBody>;
+  abstract body(): TransactionBody;
 
   /**
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  abstract witnessSet(): Promise<TransactionWitnessSet>;
+  abstract witnessSet(): TransactionWitnessSet;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isValid(): Promise<boolean>;
+  abstract isValid(): boolean;
 
   /**
-  * @returns {Promise<Optional<AuxiliaryData>>}
+  * @returns {Optional<AuxiliaryData>}
   */
-  abstract auxiliaryData(): Promise<Optional<AuxiliaryData>>;
+  abstract auxiliaryData(): Optional<AuxiliaryData>;
 
   /**
   * @param {boolean} valid
   */
-  abstract setIsValid(valid: boolean): Promise<void>;
+  abstract setIsValid(valid: boolean): void;
 
   /**
   * @param {TransactionBody} body
   * @param {TransactionWitnessSet} witnessSet
   * @param {Optional<AuxiliaryData>} auxiliaryData
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  static new(body: TransactionBody, witnessSet: TransactionWitnessSet, auxiliaryData: Optional<AuxiliaryData>): Promise<Transaction> {
+  static new(body: TransactionBody, witnessSet: TransactionWitnessSet, auxiliaryData: Optional<AuxiliaryData>): Transaction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10324,359 +10324,359 @@ export abstract class Transaction extends _Ptr {
 
 export abstract class TransactionBatch extends _Ptr {
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  abstract get(index: number): Promise<Transaction>;
+  abstract get(index: number): Transaction;
 
 }
 
 export abstract class TransactionBatchList extends _Ptr {
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionBatch>}
+  * @returns {TransactionBatch}
   */
-  abstract get(index: number): Promise<TransactionBatch>;
+  abstract get(index: number): TransactionBatch;
 
 }
 
 export abstract class TransactionBodies extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionBodies>}
+  * @returns {TransactionBodies}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionBodies> {
+  static fromBytes(bytes: Uint8Array): TransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionBodies>}
+  * @returns {TransactionBodies}
   */
-  static fromHex(hexStr: string): Promise<TransactionBodies> {
+  static fromHex(hexStr: string): TransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionBodies>}
+  * @returns {TransactionBodies}
   */
-  static fromJson(json: string): Promise<TransactionBodies> {
+  static fromJson(json: string): TransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionBodies>}
+  * @returns {TransactionBodies}
   */
-  static new(): Promise<TransactionBodies> {
+  static new(): TransactionBodies {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  abstract get(index: number): Promise<TransactionBody>;
+  abstract get(index: number): TransactionBody;
 
   /**
   * @param {TransactionBody} elem
   */
-  abstract add(elem: TransactionBody): Promise<void>;
+  abstract add(elem: TransactionBody): void;
 
 }
 
 export abstract class TransactionBody extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionBody> {
+  static fromBytes(bytes: Uint8Array): TransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  static fromHex(hexStr: string): Promise<TransactionBody> {
+  static fromHex(hexStr: string): TransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  static fromJson(json: string): Promise<TransactionBody> {
+  static fromJson(json: string): TransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract inputs(): Promise<TransactionInputs>;
+  abstract inputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<TransactionOutputs>}
+  * @returns {TransactionOutputs}
   */
-  abstract outputs(): Promise<TransactionOutputs>;
+  abstract outputs(): TransactionOutputs;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract fee(): Promise<BigNum>;
+  abstract fee(): BigNum;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract ttl(): Promise<Optional<number>>;
+  abstract ttl(): Optional<number>;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract ttlBignum(): Promise<Optional<BigNum>>;
+  abstract ttlBignum(): Optional<BigNum>;
 
   /**
   * @param {BigNum} ttl
   */
-  abstract setTtl(ttl: BigNum): Promise<void>;
+  abstract setTtl(ttl: BigNum): void;
 
   /**
   */
-  abstract removeTtl(): Promise<void>;
+  abstract removeTtl(): void;
 
   /**
   * @param {Certificates} certs
   */
-  abstract setCerts(certs: Certificates): Promise<void>;
+  abstract setCerts(certs: Certificates): void;
 
   /**
-  * @returns {Promise<Optional<Certificates>>}
+  * @returns {Optional<Certificates>}
   */
-  abstract certs(): Promise<Optional<Certificates>>;
+  abstract certs(): Optional<Certificates>;
 
   /**
   * @param {Withdrawals} withdrawals
   */
-  abstract setWithdrawals(withdrawals: Withdrawals): Promise<void>;
+  abstract setWithdrawals(withdrawals: Withdrawals): void;
 
   /**
-  * @returns {Promise<Optional<Withdrawals>>}
+  * @returns {Optional<Withdrawals>}
   */
-  abstract withdrawals(): Promise<Optional<Withdrawals>>;
+  abstract withdrawals(): Optional<Withdrawals>;
 
   /**
   * @param {Update} update
   */
-  abstract setUpdate(update: Update): Promise<void>;
+  abstract setUpdate(update: Update): void;
 
   /**
-  * @returns {Promise<Optional<Update>>}
+  * @returns {Optional<Update>}
   */
-  abstract update(): Promise<Optional<Update>>;
+  abstract update(): Optional<Update>;
 
   /**
   * @param {AuxiliaryDataHash} auxiliaryDataHash
   */
-  abstract setAuxiliaryDataHash(auxiliaryDataHash: AuxiliaryDataHash): Promise<void>;
+  abstract setAuxiliaryDataHash(auxiliaryDataHash: AuxiliaryDataHash): void;
 
   /**
-  * @returns {Promise<Optional<AuxiliaryDataHash>>}
+  * @returns {Optional<AuxiliaryDataHash>}
   */
-  abstract auxiliaryDataHash(): Promise<Optional<AuxiliaryDataHash>>;
+  abstract auxiliaryDataHash(): Optional<AuxiliaryDataHash>;
 
   /**
   * @param {number} validityStartInterval
   */
-  abstract setValidityStartInterval(validityStartInterval: number): Promise<void>;
+  abstract setValidityStartInterval(validityStartInterval: number): void;
 
   /**
   * @param {BigNum} validityStartInterval
   */
-  abstract setValidityStartIntervalBignum(validityStartInterval: BigNum): Promise<void>;
+  abstract setValidityStartIntervalBignum(validityStartInterval: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract validityStartIntervalBignum(): Promise<Optional<BigNum>>;
+  abstract validityStartIntervalBignum(): Optional<BigNum>;
 
   /**
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract validityStartInterval(): Promise<Optional<number>>;
+  abstract validityStartInterval(): Optional<number>;
 
   /**
   * @param {Mint} mint
   */
-  abstract setMint(mint: Mint): Promise<void>;
+  abstract setMint(mint: Mint): void;
 
   /**
-  * @returns {Promise<Optional<Mint>>}
+  * @returns {Optional<Mint>}
   */
-  abstract mint(): Promise<Optional<Mint>>;
+  abstract mint(): Optional<Mint>;
 
   /**
   * @param {TransactionInputs} referenceInputs
   */
-  abstract setReferenceInputs(referenceInputs: TransactionInputs): Promise<void>;
+  abstract setReferenceInputs(referenceInputs: TransactionInputs): void;
 
   /**
-  * @returns {Promise<Optional<TransactionInputs>>}
+  * @returns {Optional<TransactionInputs>}
   */
-  abstract referenceInputs(): Promise<Optional<TransactionInputs>>;
+  abstract referenceInputs(): Optional<TransactionInputs>;
 
   /**
   * @param {ScriptDataHash} scriptDataHash
   */
-  abstract setScriptDataHash(scriptDataHash: ScriptDataHash): Promise<void>;
+  abstract setScriptDataHash(scriptDataHash: ScriptDataHash): void;
 
   /**
-  * @returns {Promise<Optional<ScriptDataHash>>}
+  * @returns {Optional<ScriptDataHash>}
   */
-  abstract scriptDataHash(): Promise<Optional<ScriptDataHash>>;
+  abstract scriptDataHash(): Optional<ScriptDataHash>;
 
   /**
   * @param {TransactionInputs} collateral
   */
-  abstract setCollateral(collateral: TransactionInputs): Promise<void>;
+  abstract setCollateral(collateral: TransactionInputs): void;
 
   /**
-  * @returns {Promise<Optional<TransactionInputs>>}
+  * @returns {Optional<TransactionInputs>}
   */
-  abstract collateral(): Promise<Optional<TransactionInputs>>;
+  abstract collateral(): Optional<TransactionInputs>;
 
   /**
   * @param {Ed25519KeyHashes} requiredSigners
   */
-  abstract setRequiredSigners(requiredSigners: Ed25519KeyHashes): Promise<void>;
+  abstract setRequiredSigners(requiredSigners: Ed25519KeyHashes): void;
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHashes>>}
+  * @returns {Optional<Ed25519KeyHashes>}
   */
-  abstract requiredSigners(): Promise<Optional<Ed25519KeyHashes>>;
+  abstract requiredSigners(): Optional<Ed25519KeyHashes>;
 
   /**
   * @param {NetworkId} networkId
   */
-  abstract setNetworkId(networkId: NetworkId): Promise<void>;
+  abstract setNetworkId(networkId: NetworkId): void;
 
   /**
-  * @returns {Promise<Optional<NetworkId>>}
+  * @returns {Optional<NetworkId>}
   */
-  abstract networkId(): Promise<Optional<NetworkId>>;
+  abstract networkId(): Optional<NetworkId>;
 
   /**
   * @param {TransactionOutput} collateralReturn
   */
-  abstract setCollateralReturn(collateralReturn: TransactionOutput): Promise<void>;
+  abstract setCollateralReturn(collateralReturn: TransactionOutput): void;
 
   /**
-  * @returns {Promise<Optional<TransactionOutput>>}
+  * @returns {Optional<TransactionOutput>}
   */
-  abstract collateralReturn(): Promise<Optional<TransactionOutput>>;
+  abstract collateralReturn(): Optional<TransactionOutput>;
 
   /**
   * @param {BigNum} totalCollateral
   */
-  abstract setTotalCollateral(totalCollateral: BigNum): Promise<void>;
+  abstract setTotalCollateral(totalCollateral: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract totalCollateral(): Promise<Optional<BigNum>>;
+  abstract totalCollateral(): Optional<BigNum>;
 
   /**
   * @param {VotingProcedures} votingProcedures
   */
-  abstract setVotingProcedures(votingProcedures: VotingProcedures): Promise<void>;
+  abstract setVotingProcedures(votingProcedures: VotingProcedures): void;
 
   /**
-  * @returns {Promise<Optional<VotingProcedures>>}
+  * @returns {Optional<VotingProcedures>}
   */
-  abstract votingProcedures(): Promise<Optional<VotingProcedures>>;
+  abstract votingProcedures(): Optional<VotingProcedures>;
 
   /**
   * @param {VotingProposals} votingProposals
   */
-  abstract setVotingProposals(votingProposals: VotingProposals): Promise<void>;
+  abstract setVotingProposals(votingProposals: VotingProposals): void;
 
   /**
-  * @returns {Promise<Optional<VotingProposals>>}
+  * @returns {Optional<VotingProposals>}
   */
-  abstract votingProposals(): Promise<Optional<VotingProposals>>;
+  abstract votingProposals(): Optional<VotingProposals>;
 
   /**
   * @param {BigNum} donation
   */
-  abstract setDonation(donation: BigNum): Promise<void>;
+  abstract setDonation(donation: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract donation(): Promise<Optional<BigNum>>;
+  abstract donation(): Optional<BigNum>;
 
   /**
   * @param {BigNum} currentTreasuryValue
   */
-  abstract setCurrentTreasuryValue(currentTreasuryValue: BigNum): Promise<void>;
+  abstract setCurrentTreasuryValue(currentTreasuryValue: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract currentTreasuryValue(): Promise<Optional<BigNum>>;
+  abstract currentTreasuryValue(): Optional<BigNum>;
 
   /**
   * @param {TransactionInputs} inputs
   * @param {TransactionOutputs} outputs
   * @param {BigNum} fee
   * @param {Optional<number>} ttl
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  static new(inputs: TransactionInputs, outputs: TransactionOutputs, fee: BigNum, ttl: Optional<number>): Promise<TransactionBody> {
+  static new(inputs: TransactionInputs, outputs: TransactionOutputs, fee: BigNum, ttl: Optional<number>): TransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10684,9 +10684,9 @@ export abstract class TransactionBody extends _Ptr {
   * @param {TransactionInputs} inputs
   * @param {TransactionOutputs} outputs
   * @param {BigNum} fee
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  static newTxBody(inputs: TransactionInputs, outputs: TransactionOutputs, fee: BigNum): Promise<TransactionBody> {
+  static newTxBody(inputs: TransactionInputs, outputs: TransactionOutputs, fee: BigNum): TransactionBody {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -10696,308 +10696,308 @@ export abstract class TransactionBuilder extends _Ptr {
   /**
   * @param {TransactionUnspentOutputs} inputs
   * @param {CoinSelectionStrategyCIP2} strategy
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addInputsFrom(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2): Promise<void>;
+  abstract addInputsFrom(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2): void;
 
   /**
   * @param {TxInputsBuilder} inputs
   */
-  abstract setInputs(inputs: TxInputsBuilder): Promise<void>;
+  abstract setInputs(inputs: TxInputsBuilder): void;
 
   /**
   * @param {TxInputsBuilder} collateral
   */
-  abstract setCollateral(collateral: TxInputsBuilder): Promise<void>;
+  abstract setCollateral(collateral: TxInputsBuilder): void;
 
   /**
   * @param {TransactionOutput} collateralReturn
   */
-  abstract setCollateralReturn(collateralReturn: TransactionOutput): Promise<void>;
+  abstract setCollateralReturn(collateralReturn: TransactionOutput): void;
 
   /**
   */
-  abstract removeCollateralReturn(): Promise<void>;
+  abstract removeCollateralReturn(): void;
 
   /**
   * @param {TransactionOutput} collateralReturn
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setCollateralReturnAndTotal(collateralReturn: TransactionOutput): Promise<void>;
+  abstract setCollateralReturnAndTotal(collateralReturn: TransactionOutput): void;
 
   /**
   * @param {BigNum} totalCollateral
   */
-  abstract setTotalCollateral(totalCollateral: BigNum): Promise<void>;
+  abstract setTotalCollateral(totalCollateral: BigNum): void;
 
   /**
   */
-  abstract removeTotalCollateral(): Promise<void>;
+  abstract removeTotalCollateral(): void;
 
   /**
   * @param {BigNum} totalCollateral
   * @param {Address} returnAddress
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setTotalCollateralAndReturn(totalCollateral: BigNum, returnAddress: Address): Promise<void>;
+  abstract setTotalCollateralAndReturn(totalCollateral: BigNum, returnAddress: Address): void;
 
   /**
   * @param {TransactionInput} referenceInput
   */
-  abstract addReferenceInput(referenceInput: TransactionInput): Promise<void>;
+  abstract addReferenceInput(referenceInput: TransactionInput): void;
 
   /**
   * @param {TransactionInput} referenceInput
   * @param {number} scriptSize
   */
-  abstract addScriptReferenceInput(referenceInput: TransactionInput, scriptSize: number): Promise<void>;
+  abstract addScriptReferenceInput(referenceInput: TransactionInput, scriptSize: number): void;
 
   /**
   * @param {Ed25519KeyHash} hash
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {NativeScript} script
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addNativeScriptInput(script: NativeScript, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addNativeScriptInput(script: NativeScript, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {PlutusWitness} witness
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {ByronAddress} hash
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addBootstrapInput(hash: ByronAddress, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addBootstrapInput(hash: ByronAddress, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {Address} address
   * @param {TransactionInput} input
   * @param {Value} amount
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {TransactionUnspentOutputs} inputs
   * @param {CoinSelectionStrategyCIP2} strategy
   * @param {ChangeConfig} changeConfig
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract addInputsFromAndChange(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig): Promise<boolean>;
+  abstract addInputsFromAndChange(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig): boolean;
 
   /**
   * @param {TransactionUnspentOutputs} inputs
   * @param {CoinSelectionStrategyCIP2} strategy
   * @param {ChangeConfig} changeConfig
   * @param {BigNum} collateralPercentage
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addInputsFromAndChangeWithCollateralReturn(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig, collateralPercentage: BigNum): Promise<void>;
+  abstract addInputsFromAndChangeWithCollateralReturn(inputs: TransactionUnspentOutputs, strategy: CoinSelectionStrategyCIP2, changeConfig: ChangeConfig, collateralPercentage: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<NativeScripts>>}
+  * @returns {Optional<NativeScripts>}
   */
-  abstract getNativeInputScripts(): Promise<Optional<NativeScripts>>;
+  abstract getNativeInputScripts(): Optional<NativeScripts>;
 
   /**
-  * @returns {Promise<Optional<PlutusWitnesses>>}
+  * @returns {Optional<PlutusWitnesses>}
   */
-  abstract getPlutusInputScripts(): Promise<Optional<PlutusWitnesses>>;
+  abstract getPlutusInputScripts(): Optional<PlutusWitnesses>;
 
   /**
   * @param {Address} address
   * @param {TransactionInput} input
   * @param {Value} amount
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract feeForInput(address: Address, input: TransactionInput, amount: Value): Promise<BigNum>;
+  abstract feeForInput(address: Address, input: TransactionInput, amount: Value): BigNum;
 
   /**
   * @param {TransactionOutput} output
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addOutput(output: TransactionOutput): Promise<void>;
+  abstract addOutput(output: TransactionOutput): void;
 
   /**
   * @param {TransactionOutput} output
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract feeForOutput(output: TransactionOutput): Promise<BigNum>;
+  abstract feeForOutput(output: TransactionOutput): BigNum;
 
   /**
   * @param {BigNum} fee
   */
-  abstract setFee(fee: BigNum): Promise<void>;
+  abstract setFee(fee: BigNum): void;
 
   /**
   * @param {BigNum} fee
   */
-  abstract setMinFee(fee: BigNum): Promise<void>;
+  abstract setMinFee(fee: BigNum): void;
 
   /**
   * @param {number} ttl
   */
-  abstract setTtl(ttl: number): Promise<void>;
+  abstract setTtl(ttl: number): void;
 
   /**
   * @param {BigNum} ttl
   */
-  abstract setTtlBignum(ttl: BigNum): Promise<void>;
+  abstract setTtlBignum(ttl: BigNum): void;
 
   /**
   */
-  abstract removeTtl(): Promise<void>;
+  abstract removeTtl(): void;
 
   /**
   * @param {number} validityStartInterval
   */
-  abstract setValidityStartInterval(validityStartInterval: number): Promise<void>;
+  abstract setValidityStartInterval(validityStartInterval: number): void;
 
   /**
   * @param {BigNum} validityStartInterval
   */
-  abstract setValidityStartIntervalBignum(validityStartInterval: BigNum): Promise<void>;
+  abstract setValidityStartIntervalBignum(validityStartInterval: BigNum): void;
 
   /**
   */
-  abstract removeValidityStartInterval(): Promise<void>;
+  abstract removeValidityStartInterval(): void;
 
   /**
   * @param {Certificates} certs
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setCerts(certs: Certificates): Promise<void>;
+  abstract setCerts(certs: Certificates): void;
 
   /**
   */
-  abstract removeCerts(): Promise<void>;
+  abstract removeCerts(): void;
 
   /**
   * @param {CertificatesBuilder} certs
   */
-  abstract setCertsBuilder(certs: CertificatesBuilder): Promise<void>;
+  abstract setCertsBuilder(certs: CertificatesBuilder): void;
 
   /**
   * @param {Withdrawals} withdrawals
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setWithdrawals(withdrawals: Withdrawals): Promise<void>;
+  abstract setWithdrawals(withdrawals: Withdrawals): void;
 
   /**
   * @param {WithdrawalsBuilder} withdrawals
   */
-  abstract setWithdrawalsBuilder(withdrawals: WithdrawalsBuilder): Promise<void>;
+  abstract setWithdrawalsBuilder(withdrawals: WithdrawalsBuilder): void;
 
   /**
   * @param {VotingBuilder} votingBuilder
   */
-  abstract setVotingBuilder(votingBuilder: VotingBuilder): Promise<void>;
+  abstract setVotingBuilder(votingBuilder: VotingBuilder): void;
 
   /**
   * @param {VotingProposalBuilder} votingProposalBuilder
   */
-  abstract setVotingProposalBuilder(votingProposalBuilder: VotingProposalBuilder): Promise<void>;
+  abstract setVotingProposalBuilder(votingProposalBuilder: VotingProposalBuilder): void;
 
   /**
   */
-  abstract removeWithdrawals(): Promise<void>;
+  abstract removeWithdrawals(): void;
 
   /**
-  * @returns {Promise<Optional<AuxiliaryData>>}
+  * @returns {Optional<AuxiliaryData>}
   */
-  abstract getAuxiliaryData(): Promise<Optional<AuxiliaryData>>;
+  abstract getAuxiliaryData(): Optional<AuxiliaryData>;
 
   /**
   * @param {AuxiliaryData} auxiliaryData
   */
-  abstract setAuxiliaryData(auxiliaryData: AuxiliaryData): Promise<void>;
+  abstract setAuxiliaryData(auxiliaryData: AuxiliaryData): void;
 
   /**
   */
-  abstract removeAuxiliaryData(): Promise<void>;
+  abstract removeAuxiliaryData(): void;
 
   /**
   * @param {GeneralTransactionMetadata} metadata
   */
-  abstract setMetadata(metadata: GeneralTransactionMetadata): Promise<void>;
+  abstract setMetadata(metadata: GeneralTransactionMetadata): void;
 
   /**
   * @param {BigNum} key
   * @param {TransactionMetadatum} val
   */
-  abstract addMetadatum(key: BigNum, val: TransactionMetadatum): Promise<void>;
+  abstract addMetadatum(key: BigNum, val: TransactionMetadatum): void;
 
   /**
   * @param {BigNum} key
   * @param {string} val
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addJsonMetadatum(key: BigNum, val: string): Promise<void>;
+  abstract addJsonMetadatum(key: BigNum, val: string): void;
 
   /**
   * @param {BigNum} key
   * @param {string} val
   * @param {MetadataJsonSchema} schema
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addJsonMetadatumWithSchema(key: BigNum, val: string, schema: MetadataJsonSchema): Promise<void>;
+  abstract addJsonMetadatumWithSchema(key: BigNum, val: string, schema: MetadataJsonSchema): void;
 
   /**
   * @param {MintBuilder} mintBuilder
   */
-  abstract setMintBuilder(mintBuilder: MintBuilder): Promise<void>;
+  abstract setMintBuilder(mintBuilder: MintBuilder): void;
 
   /**
   */
-  abstract removeMintBuilder(): Promise<void>;
+  abstract removeMintBuilder(): void;
 
   /**
-  * @returns {Promise<Optional<MintBuilder>>}
+  * @returns {Optional<MintBuilder>}
   */
-  abstract getMintBuilder(): Promise<Optional<MintBuilder>>;
+  abstract getMintBuilder(): Optional<MintBuilder>;
 
   /**
   * @param {Mint} mint
   * @param {NativeScripts} mintScripts
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setMint(mint: Mint, mintScripts: NativeScripts): Promise<void>;
+  abstract setMint(mint: Mint, mintScripts: NativeScripts): void;
 
   /**
-  * @returns {Promise<Optional<Mint>>}
+  * @returns {Optional<Mint>}
   */
-  abstract getMint(): Promise<Optional<Mint>>;
+  abstract getMint(): Optional<Mint>;
 
   /**
-  * @returns {Promise<Optional<NativeScripts>>}
+  * @returns {Optional<NativeScripts>}
   */
-  abstract getMintScripts(): Promise<Optional<NativeScripts>>;
+  abstract getMintScripts(): Optional<NativeScripts>;
 
   /**
   * @param {NativeScript} policyScript
   * @param {MintAssets} mintAssets
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setMintAsset(policyScript: NativeScript, mintAssets: MintAssets): Promise<void>;
+  abstract setMintAsset(policyScript: NativeScript, mintAssets: MintAssets): void;
 
   /**
   * @param {NativeScript} policyScript
   * @param {AssetName} assetName
   * @param {Int} amount
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addMintAsset(policyScript: NativeScript, assetName: AssetName, amount: Int): Promise<void>;
+  abstract addMintAsset(policyScript: NativeScript, assetName: AssetName, amount: Int): void;
 
   /**
   * @param {NativeScript} policyScript
@@ -11005,160 +11005,160 @@ export abstract class TransactionBuilder extends _Ptr {
   * @param {Int} amount
   * @param {TransactionOutputAmountBuilder} outputBuilder
   * @param {BigNum} outputCoin
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addMintAssetAndOutput(policyScript: NativeScript, assetName: AssetName, amount: Int, outputBuilder: TransactionOutputAmountBuilder, outputCoin: BigNum): Promise<void>;
+  abstract addMintAssetAndOutput(policyScript: NativeScript, assetName: AssetName, amount: Int, outputBuilder: TransactionOutputAmountBuilder, outputCoin: BigNum): void;
 
   /**
   * @param {NativeScript} policyScript
   * @param {AssetName} assetName
   * @param {Int} amount
   * @param {TransactionOutputAmountBuilder} outputBuilder
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addMintAssetAndOutputMinRequiredCoin(policyScript: NativeScript, assetName: AssetName, amount: Int, outputBuilder: TransactionOutputAmountBuilder): Promise<void>;
+  abstract addMintAssetAndOutputMinRequiredCoin(policyScript: NativeScript, assetName: AssetName, amount: Int, outputBuilder: TransactionOutputAmountBuilder): void;
 
   /**
   * @param {PlutusData} datum
   */
-  abstract addExtraWitnessDatum(datum: PlutusData): Promise<void>;
+  abstract addExtraWitnessDatum(datum: PlutusData): void;
 
   /**
-  * @returns {Promise<Optional<PlutusList>>}
+  * @returns {Optional<PlutusList>}
   */
-  abstract getExtraWitnessDatums(): Promise<Optional<PlutusList>>;
+  abstract getExtraWitnessDatums(): Optional<PlutusList>;
 
   /**
   * @param {BigNum} donation
   */
-  abstract setDonation(donation: BigNum): Promise<void>;
+  abstract setDonation(donation: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract getDonation(): Promise<Optional<BigNum>>;
+  abstract getDonation(): Optional<BigNum>;
 
   /**
   * @param {BigNum} currentTreasuryValue
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract setCurrentTreasuryValue(currentTreasuryValue: BigNum): Promise<void>;
+  abstract setCurrentTreasuryValue(currentTreasuryValue: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract getCurrentTreasuryValue(): Promise<Optional<BigNum>>;
+  abstract getCurrentTreasuryValue(): Optional<BigNum>;
 
   /**
   * @param {TransactionBuilderConfig} cfg
-  * @returns {Promise<TransactionBuilder>}
+  * @returns {TransactionBuilder}
   */
-  static new(cfg: TransactionBuilderConfig): Promise<TransactionBuilder> {
+  static new(cfg: TransactionBuilderConfig): TransactionBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getReferenceInputs(): Promise<TransactionInputs>;
+  abstract getReferenceInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getExplicitInput(): Promise<Value>;
+  abstract getExplicitInput(): Value;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getImplicitInput(): Promise<Value>;
+  abstract getImplicitInput(): Value;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getTotalInput(): Promise<Value>;
+  abstract getTotalInput(): Value;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getTotalOutput(): Promise<Value>;
+  abstract getTotalOutput(): Value;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getExplicitOutput(): Promise<Value>;
+  abstract getExplicitOutput(): Value;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract getDeposit(): Promise<BigNum>;
+  abstract getDeposit(): BigNum;
 
   /**
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract getFeeIfSet(): Promise<Optional<BigNum>>;
+  abstract getFeeIfSet(): Optional<BigNum>;
 
   /**
   * @param {Address} address
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract addChangeIfNeeded(address: Address): Promise<boolean>;
+  abstract addChangeIfNeeded(address: Address): boolean;
 
   /**
   * @param {Address} address
   * @param {OutputDatum} plutusData
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract addChangeIfNeededWithDatum(address: Address, plutusData: OutputDatum): Promise<boolean>;
+  abstract addChangeIfNeededWithDatum(address: Address, plutusData: OutputDatum): boolean;
 
   /**
   * @param {Costmdls} costModels
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract calcScriptDataHash(costModels: Costmdls): Promise<void>;
+  abstract calcScriptDataHash(costModels: Costmdls): void;
 
   /**
   * @param {ScriptDataHash} hash
   */
-  abstract setScriptDataHash(hash: ScriptDataHash): Promise<void>;
+  abstract setScriptDataHash(hash: ScriptDataHash): void;
 
   /**
   */
-  abstract removeScriptDataHash(): Promise<void>;
+  abstract removeScriptDataHash(): void;
 
   /**
   * @param {Ed25519KeyHash} key
   */
-  abstract addRequiredSigner(key: Ed25519KeyHash): Promise<void>;
+  abstract addRequiredSigner(key: Ed25519KeyHash): void;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract fullSize(): Promise<number>;
+  abstract fullSize(): number;
 
   /**
-  * @returns {Promise<Uint32Array>}
+  * @returns {Uint32Array}
   */
-  abstract outputSizes(): Promise<Uint32Array>;
+  abstract outputSizes(): Uint32Array;
 
   /**
-  * @returns {Promise<TransactionBody>}
+  * @returns {TransactionBody}
   */
-  abstract build(): Promise<TransactionBody>;
+  abstract build(): TransactionBody;
 
   /**
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  abstract buildTx(): Promise<Transaction>;
+  abstract buildTx(): Transaction;
 
   /**
-  * @returns {Promise<Transaction>}
+  * @returns {Transaction}
   */
-  abstract buildTxUnsafe(): Promise<Transaction>;
+  abstract buildTxUnsafe(): Transaction;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract minFee(): Promise<BigNum>;
+  abstract minFee(): BigNum;
 
 }
 
@@ -11167,123 +11167,123 @@ export abstract class TransactionBuilderConfig extends _Ptr {
 
 export abstract class TransactionBuilderConfigBuilder extends _Ptr {
   /**
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  static new(): Promise<TransactionBuilderConfigBuilder> {
+  static new(): TransactionBuilderConfigBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {LinearFee} feeAlgo
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract feeAlgo(feeAlgo: LinearFee): Promise<TransactionBuilderConfigBuilder>;
+  abstract feeAlgo(feeAlgo: LinearFee): TransactionBuilderConfigBuilder;
 
   /**
   * @param {BigNum} coinsPerUtxoByte
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract coinsPerUtxoByte(coinsPerUtxoByte: BigNum): Promise<TransactionBuilderConfigBuilder>;
+  abstract coinsPerUtxoByte(coinsPerUtxoByte: BigNum): TransactionBuilderConfigBuilder;
 
   /**
   * @param {ExUnitPrices} exUnitPrices
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract exUnitPrices(exUnitPrices: ExUnitPrices): Promise<TransactionBuilderConfigBuilder>;
+  abstract exUnitPrices(exUnitPrices: ExUnitPrices): TransactionBuilderConfigBuilder;
 
   /**
   * @param {BigNum} poolDeposit
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract poolDeposit(poolDeposit: BigNum): Promise<TransactionBuilderConfigBuilder>;
+  abstract poolDeposit(poolDeposit: BigNum): TransactionBuilderConfigBuilder;
 
   /**
   * @param {BigNum} keyDeposit
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract keyDeposit(keyDeposit: BigNum): Promise<TransactionBuilderConfigBuilder>;
+  abstract keyDeposit(keyDeposit: BigNum): TransactionBuilderConfigBuilder;
 
   /**
   * @param {number} maxValueSize
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract maxValueSize(maxValueSize: number): Promise<TransactionBuilderConfigBuilder>;
+  abstract maxValueSize(maxValueSize: number): TransactionBuilderConfigBuilder;
 
   /**
   * @param {number} maxTxSize
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract maxTxSize(maxTxSize: number): Promise<TransactionBuilderConfigBuilder>;
+  abstract maxTxSize(maxTxSize: number): TransactionBuilderConfigBuilder;
 
   /**
   * @param {UnitInterval} refScriptCoinsPerByte
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract refScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): Promise<TransactionBuilderConfigBuilder>;
+  abstract refScriptCoinsPerByte(refScriptCoinsPerByte: UnitInterval): TransactionBuilderConfigBuilder;
 
   /**
   * @param {boolean} preferPureChange
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract preferPureChange(preferPureChange: boolean): Promise<TransactionBuilderConfigBuilder>;
+  abstract preferPureChange(preferPureChange: boolean): TransactionBuilderConfigBuilder;
 
   /**
   * @param {boolean} deduplicateExplicitRefInputsWithRegularInputs
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract deduplicateExplicitRefInputsWithRegularInputs(deduplicateExplicitRefInputsWithRegularInputs: boolean): Promise<TransactionBuilderConfigBuilder>;
+  abstract deduplicateExplicitRefInputsWithRegularInputs(deduplicateExplicitRefInputsWithRegularInputs: boolean): TransactionBuilderConfigBuilder;
 
   /**
   * @param {boolean} doNotBurnExtraChange
-  * @returns {Promise<TransactionBuilderConfigBuilder>}
+  * @returns {TransactionBuilderConfigBuilder}
   */
-  abstract doNotBurnExtraChange(doNotBurnExtraChange: boolean): Promise<TransactionBuilderConfigBuilder>;
+  abstract doNotBurnExtraChange(doNotBurnExtraChange: boolean): TransactionBuilderConfigBuilder;
 
   /**
-  * @returns {Promise<TransactionBuilderConfig>}
+  * @returns {TransactionBuilderConfig}
   */
-  abstract build(): Promise<TransactionBuilderConfig>;
+  abstract build(): TransactionBuilderConfig;
 
 }
 
 export abstract class TransactionHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionHash> {
+  static fromBytes(bytes: Uint8Array): TransactionHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  static fromBech32(bechStr: string): Promise<TransactionHash> {
+  static fromBech32(bechStr: string): TransactionHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  static fromHex(hex: string): Promise<TransactionHash> {
+  static fromHex(hex: string): TransactionHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -11291,60 +11291,60 @@ export abstract class TransactionHash extends _Ptr {
 
 export abstract class TransactionInput extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionInput> {
+  static fromBytes(bytes: Uint8Array): TransactionInput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  static fromHex(hexStr: string): Promise<TransactionInput> {
+  static fromHex(hexStr: string): TransactionInput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  static fromJson(json: string): Promise<TransactionInput> {
+  static fromJson(json: string): TransactionInput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionHash>}
+  * @returns {TransactionHash}
   */
-  abstract transactionId(): Promise<TransactionHash>;
+  abstract transactionId(): TransactionHash;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract index(): Promise<number>;
+  abstract index(): number;
 
   /**
   * @param {TransactionHash} transactionId
   * @param {number} index
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  static new(transactionId: TransactionHash, index: number): Promise<TransactionInput> {
+  static new(transactionId: TransactionHash, index: number): TransactionInput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -11352,679 +11352,679 @@ export abstract class TransactionInput extends _Ptr {
 
 export abstract class TransactionInputs extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionInputs> {
+  static fromBytes(bytes: Uint8Array): TransactionInputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  static fromHex(hexStr: string): Promise<TransactionInputs> {
+  static fromHex(hexStr: string): TransactionInputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  static fromJson(json: string): Promise<TransactionInputs> {
+  static fromJson(json: string): TransactionInputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  static new(): Promise<TransactionInputs> {
+  static new(): TransactionInputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  abstract get(index: number): Promise<TransactionInput>;
+  abstract get(index: number): TransactionInput;
 
   /**
   * @param {TransactionInput} input
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(input: TransactionInput): Promise<boolean>;
+  abstract add(input: TransactionInput): boolean;
 
   /**
-  * @returns {Promise<Optional<TransactionInputs>>}
+  * @returns {Optional<TransactionInputs>}
   */
-  abstract toOption(): Promise<Optional<TransactionInputs>>;
+  abstract toOption(): Optional<TransactionInputs>;
 
 }
 
 export abstract class TransactionMetadatum extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+  static fromBytes(bytes: Uint8Array): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static fromHex(hexStr: string): Promise<TransactionMetadatum> {
+  static fromHex(hexStr: string): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MetadataMap} map
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static newMap(map: MetadataMap): Promise<TransactionMetadatum> {
+  static newMap(map: MetadataMap): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MetadataList} list
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static newList(list: MetadataList): Promise<TransactionMetadatum> {
+  static newList(list: MetadataList): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Int} intValue
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static newInt(intValue: Int): Promise<TransactionMetadatum> {
+  static newInt(intValue: Int): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static newBytes(bytes: Uint8Array): Promise<TransactionMetadatum> {
+  static newBytes(bytes: Uint8Array): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} text
-  * @returns {Promise<TransactionMetadatum>}
+  * @returns {TransactionMetadatum}
   */
-  static newText(text: string): Promise<TransactionMetadatum> {
+  static newText(text: string): TransactionMetadatum {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionMetadatumKind>}
+  * @returns {TransactionMetadatumKind}
   */
-  abstract kind(): Promise<TransactionMetadatumKind>;
+  abstract kind(): TransactionMetadatumKind;
 
   /**
-  * @returns {Promise<MetadataMap>}
+  * @returns {MetadataMap}
   */
-  abstract asMap(): Promise<MetadataMap>;
+  abstract asMap(): MetadataMap;
 
   /**
-  * @returns {Promise<MetadataList>}
+  * @returns {MetadataList}
   */
-  abstract asList(): Promise<MetadataList>;
+  abstract asList(): MetadataList;
 
   /**
-  * @returns {Promise<Int>}
+  * @returns {Int}
   */
-  abstract asInt(): Promise<Int>;
+  abstract asInt(): Int;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract asBytes(): Promise<Uint8Array>;
+  abstract asBytes(): Uint8Array;
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract asText(): Promise<string>;
+  abstract asText(): string;
 
 }
 
 export abstract class TransactionMetadatumLabels extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionMetadatumLabels>}
+  * @returns {TransactionMetadatumLabels}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionMetadatumLabels> {
+  static fromBytes(bytes: Uint8Array): TransactionMetadatumLabels {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionMetadatumLabels>}
+  * @returns {TransactionMetadatumLabels}
   */
-  static fromHex(hexStr: string): Promise<TransactionMetadatumLabels> {
+  static fromHex(hexStr: string): TransactionMetadatumLabels {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionMetadatumLabels>}
+  * @returns {TransactionMetadatumLabels}
   */
-  static new(): Promise<TransactionMetadatumLabels> {
+  static new(): TransactionMetadatumLabels {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract get(index: number): Promise<BigNum>;
+  abstract get(index: number): BigNum;
 
   /**
   * @param {BigNum} elem
   */
-  abstract add(elem: BigNum): Promise<void>;
+  abstract add(elem: BigNum): void;
 
 }
 
 export abstract class TransactionOutput extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionOutput> {
+  static fromBytes(bytes: Uint8Array): TransactionOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  static fromHex(hexStr: string): Promise<TransactionOutput> {
+  static fromHex(hexStr: string): TransactionOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  static fromJson(json: string): Promise<TransactionOutput> {
+  static fromJson(json: string): TransactionOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Address>}
+  * @returns {Address}
   */
-  abstract address(): Promise<Address>;
+  abstract address(): Address;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract amount(): Promise<Value>;
+  abstract amount(): Value;
 
   /**
-  * @returns {Promise<Optional<DataHash>>}
+  * @returns {Optional<DataHash>}
   */
-  abstract dataHash(): Promise<Optional<DataHash>>;
+  abstract dataHash(): Optional<DataHash>;
 
   /**
-  * @returns {Promise<Optional<PlutusData>>}
+  * @returns {Optional<PlutusData>}
   */
-  abstract plutusData(): Promise<Optional<PlutusData>>;
+  abstract plutusData(): Optional<PlutusData>;
 
   /**
-  * @returns {Promise<Optional<ScriptRef>>}
+  * @returns {Optional<ScriptRef>}
   */
-  abstract scriptRef(): Promise<Optional<ScriptRef>>;
+  abstract scriptRef(): Optional<ScriptRef>;
 
   /**
   * @param {ScriptRef} scriptRef
   */
-  abstract setScriptRef(scriptRef: ScriptRef): Promise<void>;
+  abstract setScriptRef(scriptRef: ScriptRef): void;
 
   /**
   * @param {PlutusData} data
   */
-  abstract setPlutusData(data: PlutusData): Promise<void>;
+  abstract setPlutusData(data: PlutusData): void;
 
   /**
   * @param {DataHash} dataHash
   */
-  abstract setDataHash(dataHash: DataHash): Promise<void>;
+  abstract setDataHash(dataHash: DataHash): void;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasPlutusData(): Promise<boolean>;
+  abstract hasPlutusData(): boolean;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasDataHash(): Promise<boolean>;
+  abstract hasDataHash(): boolean;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptRef(): Promise<boolean>;
+  abstract hasScriptRef(): boolean;
 
   /**
   * @param {Address} address
   * @param {Value} amount
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  static new(address: Address, amount: Value): Promise<TransactionOutput> {
+  static new(address: Address, amount: Value): TransactionOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<CborContainerType>>}
+  * @returns {Optional<CborContainerType>}
   */
-  abstract serializationFormat(): Promise<Optional<CborContainerType>>;
+  abstract serializationFormat(): Optional<CborContainerType>;
 
 }
 
 export abstract class TransactionOutputAmountBuilder extends _Ptr {
   /**
   * @param {Value} amount
-  * @returns {Promise<TransactionOutputAmountBuilder>}
+  * @returns {TransactionOutputAmountBuilder}
   */
-  abstract withValue(amount: Value): Promise<TransactionOutputAmountBuilder>;
+  abstract withValue(amount: Value): TransactionOutputAmountBuilder;
 
   /**
   * @param {BigNum} coin
-  * @returns {Promise<TransactionOutputAmountBuilder>}
+  * @returns {TransactionOutputAmountBuilder}
   */
-  abstract withCoin(coin: BigNum): Promise<TransactionOutputAmountBuilder>;
+  abstract withCoin(coin: BigNum): TransactionOutputAmountBuilder;
 
   /**
   * @param {BigNum} coin
   * @param {MultiAsset} multiasset
-  * @returns {Promise<TransactionOutputAmountBuilder>}
+  * @returns {TransactionOutputAmountBuilder}
   */
-  abstract withCoinAndAsset(coin: BigNum, multiasset: MultiAsset): Promise<TransactionOutputAmountBuilder>;
+  abstract withCoinAndAsset(coin: BigNum, multiasset: MultiAsset): TransactionOutputAmountBuilder;
 
   /**
   * @param {MultiAsset} multiasset
   * @param {DataCost} dataCost
-  * @returns {Promise<TransactionOutputAmountBuilder>}
+  * @returns {TransactionOutputAmountBuilder}
   */
-  abstract withAssetAndMinRequiredCoinByUtxoCost(multiasset: MultiAsset, dataCost: DataCost): Promise<TransactionOutputAmountBuilder>;
+  abstract withAssetAndMinRequiredCoinByUtxoCost(multiasset: MultiAsset, dataCost: DataCost): TransactionOutputAmountBuilder;
 
   /**
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  abstract build(): Promise<TransactionOutput>;
+  abstract build(): TransactionOutput;
 
 }
 
 export abstract class TransactionOutputBuilder extends _Ptr {
   /**
-  * @returns {Promise<TransactionOutputBuilder>}
+  * @returns {TransactionOutputBuilder}
   */
-  static new(): Promise<TransactionOutputBuilder> {
+  static new(): TransactionOutputBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Address} address
-  * @returns {Promise<TransactionOutputBuilder>}
+  * @returns {TransactionOutputBuilder}
   */
-  abstract withAddress(address: Address): Promise<TransactionOutputBuilder>;
+  abstract withAddress(address: Address): TransactionOutputBuilder;
 
   /**
   * @param {DataHash} dataHash
-  * @returns {Promise<TransactionOutputBuilder>}
+  * @returns {TransactionOutputBuilder}
   */
-  abstract withDataHash(dataHash: DataHash): Promise<TransactionOutputBuilder>;
+  abstract withDataHash(dataHash: DataHash): TransactionOutputBuilder;
 
   /**
   * @param {PlutusData} data
-  * @returns {Promise<TransactionOutputBuilder>}
+  * @returns {TransactionOutputBuilder}
   */
-  abstract withPlutusData(data: PlutusData): Promise<TransactionOutputBuilder>;
+  abstract withPlutusData(data: PlutusData): TransactionOutputBuilder;
 
   /**
   * @param {ScriptRef} scriptRef
-  * @returns {Promise<TransactionOutputBuilder>}
+  * @returns {TransactionOutputBuilder}
   */
-  abstract withScriptRef(scriptRef: ScriptRef): Promise<TransactionOutputBuilder>;
+  abstract withScriptRef(scriptRef: ScriptRef): TransactionOutputBuilder;
 
   /**
-  * @returns {Promise<TransactionOutputAmountBuilder>}
+  * @returns {TransactionOutputAmountBuilder}
   */
-  abstract next(): Promise<TransactionOutputAmountBuilder>;
+  abstract next(): TransactionOutputAmountBuilder;
 
 }
 
 export abstract class TransactionOutputs extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionOutputs>}
+  * @returns {TransactionOutputs}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionOutputs> {
+  static fromBytes(bytes: Uint8Array): TransactionOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionOutputs>}
+  * @returns {TransactionOutputs}
   */
-  static fromHex(hexStr: string): Promise<TransactionOutputs> {
+  static fromHex(hexStr: string): TransactionOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionOutputs>}
+  * @returns {TransactionOutputs}
   */
-  static fromJson(json: string): Promise<TransactionOutputs> {
+  static fromJson(json: string): TransactionOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionOutputs>}
+  * @returns {TransactionOutputs}
   */
-  static new(): Promise<TransactionOutputs> {
+  static new(): TransactionOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  abstract get(index: number): Promise<TransactionOutput>;
+  abstract get(index: number): TransactionOutput;
 
   /**
   * @param {TransactionOutput} elem
   */
-  abstract add(elem: TransactionOutput): Promise<void>;
+  abstract add(elem: TransactionOutput): void;
 
 }
 
 export abstract class TransactionUnspentOutput extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionUnspentOutput>}
+  * @returns {TransactionUnspentOutput}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionUnspentOutput> {
+  static fromBytes(bytes: Uint8Array): TransactionUnspentOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionUnspentOutput>}
+  * @returns {TransactionUnspentOutput}
   */
-  static fromHex(hexStr: string): Promise<TransactionUnspentOutput> {
+  static fromHex(hexStr: string): TransactionUnspentOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionUnspentOutput>}
+  * @returns {TransactionUnspentOutput}
   */
-  static fromJson(json: string): Promise<TransactionUnspentOutput> {
+  static fromJson(json: string): TransactionUnspentOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TransactionInput} input
   * @param {TransactionOutput} output
-  * @returns {Promise<TransactionUnspentOutput>}
+  * @returns {TransactionUnspentOutput}
   */
-  static new(input: TransactionInput, output: TransactionOutput): Promise<TransactionUnspentOutput> {
+  static new(input: TransactionInput, output: TransactionOutput): TransactionUnspentOutput {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionInput>}
+  * @returns {TransactionInput}
   */
-  abstract input(): Promise<TransactionInput>;
+  abstract input(): TransactionInput;
 
   /**
-  * @returns {Promise<TransactionOutput>}
+  * @returns {TransactionOutput}
   */
-  abstract output(): Promise<TransactionOutput>;
+  abstract output(): TransactionOutput;
 
 }
 
 export abstract class TransactionUnspentOutputs extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionUnspentOutputs>}
+  * @returns {TransactionUnspentOutputs}
   */
-  static fromJson(json: string): Promise<TransactionUnspentOutputs> {
+  static fromJson(json: string): TransactionUnspentOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionUnspentOutputs>}
+  * @returns {TransactionUnspentOutputs}
   */
-  static new(): Promise<TransactionUnspentOutputs> {
+  static new(): TransactionUnspentOutputs {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionUnspentOutput>}
+  * @returns {TransactionUnspentOutput}
   */
-  abstract get(index: number): Promise<TransactionUnspentOutput>;
+  abstract get(index: number): TransactionUnspentOutput;
 
   /**
   * @param {TransactionUnspentOutput} elem
   */
-  abstract add(elem: TransactionUnspentOutput): Promise<void>;
+  abstract add(elem: TransactionUnspentOutput): void;
 
 }
 
 export abstract class TransactionWitnessSet extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionWitnessSet> {
+  static fromBytes(bytes: Uint8Array): TransactionWitnessSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  static fromHex(hexStr: string): Promise<TransactionWitnessSet> {
+  static fromHex(hexStr: string): TransactionWitnessSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  static fromJson(json: string): Promise<TransactionWitnessSet> {
+  static fromJson(json: string): TransactionWitnessSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Vkeywitnesses} vkeys
   */
-  abstract setVkeys(vkeys: Vkeywitnesses): Promise<void>;
+  abstract setVkeys(vkeys: Vkeywitnesses): void;
 
   /**
-  * @returns {Promise<Optional<Vkeywitnesses>>}
+  * @returns {Optional<Vkeywitnesses>}
   */
-  abstract vkeys(): Promise<Optional<Vkeywitnesses>>;
+  abstract vkeys(): Optional<Vkeywitnesses>;
 
   /**
   * @param {NativeScripts} nativeScripts
   */
-  abstract setNativeScripts(nativeScripts: NativeScripts): Promise<void>;
+  abstract setNativeScripts(nativeScripts: NativeScripts): void;
 
   /**
-  * @returns {Promise<Optional<NativeScripts>>}
+  * @returns {Optional<NativeScripts>}
   */
-  abstract nativeScripts(): Promise<Optional<NativeScripts>>;
+  abstract nativeScripts(): Optional<NativeScripts>;
 
   /**
   * @param {BootstrapWitnesses} bootstraps
   */
-  abstract setBootstraps(bootstraps: BootstrapWitnesses): Promise<void>;
+  abstract setBootstraps(bootstraps: BootstrapWitnesses): void;
 
   /**
-  * @returns {Promise<Optional<BootstrapWitnesses>>}
+  * @returns {Optional<BootstrapWitnesses>}
   */
-  abstract bootstraps(): Promise<Optional<BootstrapWitnesses>>;
+  abstract bootstraps(): Optional<BootstrapWitnesses>;
 
   /**
   * @param {PlutusScripts} plutusScripts
   */
-  abstract setPlutusScripts(plutusScripts: PlutusScripts): Promise<void>;
+  abstract setPlutusScripts(plutusScripts: PlutusScripts): void;
 
   /**
-  * @returns {Promise<Optional<PlutusScripts>>}
+  * @returns {Optional<PlutusScripts>}
   */
-  abstract plutusScripts(): Promise<Optional<PlutusScripts>>;
+  abstract plutusScripts(): Optional<PlutusScripts>;
 
   /**
   * @param {PlutusList} plutusData
   */
-  abstract setPlutusData(plutusData: PlutusList): Promise<void>;
+  abstract setPlutusData(plutusData: PlutusList): void;
 
   /**
-  * @returns {Promise<Optional<PlutusList>>}
+  * @returns {Optional<PlutusList>}
   */
-  abstract plutusData(): Promise<Optional<PlutusList>>;
+  abstract plutusData(): Optional<PlutusList>;
 
   /**
   * @param {Redeemers} redeemers
   */
-  abstract setRedeemers(redeemers: Redeemers): Promise<void>;
+  abstract setRedeemers(redeemers: Redeemers): void;
 
   /**
-  * @returns {Promise<Optional<Redeemers>>}
+  * @returns {Optional<Redeemers>}
   */
-  abstract redeemers(): Promise<Optional<Redeemers>>;
+  abstract redeemers(): Optional<Redeemers>;
 
   /**
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  static new(): Promise<TransactionWitnessSet> {
+  static new(): TransactionWitnessSet {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12032,178 +12032,178 @@ export abstract class TransactionWitnessSet extends _Ptr {
 
 export abstract class TransactionWitnessSets extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TransactionWitnessSets> {
+  static fromBytes(bytes: Uint8Array): TransactionWitnessSets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  static fromHex(hexStr: string): Promise<TransactionWitnessSets> {
+  static fromHex(hexStr: string): TransactionWitnessSets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  static fromJson(json: string): Promise<TransactionWitnessSets> {
+  static fromJson(json: string): TransactionWitnessSets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TransactionWitnessSets>}
+  * @returns {TransactionWitnessSets}
   */
-  static new(): Promise<TransactionWitnessSets> {
+  static new(): TransactionWitnessSets {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<TransactionWitnessSet>}
+  * @returns {TransactionWitnessSet}
   */
-  abstract get(index: number): Promise<TransactionWitnessSet>;
+  abstract get(index: number): TransactionWitnessSet;
 
   /**
   * @param {TransactionWitnessSet} elem
   */
-  abstract add(elem: TransactionWitnessSet): Promise<void>;
+  abstract add(elem: TransactionWitnessSet): void;
 
 }
 
 export abstract class TreasuryWithdrawals extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TreasuryWithdrawals>}
+  * @returns {TreasuryWithdrawals}
   */
-  static fromJson(json: string): Promise<TreasuryWithdrawals> {
+  static fromJson(json: string): TreasuryWithdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TreasuryWithdrawals>}
+  * @returns {TreasuryWithdrawals}
   */
-  static new(): Promise<TreasuryWithdrawals> {
+  static new(): TreasuryWithdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {RewardAddress} key
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract get(key: RewardAddress): Promise<Optional<BigNum>>;
+  abstract get(key: RewardAddress): Optional<BigNum>;
 
   /**
   * @param {RewardAddress} key
   * @param {BigNum} value
   */
-  abstract insert(key: RewardAddress, value: BigNum): Promise<void>;
+  abstract insert(key: RewardAddress, value: BigNum): void;
 
   /**
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  abstract keys(): Promise<RewardAddresses>;
+  abstract keys(): RewardAddresses;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
 }
 
 export abstract class TreasuryWithdrawalsAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<TreasuryWithdrawalsAction>}
+  * @returns {TreasuryWithdrawalsAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<TreasuryWithdrawalsAction> {
+  static fromBytes(bytes: Uint8Array): TreasuryWithdrawalsAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<TreasuryWithdrawalsAction>}
+  * @returns {TreasuryWithdrawalsAction}
   */
-  static fromHex(hexStr: string): Promise<TreasuryWithdrawalsAction> {
+  static fromHex(hexStr: string): TreasuryWithdrawalsAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<TreasuryWithdrawalsAction>}
+  * @returns {TreasuryWithdrawalsAction}
   */
-  static fromJson(json: string): Promise<TreasuryWithdrawalsAction> {
+  static fromJson(json: string): TreasuryWithdrawalsAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<TreasuryWithdrawals>}
+  * @returns {TreasuryWithdrawals}
   */
-  abstract withdrawals(): Promise<TreasuryWithdrawals>;
+  abstract withdrawals(): TreasuryWithdrawals;
 
   /**
-  * @returns {Promise<Optional<ScriptHash>>}
+  * @returns {Optional<ScriptHash>}
   */
-  abstract policyHash(): Promise<Optional<ScriptHash>>;
+  abstract policyHash(): Optional<ScriptHash>;
 
   /**
   * @param {TreasuryWithdrawals} withdrawals
-  * @returns {Promise<TreasuryWithdrawalsAction>}
+  * @returns {TreasuryWithdrawalsAction}
   */
-  static new(withdrawals: TreasuryWithdrawals): Promise<TreasuryWithdrawalsAction> {
+  static new(withdrawals: TreasuryWithdrawals): TreasuryWithdrawalsAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TreasuryWithdrawals} withdrawals
   * @param {ScriptHash} policyHash
-  * @returns {Promise<TreasuryWithdrawalsAction>}
+  * @returns {TreasuryWithdrawalsAction}
   */
-  static newWithPolicyHash(withdrawals: TreasuryWithdrawals, policyHash: ScriptHash): Promise<TreasuryWithdrawalsAction> {
+  static newWithPolicyHash(withdrawals: TreasuryWithdrawals, policyHash: ScriptHash): TreasuryWithdrawalsAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12211,226 +12211,226 @@ export abstract class TreasuryWithdrawalsAction extends _Ptr {
 
 export abstract class TxInputsBuilder extends _Ptr {
   /**
-  * @returns {Promise<TxInputsBuilder>}
+  * @returns {TxInputsBuilder}
   */
-  static new(): Promise<TxInputsBuilder> {
+  static new(): TxInputsBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {TransactionUnspentOutput} utxo
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addRegularUtxo(utxo: TransactionUnspentOutput): Promise<void>;
+  abstract addRegularUtxo(utxo: TransactionUnspentOutput): void;
 
   /**
   * @param {TransactionUnspentOutput} utxo
   * @param {PlutusWitness} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addPlutusScriptUtxo(utxo: TransactionUnspentOutput, witness: PlutusWitness): Promise<void>;
+  abstract addPlutusScriptUtxo(utxo: TransactionUnspentOutput, witness: PlutusWitness): void;
 
   /**
   * @param {TransactionUnspentOutput} utxo
   * @param {NativeScriptSource} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addNativeScriptUtxo(utxo: TransactionUnspentOutput, witness: NativeScriptSource): Promise<void>;
+  abstract addNativeScriptUtxo(utxo: TransactionUnspentOutput, witness: NativeScriptSource): void;
 
   /**
   * @param {Ed25519KeyHash} hash
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addKeyInput(hash: Ed25519KeyHash, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {NativeScriptSource} script
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addNativeScriptInput(script: NativeScriptSource, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addNativeScriptInput(script: NativeScriptSource, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {PlutusWitness} witness
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addPlutusScriptInput(witness: PlutusWitness, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {ByronAddress} address
   * @param {TransactionInput} input
   * @param {Value} amount
   */
-  abstract addBootstrapInput(address: ByronAddress, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addBootstrapInput(address: ByronAddress, input: TransactionInput, amount: Value): void;
 
   /**
   * @param {Address} address
   * @param {TransactionInput} input
   * @param {Value} amount
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): Promise<void>;
+  abstract addRegularInput(address: Address, input: TransactionInput, amount: Value): void;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<Optional<NativeScripts>>}
+  * @returns {Optional<NativeScripts>}
   */
-  abstract getNativeInputScripts(): Promise<Optional<NativeScripts>>;
+  abstract getNativeInputScripts(): Optional<NativeScripts>;
 
   /**
-  * @returns {Promise<Optional<PlutusWitnesses>>}
+  * @returns {Optional<PlutusWitnesses>}
   */
-  abstract getPlutusInputScripts(): Promise<Optional<PlutusWitnesses>>;
+  abstract getPlutusInputScripts(): Optional<PlutusWitnesses>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {Ed25519KeyHash} key
   */
-  abstract addRequiredSigner(key: Ed25519KeyHash): Promise<void>;
+  abstract addRequiredSigner(key: Ed25519KeyHash): void;
 
   /**
   * @param {Ed25519KeyHashes} keys
   */
-  abstract addRequiredSigners(keys: Ed25519KeyHashes): Promise<void>;
+  abstract addRequiredSigners(keys: Ed25519KeyHashes): void;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract totalValue(): Promise<Value>;
+  abstract totalValue(): Value;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract inputs(): Promise<TransactionInputs>;
+  abstract inputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<Optional<TransactionInputs>>}
+  * @returns {Optional<TransactionInputs>}
   */
-  abstract inputsOption(): Promise<Optional<TransactionInputs>>;
+  abstract inputsOption(): Optional<TransactionInputs>;
 
 }
 
 export abstract class URL extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  static fromBytes(bytes: Uint8Array): Promise<URL> {
+  static fromBytes(bytes: Uint8Array): URL {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  static fromHex(hexStr: string): Promise<URL> {
+  static fromHex(hexStr: string): URL {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  static fromJson(json: string): Promise<URL> {
+  static fromJson(json: string): URL {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {string} url
-  * @returns {Promise<URL>}
+  * @returns {URL}
   */
-  static new(url: string): Promise<URL> {
+  static new(url: string): URL {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract url(): Promise<string>;
+  abstract url(): string;
 
 }
 
 export abstract class UnitInterval extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  static fromBytes(bytes: Uint8Array): Promise<UnitInterval> {
+  static fromBytes(bytes: Uint8Array): UnitInterval {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  static fromHex(hexStr: string): Promise<UnitInterval> {
+  static fromHex(hexStr: string): UnitInterval {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  static fromJson(json: string): Promise<UnitInterval> {
+  static fromJson(json: string): UnitInterval {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract numerator(): Promise<BigNum>;
+  abstract numerator(): BigNum;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract denominator(): Promise<BigNum>;
+  abstract denominator(): BigNum;
 
   /**
   * @param {BigNum} numerator
   * @param {BigNum} denominator
-  * @returns {Promise<UnitInterval>}
+  * @returns {UnitInterval}
   */
-  static new(numerator: BigNum, denominator: BigNum): Promise<UnitInterval> {
+  static new(numerator: BigNum, denominator: BigNum): UnitInterval {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12438,60 +12438,60 @@ export abstract class UnitInterval extends _Ptr {
 
 export abstract class Update extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Update>}
+  * @returns {Update}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Update> {
+  static fromBytes(bytes: Uint8Array): Update {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Update>}
+  * @returns {Update}
   */
-  static fromHex(hexStr: string): Promise<Update> {
+  static fromHex(hexStr: string): Update {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Update>}
+  * @returns {Update}
   */
-  static fromJson(json: string): Promise<Update> {
+  static fromJson(json: string): Update {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<ProposedProtocolParameterUpdates>}
+  * @returns {ProposedProtocolParameterUpdates}
   */
-  abstract proposedProtocolParameterUpdates(): Promise<ProposedProtocolParameterUpdates>;
+  abstract proposedProtocolParameterUpdates(): ProposedProtocolParameterUpdates;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract epoch(): Promise<number>;
+  abstract epoch(): number;
 
   /**
   * @param {ProposedProtocolParameterUpdates} proposedProtocolParameterUpdates
   * @param {number} epoch
-  * @returns {Promise<Update>}
+  * @returns {Update}
   */
-  static new(proposedProtocolParameterUpdates: ProposedProtocolParameterUpdates, epoch: number): Promise<Update> {
+  static new(proposedProtocolParameterUpdates: ProposedProtocolParameterUpdates, epoch: number): Update {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12499,65 +12499,65 @@ export abstract class Update extends _Ptr {
 
 export abstract class UpdateCommitteeAction extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<UpdateCommitteeAction>}
+  * @returns {UpdateCommitteeAction}
   */
-  static fromBytes(bytes: Uint8Array): Promise<UpdateCommitteeAction> {
+  static fromBytes(bytes: Uint8Array): UpdateCommitteeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<UpdateCommitteeAction>}
+  * @returns {UpdateCommitteeAction}
   */
-  static fromHex(hexStr: string): Promise<UpdateCommitteeAction> {
+  static fromHex(hexStr: string): UpdateCommitteeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<UpdateCommitteeAction>}
+  * @returns {UpdateCommitteeAction}
   */
-  static fromJson(json: string): Promise<UpdateCommitteeAction> {
+  static fromJson(json: string): UpdateCommitteeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Optional<GovernanceActionId>>}
+  * @returns {Optional<GovernanceActionId>}
   */
-  abstract govActionId(): Promise<Optional<GovernanceActionId>>;
+  abstract govActionId(): Optional<GovernanceActionId>;
 
   /**
-  * @returns {Promise<Committee>}
+  * @returns {Committee}
   */
-  abstract committee(): Promise<Committee>;
+  abstract committee(): Committee;
 
   /**
-  * @returns {Promise<Credentials>}
+  * @returns {Credentials}
   */
-  abstract membersToRemove(): Promise<Credentials>;
+  abstract membersToRemove(): Credentials;
 
   /**
   * @param {Committee} committee
   * @param {Credentials} membersToRemove
-  * @returns {Promise<UpdateCommitteeAction>}
+  * @returns {UpdateCommitteeAction}
   */
-  static new(committee: Committee, membersToRemove: Credentials): Promise<UpdateCommitteeAction> {
+  static new(committee: Committee, membersToRemove: Credentials): UpdateCommitteeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12565,9 +12565,9 @@ export abstract class UpdateCommitteeAction extends _Ptr {
   * @param {GovernanceActionId} govActionId
   * @param {Committee} committee
   * @param {Credentials} membersToRemove
-  * @returns {Promise<UpdateCommitteeAction>}
+  * @returns {UpdateCommitteeAction}
   */
-  static newWithActionId(govActionId: GovernanceActionId, committee: Committee, membersToRemove: Credentials): Promise<UpdateCommitteeAction> {
+  static newWithActionId(govActionId: GovernanceActionId, committee: Committee, membersToRemove: Credentials): UpdateCommitteeAction {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12575,60 +12575,60 @@ export abstract class UpdateCommitteeAction extends _Ptr {
 
 export abstract class VRFCert extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VRFCert>}
+  * @returns {VRFCert}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VRFCert> {
+  static fromBytes(bytes: Uint8Array): VRFCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VRFCert>}
+  * @returns {VRFCert}
   */
-  static fromHex(hexStr: string): Promise<VRFCert> {
+  static fromHex(hexStr: string): VRFCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VRFCert>}
+  * @returns {VRFCert}
   */
-  static fromJson(json: string): Promise<VRFCert> {
+  static fromJson(json: string): VRFCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract output(): Promise<Uint8Array>;
+  abstract output(): Uint8Array;
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract proof(): Promise<Uint8Array>;
+  abstract proof(): Uint8Array;
 
   /**
   * @param {Uint8Array} output
   * @param {Uint8Array} proof
-  * @returns {Promise<VRFCert>}
+  * @returns {VRFCert}
   */
-  static new(output: Uint8Array, proof: Uint8Array): Promise<VRFCert> {
+  static new(output: Uint8Array, proof: Uint8Array): VRFCert {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12637,41 +12637,41 @@ export abstract class VRFCert extends _Ptr {
 export abstract class VRFKeyHash extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VRFKeyHash>}
+  * @returns {VRFKeyHash}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VRFKeyHash> {
+  static fromBytes(bytes: Uint8Array): VRFKeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<VRFKeyHash>}
+  * @returns {VRFKeyHash}
   */
-  static fromBech32(bechStr: string): Promise<VRFKeyHash> {
+  static fromBech32(bechStr: string): VRFKeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<VRFKeyHash>}
+  * @returns {VRFKeyHash}
   */
-  static fromHex(hex: string): Promise<VRFKeyHash> {
+  static fromHex(hex: string): VRFKeyHash {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12680,41 +12680,41 @@ export abstract class VRFKeyHash extends _Ptr {
 export abstract class VRFVKey extends _Ptr {
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VRFVKey>}
+  * @returns {VRFVKey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VRFVKey> {
+  static fromBytes(bytes: Uint8Array): VRFVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {string} prefix
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toBech32(prefix: string): Promise<string>;
+  abstract toBech32(prefix: string): string;
 
   /**
   * @param {string} bechStr
-  * @returns {Promise<VRFVKey>}
+  * @returns {VRFVKey}
   */
-  static fromBech32(bechStr: string): Promise<VRFVKey> {
+  static fromBech32(bechStr: string): VRFVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hex
-  * @returns {Promise<VRFVKey>}
+  * @returns {VRFVKey}
   */
-  static fromHex(hex: string): Promise<VRFVKey> {
+  static fromHex(hex: string): VRFVKey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -12722,674 +12722,674 @@ export abstract class VRFVKey extends _Ptr {
 
 export abstract class Value extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Value> {
+  static fromBytes(bytes: Uint8Array): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static fromHex(hexStr: string): Promise<Value> {
+  static fromHex(hexStr: string): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static fromJson(json: string): Promise<Value> {
+  static fromJson(json: string): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} coin
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static new(coin: BigNum): Promise<Value> {
+  static new(coin: BigNum): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {MultiAsset} multiasset
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static newFromAssets(multiasset: MultiAsset): Promise<Value> {
+  static newFromAssets(multiasset: MultiAsset): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {BigNum} coin
   * @param {MultiAsset} multiasset
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static newWithAssets(coin: BigNum, multiasset: MultiAsset): Promise<Value> {
+  static newWithAssets(coin: BigNum, multiasset: MultiAsset): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  static zero(): Promise<Value> {
+  static zero(): Value {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract isZero(): Promise<boolean>;
+  abstract isZero(): boolean;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
   * @param {BigNum} coin
   */
-  abstract setCoin(coin: BigNum): Promise<void>;
+  abstract setCoin(coin: BigNum): void;
 
   /**
-  * @returns {Promise<Optional<MultiAsset>>}
+  * @returns {Optional<MultiAsset>}
   */
-  abstract multiasset(): Promise<Optional<MultiAsset>>;
+  abstract multiasset(): Optional<MultiAsset>;
 
   /**
   * @param {MultiAsset} multiasset
   */
-  abstract setMultiasset(multiasset: MultiAsset): Promise<void>;
+  abstract setMultiasset(multiasset: MultiAsset): void;
 
   /**
   * @param {Value} rhs
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract checkedAdd(rhs: Value): Promise<Value>;
+  abstract checkedAdd(rhs: Value): Value;
 
   /**
   * @param {Value} rhsValue
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract checkedSub(rhsValue: Value): Promise<Value>;
+  abstract checkedSub(rhsValue: Value): Value;
 
   /**
   * @param {Value} rhsValue
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract clampedSub(rhsValue: Value): Promise<Value>;
+  abstract clampedSub(rhsValue: Value): Value;
 
   /**
   * @param {Value} rhsValue
-  * @returns {Promise<Optional<number>>}
+  * @returns {Optional<number>}
   */
-  abstract compare(rhsValue: Value): Promise<Optional<number>>;
+  abstract compare(rhsValue: Value): Optional<number>;
 
 }
 
 export abstract class VersionedBlock extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VersionedBlock>}
+  * @returns {VersionedBlock}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VersionedBlock> {
+  static fromBytes(bytes: Uint8Array): VersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VersionedBlock>}
+  * @returns {VersionedBlock}
   */
-  static fromHex(hexStr: string): Promise<VersionedBlock> {
+  static fromHex(hexStr: string): VersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VersionedBlock>}
+  * @returns {VersionedBlock}
   */
-  static fromJson(json: string): Promise<VersionedBlock> {
+  static fromJson(json: string): VersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Block} block
   * @param {number} eraCode
-  * @returns {Promise<VersionedBlock>}
+  * @returns {VersionedBlock}
   */
-  static new(block: Block, eraCode: number): Promise<VersionedBlock> {
+  static new(block: Block, eraCode: number): VersionedBlock {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Block>}
+  * @returns {Block}
   */
-  abstract block(): Promise<Block>;
+  abstract block(): Block;
 
   /**
-  * @returns {Promise<BlockEra>}
+  * @returns {BlockEra}
   */
-  abstract era(): Promise<BlockEra>;
+  abstract era(): BlockEra;
 
 }
 
 export abstract class Vkey extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Vkey> {
+  static fromBytes(bytes: Uint8Array): Vkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  static fromHex(hexStr: string): Promise<Vkey> {
+  static fromHex(hexStr: string): Vkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  static fromJson(json: string): Promise<Vkey> {
+  static fromJson(json: string): Vkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {PublicKey} pk
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  static new(pk: PublicKey): Promise<Vkey> {
+  static new(pk: PublicKey): Vkey {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<PublicKey>}
+  * @returns {PublicKey}
   */
-  abstract publicKey(): Promise<PublicKey>;
+  abstract publicKey(): PublicKey;
 
 }
 
 export abstract class Vkeys extends _Ptr {
   /**
-  * @returns {Promise<Vkeys>}
+  * @returns {Vkeys}
   */
-  static new(): Promise<Vkeys> {
+  static new(): Vkeys {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  abstract get(index: number): Promise<Vkey>;
+  abstract get(index: number): Vkey;
 
   /**
   * @param {Vkey} elem
   */
-  abstract add(elem: Vkey): Promise<void>;
+  abstract add(elem: Vkey): void;
 
 }
 
 export abstract class Vkeywitness extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Vkeywitness>}
+  * @returns {Vkeywitness}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Vkeywitness> {
+  static fromBytes(bytes: Uint8Array): Vkeywitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Vkeywitness>}
+  * @returns {Vkeywitness}
   */
-  static fromHex(hexStr: string): Promise<Vkeywitness> {
+  static fromHex(hexStr: string): Vkeywitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Vkeywitness>}
+  * @returns {Vkeywitness}
   */
-  static fromJson(json: string): Promise<Vkeywitness> {
+  static fromJson(json: string): Vkeywitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Vkey} vkey
   * @param {Ed25519Signature} signature
-  * @returns {Promise<Vkeywitness>}
+  * @returns {Vkeywitness}
   */
-  static new(vkey: Vkey, signature: Ed25519Signature): Promise<Vkeywitness> {
+  static new(vkey: Vkey, signature: Ed25519Signature): Vkeywitness {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Vkey>}
+  * @returns {Vkey}
   */
-  abstract vkey(): Promise<Vkey>;
+  abstract vkey(): Vkey;
 
   /**
-  * @returns {Promise<Ed25519Signature>}
+  * @returns {Ed25519Signature}
   */
-  abstract signature(): Promise<Ed25519Signature>;
+  abstract signature(): Ed25519Signature;
 
 }
 
 export abstract class Vkeywitnesses extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Vkeywitnesses>}
+  * @returns {Vkeywitnesses}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Vkeywitnesses> {
+  static fromBytes(bytes: Uint8Array): Vkeywitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Vkeywitnesses>}
+  * @returns {Vkeywitnesses}
   */
-  static fromHex(hexStr: string): Promise<Vkeywitnesses> {
+  static fromHex(hexStr: string): Vkeywitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Vkeywitnesses>}
+  * @returns {Vkeywitnesses}
   */
-  static fromJson(json: string): Promise<Vkeywitnesses> {
+  static fromJson(json: string): Vkeywitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Vkeywitnesses>}
+  * @returns {Vkeywitnesses}
   */
-  static new(): Promise<Vkeywitnesses> {
+  static new(): Vkeywitnesses {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<Vkeywitness>}
+  * @returns {Vkeywitness}
   */
-  abstract get(index: number): Promise<Vkeywitness>;
+  abstract get(index: number): Vkeywitness;
 
   /**
   * @param {Vkeywitness} witness
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(witness: Vkeywitness): Promise<boolean>;
+  abstract add(witness: Vkeywitness): boolean;
 
 }
 
 export abstract class VoteDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VoteDelegation>}
+  * @returns {VoteDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VoteDelegation> {
+  static fromBytes(bytes: Uint8Array): VoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VoteDelegation>}
+  * @returns {VoteDelegation}
   */
-  static fromHex(hexStr: string): Promise<VoteDelegation> {
+  static fromHex(hexStr: string): VoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VoteDelegation>}
+  * @returns {VoteDelegation}
   */
-  static fromJson(json: string): Promise<VoteDelegation> {
+  static fromJson(json: string): VoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  abstract drep(): Promise<DRep>;
+  abstract drep(): DRep;
 
   /**
   * @param {Credential} stakeCredential
   * @param {DRep} drep
-  * @returns {Promise<VoteDelegation>}
+  * @returns {VoteDelegation}
   */
-  static new(stakeCredential: Credential, drep: DRep): Promise<VoteDelegation> {
+  static new(stakeCredential: Credential, drep: DRep): VoteDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class VoteRegistrationAndDelegation extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VoteRegistrationAndDelegation>}
+  * @returns {VoteRegistrationAndDelegation}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VoteRegistrationAndDelegation> {
+  static fromBytes(bytes: Uint8Array): VoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VoteRegistrationAndDelegation>}
+  * @returns {VoteRegistrationAndDelegation}
   */
-  static fromHex(hexStr: string): Promise<VoteRegistrationAndDelegation> {
+  static fromHex(hexStr: string): VoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VoteRegistrationAndDelegation>}
+  * @returns {VoteRegistrationAndDelegation}
   */
-  static fromJson(json: string): Promise<VoteRegistrationAndDelegation> {
+  static fromJson(json: string): VoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Credential>}
+  * @returns {Credential}
   */
-  abstract stakeCredential(): Promise<Credential>;
+  abstract stakeCredential(): Credential;
 
   /**
-  * @returns {Promise<DRep>}
+  * @returns {DRep}
   */
-  abstract drep(): Promise<DRep>;
+  abstract drep(): DRep;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract coin(): Promise<BigNum>;
+  abstract coin(): BigNum;
 
   /**
   * @param {Credential} stakeCredential
   * @param {DRep} drep
   * @param {BigNum} coin
-  * @returns {Promise<VoteRegistrationAndDelegation>}
+  * @returns {VoteRegistrationAndDelegation}
   */
-  static new(stakeCredential: Credential, drep: DRep, coin: BigNum): Promise<VoteRegistrationAndDelegation> {
+  static new(stakeCredential: Credential, drep: DRep, coin: BigNum): VoteRegistrationAndDelegation {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
 }
 
 export abstract class Voter extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Voter> {
+  static fromBytes(bytes: Uint8Array): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static fromHex(hexStr: string): Promise<Voter> {
+  static fromHex(hexStr: string): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static fromJson(json: string): Promise<Voter> {
+  static fromJson(json: string): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} cred
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static newConstitutionalCommitteeHotCredential(cred: Credential): Promise<Voter> {
+  static newConstitutionalCommitteeHotCredential(cred: Credential): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Credential} cred
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static newDrepCredential(cred: Credential): Promise<Voter> {
+  static newDrepCredential(cred: Credential): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Ed25519KeyHash} keyHash
-  * @returns {Promise<Voter>}
+  * @returns {Voter}
   */
-  static newStakePoolKeyHash(keyHash: Ed25519KeyHash): Promise<Voter> {
+  static newStakePoolKeyHash(keyHash: Ed25519KeyHash): Voter {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<VoterKind>}
+  * @returns {VoterKind}
   */
-  abstract kind(): Promise<VoterKind>;
+  abstract kind(): VoterKind;
 
   /**
-  * @returns {Promise<Optional<Credential>>}
+  * @returns {Optional<Credential>}
   */
-  abstract toConstitutionalCommitteeHotCredential(): Promise<Optional<Credential>>;
+  abstract toConstitutionalCommitteeHotCredential(): Optional<Credential>;
 
   /**
-  * @returns {Promise<Optional<Credential>>}
+  * @returns {Optional<Credential>}
   */
-  abstract toDrepCredential(): Promise<Optional<Credential>>;
+  abstract toDrepCredential(): Optional<Credential>;
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHash>>}
+  * @returns {Optional<Ed25519KeyHash>}
   */
-  abstract toStakePoolKeyHash(): Promise<Optional<Ed25519KeyHash>>;
+  abstract toStakePoolKeyHash(): Optional<Ed25519KeyHash>;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasScriptCredentials(): Promise<boolean>;
+  abstract hasScriptCredentials(): boolean;
 
   /**
-  * @returns {Promise<Optional<Ed25519KeyHash>>}
+  * @returns {Optional<Ed25519KeyHash>}
   */
-  abstract toKeyHash(): Promise<Optional<Ed25519KeyHash>>;
+  abstract toKeyHash(): Optional<Ed25519KeyHash>;
 
 }
 
 export abstract class Voters extends _Ptr {
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Voters>}
+  * @returns {Voters}
   */
-  static fromJson(json: string): Promise<Voters> {
+  static fromJson(json: string): Voters {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Voters>}
+  * @returns {Voters}
   */
-  static new(): Promise<Voters> {
+  static new(): Voters {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {Voter} voter
   */
-  abstract add(voter: Voter): Promise<void>;
+  abstract add(voter: Voter): void;
 
   /**
   * @param {number} index
-  * @returns {Promise<Optional<Voter>>}
+  * @returns {Optional<Voter>}
   */
-  abstract get(index: number): Promise<Optional<Voter>>;
+  abstract get(index: number): Optional<Voter>;
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
 }
 
 export abstract class VotingBuilder extends _Ptr {
   /**
-  * @returns {Promise<VotingBuilder>}
+  * @returns {VotingBuilder}
   */
-  static new(): Promise<VotingBuilder> {
+  static new(): VotingBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13397,168 +13397,168 @@ export abstract class VotingBuilder extends _Ptr {
   * @param {Voter} voter
   * @param {GovernanceActionId} govActionId
   * @param {VotingProcedure} votingProcedure
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract add(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure): Promise<void>;
+  abstract add(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure): void;
 
   /**
   * @param {Voter} voter
   * @param {GovernanceActionId} govActionId
   * @param {VotingProcedure} votingProcedure
   * @param {PlutusWitness} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithPlutusWitness(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure, witness: PlutusWitness): Promise<void>;
+  abstract addWithPlutusWitness(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure, witness: PlutusWitness): void;
 
   /**
   * @param {Voter} voter
   * @param {GovernanceActionId} govActionId
   * @param {VotingProcedure} votingProcedure
   * @param {NativeScriptSource} nativeScriptSource
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithNativeScript(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure, nativeScriptSource: NativeScriptSource): Promise<void>;
+  abstract addWithNativeScript(voter: Voter, govActionId: GovernanceActionId, votingProcedure: VotingProcedure, nativeScriptSource: NativeScriptSource): void;
 
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  abstract getPlutusWitnesses(): Promise<PlutusWitnesses>;
+  abstract getPlutusWitnesses(): PlutusWitnesses;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract getNativeScripts(): Promise<NativeScripts>;
+  abstract getNativeScripts(): NativeScripts;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasPlutusScripts(): Promise<boolean>;
+  abstract hasPlutusScripts(): boolean;
 
   /**
-  * @returns {Promise<VotingProcedures>}
+  * @returns {VotingProcedures}
   */
-  abstract build(): Promise<VotingProcedures>;
+  abstract build(): VotingProcedures;
 
 }
 
 export abstract class VotingProcedure extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VotingProcedure>}
+  * @returns {VotingProcedure}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VotingProcedure> {
+  static fromBytes(bytes: Uint8Array): VotingProcedure {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VotingProcedure>}
+  * @returns {VotingProcedure}
   */
-  static fromHex(hexStr: string): Promise<VotingProcedure> {
+  static fromHex(hexStr: string): VotingProcedure {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VotingProcedure>}
+  * @returns {VotingProcedure}
   */
-  static fromJson(json: string): Promise<VotingProcedure> {
+  static fromJson(json: string): VotingProcedure {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {VoteKind} vote
-  * @returns {Promise<VotingProcedure>}
+  * @returns {VotingProcedure}
   */
-  static new(vote: VoteKind): Promise<VotingProcedure> {
+  static new(vote: VoteKind): VotingProcedure {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {VoteKind} vote
   * @param {Anchor} anchor
-  * @returns {Promise<VotingProcedure>}
+  * @returns {VotingProcedure}
   */
-  static newWithAnchor(vote: VoteKind, anchor: Anchor): Promise<VotingProcedure> {
+  static newWithAnchor(vote: VoteKind, anchor: Anchor): VotingProcedure {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<VoteKind>}
+  * @returns {VoteKind}
   */
-  abstract voteKind(): Promise<VoteKind>;
+  abstract voteKind(): VoteKind;
 
   /**
-  * @returns {Promise<Optional<Anchor>>}
+  * @returns {Optional<Anchor>}
   */
-  abstract anchor(): Promise<Optional<Anchor>>;
+  abstract anchor(): Optional<Anchor>;
 
 }
 
 export abstract class VotingProcedures extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VotingProcedures>}
+  * @returns {VotingProcedures}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VotingProcedures> {
+  static fromBytes(bytes: Uint8Array): VotingProcedures {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VotingProcedures>}
+  * @returns {VotingProcedures}
   */
-  static fromHex(hexStr: string): Promise<VotingProcedures> {
+  static fromHex(hexStr: string): VotingProcedures {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VotingProcedures>}
+  * @returns {VotingProcedures}
   */
-  static fromJson(json: string): Promise<VotingProcedures> {
+  static fromJson(json: string): VotingProcedures {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<VotingProcedures>}
+  * @returns {VotingProcedures}
   */
-  static new(): Promise<VotingProcedures> {
+  static new(): VotingProcedures {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13567,96 +13567,96 @@ export abstract class VotingProcedures extends _Ptr {
   * @param {GovernanceActionId} governanceActionId
   * @param {VotingProcedure} votingProcedure
   */
-  abstract insert(voter: Voter, governanceActionId: GovernanceActionId, votingProcedure: VotingProcedure): Promise<void>;
+  abstract insert(voter: Voter, governanceActionId: GovernanceActionId, votingProcedure: VotingProcedure): void;
 
   /**
   * @param {Voter} voter
   * @param {GovernanceActionId} governanceActionId
-  * @returns {Promise<Optional<VotingProcedure>>}
+  * @returns {Optional<VotingProcedure>}
   */
-  abstract get(voter: Voter, governanceActionId: GovernanceActionId): Promise<Optional<VotingProcedure>>;
+  abstract get(voter: Voter, governanceActionId: GovernanceActionId): Optional<VotingProcedure>;
 
   /**
-  * @returns {Promise<Voters>}
+  * @returns {Voters}
   */
-  abstract getVoters(): Promise<Voters>;
+  abstract getVoters(): Voters;
 
   /**
   * @param {Voter} voter
-  * @returns {Promise<GovernanceActionIds>}
+  * @returns {GovernanceActionIds}
   */
-  abstract getGovernanceActionIdsByVoter(voter: Voter): Promise<GovernanceActionIds>;
+  abstract getGovernanceActionIdsByVoter(voter: Voter): GovernanceActionIds;
 
 }
 
 export abstract class VotingProposal extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VotingProposal>}
+  * @returns {VotingProposal}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VotingProposal> {
+  static fromBytes(bytes: Uint8Array): VotingProposal {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VotingProposal>}
+  * @returns {VotingProposal}
   */
-  static fromHex(hexStr: string): Promise<VotingProposal> {
+  static fromHex(hexStr: string): VotingProposal {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VotingProposal>}
+  * @returns {VotingProposal}
   */
-  static fromJson(json: string): Promise<VotingProposal> {
+  static fromJson(json: string): VotingProposal {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<GovernanceAction>}
+  * @returns {GovernanceAction}
   */
-  abstract governanceAction(): Promise<GovernanceAction>;
+  abstract governanceAction(): GovernanceAction;
 
   /**
-  * @returns {Promise<Anchor>}
+  * @returns {Anchor}
   */
-  abstract anchor(): Promise<Anchor>;
+  abstract anchor(): Anchor;
 
   /**
-  * @returns {Promise<RewardAddress>}
+  * @returns {RewardAddress}
   */
-  abstract rewardAccount(): Promise<RewardAddress>;
+  abstract rewardAccount(): RewardAddress;
 
   /**
-  * @returns {Promise<BigNum>}
+  * @returns {BigNum}
   */
-  abstract deposit(): Promise<BigNum>;
+  abstract deposit(): BigNum;
 
   /**
   * @param {GovernanceAction} governanceAction
   * @param {Anchor} anchor
   * @param {RewardAddress} rewardAccount
   * @param {BigNum} deposit
-  * @returns {Promise<VotingProposal>}
+  * @returns {VotingProposal}
   */
-  static new(governanceAction: GovernanceAction, anchor: Anchor, rewardAccount: RewardAddress, deposit: BigNum): Promise<VotingProposal> {
+  static new(governanceAction: GovernanceAction, anchor: Anchor, rewardAccount: RewardAddress, deposit: BigNum): VotingProposal {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
@@ -13664,256 +13664,256 @@ export abstract class VotingProposal extends _Ptr {
 
 export abstract class VotingProposalBuilder extends _Ptr {
   /**
-  * @returns {Promise<VotingProposalBuilder>}
+  * @returns {VotingProposalBuilder}
   */
-  static new(): Promise<VotingProposalBuilder> {
+  static new(): VotingProposalBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {VotingProposal} proposal
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract add(proposal: VotingProposal): Promise<void>;
+  abstract add(proposal: VotingProposal): void;
 
   /**
   * @param {VotingProposal} proposal
   * @param {PlutusWitness} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithPlutusWitness(proposal: VotingProposal, witness: PlutusWitness): Promise<void>;
+  abstract addWithPlutusWitness(proposal: VotingProposal, witness: PlutusWitness): void;
 
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  abstract getPlutusWitnesses(): Promise<PlutusWitnesses>;
+  abstract getPlutusWitnesses(): PlutusWitnesses;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasPlutusScripts(): Promise<boolean>;
+  abstract hasPlutusScripts(): boolean;
 
   /**
-  * @returns {Promise<VotingProposals>}
+  * @returns {VotingProposals}
   */
-  abstract build(): Promise<VotingProposals>;
+  abstract build(): VotingProposals;
 
 }
 
 export abstract class VotingProposals extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<VotingProposals>}
+  * @returns {VotingProposals}
   */
-  static fromBytes(bytes: Uint8Array): Promise<VotingProposals> {
+  static fromBytes(bytes: Uint8Array): VotingProposals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<VotingProposals>}
+  * @returns {VotingProposals}
   */
-  static fromHex(hexStr: string): Promise<VotingProposals> {
+  static fromHex(hexStr: string): VotingProposals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<VotingProposals>}
+  * @returns {VotingProposals}
   */
-  static fromJson(json: string): Promise<VotingProposals> {
+  static fromJson(json: string): VotingProposals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<VotingProposals>}
+  * @returns {VotingProposals}
   */
-  static new(): Promise<VotingProposals> {
+  static new(): VotingProposals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {number} index
-  * @returns {Promise<VotingProposal>}
+  * @returns {VotingProposal}
   */
-  abstract get(index: number): Promise<VotingProposal>;
+  abstract get(index: number): VotingProposal;
 
   /**
   * @param {VotingProposal} proposal
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract add(proposal: VotingProposal): Promise<boolean>;
+  abstract add(proposal: VotingProposal): boolean;
 
   /**
   * @param {VotingProposal} elem
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract contains(elem: VotingProposal): Promise<boolean>;
+  abstract contains(elem: VotingProposal): boolean;
 
   /**
-  * @returns {Promise<Optional<VotingProposals>>}
+  * @returns {Optional<VotingProposals>}
   */
-  abstract toOption(): Promise<Optional<VotingProposals>>;
+  abstract toOption(): Optional<VotingProposals>;
 
 }
 
 export abstract class Withdrawals extends _Ptr {
   /**
-  * @returns {Promise<Uint8Array>}
+  * @returns {Uint8Array}
   */
-  abstract toBytes(): Promise<Uint8Array>;
+  abstract toBytes(): Uint8Array;
 
   /**
   * @param {Uint8Array} bytes
-  * @returns {Promise<Withdrawals>}
+  * @returns {Withdrawals}
   */
-  static fromBytes(bytes: Uint8Array): Promise<Withdrawals> {
+  static fromBytes(bytes: Uint8Array): Withdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toHex(): Promise<string>;
+  abstract toHex(): string;
 
   /**
   * @param {string} hexStr
-  * @returns {Promise<Withdrawals>}
+  * @returns {Withdrawals}
   */
-  static fromHex(hexStr: string): Promise<Withdrawals> {
+  static fromHex(hexStr: string): Withdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<string>}
+  * @returns {string}
   */
-  abstract toJson(): Promise<string>;
+  abstract toJson(): string;
 
   /**
   * @param {string} json
-  * @returns {Promise<Withdrawals>}
+  * @returns {Withdrawals}
   */
-  static fromJson(json: string): Promise<Withdrawals> {
+  static fromJson(json: string): Withdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<Withdrawals>}
+  * @returns {Withdrawals}
   */
-  static new(): Promise<Withdrawals> {
+  static new(): Withdrawals {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
-  * @returns {Promise<number>}
+  * @returns {number}
   */
-  abstract len(): Promise<number>;
+  abstract len(): number;
 
   /**
   * @param {RewardAddress} key
   * @param {BigNum} value
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract insert(key: RewardAddress, value: BigNum): Promise<Optional<BigNum>>;
+  abstract insert(key: RewardAddress, value: BigNum): Optional<BigNum>;
 
   /**
   * @param {RewardAddress} key
-  * @returns {Promise<Optional<BigNum>>}
+  * @returns {Optional<BigNum>}
   */
-  abstract get(key: RewardAddress): Promise<Optional<BigNum>>;
+  abstract get(key: RewardAddress): Optional<BigNum>;
 
   /**
-  * @returns {Promise<RewardAddresses>}
+  * @returns {RewardAddresses}
   */
-  abstract keys(): Promise<RewardAddresses>;
+  abstract keys(): RewardAddresses;
 
 }
 
 export abstract class WithdrawalsBuilder extends _Ptr {
   /**
-  * @returns {Promise<WithdrawalsBuilder>}
+  * @returns {WithdrawalsBuilder}
   */
-  static new(): Promise<WithdrawalsBuilder> {
+  static new(): WithdrawalsBuilder {
     throw new Error(EXCEPTIONS.SHOULD_BE_OVERWRITTEN);
   }
 
   /**
   * @param {RewardAddress} address
   * @param {BigNum} coin
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract add(address: RewardAddress, coin: BigNum): Promise<void>;
+  abstract add(address: RewardAddress, coin: BigNum): void;
 
   /**
   * @param {RewardAddress} address
   * @param {BigNum} coin
   * @param {PlutusWitness} witness
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithPlutusWitness(address: RewardAddress, coin: BigNum, witness: PlutusWitness): Promise<void>;
+  abstract addWithPlutusWitness(address: RewardAddress, coin: BigNum, witness: PlutusWitness): void;
 
   /**
   * @param {RewardAddress} address
   * @param {BigNum} coin
   * @param {NativeScriptSource} nativeScriptSource
-  * @returns {Promise<void>}
+  * @returns {void}
   */
-  abstract addWithNativeScript(address: RewardAddress, coin: BigNum, nativeScriptSource: NativeScriptSource): Promise<void>;
+  abstract addWithNativeScript(address: RewardAddress, coin: BigNum, nativeScriptSource: NativeScriptSource): void;
 
   /**
-  * @returns {Promise<PlutusWitnesses>}
+  * @returns {PlutusWitnesses}
   */
-  abstract getPlutusWitnesses(): Promise<PlutusWitnesses>;
+  abstract getPlutusWitnesses(): PlutusWitnesses;
 
   /**
-  * @returns {Promise<TransactionInputs>}
+  * @returns {TransactionInputs}
   */
-  abstract getRefInputs(): Promise<TransactionInputs>;
+  abstract getRefInputs(): TransactionInputs;
 
   /**
-  * @returns {Promise<NativeScripts>}
+  * @returns {NativeScripts}
   */
-  abstract getNativeScripts(): Promise<NativeScripts>;
+  abstract getNativeScripts(): NativeScripts;
 
   /**
-  * @returns {Promise<Value>}
+  * @returns {Value}
   */
-  abstract getTotalWithdrawals(): Promise<Value>;
+  abstract getTotalWithdrawals(): Value;
 
   /**
-  * @returns {Promise<boolean>}
+  * @returns {boolean}
   */
-  abstract hasPlutusScripts(): Promise<boolean>;
+  abstract hasPlutusScripts(): boolean;
 
   /**
-  * @returns {Promise<Withdrawals>}
+  * @returns {Withdrawals}
   */
-  abstract build(): Promise<Withdrawals>;
+  abstract build(): Withdrawals;
 
 }
 

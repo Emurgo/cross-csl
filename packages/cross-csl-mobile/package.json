@@ -1,13 +1,13 @@
 {
   "name": "@emurgo/cross-csl-mobile",
-  "version": "7.1.1",
+  "version": "8.0.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "yarn install && ../../node_modules/typescript/bin/tsc --project tsconfig.json",
+    "build": "yarn install && npm i && ../../node_modules/typescript/bin/tsc --project tsconfig.json",
     "clean": "rm -rf ./dist",
     "gen-flow-defs": "node ../../generate-flow.js",
     "rebuild": "yarn clean && yarn build && yarn gen-flow-defs",
@@ -20,11 +20,10 @@
   "author": "EMURGO",
   "license": "MIT",
   "dependencies": {
-    "@emurgo/cross-csl-core": "7.1.1",
-    "@emurgo/csl-mobile-bridge": "^8.1.1"
+    "@emurgo/cross-csl-core": "8.0.0"
   },
   "peerDependencies": {
-    "@emurgo/csl-mobile-bridge": "^8.1.1"
+    "@emurgo/csl-mobile-bridge-jsi": "1.0.0-alpha.7"
   },
   "devDependencies": {
     "install-peers-cli": "^2.2.0",
