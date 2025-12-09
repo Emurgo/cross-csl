@@ -39,7 +39,7 @@
     "karma-typescript": "^5.5.2",
     "karma-typescript-es6-transform": "^5.5.2",
     "karma-webpack": "5.0.0",
-    "mocha": "^9.1.2",
+    "mocha": "^11.7.5",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.4",
     "webpack": "^5.58.2",
