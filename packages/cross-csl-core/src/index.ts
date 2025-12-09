@@ -16,11 +16,6 @@ const pointers: Record<string, any[]> = {};
 
 export const freeContext = (context: string) => {
   if (pointers[context]) {
-    for (const pointer of pointers[context]) {
-      if (pointer.free) {
-        pointer.free();
-      }
-    }
     delete pointers[context];
   }
 };
@@ -86,21 +81,12 @@ export abstract class _Ptr extends _WasmProxy {
   constructor(wasm: any | undefined, ctx: string) {
     super(wasm, ctx);
   }
-  /**
-   * Frees the pointer
-   * @returns {void}
-   */
-  abstract free(): void;
 }
 
-export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
-  constructor(wasm: T | undefined, ctx: string) {
-    super(wasm, ctx);
-  }
-
-  free(): void {
-    return this.wasm.free();
-  }
+export abstract class Ptr<T> extends WasmProxy<T> {
+    constructor(wasm: T | undefined, ctx: string) {
+        super(wasm, ctx);
+    }
 }
 
 export type Optional<T> = T | undefined;
@@ -6891,6 +6877,7 @@ export abstract class PlutusData extends _Ptr {
 
   /**
   * @param {BigNum} alternative
+  * @param {PlutusData} plutusData
   * @param {PlutusData} plutusData
   * @returns {PlutusData}
   */
