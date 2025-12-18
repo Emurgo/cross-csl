@@ -12,28 +12,20 @@ export const EXCEPTIONS = {
   NOT_IMPLEMENTED: 'not implemented',
   SHOULD_BE_OVERWRITTEN: 'should be overwritten by implementations'
 };
-const pointers: Record<string, any[]> = {};
 
-export const freeContext = (context: string) => {
-  if (pointers[context]) {
-    for (const pointer of pointers[context]) {
-      if (pointer.free) {
-        pointer.free();
-      }
-    }
-    delete pointers[context];
-  }
-};
+/**
+ * @deprecated This function is no longer needed. Memory is now managed automatically by garbage collection.
+ * Kept for backward compatibility - does nothing.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const freeContext = (_context?: string): void => {};
 
-export const switchContext = (from: string, to: string) => {
-  if (pointers[from]) {
-    if (!pointers[to]) {
-      pointers[to] = [];
-    }
-    pointers[to] = pointers[to].concat(pointers[from]);
-    delete pointers[from];
-  }
-};
+/**
+ * @deprecated This function is no longer needed. Memory is now managed automatically by garbage collection.
+ * Kept for backward compatibility - does nothing.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const switchContext = (_from?: string, _to?: string): void => {};
 
 export abstract class _WasmProxy {
   public _wasm: any | undefined;
@@ -42,9 +34,8 @@ export abstract class _WasmProxy {
     throw new Error('Trying to access undefined WASM object');
   }
 
-  // this constructor is here just to enforce it in the implementing classes
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(wasm: any | undefined, ctx: string) {}
+  constructor(wasm: any | undefined) {}
 
   abstract hasValue(): boolean;
 }
@@ -61,15 +52,7 @@ export abstract class WasmProxy<T> implements _WasmProxy {
     throw new Error('Trying to access undefined WASM object');
   }
 
-  constructor(wasm: T | undefined, ctx: string) {
-    if (wasm) {
-      if (!pointers[ctx]) {
-        pointers[ctx] = [];
-      }
-
-      pointers[ctx].push(wasm);
-    }
-
+  constructor(wasm: T | undefined) {
     this._wasm = wasm;
   }
 
@@ -83,23 +66,14 @@ export abstract class WasmProxy<T> implements _WasmProxy {
 }
 
 export abstract class _Ptr extends _WasmProxy {
-  constructor(wasm: any | undefined, ctx: string) {
-    super(wasm, ctx);
+  constructor(wasm: any | undefined) {
+    super(wasm);
   }
-  /**
-   * Frees the pointer
-   * @returns {void}
-   */
-  abstract free(): void;
 }
 
-export abstract class Ptr<T extends { free: () => any }> extends WasmProxy<T> {
-  constructor(wasm: T | undefined, ctx: string) {
-    super(wasm, ctx);
-  }
-
-  free(): void {
-    return this.wasm.free();
+export abstract class Ptr<T> extends WasmProxy<T> {
+  constructor(wasm: T | undefined) {
+    super(wasm);
   }
 }
 

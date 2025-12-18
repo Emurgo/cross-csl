@@ -1,28 +1,23 @@
-import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs';
+import * as WasmV4 from '@emurgo/cardano-serialization-lib-nodejs-gc';
 import * as WasmContract from '@emurgo/cross-csl-core';
 
 const { Ptr } = WasmContract;
 import type { Optional } from '@emurgo/cross-csl-core';
 
-export const init = (ctx: string): WasmContract.WasmModuleProxy => {
-  return new WasmModuleProxy(ctx);
+export const init = (_ctx?: string): WasmContract.WasmModuleProxy => {
+  return new WasmModuleProxy();
 };
 
 export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
-  private _ctx: string;
-
-  constructor(ctx: string) {
-    this._ctx = ctx;
-  }
 
   calculateExUnitsCeilCost(exUnits: WasmContract.ExUnits, exUnitPrices: WasmContract.ExUnitPrices): WasmContract.BigNum {
     const ret = WasmV4.calculate_ex_units_ceil_cost(exUnits.wasm, exUnitPrices.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   createSendAll(address: WasmContract.Address, utxos: WasmContract.TransactionUnspentOutputs, config: WasmContract.TransactionBuilderConfig): WasmContract.TransactionBatchList {
     const ret = WasmV4.create_send_all(address.wasm, utxos.wasm, config.wasm);
-    return new this.TransactionBatchList(ret, this._ctx);
+    return new this.TransactionBatchList(ret);
   }
 
   decodeArbitraryBytesFromMetadatum(metadata: WasmContract.TransactionMetadatum): Uint8Array {
@@ -43,22 +38,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   encodeArbitraryBytesAsMetadatum(bytes: Uint8Array): WasmContract.TransactionMetadatum {
     const ret = WasmV4.encode_arbitrary_bytes_as_metadatum(bytes);
-    return new this.TransactionMetadatum(ret, this._ctx);
+    return new this.TransactionMetadatum(ret);
   }
 
   encodeJsonStrToMetadatum(json: string, schema: WasmContract.MetadataJsonSchema): WasmContract.TransactionMetadatum {
     const ret = WasmV4.encode_json_str_to_metadatum(json, schema);
-    return new this.TransactionMetadatum(ret, this._ctx);
+    return new this.TransactionMetadatum(ret);
   }
 
   encodeJsonStrToNativeScript(json: string, selfXpub: string, schema: WasmContract.ScriptSchema): WasmContract.NativeScript {
     const ret = WasmV4.encode_json_str_to_native_script(json, selfXpub, schema);
-    return new this.NativeScript(ret, this._ctx);
+    return new this.NativeScript(ret);
   }
 
   encodeJsonStrToPlutusDatum(json: string, schema: WasmContract.PlutusDatumSchema): WasmContract.PlutusData {
     const ret = WasmV4.encode_json_str_to_plutus_datum(json, schema);
-    return new this.PlutusData(ret, this._ctx);
+    return new this.PlutusData(ret);
   }
 
   encryptWithPassword(password: string, salt: string, nonce: string, data: string): string {
@@ -67,12 +62,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   getDeposit(txbody: WasmContract.TransactionBody, poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): WasmContract.BigNum {
     const ret = WasmV4.get_deposit(txbody.wasm, poolDeposit.wasm, keyDeposit.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   getImplicitInput(txbody: WasmContract.TransactionBody, poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): WasmContract.Value {
     const ret = WasmV4.get_implicit_input(txbody.wasm, poolDeposit.wasm, keyDeposit.wasm);
-    return new this.Value(ret, this._ctx);
+    return new this.Value(ret);
   }
 
   hasTransactionSetTag(txBytes: Uint8Array): WasmContract.TransactionSetsState {
@@ -81,52 +76,52 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
   hashAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): WasmContract.AuxiliaryDataHash {
     const ret = WasmV4.hash_auxiliary_data(auxiliaryData.wasm);
-    return new this.AuxiliaryDataHash(ret, this._ctx);
+    return new this.AuxiliaryDataHash(ret);
   }
 
   hashPlutusData(plutusData: WasmContract.PlutusData): WasmContract.DataHash {
     const ret = WasmV4.hash_plutus_data(plutusData.wasm);
-    return new this.DataHash(ret, this._ctx);
+    return new this.DataHash(ret);
   }
 
   hashScriptData(redeemers: WasmContract.Redeemers, costModels: WasmContract.Costmdls, datums: Optional<WasmContract.PlutusList>): WasmContract.ScriptDataHash {
     const ret = WasmV4.hash_script_data(redeemers.wasm, costModels.wasm, datums?.wasm);
-    return new this.ScriptDataHash(ret, this._ctx);
+    return new this.ScriptDataHash(ret);
   }
 
   makeDaedalusBootstrapWitness(txBodyHash: WasmContract.TransactionHash, addr: WasmContract.ByronAddress, key: WasmContract.LegacyDaedalusPrivateKey): WasmContract.BootstrapWitness {
     const ret = WasmV4.make_daedalus_bootstrap_witness(txBodyHash.wasm, addr.wasm, key.wasm);
-    return new this.BootstrapWitness(ret, this._ctx);
+    return new this.BootstrapWitness(ret);
   }
 
   makeIcarusBootstrapWitness(txBodyHash: WasmContract.TransactionHash, addr: WasmContract.ByronAddress, key: WasmContract.Bip32PrivateKey): WasmContract.BootstrapWitness {
     const ret = WasmV4.make_icarus_bootstrap_witness(txBodyHash.wasm, addr.wasm, key.wasm);
-    return new this.BootstrapWitness(ret, this._ctx);
+    return new this.BootstrapWitness(ret);
   }
 
   makeVkeyWitness(txBodyHash: WasmContract.TransactionHash, sk: WasmContract.PrivateKey): WasmContract.Vkeywitness {
     const ret = WasmV4.make_vkey_witness(txBodyHash.wasm, sk.wasm);
-    return new this.Vkeywitness(ret, this._ctx);
+    return new this.Vkeywitness(ret);
   }
 
   minAdaForOutput(output: WasmContract.TransactionOutput, dataCost: WasmContract.DataCost): WasmContract.BigNum {
     const ret = WasmV4.min_ada_for_output(output.wasm, dataCost.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   minFee(tx: WasmContract.Transaction, linearFee: WasmContract.LinearFee): WasmContract.BigNum {
     const ret = WasmV4.min_fee(tx.wasm, linearFee.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   minRefScriptFee(totalRefScriptsSize: number, refScriptCoinsPerByte: WasmContract.UnitInterval): WasmContract.BigNum {
     const ret = WasmV4.min_ref_script_fee(totalRefScriptsSize, refScriptCoinsPerByte.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   minScriptFee(tx: WasmContract.Transaction, exUnitPrices: WasmContract.ExUnitPrices): WasmContract.BigNum {
     const ret = WasmV4.min_script_fee(tx.wasm, exUnitPrices.wasm);
-    return new this.BigNum(ret, this._ctx);
+    return new this.BigNum(ret);
   }
 
   public Address = (() => {
@@ -139,7 +134,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(data: Uint8Array): WasmContract.Address {
         const ret = WasmV4.Address.from_bytes(data);
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       toJson(): string {
@@ -148,7 +143,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Address {
         const ret = WasmV4.Address.from_json(json);
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       kind(): WasmContract.AddressKind {
@@ -158,7 +153,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       paymentCred(): Optional<WasmContract.Credential> {
         const ret = this.wasm.payment_cred();
         if (ret == null) return undefined;
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       isMalformed(): boolean {
@@ -171,7 +166,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Address {
         const ret = WasmV4.Address.from_hex(hexStr);
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       toBytes(): Uint8Array {
@@ -184,7 +179,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.Address {
         const ret = WasmV4.Address.from_bech32(bechStr);
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       networkId(): number {
@@ -209,7 +204,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Anchor {
         const ret = WasmV4.Anchor.from_bytes(bytes);
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       toHex(): string {
@@ -218,7 +213,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Anchor {
         const ret = WasmV4.Anchor.from_hex(hexStr);
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       toJson(): string {
@@ -227,22 +222,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Anchor {
         const ret = WasmV4.Anchor.from_json(json);
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       url(): WasmContract.URL {
         const ret = this.wasm.url();
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       anchorDataHash(): WasmContract.AnchorDataHash {
         const ret = this.wasm.anchor_data_hash();
-        return new $outer.AnchorDataHash(ret, $outer._ctx);
+        return new $outer.AnchorDataHash(ret);
       }
 
       static new(anchorUrl: WasmContract.URL, anchorDataHash: WasmContract.AnchorDataHash): WasmContract.Anchor {
         const ret = WasmV4.Anchor.new(anchorUrl.wasm, anchorDataHash.wasm);
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
     }
@@ -259,7 +254,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.AnchorDataHash {
         const ret = WasmV4.AnchorDataHash.from_bytes(bytes);
-        return new $outer.AnchorDataHash(ret, $outer._ctx);
+        return new $outer.AnchorDataHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -272,7 +267,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.AnchorDataHash {
         const ret = WasmV4.AnchorDataHash.from_bech32(bechStr);
-        return new $outer.AnchorDataHash(ret, $outer._ctx);
+        return new $outer.AnchorDataHash(ret);
       }
 
       toHex(): string {
@@ -281,7 +276,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.AnchorDataHash {
         const ret = WasmV4.AnchorDataHash.from_hex(hex);
-        return new $outer.AnchorDataHash(ret, $outer._ctx);
+        return new $outer.AnchorDataHash(ret);
       }
 
     }
@@ -302,7 +297,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.AssetName {
         const ret = WasmV4.AssetName.from_bytes(bytes);
-        return new $outer.AssetName(ret, $outer._ctx);
+        return new $outer.AssetName(ret);
       }
 
       toHex(): string {
@@ -311,7 +306,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.AssetName {
         const ret = WasmV4.AssetName.from_hex(hexStr);
-        return new $outer.AssetName(ret, $outer._ctx);
+        return new $outer.AssetName(ret);
       }
 
       toJson(): string {
@@ -320,12 +315,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.AssetName {
         const ret = WasmV4.AssetName.from_json(json);
-        return new $outer.AssetName(ret, $outer._ctx);
+        return new $outer.AssetName(ret);
       }
 
       static new(name: Uint8Array): WasmContract.AssetName {
         const ret = WasmV4.AssetName.new(name);
-        return new $outer.AssetName(ret, $outer._ctx);
+        return new $outer.AssetName(ret);
       }
 
       name(): Uint8Array {
@@ -350,7 +345,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.AssetNames {
         const ret = WasmV4.AssetNames.from_bytes(bytes);
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
       toHex(): string {
@@ -359,7 +354,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.AssetNames {
         const ret = WasmV4.AssetNames.from_hex(hexStr);
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
       toJson(): string {
@@ -368,12 +363,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.AssetNames {
         const ret = WasmV4.AssetNames.from_json(json);
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
       static new(): WasmContract.AssetNames {
         const ret = WasmV4.AssetNames.new();
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
       len(): number {
@@ -382,7 +377,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.AssetName {
         const ret = this.wasm.get(index);
-        return new $outer.AssetName(ret, $outer._ctx);
+        return new $outer.AssetName(ret);
       }
 
       add(elem: WasmContract.AssetName): void {
@@ -407,7 +402,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Assets {
         const ret = WasmV4.Assets.from_bytes(bytes);
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       toHex(): string {
@@ -416,7 +411,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Assets {
         const ret = WasmV4.Assets.from_hex(hexStr);
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       toJson(): string {
@@ -425,12 +420,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Assets {
         const ret = WasmV4.Assets.from_json(json);
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       static new(): WasmContract.Assets {
         const ret = WasmV4.Assets.new();
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       len(): number {
@@ -440,18 +435,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.AssetName, value: WasmContract.BigNum): Optional<WasmContract.BigNum> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       get(key: WasmContract.AssetName): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       keys(): WasmContract.AssetNames {
         const ret = this.wasm.keys();
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
     }
@@ -472,7 +467,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.AuxiliaryData {
         const ret = WasmV4.AuxiliaryData.from_bytes(bytes);
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       toHex(): string {
@@ -481,7 +476,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.AuxiliaryData {
         const ret = WasmV4.AuxiliaryData.from_hex(hexStr);
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       toJson(): string {
@@ -490,18 +485,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.AuxiliaryData {
         const ret = WasmV4.AuxiliaryData.from_json(json);
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       static new(): WasmContract.AuxiliaryData {
         const ret = WasmV4.AuxiliaryData.new();
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       metadata(): Optional<WasmContract.GeneralTransactionMetadata> {
         const ret = this.wasm.metadata();
         if (ret == null) return undefined;
-        return new $outer.GeneralTransactionMetadata(ret, $outer._ctx);
+        return new $outer.GeneralTransactionMetadata(ret);
       }
 
       setMetadata(metadata: WasmContract.GeneralTransactionMetadata): void {
@@ -511,7 +506,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       nativeScripts(): Optional<WasmContract.NativeScripts> {
         const ret = this.wasm.native_scripts();
         if (ret == null) return undefined;
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       setNativeScripts(nativeScripts: WasmContract.NativeScripts): void {
@@ -521,7 +516,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       plutusScripts(): Optional<WasmContract.PlutusScripts> {
         const ret = this.wasm.plutus_scripts();
         if (ret == null) return undefined;
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       setPlutusScripts(plutusScripts: WasmContract.PlutusScripts): void {
@@ -550,7 +545,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.AuxiliaryDataHash {
         const ret = WasmV4.AuxiliaryDataHash.from_bytes(bytes);
-        return new $outer.AuxiliaryDataHash(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -563,7 +558,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.AuxiliaryDataHash {
         const ret = WasmV4.AuxiliaryDataHash.from_bech32(bechStr);
-        return new $outer.AuxiliaryDataHash(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataHash(ret);
       }
 
       toHex(): string {
@@ -572,7 +567,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.AuxiliaryDataHash {
         const ret = WasmV4.AuxiliaryDataHash.from_hex(hex);
-        return new $outer.AuxiliaryDataHash(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataHash(ret);
       }
 
     }
@@ -589,7 +584,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.AuxiliaryDataSet {
         const ret = WasmV4.AuxiliaryDataSet.new();
-        return new $outer.AuxiliaryDataSet(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataSet(ret);
       }
 
       len(): number {
@@ -599,13 +594,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(txIndex: number, data: WasmContract.AuxiliaryData): Optional<WasmContract.AuxiliaryData> {
         const ret = this.wasm.insert(txIndex, data.wasm);
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       get(txIndex: number): Optional<WasmContract.AuxiliaryData> {
         const ret = this.wasm.get(txIndex);
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       indices(): Uint32Array {
@@ -626,28 +621,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(network: number, payment: WasmContract.Credential, stake: WasmContract.Credential): WasmContract.BaseAddress {
         const ret = WasmV4.BaseAddress.new(network, payment.wasm, stake.wasm);
-        return new $outer.BaseAddress(ret, $outer._ctx);
+        return new $outer.BaseAddress(ret);
       }
 
       paymentCred(): WasmContract.Credential {
         const ret = this.wasm.payment_cred();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       stakeCred(): WasmContract.Credential {
         const ret = this.wasm.stake_cred();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.BaseAddress> {
         const ret = WasmV4.BaseAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.BaseAddress(ret, $outer._ctx);
+        return new $outer.BaseAddress(ret);
       }
 
       networkId(): number {
@@ -672,7 +667,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.BigInt {
         const ret = WasmV4.BigInt.from_bytes(bytes);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       toHex(): string {
@@ -681,7 +676,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.BigInt {
         const ret = WasmV4.BigInt.from_hex(hexStr);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       toJson(): string {
@@ -690,7 +685,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.BigInt {
         const ret = WasmV4.BigInt.from_json(json);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       isZero(): boolean {
@@ -700,18 +695,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asU64(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.as_u64();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       asInt(): Optional<WasmContract.Int> {
         const ret = this.wasm.as_int();
         if (ret == null) return undefined;
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       static fromStr(text: string): WasmContract.BigInt {
         const ret = WasmV4.BigInt.from_str(text);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       toStr(): string {
@@ -720,52 +715,52 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       add(other: WasmContract.BigInt): WasmContract.BigInt {
         const ret = this.wasm.add(other.wasm);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       sub(other: WasmContract.BigInt): WasmContract.BigInt {
         const ret = this.wasm.sub(other.wasm);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       mul(other: WasmContract.BigInt): WasmContract.BigInt {
         const ret = this.wasm.mul(other.wasm);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       pow(exp: number): WasmContract.BigInt {
         const ret = this.wasm.pow(exp);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       static one(): WasmContract.BigInt {
         const ret = WasmV4.BigInt.one();
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       static zero(): WasmContract.BigInt {
         const ret = WasmV4.BigInt.zero();
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       abs(): WasmContract.BigInt {
         const ret = this.wasm.abs();
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       increment(): WasmContract.BigInt {
         const ret = this.wasm.increment();
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       divCeil(other: WasmContract.BigInt): WasmContract.BigInt {
         const ret = this.wasm.div_ceil(other.wasm);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       divFloor(other: WasmContract.BigInt): WasmContract.BigInt {
         const ret = this.wasm.div_floor(other.wasm);
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
     }
@@ -786,7 +781,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.BigNum {
         const ret = WasmV4.BigNum.from_bytes(bytes);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       toHex(): string {
@@ -795,7 +790,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.BigNum {
         const ret = WasmV4.BigNum.from_hex(hexStr);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       toJson(): string {
@@ -804,12 +799,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.BigNum {
         const ret = WasmV4.BigNum.from_json(json);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static fromStr(string: string): WasmContract.BigNum {
         const ret = WasmV4.BigNum.from_str(string);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       toStr(): string {
@@ -818,12 +813,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static zero(): WasmContract.BigNum {
         const ret = WasmV4.BigNum.zero();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static one(): WasmContract.BigNum {
         const ret = WasmV4.BigNum.one();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       isZero(): boolean {
@@ -832,27 +827,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       divFloor(other: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.div_floor(other.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       checkedMul(other: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.checked_mul(other.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       checkedAdd(other: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.checked_add(other.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       checkedSub(other: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.checked_sub(other.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       clampedSub(other: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.clamped_sub(other.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       compare(rhsValue: WasmContract.BigNum): number {
@@ -865,12 +860,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static maxValue(): WasmContract.BigNum {
         const ret = WasmV4.BigNum.max_value();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static max(a: WasmContract.BigNum, b: WasmContract.BigNum): WasmContract.BigNum {
         const ret = WasmV4.BigNum.max(a.wasm, b.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
     }
@@ -887,12 +882,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       derive(index: number): WasmContract.Bip32PrivateKey {
         const ret = this.wasm.derive(index);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       static from_128Xprv(bytes: Uint8Array): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.from_128_xprv(bytes);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       to_128Xprv(): Uint8Array {
@@ -901,22 +896,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static generateEd25519Bip32(): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.generate_ed25519_bip32();
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       toRawKey(): WasmContract.PrivateKey {
         const ret = this.wasm.to_raw_key();
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       toPublic(): WasmContract.Bip32PublicKey {
         const ret = this.wasm.to_public();
-        return new $outer.Bip32PublicKey(ret, $outer._ctx);
+        return new $outer.Bip32PublicKey(ret);
       }
 
       static fromBytes(bytes: Uint8Array): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.from_bytes(bytes);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       asBytes(): Uint8Array {
@@ -925,7 +920,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bech32Str: string): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.from_bech32(bech32Str);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       toBech32(): string {
@@ -934,7 +929,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBip39Entropy(entropy: Uint8Array, password: Uint8Array): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.from_bip39_entropy(entropy, password);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
       chaincode(): Uint8Array {
@@ -947,7 +942,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Bip32PrivateKey {
         const ret = WasmV4.Bip32PrivateKey.from_hex(hexStr);
-        return new $outer.Bip32PrivateKey(ret, $outer._ctx);
+        return new $outer.Bip32PrivateKey(ret);
       }
 
     }
@@ -964,17 +959,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       derive(index: number): WasmContract.Bip32PublicKey {
         const ret = this.wasm.derive(index);
-        return new $outer.Bip32PublicKey(ret, $outer._ctx);
+        return new $outer.Bip32PublicKey(ret);
       }
 
       toRawKey(): WasmContract.PublicKey {
         const ret = this.wasm.to_raw_key();
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
       static fromBytes(bytes: Uint8Array): WasmContract.Bip32PublicKey {
         const ret = WasmV4.Bip32PublicKey.from_bytes(bytes);
-        return new $outer.Bip32PublicKey(ret, $outer._ctx);
+        return new $outer.Bip32PublicKey(ret);
       }
 
       asBytes(): Uint8Array {
@@ -983,7 +978,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bech32Str: string): WasmContract.Bip32PublicKey {
         const ret = WasmV4.Bip32PublicKey.from_bech32(bech32Str);
-        return new $outer.Bip32PublicKey(ret, $outer._ctx);
+        return new $outer.Bip32PublicKey(ret);
       }
 
       toBech32(): string {
@@ -1000,7 +995,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Bip32PublicKey {
         const ret = WasmV4.Bip32PublicKey.from_hex(hexStr);
-        return new $outer.Bip32PublicKey(ret, $outer._ctx);
+        return new $outer.Bip32PublicKey(ret);
       }
 
     }
@@ -1021,7 +1016,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Block {
         const ret = WasmV4.Block.from_bytes(bytes);
-        return new $outer.Block(ret, $outer._ctx);
+        return new $outer.Block(ret);
       }
 
       toHex(): string {
@@ -1030,7 +1025,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Block {
         const ret = WasmV4.Block.from_hex(hexStr);
-        return new $outer.Block(ret, $outer._ctx);
+        return new $outer.Block(ret);
       }
 
       toJson(): string {
@@ -1039,27 +1034,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Block {
         const ret = WasmV4.Block.from_json(json);
-        return new $outer.Block(ret, $outer._ctx);
+        return new $outer.Block(ret);
       }
 
       header(): WasmContract.Header {
         const ret = this.wasm.header();
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
       transactionBodies(): WasmContract.TransactionBodies {
         const ret = this.wasm.transaction_bodies();
-        return new $outer.TransactionBodies(ret, $outer._ctx);
+        return new $outer.TransactionBodies(ret);
       }
 
       transactionWitnessSets(): WasmContract.TransactionWitnessSets {
         const ret = this.wasm.transaction_witness_sets();
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       auxiliaryDataSet(): WasmContract.AuxiliaryDataSet {
         const ret = this.wasm.auxiliary_data_set();
-        return new $outer.AuxiliaryDataSet(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataSet(ret);
       }
 
       invalidTransactions(): Uint32Array {
@@ -1068,7 +1063,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(header: WasmContract.Header, transactionBodies: WasmContract.TransactionBodies, transactionWitnessSets: WasmContract.TransactionWitnessSets, auxiliaryDataSet: WasmContract.AuxiliaryDataSet, invalidTransactions: Uint32Array): WasmContract.Block {
         const ret = WasmV4.Block.new(header.wasm, transactionBodies.wasm, transactionWitnessSets.wasm, auxiliaryDataSet.wasm, invalidTransactions);
-        return new $outer.Block(ret, $outer._ctx);
+        return new $outer.Block(ret);
       }
 
     }
@@ -1085,7 +1080,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.BlockHash {
         const ret = WasmV4.BlockHash.from_bytes(bytes);
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -1098,7 +1093,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.BlockHash {
         const ret = WasmV4.BlockHash.from_bech32(bechStr);
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
       toHex(): string {
@@ -1107,7 +1102,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.BlockHash {
         const ret = WasmV4.BlockHash.from_hex(hex);
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
     }
@@ -1128,7 +1123,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.BootstrapWitness {
         const ret = WasmV4.BootstrapWitness.from_bytes(bytes);
-        return new $outer.BootstrapWitness(ret, $outer._ctx);
+        return new $outer.BootstrapWitness(ret);
       }
 
       toHex(): string {
@@ -1137,7 +1132,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.BootstrapWitness {
         const ret = WasmV4.BootstrapWitness.from_hex(hexStr);
-        return new $outer.BootstrapWitness(ret, $outer._ctx);
+        return new $outer.BootstrapWitness(ret);
       }
 
       toJson(): string {
@@ -1146,17 +1141,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.BootstrapWitness {
         const ret = WasmV4.BootstrapWitness.from_json(json);
-        return new $outer.BootstrapWitness(ret, $outer._ctx);
+        return new $outer.BootstrapWitness(ret);
       }
 
       vkey(): WasmContract.Vkey {
         const ret = this.wasm.vkey();
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       signature(): WasmContract.Ed25519Signature {
         const ret = this.wasm.signature();
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
       chainCode(): Uint8Array {
@@ -1169,7 +1164,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(vkey: WasmContract.Vkey, signature: WasmContract.Ed25519Signature, chainCode: Uint8Array, attributes: Uint8Array): WasmContract.BootstrapWitness {
         const ret = WasmV4.BootstrapWitness.new(vkey.wasm, signature.wasm, chainCode, attributes);
-        return new $outer.BootstrapWitness(ret, $outer._ctx);
+        return new $outer.BootstrapWitness(ret);
       }
 
     }
@@ -1190,7 +1185,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.BootstrapWitnesses {
         const ret = WasmV4.BootstrapWitnesses.from_bytes(bytes);
-        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+        return new $outer.BootstrapWitnesses(ret);
       }
 
       toHex(): string {
@@ -1199,7 +1194,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.BootstrapWitnesses {
         const ret = WasmV4.BootstrapWitnesses.from_hex(hexStr);
-        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+        return new $outer.BootstrapWitnesses(ret);
       }
 
       toJson(): string {
@@ -1208,12 +1203,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.BootstrapWitnesses {
         const ret = WasmV4.BootstrapWitnesses.from_json(json);
-        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+        return new $outer.BootstrapWitnesses(ret);
       }
 
       static new(): WasmContract.BootstrapWitnesses {
         const ret = WasmV4.BootstrapWitnesses.new();
-        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+        return new $outer.BootstrapWitnesses(ret);
       }
 
       len(): number {
@@ -1222,7 +1217,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.BootstrapWitness {
         const ret = this.wasm.get(index);
-        return new $outer.BootstrapWitness(ret, $outer._ctx);
+        return new $outer.BootstrapWitness(ret);
       }
 
       add(witness: WasmContract.BootstrapWitness): boolean {
@@ -1251,7 +1246,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ByronAddress {
         const ret = WasmV4.ByronAddress.from_bytes(bytes);
-        return new $outer.ByronAddress(ret, $outer._ctx);
+        return new $outer.ByronAddress(ret);
       }
 
       byronProtocolMagic(): number {
@@ -1272,12 +1267,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBase58(s: string): WasmContract.ByronAddress {
         const ret = WasmV4.ByronAddress.from_base58(s);
-        return new $outer.ByronAddress(ret, $outer._ctx);
+        return new $outer.ByronAddress(ret);
       }
 
       static icarusFromKey(key: WasmContract.Bip32PublicKey, protocolMagic: number): WasmContract.ByronAddress {
         const ret = WasmV4.ByronAddress.icarus_from_key(key.wasm, protocolMagic);
-        return new $outer.ByronAddress(ret, $outer._ctx);
+        return new $outer.ByronAddress(ret);
       }
 
       static isValid(s: string): boolean {
@@ -1286,13 +1281,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.ByronAddress> {
         const ret = WasmV4.ByronAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.ByronAddress(ret, $outer._ctx);
+        return new $outer.ByronAddress(ret);
       }
 
     }
@@ -1313,7 +1308,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Certificate {
         const ret = WasmV4.Certificate.from_bytes(bytes);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       toHex(): string {
@@ -1322,7 +1317,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Certificate {
         const ret = WasmV4.Certificate.from_hex(hexStr);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       toJson(): string {
@@ -1331,102 +1326,102 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Certificate {
         const ret = WasmV4.Certificate.from_json(json);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeRegistration(stakeRegistration: WasmContract.StakeRegistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_registration(stakeRegistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newRegCert(stakeRegistration: WasmContract.StakeRegistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_reg_cert(stakeRegistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeDeregistration(stakeDeregistration: WasmContract.StakeDeregistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_deregistration(stakeDeregistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newUnregCert(stakeDeregistration: WasmContract.StakeDeregistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_unreg_cert(stakeDeregistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeDelegation(stakeDelegation: WasmContract.StakeDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_delegation(stakeDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newPoolRegistration(poolRegistration: WasmContract.PoolRegistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_pool_registration(poolRegistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newPoolRetirement(poolRetirement: WasmContract.PoolRetirement): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_pool_retirement(poolRetirement.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newGenesisKeyDelegation(genesisKeyDelegation: WasmContract.GenesisKeyDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_genesis_key_delegation(genesisKeyDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newMoveInstantaneousRewardsCert(moveInstantaneousRewardsCert: WasmContract.MoveInstantaneousRewardsCert): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_move_instantaneous_rewards_cert(moveInstantaneousRewardsCert.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newCommitteeHotAuth(committeeHotAuth: WasmContract.CommitteeHotAuth): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_committee_hot_auth(committeeHotAuth.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newCommitteeColdResign(committeeColdResign: WasmContract.CommitteeColdResign): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_committee_cold_resign(committeeColdResign.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newDrepDeregistration(drepDeregistration: WasmContract.DRepDeregistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_drep_deregistration(drepDeregistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newDrepRegistration(drepRegistration: WasmContract.DRepRegistration): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_drep_registration(drepRegistration.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newDrepUpdate(drepUpdate: WasmContract.DRepUpdate): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_drep_update(drepUpdate.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeAndVoteDelegation(stakeAndVoteDelegation: WasmContract.StakeAndVoteDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_and_vote_delegation(stakeAndVoteDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeRegistrationAndDelegation(stakeRegistrationAndDelegation: WasmContract.StakeRegistrationAndDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_registration_and_delegation(stakeRegistrationAndDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newStakeVoteRegistrationAndDelegation(stakeVoteRegistrationAndDelegation: WasmContract.StakeVoteRegistrationAndDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_stake_vote_registration_and_delegation(stakeVoteRegistrationAndDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newVoteDelegation(voteDelegation: WasmContract.VoteDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_vote_delegation(voteDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       static newVoteRegistrationAndDelegation(voteRegistrationAndDelegation: WasmContract.VoteRegistrationAndDelegation): WasmContract.Certificate {
         const ret = WasmV4.Certificate.new_vote_registration_and_delegation(voteRegistrationAndDelegation.wasm);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       kind(): WasmContract.CertificateKind {
@@ -1436,115 +1431,115 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asStakeRegistration(): Optional<WasmContract.StakeRegistration> {
         const ret = this.wasm.as_stake_registration();
         if (ret == null) return undefined;
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       asRegCert(): Optional<WasmContract.StakeRegistration> {
         const ret = this.wasm.as_reg_cert();
         if (ret == null) return undefined;
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       asStakeDeregistration(): Optional<WasmContract.StakeDeregistration> {
         const ret = this.wasm.as_stake_deregistration();
         if (ret == null) return undefined;
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       asUnregCert(): Optional<WasmContract.StakeDeregistration> {
         const ret = this.wasm.as_unreg_cert();
         if (ret == null) return undefined;
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       asStakeDelegation(): Optional<WasmContract.StakeDelegation> {
         const ret = this.wasm.as_stake_delegation();
         if (ret == null) return undefined;
-        return new $outer.StakeDelegation(ret, $outer._ctx);
+        return new $outer.StakeDelegation(ret);
       }
 
       asPoolRegistration(): Optional<WasmContract.PoolRegistration> {
         const ret = this.wasm.as_pool_registration();
         if (ret == null) return undefined;
-        return new $outer.PoolRegistration(ret, $outer._ctx);
+        return new $outer.PoolRegistration(ret);
       }
 
       asPoolRetirement(): Optional<WasmContract.PoolRetirement> {
         const ret = this.wasm.as_pool_retirement();
         if (ret == null) return undefined;
-        return new $outer.PoolRetirement(ret, $outer._ctx);
+        return new $outer.PoolRetirement(ret);
       }
 
       asGenesisKeyDelegation(): Optional<WasmContract.GenesisKeyDelegation> {
         const ret = this.wasm.as_genesis_key_delegation();
         if (ret == null) return undefined;
-        return new $outer.GenesisKeyDelegation(ret, $outer._ctx);
+        return new $outer.GenesisKeyDelegation(ret);
       }
 
       asMoveInstantaneousRewardsCert(): Optional<WasmContract.MoveInstantaneousRewardsCert> {
         const ret = this.wasm.as_move_instantaneous_rewards_cert();
         if (ret == null) return undefined;
-        return new $outer.MoveInstantaneousRewardsCert(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousRewardsCert(ret);
       }
 
       asCommitteeHotAuth(): Optional<WasmContract.CommitteeHotAuth> {
         const ret = this.wasm.as_committee_hot_auth();
         if (ret == null) return undefined;
-        return new $outer.CommitteeHotAuth(ret, $outer._ctx);
+        return new $outer.CommitteeHotAuth(ret);
       }
 
       asCommitteeColdResign(): Optional<WasmContract.CommitteeColdResign> {
         const ret = this.wasm.as_committee_cold_resign();
         if (ret == null) return undefined;
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       asDrepDeregistration(): Optional<WasmContract.DRepDeregistration> {
         const ret = this.wasm.as_drep_deregistration();
         if (ret == null) return undefined;
-        return new $outer.DRepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret);
       }
 
       asDrepRegistration(): Optional<WasmContract.DRepRegistration> {
         const ret = this.wasm.as_drep_registration();
         if (ret == null) return undefined;
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       asDrepUpdate(): Optional<WasmContract.DRepUpdate> {
         const ret = this.wasm.as_drep_update();
         if (ret == null) return undefined;
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       asStakeAndVoteDelegation(): Optional<WasmContract.StakeAndVoteDelegation> {
         const ret = this.wasm.as_stake_and_vote_delegation();
         if (ret == null) return undefined;
-        return new $outer.StakeAndVoteDelegation(ret, $outer._ctx);
+        return new $outer.StakeAndVoteDelegation(ret);
       }
 
       asStakeRegistrationAndDelegation(): Optional<WasmContract.StakeRegistrationAndDelegation> {
         const ret = this.wasm.as_stake_registration_and_delegation();
         if (ret == null) return undefined;
-        return new $outer.StakeRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeRegistrationAndDelegation(ret);
       }
 
       asStakeVoteRegistrationAndDelegation(): Optional<WasmContract.StakeVoteRegistrationAndDelegation> {
         const ret = this.wasm.as_stake_vote_registration_and_delegation();
         if (ret == null) return undefined;
-        return new $outer.StakeVoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeVoteRegistrationAndDelegation(ret);
       }
 
       asVoteDelegation(): Optional<WasmContract.VoteDelegation> {
         const ret = this.wasm.as_vote_delegation();
         if (ret == null) return undefined;
-        return new $outer.VoteDelegation(ret, $outer._ctx);
+        return new $outer.VoteDelegation(ret);
       }
 
       asVoteRegistrationAndDelegation(): Optional<WasmContract.VoteRegistrationAndDelegation> {
         const ret = this.wasm.as_vote_registration_and_delegation();
         if (ret == null) return undefined;
-        return new $outer.VoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.VoteRegistrationAndDelegation(ret);
       }
 
       hasRequiredScriptWitness(): boolean {
@@ -1569,7 +1564,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Certificates {
         const ret = WasmV4.Certificates.from_bytes(bytes);
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
       toHex(): string {
@@ -1578,7 +1573,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Certificates {
         const ret = WasmV4.Certificates.from_hex(hexStr);
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
       toJson(): string {
@@ -1587,12 +1582,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Certificates {
         const ret = WasmV4.Certificates.from_json(json);
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
       static new(): WasmContract.Certificates {
         const ret = WasmV4.Certificates.new();
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
       len(): number {
@@ -1601,7 +1596,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Certificate {
         const ret = this.wasm.get(index);
-        return new $outer.Certificate(ret, $outer._ctx);
+        return new $outer.Certificate(ret);
       }
 
       add(elem: WasmContract.Certificate): boolean {
@@ -1622,7 +1617,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.CertificatesBuilder {
         const ret = WasmV4.CertificatesBuilder.new();
-        return new $outer.CertificatesBuilder(ret, $outer._ctx);
+        return new $outer.CertificatesBuilder(ret);
       }
 
       add(cert: WasmContract.Certificate): void {
@@ -1639,27 +1634,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       getPlutusWitnesses(): WasmContract.PlutusWitnesses {
         const ret = this.wasm.get_plutus_witnesses();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getNativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.get_native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       getCertificatesRefund(poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): WasmContract.Value {
         const ret = this.wasm.get_certificates_refund(poolDeposit.wasm, keyDeposit.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getCertificatesDeposit(poolDeposit: WasmContract.BigNum, keyDeposit: WasmContract.BigNum): WasmContract.BigNum {
         const ret = this.wasm.get_certificates_deposit(poolDeposit.wasm, keyDeposit.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       hasPlutusScripts(): boolean {
@@ -1668,7 +1663,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.Certificates {
         const ret = this.wasm.build();
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
     }
@@ -1685,22 +1680,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(address: WasmContract.Address): WasmContract.ChangeConfig {
         const ret = WasmV4.ChangeConfig.new(address.wasm);
-        return new $outer.ChangeConfig(ret, $outer._ctx);
+        return new $outer.ChangeConfig(ret);
       }
 
       changeAddress(address: WasmContract.Address): WasmContract.ChangeConfig {
         const ret = this.wasm.change_address(address.wasm);
-        return new $outer.ChangeConfig(ret, $outer._ctx);
+        return new $outer.ChangeConfig(ret);
       }
 
       changePlutusData(plutusData: WasmContract.OutputDatum): WasmContract.ChangeConfig {
         const ret = this.wasm.change_plutus_data(plutusData.wasm);
-        return new $outer.ChangeConfig(ret, $outer._ctx);
+        return new $outer.ChangeConfig(ret);
       }
 
       changeScriptRef(scriptRef: WasmContract.ScriptRef): WasmContract.ChangeConfig {
         const ret = this.wasm.change_script_ref(scriptRef.wasm);
-        return new $outer.ChangeConfig(ret, $outer._ctx);
+        return new $outer.ChangeConfig(ret);
       }
 
     }
@@ -1721,7 +1716,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Committee {
         const ret = WasmV4.Committee.from_bytes(bytes);
-        return new $outer.Committee(ret, $outer._ctx);
+        return new $outer.Committee(ret);
       }
 
       toHex(): string {
@@ -1730,7 +1725,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Committee {
         const ret = WasmV4.Committee.from_hex(hexStr);
-        return new $outer.Committee(ret, $outer._ctx);
+        return new $outer.Committee(ret);
       }
 
       toJson(): string {
@@ -1739,22 +1734,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Committee {
         const ret = WasmV4.Committee.from_json(json);
-        return new $outer.Committee(ret, $outer._ctx);
+        return new $outer.Committee(ret);
       }
 
       static new(quorumThreshold: WasmContract.UnitInterval): WasmContract.Committee {
         const ret = WasmV4.Committee.new(quorumThreshold.wasm);
-        return new $outer.Committee(ret, $outer._ctx);
+        return new $outer.Committee(ret);
       }
 
       membersKeys(): WasmContract.Credentials {
         const ret = this.wasm.members_keys();
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       quorumThreshold(): WasmContract.UnitInterval {
         const ret = this.wasm.quorum_threshold();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       addMember(committeeColdCredential: WasmContract.Credential, epoch: number): void {
@@ -1783,7 +1778,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.CommitteeColdResign {
         const ret = WasmV4.CommitteeColdResign.from_bytes(bytes);
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       toHex(): string {
@@ -1792,7 +1787,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.CommitteeColdResign {
         const ret = WasmV4.CommitteeColdResign.from_hex(hexStr);
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       toJson(): string {
@@ -1801,28 +1796,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.CommitteeColdResign {
         const ret = WasmV4.CommitteeColdResign.from_json(json);
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       committeeColdCredential(): WasmContract.Credential {
         const ret = this.wasm.committee_cold_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       anchor(): Optional<WasmContract.Anchor> {
         const ret = this.wasm.anchor();
         if (ret == null) return undefined;
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       static new(committeeColdCredential: WasmContract.Credential): WasmContract.CommitteeColdResign {
         const ret = WasmV4.CommitteeColdResign.new(committeeColdCredential.wasm);
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       static newWithAnchor(committeeColdCredential: WasmContract.Credential, anchor: WasmContract.Anchor): WasmContract.CommitteeColdResign {
         const ret = WasmV4.CommitteeColdResign.new_with_anchor(committeeColdCredential.wasm, anchor.wasm);
-        return new $outer.CommitteeColdResign(ret, $outer._ctx);
+        return new $outer.CommitteeColdResign(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -1847,7 +1842,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.CommitteeHotAuth {
         const ret = WasmV4.CommitteeHotAuth.from_bytes(bytes);
-        return new $outer.CommitteeHotAuth(ret, $outer._ctx);
+        return new $outer.CommitteeHotAuth(ret);
       }
 
       toHex(): string {
@@ -1856,7 +1851,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.CommitteeHotAuth {
         const ret = WasmV4.CommitteeHotAuth.from_hex(hexStr);
-        return new $outer.CommitteeHotAuth(ret, $outer._ctx);
+        return new $outer.CommitteeHotAuth(ret);
       }
 
       toJson(): string {
@@ -1865,22 +1860,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.CommitteeHotAuth {
         const ret = WasmV4.CommitteeHotAuth.from_json(json);
-        return new $outer.CommitteeHotAuth(ret, $outer._ctx);
+        return new $outer.CommitteeHotAuth(ret);
       }
 
       committeeColdCredential(): WasmContract.Credential {
         const ret = this.wasm.committee_cold_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       committeeHotCredential(): WasmContract.Credential {
         const ret = this.wasm.committee_hot_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       static new(committeeColdCredential: WasmContract.Credential, committeeHotCredential: WasmContract.Credential): WasmContract.CommitteeHotAuth {
         const ret = WasmV4.CommitteeHotAuth.new(committeeColdCredential.wasm, committeeHotCredential.wasm);
-        return new $outer.CommitteeHotAuth(ret, $outer._ctx);
+        return new $outer.CommitteeHotAuth(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -1905,7 +1900,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Constitution {
         const ret = WasmV4.Constitution.from_bytes(bytes);
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
       toHex(): string {
@@ -1914,7 +1909,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Constitution {
         const ret = WasmV4.Constitution.from_hex(hexStr);
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
       toJson(): string {
@@ -1923,28 +1918,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Constitution {
         const ret = WasmV4.Constitution.from_json(json);
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
       anchor(): WasmContract.Anchor {
         const ret = this.wasm.anchor();
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       scriptHash(): Optional<WasmContract.ScriptHash> {
         const ret = this.wasm.script_hash();
         if (ret == null) return undefined;
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       static new(anchor: WasmContract.Anchor): WasmContract.Constitution {
         const ret = WasmV4.Constitution.new(anchor.wasm);
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
       static newWithScriptHash(anchor: WasmContract.Anchor, scriptHash: WasmContract.ScriptHash): WasmContract.Constitution {
         const ret = WasmV4.Constitution.new_with_script_hash(anchor.wasm, scriptHash.wasm);
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
     }
@@ -1965,7 +1960,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ConstrPlutusData {
         const ret = WasmV4.ConstrPlutusData.from_bytes(bytes);
-        return new $outer.ConstrPlutusData(ret, $outer._ctx);
+        return new $outer.ConstrPlutusData(ret);
       }
 
       toHex(): string {
@@ -1974,22 +1969,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ConstrPlutusData {
         const ret = WasmV4.ConstrPlutusData.from_hex(hexStr);
-        return new $outer.ConstrPlutusData(ret, $outer._ctx);
+        return new $outer.ConstrPlutusData(ret);
       }
 
       alternative(): WasmContract.BigNum {
         const ret = this.wasm.alternative();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       data(): WasmContract.PlutusList {
         const ret = this.wasm.data();
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       static new(alternative: WasmContract.BigNum, data: WasmContract.PlutusList): WasmContract.ConstrPlutusData {
         const ret = WasmV4.ConstrPlutusData.new(alternative.wasm, data.wasm);
-        return new $outer.ConstrPlutusData(ret, $outer._ctx);
+        return new $outer.ConstrPlutusData(ret);
       }
 
     }
@@ -2010,7 +2005,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.CostModel {
         const ret = WasmV4.CostModel.from_bytes(bytes);
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       toHex(): string {
@@ -2019,7 +2014,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.CostModel {
         const ret = WasmV4.CostModel.from_hex(hexStr);
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       toJson(): string {
@@ -2028,22 +2023,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.CostModel {
         const ret = WasmV4.CostModel.from_json(json);
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       static new(): WasmContract.CostModel {
         const ret = WasmV4.CostModel.new();
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       set(operation: number, cost: WasmContract.Int): WasmContract.Int {
         const ret = this.wasm.set(operation, cost.wasm);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       get(operation: number): WasmContract.Int {
         const ret = this.wasm.get(operation);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       len(): number {
@@ -2068,7 +2063,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Costmdls {
         const ret = WasmV4.Costmdls.from_bytes(bytes);
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
       toHex(): string {
@@ -2077,7 +2072,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Costmdls {
         const ret = WasmV4.Costmdls.from_hex(hexStr);
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
       toJson(): string {
@@ -2086,12 +2081,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Costmdls {
         const ret = WasmV4.Costmdls.from_json(json);
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
       static new(): WasmContract.Costmdls {
         const ret = WasmV4.Costmdls.new();
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
       len(): number {
@@ -2101,23 +2096,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.Language, value: WasmContract.CostModel): Optional<WasmContract.CostModel> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       get(key: WasmContract.Language): Optional<WasmContract.CostModel> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.CostModel(ret, $outer._ctx);
+        return new $outer.CostModel(ret);
       }
 
       keys(): WasmContract.Languages {
         const ret = this.wasm.keys();
-        return new $outer.Languages(ret, $outer._ctx);
+        return new $outer.Languages(ret);
       }
 
       retainLanguageVersions(languages: WasmContract.Languages): WasmContract.Costmdls {
         const ret = this.wasm.retain_language_versions(languages.wasm);
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
     }
@@ -2134,24 +2129,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromKeyhash(hash: WasmContract.Ed25519KeyHash): WasmContract.Credential {
         const ret = WasmV4.Credential.from_keyhash(hash.wasm);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       static fromScripthash(hash: WasmContract.ScriptHash): WasmContract.Credential {
         const ret = WasmV4.Credential.from_scripthash(hash.wasm);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toKeyhash(): Optional<WasmContract.Ed25519KeyHash> {
         const ret = this.wasm.to_keyhash();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       toScripthash(): Optional<WasmContract.ScriptHash> {
         const ret = this.wasm.to_scripthash();
         if (ret == null) return undefined;
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       kind(): WasmContract.CredKind {
@@ -2168,7 +2163,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Credential {
         const ret = WasmV4.Credential.from_bytes(bytes);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toHex(): string {
@@ -2177,7 +2172,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Credential {
         const ret = WasmV4.Credential.from_hex(hexStr);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toJson(): string {
@@ -2186,7 +2181,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Credential {
         const ret = WasmV4.Credential.from_json(json);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
     }
@@ -2207,7 +2202,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Credentials {
         const ret = WasmV4.Credentials.from_bytes(bytes);
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       toHex(): string {
@@ -2216,7 +2211,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Credentials {
         const ret = WasmV4.Credentials.from_hex(hexStr);
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       toJson(): string {
@@ -2225,12 +2220,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Credentials {
         const ret = WasmV4.Credentials.from_json(json);
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       static new(): WasmContract.Credentials {
         const ret = WasmV4.Credentials.new();
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       len(): number {
@@ -2239,7 +2234,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Credential {
         const ret = this.wasm.get(index);
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       add(credential: WasmContract.Credential): boolean {
@@ -2264,7 +2259,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DNSRecordAorAAAA {
         const ret = WasmV4.DNSRecordAorAAAA.from_bytes(bytes);
-        return new $outer.DNSRecordAorAAAA(ret, $outer._ctx);
+        return new $outer.DNSRecordAorAAAA(ret);
       }
 
       toHex(): string {
@@ -2273,7 +2268,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DNSRecordAorAAAA {
         const ret = WasmV4.DNSRecordAorAAAA.from_hex(hexStr);
-        return new $outer.DNSRecordAorAAAA(ret, $outer._ctx);
+        return new $outer.DNSRecordAorAAAA(ret);
       }
 
       toJson(): string {
@@ -2282,12 +2277,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DNSRecordAorAAAA {
         const ret = WasmV4.DNSRecordAorAAAA.from_json(json);
-        return new $outer.DNSRecordAorAAAA(ret, $outer._ctx);
+        return new $outer.DNSRecordAorAAAA(ret);
       }
 
       static new(dnsName: string): WasmContract.DNSRecordAorAAAA {
         const ret = WasmV4.DNSRecordAorAAAA.new(dnsName);
-        return new $outer.DNSRecordAorAAAA(ret, $outer._ctx);
+        return new $outer.DNSRecordAorAAAA(ret);
       }
 
       record(): string {
@@ -2312,7 +2307,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DNSRecordSRV {
         const ret = WasmV4.DNSRecordSRV.from_bytes(bytes);
-        return new $outer.DNSRecordSRV(ret, $outer._ctx);
+        return new $outer.DNSRecordSRV(ret);
       }
 
       toHex(): string {
@@ -2321,7 +2316,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DNSRecordSRV {
         const ret = WasmV4.DNSRecordSRV.from_hex(hexStr);
-        return new $outer.DNSRecordSRV(ret, $outer._ctx);
+        return new $outer.DNSRecordSRV(ret);
       }
 
       toJson(): string {
@@ -2330,12 +2325,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DNSRecordSRV {
         const ret = WasmV4.DNSRecordSRV.from_json(json);
-        return new $outer.DNSRecordSRV(ret, $outer._ctx);
+        return new $outer.DNSRecordSRV(ret);
       }
 
       static new(dnsName: string): WasmContract.DNSRecordSRV {
         const ret = WasmV4.DNSRecordSRV.new(dnsName);
-        return new $outer.DNSRecordSRV(ret, $outer._ctx);
+        return new $outer.DNSRecordSRV(ret);
       }
 
       record(): string {
@@ -2360,7 +2355,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DRep {
         const ret = WasmV4.DRep.from_bytes(bytes);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       toHex(): string {
@@ -2369,7 +2364,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DRep {
         const ret = WasmV4.DRep.from_hex(hexStr);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       toJson(): string {
@@ -2378,32 +2373,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DRep {
         const ret = WasmV4.DRep.from_json(json);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static newKeyHash(keyHash: WasmContract.Ed25519KeyHash): WasmContract.DRep {
         const ret = WasmV4.DRep.new_key_hash(keyHash.wasm);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static newScriptHash(scriptHash: WasmContract.ScriptHash): WasmContract.DRep {
         const ret = WasmV4.DRep.new_script_hash(scriptHash.wasm);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static newAlwaysAbstain(): WasmContract.DRep {
         const ret = WasmV4.DRep.new_always_abstain();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static newAlwaysNoConfidence(): WasmContract.DRep {
         const ret = WasmV4.DRep.new_always_no_confidence();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static newFromCredential(cred: WasmContract.Credential): WasmContract.DRep {
         const ret = WasmV4.DRep.new_from_credential(cred.wasm);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       kind(): WasmContract.DRepKind {
@@ -2413,13 +2408,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toKeyHash(): Optional<WasmContract.Ed25519KeyHash> {
         const ret = this.wasm.to_key_hash();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       toScriptHash(): Optional<WasmContract.ScriptHash> {
         const ret = this.wasm.to_script_hash();
         if (ret == null) return undefined;
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       toBech32(cip_129Format: boolean): string {
@@ -2428,7 +2423,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bech32Str: string): WasmContract.DRep {
         const ret = WasmV4.DRep.from_bech32(bech32Str);
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
     }
@@ -2449,7 +2444,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DRepDeregistration {
         const ret = WasmV4.DRepDeregistration.from_bytes(bytes);
-        return new $outer.DRepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret);
       }
 
       toHex(): string {
@@ -2458,7 +2453,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DRepDeregistration {
         const ret = WasmV4.DRepDeregistration.from_hex(hexStr);
-        return new $outer.DRepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret);
       }
 
       toJson(): string {
@@ -2467,22 +2462,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DRepDeregistration {
         const ret = WasmV4.DRepDeregistration.from_json(json);
-        return new $outer.DRepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret);
       }
 
       votingCredential(): WasmContract.Credential {
         const ret = this.wasm.voting_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): WasmContract.DRepDeregistration {
         const ret = WasmV4.DRepDeregistration.new(votingCredential.wasm, coin.wasm);
-        return new $outer.DRepDeregistration(ret, $outer._ctx);
+        return new $outer.DRepDeregistration(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -2507,7 +2502,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DRepRegistration {
         const ret = WasmV4.DRepRegistration.from_bytes(bytes);
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       toHex(): string {
@@ -2516,7 +2511,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DRepRegistration {
         const ret = WasmV4.DRepRegistration.from_hex(hexStr);
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       toJson(): string {
@@ -2525,33 +2520,33 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DRepRegistration {
         const ret = WasmV4.DRepRegistration.from_json(json);
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       votingCredential(): WasmContract.Credential {
         const ret = this.wasm.voting_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       anchor(): Optional<WasmContract.Anchor> {
         const ret = this.wasm.anchor();
         if (ret == null) return undefined;
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       static new(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum): WasmContract.DRepRegistration {
         const ret = WasmV4.DRepRegistration.new(votingCredential.wasm, coin.wasm);
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       static newWithAnchor(votingCredential: WasmContract.Credential, coin: WasmContract.BigNum, anchor: WasmContract.Anchor): WasmContract.DRepRegistration {
         const ret = WasmV4.DRepRegistration.new_with_anchor(votingCredential.wasm, coin.wasm, anchor.wasm);
-        return new $outer.DRepRegistration(ret, $outer._ctx);
+        return new $outer.DRepRegistration(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -2576,7 +2571,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DRepUpdate {
         const ret = WasmV4.DRepUpdate.from_bytes(bytes);
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       toHex(): string {
@@ -2585,7 +2580,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DRepUpdate {
         const ret = WasmV4.DRepUpdate.from_hex(hexStr);
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       toJson(): string {
@@ -2594,28 +2589,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DRepUpdate {
         const ret = WasmV4.DRepUpdate.from_json(json);
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       votingCredential(): WasmContract.Credential {
         const ret = this.wasm.voting_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       anchor(): Optional<WasmContract.Anchor> {
         const ret = this.wasm.anchor();
         if (ret == null) return undefined;
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       static new(votingCredential: WasmContract.Credential): WasmContract.DRepUpdate {
         const ret = WasmV4.DRepUpdate.new(votingCredential.wasm);
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       static newWithAnchor(votingCredential: WasmContract.Credential, anchor: WasmContract.Anchor): WasmContract.DRepUpdate {
         const ret = WasmV4.DRepUpdate.new_with_anchor(votingCredential.wasm, anchor.wasm);
-        return new $outer.DRepUpdate(ret, $outer._ctx);
+        return new $outer.DRepUpdate(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -2640,7 +2635,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DRepVotingThresholds {
         const ret = WasmV4.DRepVotingThresholds.from_bytes(bytes);
-        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret);
       }
 
       toHex(): string {
@@ -2649,7 +2644,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.DRepVotingThresholds {
         const ret = WasmV4.DRepVotingThresholds.from_hex(hexStr);
-        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret);
       }
 
       toJson(): string {
@@ -2658,12 +2653,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.DRepVotingThresholds {
         const ret = WasmV4.DRepVotingThresholds.from_json(json);
-        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret);
       }
 
       static new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, updateConstitution: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval, ppNetworkGroup: WasmContract.UnitInterval, ppEconomicGroup: WasmContract.UnitInterval, ppTechnicalGroup: WasmContract.UnitInterval, ppGovernanceGroup: WasmContract.UnitInterval, treasuryWithdrawal: WasmContract.UnitInterval): WasmContract.DRepVotingThresholds {
         const ret = WasmV4.DRepVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, updateConstitution.wasm, hardForkInitiation.wasm, ppNetworkGroup.wasm, ppEconomicGroup.wasm, ppTechnicalGroup.wasm, ppGovernanceGroup.wasm, treasuryWithdrawal.wasm);
-        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret);
       }
 
       setMotionNoConfidence(motionNoConfidence: WasmContract.UnitInterval): void {
@@ -2708,52 +2703,52 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       motionNoConfidence(): WasmContract.UnitInterval {
         const ret = this.wasm.motion_no_confidence();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       committeeNormal(): WasmContract.UnitInterval {
         const ret = this.wasm.committee_normal();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       committeeNoConfidence(): WasmContract.UnitInterval {
         const ret = this.wasm.committee_no_confidence();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       updateConstitution(): WasmContract.UnitInterval {
         const ret = this.wasm.update_constitution();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       hardForkInitiation(): WasmContract.UnitInterval {
         const ret = this.wasm.hard_fork_initiation();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       ppNetworkGroup(): WasmContract.UnitInterval {
         const ret = this.wasm.pp_network_group();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       ppEconomicGroup(): WasmContract.UnitInterval {
         const ret = this.wasm.pp_economic_group();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       ppTechnicalGroup(): WasmContract.UnitInterval {
         const ret = this.wasm.pp_technical_group();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       ppGovernanceGroup(): WasmContract.UnitInterval {
         const ret = this.wasm.pp_governance_group();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       treasuryWithdrawal(): WasmContract.UnitInterval {
         const ret = this.wasm.treasury_withdrawal();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
     }
@@ -2770,12 +2765,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static newCoinsPerByte(coinsPerByte: WasmContract.BigNum): WasmContract.DataCost {
         const ret = WasmV4.DataCost.new_coins_per_byte(coinsPerByte.wasm);
-        return new $outer.DataCost(ret, $outer._ctx);
+        return new $outer.DataCost(ret);
       }
 
       coinsPerByte(): WasmContract.BigNum {
         const ret = this.wasm.coins_per_byte();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
     }
@@ -2792,7 +2787,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.DataHash {
         const ret = WasmV4.DataHash.from_bytes(bytes);
-        return new $outer.DataHash(ret, $outer._ctx);
+        return new $outer.DataHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -2805,7 +2800,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.DataHash {
         const ret = WasmV4.DataHash.from_bech32(bechStr);
-        return new $outer.DataHash(ret, $outer._ctx);
+        return new $outer.DataHash(ret);
       }
 
       toHex(): string {
@@ -2814,7 +2809,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.DataHash {
         const ret = WasmV4.DataHash.from_hex(hex);
-        return new $outer.DataHash(ret, $outer._ctx);
+        return new $outer.DataHash(ret);
       }
 
     }
@@ -2831,12 +2826,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(datum: WasmContract.PlutusData): WasmContract.DatumSource {
         const ret = WasmV4.DatumSource.new(datum.wasm);
-        return new $outer.DatumSource(ret, $outer._ctx);
+        return new $outer.DatumSource(ret);
       }
 
       static newRefInput(input: WasmContract.TransactionInput): WasmContract.DatumSource {
         const ret = WasmV4.DatumSource.new_ref_input(input.wasm);
-        return new $outer.DatumSource(ret, $outer._ctx);
+        return new $outer.DatumSource(ret);
       }
 
     }
@@ -2853,7 +2848,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Ed25519KeyHash {
         const ret = WasmV4.Ed25519KeyHash.from_bytes(bytes);
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -2866,7 +2861,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.Ed25519KeyHash {
         const ret = WasmV4.Ed25519KeyHash.from_bech32(bechStr);
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       toHex(): string {
@@ -2875,7 +2870,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.Ed25519KeyHash {
         const ret = WasmV4.Ed25519KeyHash.from_hex(hex);
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
     }
@@ -2896,7 +2891,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Ed25519KeyHashes {
         const ret = WasmV4.Ed25519KeyHashes.from_bytes(bytes);
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       toHex(): string {
@@ -2905,7 +2900,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Ed25519KeyHashes {
         const ret = WasmV4.Ed25519KeyHashes.from_hex(hexStr);
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       toJson(): string {
@@ -2914,12 +2909,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Ed25519KeyHashes {
         const ret = WasmV4.Ed25519KeyHashes.from_json(json);
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       static new(): WasmContract.Ed25519KeyHashes {
         const ret = WasmV4.Ed25519KeyHashes.new();
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       len(): number {
@@ -2928,7 +2923,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.get(index);
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       add(keyhash: WasmContract.Ed25519KeyHash): boolean {
@@ -2942,7 +2937,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toOption(): Optional<WasmContract.Ed25519KeyHashes> {
         const ret = this.wasm.to_option();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
     }
@@ -2971,17 +2966,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bech32Str: string): WasmContract.Ed25519Signature {
         const ret = WasmV4.Ed25519Signature.from_bech32(bech32Str);
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
       static fromHex(input: string): WasmContract.Ed25519Signature {
         const ret = WasmV4.Ed25519Signature.from_hex(input);
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
       static fromBytes(bytes: Uint8Array): WasmContract.Ed25519Signature {
         const ret = WasmV4.Ed25519Signature.from_bytes(bytes);
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
     }
@@ -2998,23 +2993,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(network: number, payment: WasmContract.Credential): WasmContract.EnterpriseAddress {
         const ret = WasmV4.EnterpriseAddress.new(network, payment.wasm);
-        return new $outer.EnterpriseAddress(ret, $outer._ctx);
+        return new $outer.EnterpriseAddress(ret);
       }
 
       paymentCred(): WasmContract.Credential {
         const ret = this.wasm.payment_cred();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.EnterpriseAddress> {
         const ret = WasmV4.EnterpriseAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.EnterpriseAddress(ret, $outer._ctx);
+        return new $outer.EnterpriseAddress(ret);
       }
 
       networkId(): number {
@@ -3039,7 +3034,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ExUnitPrices {
         const ret = WasmV4.ExUnitPrices.from_bytes(bytes);
-        return new $outer.ExUnitPrices(ret, $outer._ctx);
+        return new $outer.ExUnitPrices(ret);
       }
 
       toHex(): string {
@@ -3048,7 +3043,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ExUnitPrices {
         const ret = WasmV4.ExUnitPrices.from_hex(hexStr);
-        return new $outer.ExUnitPrices(ret, $outer._ctx);
+        return new $outer.ExUnitPrices(ret);
       }
 
       toJson(): string {
@@ -3057,22 +3052,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ExUnitPrices {
         const ret = WasmV4.ExUnitPrices.from_json(json);
-        return new $outer.ExUnitPrices(ret, $outer._ctx);
+        return new $outer.ExUnitPrices(ret);
       }
 
       memPrice(): WasmContract.UnitInterval {
         const ret = this.wasm.mem_price();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       stepPrice(): WasmContract.UnitInterval {
         const ret = this.wasm.step_price();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       static new(memPrice: WasmContract.UnitInterval, stepPrice: WasmContract.UnitInterval): WasmContract.ExUnitPrices {
         const ret = WasmV4.ExUnitPrices.new(memPrice.wasm, stepPrice.wasm);
-        return new $outer.ExUnitPrices(ret, $outer._ctx);
+        return new $outer.ExUnitPrices(ret);
       }
 
     }
@@ -3093,7 +3088,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ExUnits {
         const ret = WasmV4.ExUnits.from_bytes(bytes);
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       toHex(): string {
@@ -3102,7 +3097,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ExUnits {
         const ret = WasmV4.ExUnits.from_hex(hexStr);
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       toJson(): string {
@@ -3111,22 +3106,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ExUnits {
         const ret = WasmV4.ExUnits.from_json(json);
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       mem(): WasmContract.BigNum {
         const ret = this.wasm.mem();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       steps(): WasmContract.BigNum {
         const ret = this.wasm.steps();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(mem: WasmContract.BigNum, steps: WasmContract.BigNum): WasmContract.ExUnits {
         const ret = WasmV4.ExUnits.new(mem.wasm, steps.wasm);
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
     }
@@ -3143,32 +3138,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.FixedBlock {
         const ret = WasmV4.FixedBlock.from_bytes(bytes);
-        return new $outer.FixedBlock(ret, $outer._ctx);
+        return new $outer.FixedBlock(ret);
       }
 
       static fromHex(hexStr: string): WasmContract.FixedBlock {
         const ret = WasmV4.FixedBlock.from_hex(hexStr);
-        return new $outer.FixedBlock(ret, $outer._ctx);
+        return new $outer.FixedBlock(ret);
       }
 
       header(): WasmContract.Header {
         const ret = this.wasm.header();
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
       transactionBodies(): WasmContract.FixedTransactionBodies {
         const ret = this.wasm.transaction_bodies();
-        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+        return new $outer.FixedTransactionBodies(ret);
       }
 
       transactionWitnessSets(): WasmContract.TransactionWitnessSets {
         const ret = this.wasm.transaction_witness_sets();
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       auxiliaryDataSet(): WasmContract.AuxiliaryDataSet {
         const ret = this.wasm.auxiliary_data_set();
-        return new $outer.AuxiliaryDataSet(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataSet(ret);
       }
 
       invalidTransactions(): Uint32Array {
@@ -3177,7 +3172,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       blockHash(): WasmContract.BlockHash {
         const ret = this.wasm.block_hash();
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
     }
@@ -3198,7 +3193,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.FixedTransaction {
         const ret = WasmV4.FixedTransaction.from_bytes(bytes);
-        return new $outer.FixedTransaction(ret, $outer._ctx);
+        return new $outer.FixedTransaction(ret);
       }
 
       toHex(): string {
@@ -3207,27 +3202,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.FixedTransaction {
         const ret = WasmV4.FixedTransaction.from_hex(hexStr);
-        return new $outer.FixedTransaction(ret, $outer._ctx);
+        return new $outer.FixedTransaction(ret);
       }
 
       static new(rawBody: Uint8Array, rawWitnessSet: Uint8Array, isValid: boolean): WasmContract.FixedTransaction {
         const ret = WasmV4.FixedTransaction.new(rawBody, rawWitnessSet, isValid);
-        return new $outer.FixedTransaction(ret, $outer._ctx);
+        return new $outer.FixedTransaction(ret);
       }
 
       static newWithAuxiliary(rawBody: Uint8Array, rawWitnessSet: Uint8Array, rawAuxiliaryData: Uint8Array, isValid: boolean): WasmContract.FixedTransaction {
         const ret = WasmV4.FixedTransaction.new_with_auxiliary(rawBody, rawWitnessSet, rawAuxiliaryData, isValid);
-        return new $outer.FixedTransaction(ret, $outer._ctx);
+        return new $outer.FixedTransaction(ret);
       }
 
       static newFromBodyBytes(rawBody: Uint8Array): WasmContract.FixedTransaction {
         const ret = WasmV4.FixedTransaction.new_from_body_bytes(rawBody);
-        return new $outer.FixedTransaction(ret, $outer._ctx);
+        return new $outer.FixedTransaction(ret);
       }
 
       body(): WasmContract.TransactionBody {
         const ret = this.wasm.body();
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       rawBody(): Uint8Array {
@@ -3244,7 +3239,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       witnessSet(): WasmContract.TransactionWitnessSet {
         const ret = this.wasm.witness_set();
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       rawWitnessSet(): Uint8Array {
@@ -3266,7 +3261,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       auxiliaryData(): Optional<WasmContract.AuxiliaryData> {
         const ret = this.wasm.auxiliary_data();
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       rawAuxiliaryData(): Optional<Uint8Array> {
@@ -3275,7 +3270,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       transactionHash(): WasmContract.TransactionHash {
         const ret = this.wasm.transaction_hash();
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       addVkeyWitness(vkeyWitness: WasmContract.Vkeywitness): void {
@@ -3312,17 +3307,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.FixedTransactionBodies {
         const ret = WasmV4.FixedTransactionBodies.from_bytes(bytes);
-        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+        return new $outer.FixedTransactionBodies(ret);
       }
 
       static fromHex(hexStr: string): WasmContract.FixedTransactionBodies {
         const ret = WasmV4.FixedTransactionBodies.from_hex(hexStr);
-        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+        return new $outer.FixedTransactionBodies(ret);
       }
 
       static new(): WasmContract.FixedTransactionBodies {
         const ret = WasmV4.FixedTransactionBodies.new();
-        return new $outer.FixedTransactionBodies(ret, $outer._ctx);
+        return new $outer.FixedTransactionBodies(ret);
       }
 
       len(): number {
@@ -3331,7 +3326,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.FixedTransactionBody {
         const ret = this.wasm.get(index);
-        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+        return new $outer.FixedTransactionBody(ret);
       }
 
       add(elem: WasmContract.FixedTransactionBody): void {
@@ -3352,22 +3347,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.FixedTransactionBody {
         const ret = WasmV4.FixedTransactionBody.from_bytes(bytes);
-        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+        return new $outer.FixedTransactionBody(ret);
       }
 
       static fromHex(hexStr: string): WasmContract.FixedTransactionBody {
         const ret = WasmV4.FixedTransactionBody.from_hex(hexStr);
-        return new $outer.FixedTransactionBody(ret, $outer._ctx);
+        return new $outer.FixedTransactionBody(ret);
       }
 
       transactionBody(): WasmContract.TransactionBody {
         const ret = this.wasm.transaction_body();
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       txHash(): WasmContract.TransactionHash {
         const ret = this.wasm.tx_hash();
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       originalBytes(): Uint8Array {
@@ -3388,7 +3383,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       txWitnessesSet(): WasmContract.TransactionWitnessSet {
         const ret = this.wasm.tx_witnesses_set();
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       addVkeyWitness(vkeyWitness: WasmContract.Vkeywitness): void {
@@ -3405,7 +3400,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(data: Uint8Array): WasmContract.FixedTxWitnessesSet {
         const ret = WasmV4.FixedTxWitnessesSet.from_bytes(data);
-        return new $outer.FixedTxWitnessesSet(ret, $outer._ctx);
+        return new $outer.FixedTxWitnessesSet(ret);
       }
 
     }
@@ -3422,17 +3417,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.FixedVersionedBlock {
         const ret = WasmV4.FixedVersionedBlock.from_bytes(bytes);
-        return new $outer.FixedVersionedBlock(ret, $outer._ctx);
+        return new $outer.FixedVersionedBlock(ret);
       }
 
       static fromHex(hexStr: string): WasmContract.FixedVersionedBlock {
         const ret = WasmV4.FixedVersionedBlock.from_hex(hexStr);
-        return new $outer.FixedVersionedBlock(ret, $outer._ctx);
+        return new $outer.FixedVersionedBlock(ret);
       }
 
       block(): WasmContract.FixedBlock {
         const ret = this.wasm.block();
-        return new $outer.FixedBlock(ret, $outer._ctx);
+        return new $outer.FixedBlock(ret);
       }
 
       era(): WasmContract.BlockEra {
@@ -3457,7 +3452,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GeneralTransactionMetadata {
         const ret = WasmV4.GeneralTransactionMetadata.from_bytes(bytes);
-        return new $outer.GeneralTransactionMetadata(ret, $outer._ctx);
+        return new $outer.GeneralTransactionMetadata(ret);
       }
 
       toHex(): string {
@@ -3466,7 +3461,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.GeneralTransactionMetadata {
         const ret = WasmV4.GeneralTransactionMetadata.from_hex(hexStr);
-        return new $outer.GeneralTransactionMetadata(ret, $outer._ctx);
+        return new $outer.GeneralTransactionMetadata(ret);
       }
 
       toJson(): string {
@@ -3475,12 +3470,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GeneralTransactionMetadata {
         const ret = WasmV4.GeneralTransactionMetadata.from_json(json);
-        return new $outer.GeneralTransactionMetadata(ret, $outer._ctx);
+        return new $outer.GeneralTransactionMetadata(ret);
       }
 
       static new(): WasmContract.GeneralTransactionMetadata {
         const ret = WasmV4.GeneralTransactionMetadata.new();
-        return new $outer.GeneralTransactionMetadata(ret, $outer._ctx);
+        return new $outer.GeneralTransactionMetadata(ret);
       }
 
       len(): number {
@@ -3490,18 +3485,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.BigNum, value: WasmContract.TransactionMetadatum): Optional<WasmContract.TransactionMetadatum> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       get(key: WasmContract.BigNum): Optional<WasmContract.TransactionMetadatum> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       keys(): WasmContract.TransactionMetadatumLabels {
         const ret = this.wasm.keys();
-        return new $outer.TransactionMetadatumLabels(ret, $outer._ctx);
+        return new $outer.TransactionMetadatumLabels(ret);
       }
 
     }
@@ -3518,7 +3513,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GenesisDelegateHash {
         const ret = WasmV4.GenesisDelegateHash.from_bytes(bytes);
-        return new $outer.GenesisDelegateHash(ret, $outer._ctx);
+        return new $outer.GenesisDelegateHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -3531,7 +3526,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.GenesisDelegateHash {
         const ret = WasmV4.GenesisDelegateHash.from_bech32(bechStr);
-        return new $outer.GenesisDelegateHash(ret, $outer._ctx);
+        return new $outer.GenesisDelegateHash(ret);
       }
 
       toHex(): string {
@@ -3540,7 +3535,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.GenesisDelegateHash {
         const ret = WasmV4.GenesisDelegateHash.from_hex(hex);
-        return new $outer.GenesisDelegateHash(ret, $outer._ctx);
+        return new $outer.GenesisDelegateHash(ret);
       }
 
     }
@@ -3557,7 +3552,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GenesisHash {
         const ret = WasmV4.GenesisHash.from_bytes(bytes);
-        return new $outer.GenesisHash(ret, $outer._ctx);
+        return new $outer.GenesisHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -3570,7 +3565,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.GenesisHash {
         const ret = WasmV4.GenesisHash.from_bech32(bechStr);
-        return new $outer.GenesisHash(ret, $outer._ctx);
+        return new $outer.GenesisHash(ret);
       }
 
       toHex(): string {
@@ -3579,7 +3574,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.GenesisHash {
         const ret = WasmV4.GenesisHash.from_hex(hex);
-        return new $outer.GenesisHash(ret, $outer._ctx);
+        return new $outer.GenesisHash(ret);
       }
 
     }
@@ -3600,7 +3595,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GenesisHashes {
         const ret = WasmV4.GenesisHashes.from_bytes(bytes);
-        return new $outer.GenesisHashes(ret, $outer._ctx);
+        return new $outer.GenesisHashes(ret);
       }
 
       toHex(): string {
@@ -3609,7 +3604,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.GenesisHashes {
         const ret = WasmV4.GenesisHashes.from_hex(hexStr);
-        return new $outer.GenesisHashes(ret, $outer._ctx);
+        return new $outer.GenesisHashes(ret);
       }
 
       toJson(): string {
@@ -3618,12 +3613,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GenesisHashes {
         const ret = WasmV4.GenesisHashes.from_json(json);
-        return new $outer.GenesisHashes(ret, $outer._ctx);
+        return new $outer.GenesisHashes(ret);
       }
 
       static new(): WasmContract.GenesisHashes {
         const ret = WasmV4.GenesisHashes.new();
-        return new $outer.GenesisHashes(ret, $outer._ctx);
+        return new $outer.GenesisHashes(ret);
       }
 
       len(): number {
@@ -3632,7 +3627,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.GenesisHash {
         const ret = this.wasm.get(index);
-        return new $outer.GenesisHash(ret, $outer._ctx);
+        return new $outer.GenesisHash(ret);
       }
 
       add(elem: WasmContract.GenesisHash): void {
@@ -3657,7 +3652,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GenesisKeyDelegation {
         const ret = WasmV4.GenesisKeyDelegation.from_bytes(bytes);
-        return new $outer.GenesisKeyDelegation(ret, $outer._ctx);
+        return new $outer.GenesisKeyDelegation(ret);
       }
 
       toHex(): string {
@@ -3666,7 +3661,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.GenesisKeyDelegation {
         const ret = WasmV4.GenesisKeyDelegation.from_hex(hexStr);
-        return new $outer.GenesisKeyDelegation(ret, $outer._ctx);
+        return new $outer.GenesisKeyDelegation(ret);
       }
 
       toJson(): string {
@@ -3675,27 +3670,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GenesisKeyDelegation {
         const ret = WasmV4.GenesisKeyDelegation.from_json(json);
-        return new $outer.GenesisKeyDelegation(ret, $outer._ctx);
+        return new $outer.GenesisKeyDelegation(ret);
       }
 
       genesishash(): WasmContract.GenesisHash {
         const ret = this.wasm.genesishash();
-        return new $outer.GenesisHash(ret, $outer._ctx);
+        return new $outer.GenesisHash(ret);
       }
 
       genesisDelegateHash(): WasmContract.GenesisDelegateHash {
         const ret = this.wasm.genesis_delegate_hash();
-        return new $outer.GenesisDelegateHash(ret, $outer._ctx);
+        return new $outer.GenesisDelegateHash(ret);
       }
 
       vrfKeyhash(): WasmContract.VRFKeyHash {
         const ret = this.wasm.vrf_keyhash();
-        return new $outer.VRFKeyHash(ret, $outer._ctx);
+        return new $outer.VRFKeyHash(ret);
       }
 
       static new(genesishash: WasmContract.GenesisHash, genesisDelegateHash: WasmContract.GenesisDelegateHash, vrfKeyhash: WasmContract.VRFKeyHash): WasmContract.GenesisKeyDelegation {
         const ret = WasmV4.GenesisKeyDelegation.new(genesishash.wasm, genesisDelegateHash.wasm, vrfKeyhash.wasm);
-        return new $outer.GenesisKeyDelegation(ret, $outer._ctx);
+        return new $outer.GenesisKeyDelegation(ret);
       }
 
     }
@@ -3716,7 +3711,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.from_bytes(bytes);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       toHex(): string {
@@ -3725,7 +3720,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.from_hex(hexStr);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       toJson(): string {
@@ -3734,42 +3729,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.from_json(json);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newParameterChangeAction(parameterChangeAction: WasmContract.ParameterChangeAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_parameter_change_action(parameterChangeAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newHardForkInitiationAction(hardForkInitiationAction: WasmContract.HardForkInitiationAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_hard_fork_initiation_action(hardForkInitiationAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newTreasuryWithdrawalsAction(treasuryWithdrawalsAction: WasmContract.TreasuryWithdrawalsAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_treasury_withdrawals_action(treasuryWithdrawalsAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newNoConfidenceAction(noConfidenceAction: WasmContract.NoConfidenceAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_no_confidence_action(noConfidenceAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newNewCommitteeAction(newCommitteeAction: WasmContract.UpdateCommitteeAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_new_committee_action(newCommitteeAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newNewConstitutionAction(newConstitutionAction: WasmContract.NewConstitutionAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_new_constitution_action(newConstitutionAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       static newInfoAction(infoAction: WasmContract.InfoAction): WasmContract.GovernanceAction {
         const ret = WasmV4.GovernanceAction.new_info_action(infoAction.wasm);
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       kind(): WasmContract.GovernanceActionKind {
@@ -3779,43 +3774,43 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asParameterChangeAction(): Optional<WasmContract.ParameterChangeAction> {
         const ret = this.wasm.as_parameter_change_action();
         if (ret == null) return undefined;
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       asHardForkInitiationAction(): Optional<WasmContract.HardForkInitiationAction> {
         const ret = this.wasm.as_hard_fork_initiation_action();
         if (ret == null) return undefined;
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
       asTreasuryWithdrawalsAction(): Optional<WasmContract.TreasuryWithdrawalsAction> {
         const ret = this.wasm.as_treasury_withdrawals_action();
         if (ret == null) return undefined;
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
       asNoConfidenceAction(): Optional<WasmContract.NoConfidenceAction> {
         const ret = this.wasm.as_no_confidence_action();
         if (ret == null) return undefined;
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
       asNewCommitteeAction(): Optional<WasmContract.UpdateCommitteeAction> {
         const ret = this.wasm.as_new_committee_action();
         if (ret == null) return undefined;
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
       asNewConstitutionAction(): Optional<WasmContract.NewConstitutionAction> {
         const ret = this.wasm.as_new_constitution_action();
         if (ret == null) return undefined;
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       asInfoAction(): Optional<WasmContract.InfoAction> {
         const ret = this.wasm.as_info_action();
         if (ret == null) return undefined;
-        return new $outer.InfoAction(ret, $outer._ctx);
+        return new $outer.InfoAction(ret);
       }
 
     }
@@ -3836,7 +3831,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.GovernanceActionId {
         const ret = WasmV4.GovernanceActionId.from_bytes(bytes);
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       toHex(): string {
@@ -3845,7 +3840,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.GovernanceActionId {
         const ret = WasmV4.GovernanceActionId.from_hex(hexStr);
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       toJson(): string {
@@ -3854,12 +3849,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GovernanceActionId {
         const ret = WasmV4.GovernanceActionId.from_json(json);
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       transactionId(): WasmContract.TransactionHash {
         const ret = this.wasm.transaction_id();
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       index(): number {
@@ -3868,7 +3863,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(transactionId: WasmContract.TransactionHash, index: number): WasmContract.GovernanceActionId {
         const ret = WasmV4.GovernanceActionId.new(transactionId.wasm, index);
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
     }
@@ -3889,12 +3884,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.GovernanceActionIds {
         const ret = WasmV4.GovernanceActionIds.from_json(json);
-        return new $outer.GovernanceActionIds(ret, $outer._ctx);
+        return new $outer.GovernanceActionIds(ret);
       }
 
       static new(): WasmContract.GovernanceActionIds {
         const ret = WasmV4.GovernanceActionIds.new();
-        return new $outer.GovernanceActionIds(ret, $outer._ctx);
+        return new $outer.GovernanceActionIds(ret);
       }
 
       add(governanceActionId: WasmContract.GovernanceActionId): void {
@@ -3904,7 +3899,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(index: number): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.get(index);
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       len(): number {
@@ -3929,7 +3924,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.HardForkInitiationAction {
         const ret = WasmV4.HardForkInitiationAction.from_bytes(bytes);
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
       toHex(): string {
@@ -3938,7 +3933,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.HardForkInitiationAction {
         const ret = WasmV4.HardForkInitiationAction.from_hex(hexStr);
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
       toJson(): string {
@@ -3947,28 +3942,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.HardForkInitiationAction {
         const ret = WasmV4.HardForkInitiationAction.from_json(json);
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
       govActionId(): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.gov_action_id();
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       protocolVersion(): WasmContract.ProtocolVersion {
         const ret = this.wasm.protocol_version();
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       static new(protocolVersion: WasmContract.ProtocolVersion): WasmContract.HardForkInitiationAction {
         const ret = WasmV4.HardForkInitiationAction.new(protocolVersion.wasm);
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
       static newWithActionId(govActionId: WasmContract.GovernanceActionId, protocolVersion: WasmContract.ProtocolVersion): WasmContract.HardForkInitiationAction {
         const ret = WasmV4.HardForkInitiationAction.new_with_action_id(govActionId.wasm, protocolVersion.wasm);
-        return new $outer.HardForkInitiationAction(ret, $outer._ctx);
+        return new $outer.HardForkInitiationAction(ret);
       }
 
     }
@@ -3989,7 +3984,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Header {
         const ret = WasmV4.Header.from_bytes(bytes);
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
       toHex(): string {
@@ -3998,7 +3993,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Header {
         const ret = WasmV4.Header.from_hex(hexStr);
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
       toJson(): string {
@@ -4007,22 +4002,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Header {
         const ret = WasmV4.Header.from_json(json);
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
       headerBody(): WasmContract.HeaderBody {
         const ret = this.wasm.header_body();
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
       bodySignature(): WasmContract.KESSignature {
         const ret = this.wasm.body_signature();
-        return new $outer.KESSignature(ret, $outer._ctx);
+        return new $outer.KESSignature(ret);
       }
 
       static new(headerBody: WasmContract.HeaderBody, bodySignature: WasmContract.KESSignature): WasmContract.Header {
         const ret = WasmV4.Header.new(headerBody.wasm, bodySignature.wasm);
-        return new $outer.Header(ret, $outer._ctx);
+        return new $outer.Header(ret);
       }
 
     }
@@ -4043,7 +4038,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.HeaderBody {
         const ret = WasmV4.HeaderBody.from_bytes(bytes);
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
       toHex(): string {
@@ -4052,7 +4047,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.HeaderBody {
         const ret = WasmV4.HeaderBody.from_hex(hexStr);
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
       toJson(): string {
@@ -4061,7 +4056,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.HeaderBody {
         const ret = WasmV4.HeaderBody.from_json(json);
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
       blockNumber(): number {
@@ -4074,23 +4069,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       slotBignum(): WasmContract.BigNum {
         const ret = this.wasm.slot_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       prevHash(): Optional<WasmContract.BlockHash> {
         const ret = this.wasm.prev_hash();
         if (ret == null) return undefined;
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
       issuerVkey(): WasmContract.Vkey {
         const ret = this.wasm.issuer_vkey();
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       vrfVkey(): WasmContract.VRFVKey {
         const ret = this.wasm.vrf_vkey();
-        return new $outer.VRFVKey(ret, $outer._ctx);
+        return new $outer.VRFVKey(ret);
       }
 
       hasNonceAndLeaderVrf(): boolean {
@@ -4100,13 +4095,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       nonceVrfOrNothing(): Optional<WasmContract.VRFCert> {
         const ret = this.wasm.nonce_vrf_or_nothing();
         if (ret == null) return undefined;
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       leaderVrfOrNothing(): Optional<WasmContract.VRFCert> {
         const ret = this.wasm.leader_vrf_or_nothing();
         if (ret == null) return undefined;
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       hasVrfResult(): boolean {
@@ -4116,7 +4111,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       vrfResultOrNothing(): Optional<WasmContract.VRFCert> {
         const ret = this.wasm.vrf_result_or_nothing();
         if (ret == null) return undefined;
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       blockBodySize(): number {
@@ -4125,27 +4120,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       blockBodyHash(): WasmContract.BlockHash {
         const ret = this.wasm.block_body_hash();
-        return new $outer.BlockHash(ret, $outer._ctx);
+        return new $outer.BlockHash(ret);
       }
 
       operationalCert(): WasmContract.OperationalCert {
         const ret = this.wasm.operational_cert();
-        return new $outer.OperationalCert(ret, $outer._ctx);
+        return new $outer.OperationalCert(ret);
       }
 
       protocolVersion(): WasmContract.ProtocolVersion {
         const ret = this.wasm.protocol_version();
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       static new(blockNumber: number, slot: number, prevHash: Optional<WasmContract.BlockHash>, issuerVkey: WasmContract.Vkey, vrfVkey: WasmContract.VRFVKey, vrfResult: WasmContract.VRFCert, blockBodySize: number, blockBodyHash: WasmContract.BlockHash, operationalCert: WasmContract.OperationalCert, protocolVersion: WasmContract.ProtocolVersion): WasmContract.HeaderBody {
         const ret = WasmV4.HeaderBody.new(blockNumber, slot, prevHash?.wasm, issuerVkey.wasm, vrfVkey.wasm, vrfResult.wasm, blockBodySize, blockBodyHash.wasm, operationalCert.wasm, protocolVersion.wasm);
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
       static newHeaderbody(blockNumber: number, slot: WasmContract.BigNum, prevHash: Optional<WasmContract.BlockHash>, issuerVkey: WasmContract.Vkey, vrfVkey: WasmContract.VRFVKey, vrfResult: WasmContract.VRFCert, blockBodySize: number, blockBodyHash: WasmContract.BlockHash, operationalCert: WasmContract.OperationalCert, protocolVersion: WasmContract.ProtocolVersion): WasmContract.HeaderBody {
         const ret = WasmV4.HeaderBody.new_headerbody(blockNumber, slot.wasm, prevHash?.wasm, issuerVkey.wasm, vrfVkey.wasm, vrfResult.wasm, blockBodySize, blockBodyHash.wasm, operationalCert.wasm, protocolVersion.wasm);
-        return new $outer.HeaderBody(ret, $outer._ctx);
+        return new $outer.HeaderBody(ret);
       }
 
     }
@@ -4162,7 +4157,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.InfoAction {
         const ret = WasmV4.InfoAction.new();
-        return new $outer.InfoAction(ret, $outer._ctx);
+        return new $outer.InfoAction(ret);
       }
 
     }
@@ -4183,7 +4178,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Int {
         const ret = WasmV4.Int.from_bytes(bytes);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       toHex(): string {
@@ -4192,7 +4187,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Int {
         const ret = WasmV4.Int.from_hex(hexStr);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       toJson(): string {
@@ -4201,22 +4196,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Int {
         const ret = WasmV4.Int.from_json(json);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       static new(x: WasmContract.BigNum): WasmContract.Int {
         const ret = WasmV4.Int.new(x.wasm);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       static newNegative(x: WasmContract.BigNum): WasmContract.Int {
         const ret = WasmV4.Int.new_negative(x.wasm);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       static newI32(x: number): WasmContract.Int {
         const ret = WasmV4.Int.new_i32(x);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       isPositive(): boolean {
@@ -4226,13 +4221,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asPositive(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.as_positive();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       asNegative(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.as_negative();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       asI32(): Optional<number> {
@@ -4253,7 +4248,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromStr(string: string): WasmContract.Int {
         const ret = WasmV4.Int.from_str(string);
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
     }
@@ -4274,7 +4269,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Ipv4 {
         const ret = WasmV4.Ipv4.from_bytes(bytes);
-        return new $outer.Ipv4(ret, $outer._ctx);
+        return new $outer.Ipv4(ret);
       }
 
       toHex(): string {
@@ -4283,7 +4278,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Ipv4 {
         const ret = WasmV4.Ipv4.from_hex(hexStr);
-        return new $outer.Ipv4(ret, $outer._ctx);
+        return new $outer.Ipv4(ret);
       }
 
       toJson(): string {
@@ -4292,12 +4287,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Ipv4 {
         const ret = WasmV4.Ipv4.from_json(json);
-        return new $outer.Ipv4(ret, $outer._ctx);
+        return new $outer.Ipv4(ret);
       }
 
       static new(data: Uint8Array): WasmContract.Ipv4 {
         const ret = WasmV4.Ipv4.new(data);
-        return new $outer.Ipv4(ret, $outer._ctx);
+        return new $outer.Ipv4(ret);
       }
 
       ip(): Uint8Array {
@@ -4322,7 +4317,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Ipv6 {
         const ret = WasmV4.Ipv6.from_bytes(bytes);
-        return new $outer.Ipv6(ret, $outer._ctx);
+        return new $outer.Ipv6(ret);
       }
 
       toHex(): string {
@@ -4331,7 +4326,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Ipv6 {
         const ret = WasmV4.Ipv6.from_hex(hexStr);
-        return new $outer.Ipv6(ret, $outer._ctx);
+        return new $outer.Ipv6(ret);
       }
 
       toJson(): string {
@@ -4340,12 +4335,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Ipv6 {
         const ret = WasmV4.Ipv6.from_json(json);
-        return new $outer.Ipv6(ret, $outer._ctx);
+        return new $outer.Ipv6(ret);
       }
 
       static new(data: Uint8Array): WasmContract.Ipv6 {
         const ret = WasmV4.Ipv6.new(data);
-        return new $outer.Ipv6(ret, $outer._ctx);
+        return new $outer.Ipv6(ret);
       }
 
       ip(): Uint8Array {
@@ -4370,7 +4365,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.KESSignature {
         const ret = WasmV4.KESSignature.from_bytes(bytes);
-        return new $outer.KESSignature(ret, $outer._ctx);
+        return new $outer.KESSignature(ret);
       }
 
     }
@@ -4387,7 +4382,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.KESVKey {
         const ret = WasmV4.KESVKey.from_bytes(bytes);
-        return new $outer.KESVKey(ret, $outer._ctx);
+        return new $outer.KESVKey(ret);
       }
 
       toBytes(): Uint8Array {
@@ -4400,7 +4395,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.KESVKey {
         const ret = WasmV4.KESVKey.from_bech32(bechStr);
-        return new $outer.KESVKey(ret, $outer._ctx);
+        return new $outer.KESVKey(ret);
       }
 
       toHex(): string {
@@ -4409,7 +4404,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.KESVKey {
         const ret = WasmV4.KESVKey.from_hex(hex);
-        return new $outer.KESVKey(ret, $outer._ctx);
+        return new $outer.KESVKey(ret);
       }
 
     }
@@ -4430,7 +4425,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Language {
         const ret = WasmV4.Language.from_bytes(bytes);
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       toHex(): string {
@@ -4439,7 +4434,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Language {
         const ret = WasmV4.Language.from_hex(hexStr);
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       toJson(): string {
@@ -4448,22 +4443,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Language {
         const ret = WasmV4.Language.from_json(json);
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       static newPlutusV1(): WasmContract.Language {
         const ret = WasmV4.Language.new_plutus_v1();
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       static newPlutusV2(): WasmContract.Language {
         const ret = WasmV4.Language.new_plutus_v2();
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       static newPlutusV3(): WasmContract.Language {
         const ret = WasmV4.Language.new_plutus_v3();
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       kind(): WasmContract.LanguageKind {
@@ -4484,7 +4479,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.Languages {
         const ret = WasmV4.Languages.new();
-        return new $outer.Languages(ret, $outer._ctx);
+        return new $outer.Languages(ret);
       }
 
       len(): number {
@@ -4493,7 +4488,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Language {
         const ret = this.wasm.get(index);
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
       add(elem: WasmContract.Language): void {
@@ -4502,7 +4497,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static list(): WasmContract.Languages {
         const ret = WasmV4.Languages.list();
-        return new $outer.Languages(ret, $outer._ctx);
+        return new $outer.Languages(ret);
       }
 
     }
@@ -4519,7 +4514,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.LegacyDaedalusPrivateKey {
         const ret = WasmV4.LegacyDaedalusPrivateKey.from_bytes(bytes);
-        return new $outer.LegacyDaedalusPrivateKey(ret, $outer._ctx);
+        return new $outer.LegacyDaedalusPrivateKey(ret);
       }
 
       asBytes(): Uint8Array {
@@ -4544,17 +4539,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       constant(): WasmContract.BigNum {
         const ret = this.wasm.constant();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       coefficient(): WasmContract.BigNum {
         const ret = this.wasm.coefficient();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(coefficient: WasmContract.BigNum, constant: WasmContract.BigNum): WasmContract.LinearFee {
         const ret = WasmV4.LinearFee.new(coefficient.wasm, constant.wasm);
-        return new $outer.LinearFee(ret, $outer._ctx);
+        return new $outer.LinearFee(ret);
       }
 
     }
@@ -4575,7 +4570,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MIRToStakeCredentials {
         const ret = WasmV4.MIRToStakeCredentials.from_bytes(bytes);
-        return new $outer.MIRToStakeCredentials(ret, $outer._ctx);
+        return new $outer.MIRToStakeCredentials(ret);
       }
 
       toHex(): string {
@@ -4584,7 +4579,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MIRToStakeCredentials {
         const ret = WasmV4.MIRToStakeCredentials.from_hex(hexStr);
-        return new $outer.MIRToStakeCredentials(ret, $outer._ctx);
+        return new $outer.MIRToStakeCredentials(ret);
       }
 
       toJson(): string {
@@ -4593,12 +4588,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MIRToStakeCredentials {
         const ret = WasmV4.MIRToStakeCredentials.from_json(json);
-        return new $outer.MIRToStakeCredentials(ret, $outer._ctx);
+        return new $outer.MIRToStakeCredentials(ret);
       }
 
       static new(): WasmContract.MIRToStakeCredentials {
         const ret = WasmV4.MIRToStakeCredentials.new();
-        return new $outer.MIRToStakeCredentials(ret, $outer._ctx);
+        return new $outer.MIRToStakeCredentials(ret);
       }
 
       len(): number {
@@ -4608,18 +4603,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(cred: WasmContract.Credential, delta: WasmContract.Int): Optional<WasmContract.Int> {
         const ret = this.wasm.insert(cred.wasm, delta.wasm);
         if (ret == null) return undefined;
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       get(cred: WasmContract.Credential): Optional<WasmContract.Int> {
         const ret = this.wasm.get(cred.wasm);
         if (ret == null) return undefined;
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       keys(): WasmContract.Credentials {
         const ret = this.wasm.keys();
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
     }
@@ -4640,13 +4635,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.MalformedAddress> {
         const ret = WasmV4.MalformedAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.MalformedAddress(ret, $outer._ctx);
+        return new $outer.MalformedAddress(ret);
       }
 
     }
@@ -4667,7 +4662,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MetadataList {
         const ret = WasmV4.MetadataList.from_bytes(bytes);
-        return new $outer.MetadataList(ret, $outer._ctx);
+        return new $outer.MetadataList(ret);
       }
 
       toHex(): string {
@@ -4676,12 +4671,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MetadataList {
         const ret = WasmV4.MetadataList.from_hex(hexStr);
-        return new $outer.MetadataList(ret, $outer._ctx);
+        return new $outer.MetadataList(ret);
       }
 
       static new(): WasmContract.MetadataList {
         const ret = WasmV4.MetadataList.new();
-        return new $outer.MetadataList(ret, $outer._ctx);
+        return new $outer.MetadataList(ret);
       }
 
       len(): number {
@@ -4690,7 +4685,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionMetadatum {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       add(elem: WasmContract.TransactionMetadatum): void {
@@ -4715,7 +4710,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MetadataMap {
         const ret = WasmV4.MetadataMap.from_bytes(bytes);
-        return new $outer.MetadataMap(ret, $outer._ctx);
+        return new $outer.MetadataMap(ret);
       }
 
       toHex(): string {
@@ -4724,12 +4719,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MetadataMap {
         const ret = WasmV4.MetadataMap.from_hex(hexStr);
-        return new $outer.MetadataMap(ret, $outer._ctx);
+        return new $outer.MetadataMap(ret);
       }
 
       static new(): WasmContract.MetadataMap {
         const ret = WasmV4.MetadataMap.new();
-        return new $outer.MetadataMap(ret, $outer._ctx);
+        return new $outer.MetadataMap(ret);
       }
 
       len(): number {
@@ -4739,34 +4734,34 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.TransactionMetadatum, value: WasmContract.TransactionMetadatum): Optional<WasmContract.TransactionMetadatum> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       insertStr(key: string, value: WasmContract.TransactionMetadatum): Optional<WasmContract.TransactionMetadatum> {
         const ret = this.wasm.insert_str(key, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       insertI32(key: number, value: WasmContract.TransactionMetadatum): Optional<WasmContract.TransactionMetadatum> {
         const ret = this.wasm.insert_i32(key, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       get(key: WasmContract.TransactionMetadatum): WasmContract.TransactionMetadatum {
         const ret = this.wasm.get(key.wasm);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       getStr(key: string): WasmContract.TransactionMetadatum {
         const ret = this.wasm.get_str(key);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       getI32(key: number): WasmContract.TransactionMetadatum {
         const ret = this.wasm.get_i32(key);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       has(key: WasmContract.TransactionMetadatum): boolean {
@@ -4775,7 +4770,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       keys(): WasmContract.MetadataList {
         const ret = this.wasm.keys();
-        return new $outer.MetadataList(ret, $outer._ctx);
+        return new $outer.MetadataList(ret);
       }
 
     }
@@ -4796,7 +4791,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Mint {
         const ret = WasmV4.Mint.from_bytes(bytes);
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       toHex(): string {
@@ -4805,7 +4800,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Mint {
         const ret = WasmV4.Mint.from_hex(hexStr);
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       toJson(): string {
@@ -4814,17 +4809,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Mint {
         const ret = WasmV4.Mint.from_json(json);
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       static new(): WasmContract.Mint {
         const ret = WasmV4.Mint.new();
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       static newFromEntry(key: WasmContract.ScriptHash, value: WasmContract.MintAssets): WasmContract.Mint {
         const ret = WasmV4.Mint.new_from_entry(key.wasm, value.wasm);
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       len(): number {
@@ -4834,28 +4829,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.ScriptHash, value: WasmContract.MintAssets): Optional<WasmContract.MintAssets> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.MintAssets(ret, $outer._ctx);
+        return new $outer.MintAssets(ret);
       }
 
       get(key: WasmContract.ScriptHash): Optional<WasmContract.MintsAssets> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.MintsAssets(ret, $outer._ctx);
+        return new $outer.MintsAssets(ret);
       }
 
       keys(): WasmContract.ScriptHashes {
         const ret = this.wasm.keys();
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       asPositiveMultiasset(): WasmContract.MultiAsset {
         const ret = this.wasm.as_positive_multiasset();
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       asNegativeMultiasset(): WasmContract.MultiAsset {
         const ret = this.wasm.as_negative_multiasset();
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
     }
@@ -4872,12 +4867,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.MintAssets {
         const ret = WasmV4.MintAssets.new();
-        return new $outer.MintAssets(ret, $outer._ctx);
+        return new $outer.MintAssets(ret);
       }
 
       static newFromEntry(key: WasmContract.AssetName, value: WasmContract.Int): WasmContract.MintAssets {
         const ret = WasmV4.MintAssets.new_from_entry(key.wasm, value.wasm);
-        return new $outer.MintAssets(ret, $outer._ctx);
+        return new $outer.MintAssets(ret);
       }
 
       len(): number {
@@ -4887,18 +4882,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.AssetName, value: WasmContract.Int): Optional<WasmContract.Int> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       get(key: WasmContract.AssetName): Optional<WasmContract.Int> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       keys(): WasmContract.AssetNames {
         const ret = this.wasm.keys();
-        return new $outer.AssetNames(ret, $outer._ctx);
+        return new $outer.AssetNames(ret);
       }
 
     }
@@ -4915,7 +4910,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.MintBuilder {
         const ret = WasmV4.MintBuilder.new();
-        return new $outer.MintBuilder(ret, $outer._ctx);
+        return new $outer.MintBuilder(ret);
       }
 
       addAsset(mint: WasmContract.MintWitness, assetName: WasmContract.AssetName, amount: WasmContract.Int): void {
@@ -4928,27 +4923,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.Mint {
         const ret = this.wasm.build();
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       getNativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.get_native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       getPlutusWitnesses(): WasmContract.PlutusWitnesses {
         const ret = this.wasm.get_plutus_witnesses();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getRedeemers(): WasmContract.Redeemers {
         const ret = this.wasm.get_redeemers();
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       hasPlutusScripts(): boolean {
@@ -4973,12 +4968,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static newNativeScript(nativeScript: WasmContract.NativeScriptSource): WasmContract.MintWitness {
         const ret = WasmV4.MintWitness.new_native_script(nativeScript.wasm);
-        return new $outer.MintWitness(ret, $outer._ctx);
+        return new $outer.MintWitness(ret);
       }
 
       static newPlutusScript(plutusScript: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): WasmContract.MintWitness {
         const ret = WasmV4.MintWitness.new_plutus_script(plutusScript.wasm, redeemer.wasm);
-        return new $outer.MintWitness(ret, $outer._ctx);
+        return new $outer.MintWitness(ret);
       }
 
     }
@@ -4999,12 +4994,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MintsAssets {
         const ret = WasmV4.MintsAssets.from_json(json);
-        return new $outer.MintsAssets(ret, $outer._ctx);
+        return new $outer.MintsAssets(ret);
       }
 
       static new(): WasmContract.MintsAssets {
         const ret = WasmV4.MintsAssets.new();
-        return new $outer.MintsAssets(ret, $outer._ctx);
+        return new $outer.MintsAssets(ret);
       }
 
       add(mintAssets: WasmContract.MintAssets): void {
@@ -5014,7 +5009,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(index: number): Optional<WasmContract.MintAssets> {
         const ret = this.wasm.get(index);
         if (ret == null) return undefined;
-        return new $outer.MintAssets(ret, $outer._ctx);
+        return new $outer.MintAssets(ret);
       }
 
       len(): number {
@@ -5039,7 +5034,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MoveInstantaneousReward {
         const ret = WasmV4.MoveInstantaneousReward.from_bytes(bytes);
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       toHex(): string {
@@ -5048,7 +5043,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MoveInstantaneousReward {
         const ret = WasmV4.MoveInstantaneousReward.from_hex(hexStr);
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       toJson(): string {
@@ -5057,17 +5052,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MoveInstantaneousReward {
         const ret = WasmV4.MoveInstantaneousReward.from_json(json);
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       static newToOtherPot(pot: WasmContract.MIRPot, amount: WasmContract.BigNum): WasmContract.MoveInstantaneousReward {
         const ret = WasmV4.MoveInstantaneousReward.new_to_other_pot(pot, amount.wasm);
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       static newToStakeCreds(pot: WasmContract.MIRPot, amounts: WasmContract.MIRToStakeCredentials): WasmContract.MoveInstantaneousReward {
         const ret = WasmV4.MoveInstantaneousReward.new_to_stake_creds(pot, amounts.wasm);
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       pot(): WasmContract.MIRPot {
@@ -5081,13 +5076,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asToOtherPot(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.as_to_other_pot();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       asToStakeCreds(): Optional<WasmContract.MIRToStakeCredentials> {
         const ret = this.wasm.as_to_stake_creds();
         if (ret == null) return undefined;
-        return new $outer.MIRToStakeCredentials(ret, $outer._ctx);
+        return new $outer.MIRToStakeCredentials(ret);
       }
 
     }
@@ -5108,7 +5103,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MoveInstantaneousRewardsCert {
         const ret = WasmV4.MoveInstantaneousRewardsCert.from_bytes(bytes);
-        return new $outer.MoveInstantaneousRewardsCert(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousRewardsCert(ret);
       }
 
       toHex(): string {
@@ -5117,7 +5112,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MoveInstantaneousRewardsCert {
         const ret = WasmV4.MoveInstantaneousRewardsCert.from_hex(hexStr);
-        return new $outer.MoveInstantaneousRewardsCert(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousRewardsCert(ret);
       }
 
       toJson(): string {
@@ -5126,17 +5121,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MoveInstantaneousRewardsCert {
         const ret = WasmV4.MoveInstantaneousRewardsCert.from_json(json);
-        return new $outer.MoveInstantaneousRewardsCert(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousRewardsCert(ret);
       }
 
       moveInstantaneousReward(): WasmContract.MoveInstantaneousReward {
         const ret = this.wasm.move_instantaneous_reward();
-        return new $outer.MoveInstantaneousReward(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousReward(ret);
       }
 
       static new(moveInstantaneousReward: WasmContract.MoveInstantaneousReward): WasmContract.MoveInstantaneousRewardsCert {
         const ret = WasmV4.MoveInstantaneousRewardsCert.new(moveInstantaneousReward.wasm);
-        return new $outer.MoveInstantaneousRewardsCert(ret, $outer._ctx);
+        return new $outer.MoveInstantaneousRewardsCert(ret);
       }
 
     }
@@ -5157,7 +5152,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MultiAsset {
         const ret = WasmV4.MultiAsset.from_bytes(bytes);
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       toHex(): string {
@@ -5166,7 +5161,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MultiAsset {
         const ret = WasmV4.MultiAsset.from_hex(hexStr);
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       toJson(): string {
@@ -5175,12 +5170,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MultiAsset {
         const ret = WasmV4.MultiAsset.from_json(json);
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       static new(): WasmContract.MultiAsset {
         const ret = WasmV4.MultiAsset.new();
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       len(): number {
@@ -5190,34 +5185,34 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(policyId: WasmContract.ScriptHash, assets: WasmContract.Assets): Optional<WasmContract.Assets> {
         const ret = this.wasm.insert(policyId.wasm, assets.wasm);
         if (ret == null) return undefined;
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       get(policyId: WasmContract.ScriptHash): Optional<WasmContract.Assets> {
         const ret = this.wasm.get(policyId.wasm);
         if (ret == null) return undefined;
-        return new $outer.Assets(ret, $outer._ctx);
+        return new $outer.Assets(ret);
       }
 
       setAsset(policyId: WasmContract.ScriptHash, assetName: WasmContract.AssetName, value: WasmContract.BigNum): Optional<WasmContract.BigNum> {
         const ret = this.wasm.set_asset(policyId.wasm, assetName.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       getAsset(policyId: WasmContract.ScriptHash, assetName: WasmContract.AssetName): WasmContract.BigNum {
         const ret = this.wasm.get_asset(policyId.wasm, assetName.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       keys(): WasmContract.ScriptHashes {
         const ret = this.wasm.keys();
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       sub(rhsMa: WasmContract.MultiAsset): WasmContract.MultiAsset {
         const ret = this.wasm.sub(rhsMa.wasm);
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
     }
@@ -5238,7 +5233,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.MultiHostName {
         const ret = WasmV4.MultiHostName.from_bytes(bytes);
-        return new $outer.MultiHostName(ret, $outer._ctx);
+        return new $outer.MultiHostName(ret);
       }
 
       toHex(): string {
@@ -5247,7 +5242,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.MultiHostName {
         const ret = WasmV4.MultiHostName.from_hex(hexStr);
-        return new $outer.MultiHostName(ret, $outer._ctx);
+        return new $outer.MultiHostName(ret);
       }
 
       toJson(): string {
@@ -5256,17 +5251,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.MultiHostName {
         const ret = WasmV4.MultiHostName.from_json(json);
-        return new $outer.MultiHostName(ret, $outer._ctx);
+        return new $outer.MultiHostName(ret);
       }
 
       dnsName(): WasmContract.DNSRecordSRV {
         const ret = this.wasm.dns_name();
-        return new $outer.DNSRecordSRV(ret, $outer._ctx);
+        return new $outer.DNSRecordSRV(ret);
       }
 
       static new(dnsName: WasmContract.DNSRecordSRV): WasmContract.MultiHostName {
         const ret = WasmV4.MultiHostName.new(dnsName.wasm);
-        return new $outer.MultiHostName(ret, $outer._ctx);
+        return new $outer.MultiHostName(ret);
       }
 
     }
@@ -5287,7 +5282,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.from_bytes(bytes);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       toHex(): string {
@@ -5296,7 +5291,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.from_hex(hexStr);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       toJson(): string {
@@ -5305,42 +5300,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.from_json(json);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       hash(): WasmContract.ScriptHash {
         const ret = this.wasm.hash();
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       static newScriptPubkey(scriptPubkey: WasmContract.ScriptPubkey): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_script_pubkey(scriptPubkey.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       static newScriptAll(scriptAll: WasmContract.ScriptAll): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_script_all(scriptAll.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       static newScriptAny(scriptAny: WasmContract.ScriptAny): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_script_any(scriptAny.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       static newScriptNOfK(scriptNOfK: WasmContract.ScriptNOfK): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_script_n_of_k(scriptNOfK.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       static newTimelockStart(timelockStart: WasmContract.TimelockStart): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_timelock_start(timelockStart.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       static newTimelockExpiry(timelockExpiry: WasmContract.TimelockExpiry): WasmContract.NativeScript {
         const ret = WasmV4.NativeScript.new_timelock_expiry(timelockExpiry.wasm);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       kind(): WasmContract.NativeScriptKind {
@@ -5350,42 +5345,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asScriptPubkey(): Optional<WasmContract.ScriptPubkey> {
         const ret = this.wasm.as_script_pubkey();
         if (ret == null) return undefined;
-        return new $outer.ScriptPubkey(ret, $outer._ctx);
+        return new $outer.ScriptPubkey(ret);
       }
 
       asScriptAll(): Optional<WasmContract.ScriptAll> {
         const ret = this.wasm.as_script_all();
         if (ret == null) return undefined;
-        return new $outer.ScriptAll(ret, $outer._ctx);
+        return new $outer.ScriptAll(ret);
       }
 
       asScriptAny(): Optional<WasmContract.ScriptAny> {
         const ret = this.wasm.as_script_any();
         if (ret == null) return undefined;
-        return new $outer.ScriptAny(ret, $outer._ctx);
+        return new $outer.ScriptAny(ret);
       }
 
       asScriptNOfK(): Optional<WasmContract.ScriptNOfK> {
         const ret = this.wasm.as_script_n_of_k();
         if (ret == null) return undefined;
-        return new $outer.ScriptNOfK(ret, $outer._ctx);
+        return new $outer.ScriptNOfK(ret);
       }
 
       asTimelockStart(): Optional<WasmContract.TimelockStart> {
         const ret = this.wasm.as_timelock_start();
         if (ret == null) return undefined;
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
       asTimelockExpiry(): Optional<WasmContract.TimelockExpiry> {
         const ret = this.wasm.as_timelock_expiry();
         if (ret == null) return undefined;
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
       getRequiredSigners(): WasmContract.Ed25519KeyHashes {
         const ret = this.wasm.get_required_signers();
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
     }
@@ -5402,12 +5397,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(script: WasmContract.NativeScript): WasmContract.NativeScriptSource {
         const ret = WasmV4.NativeScriptSource.new(script.wasm);
-        return new $outer.NativeScriptSource(ret, $outer._ctx);
+        return new $outer.NativeScriptSource(ret);
       }
 
       static newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, scriptSize: number): WasmContract.NativeScriptSource {
         const ret = WasmV4.NativeScriptSource.new_ref_input(scriptHash.wasm, input.wasm, scriptSize);
-        return new $outer.NativeScriptSource(ret, $outer._ctx);
+        return new $outer.NativeScriptSource(ret);
       }
 
       setRequiredSigners(keyHashes: WasmContract.Ed25519KeyHashes): void {
@@ -5432,7 +5427,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.NativeScripts {
         const ret = WasmV4.NativeScripts.new();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       len(): number {
@@ -5441,7 +5436,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.NativeScript {
         const ret = this.wasm.get(index);
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       add(elem: WasmContract.NativeScript): void {
@@ -5454,7 +5449,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.NativeScripts {
         const ret = WasmV4.NativeScripts.from_bytes(bytes);
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       toHex(): string {
@@ -5463,7 +5458,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.NativeScripts {
         const ret = WasmV4.NativeScripts.from_hex(hexStr);
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       toJson(): string {
@@ -5472,7 +5467,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.NativeScripts {
         const ret = WasmV4.NativeScripts.from_json(json);
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
     }
@@ -5493,7 +5488,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.NetworkId {
         const ret = WasmV4.NetworkId.from_bytes(bytes);
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       toHex(): string {
@@ -5502,7 +5497,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.NetworkId {
         const ret = WasmV4.NetworkId.from_hex(hexStr);
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       toJson(): string {
@@ -5511,17 +5506,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.NetworkId {
         const ret = WasmV4.NetworkId.from_json(json);
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       static testnet(): WasmContract.NetworkId {
         const ret = WasmV4.NetworkId.testnet();
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       static mainnet(): WasmContract.NetworkId {
         const ret = WasmV4.NetworkId.mainnet();
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       kind(): WasmContract.NetworkIdKind {
@@ -5542,7 +5537,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(networkId: number, protocolMagic: number): WasmContract.NetworkInfo {
         const ret = WasmV4.NetworkInfo.new(networkId, protocolMagic);
-        return new $outer.NetworkInfo(ret, $outer._ctx);
+        return new $outer.NetworkInfo(ret);
       }
 
       networkId(): number {
@@ -5555,17 +5550,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static testnetPreview(): WasmContract.NetworkInfo {
         const ret = WasmV4.NetworkInfo.testnet_preview();
-        return new $outer.NetworkInfo(ret, $outer._ctx);
+        return new $outer.NetworkInfo(ret);
       }
 
       static testnetPreprod(): WasmContract.NetworkInfo {
         const ret = WasmV4.NetworkInfo.testnet_preprod();
-        return new $outer.NetworkInfo(ret, $outer._ctx);
+        return new $outer.NetworkInfo(ret);
       }
 
       static mainnet(): WasmContract.NetworkInfo {
         const ret = WasmV4.NetworkInfo.mainnet();
-        return new $outer.NetworkInfo(ret, $outer._ctx);
+        return new $outer.NetworkInfo(ret);
       }
 
     }
@@ -5586,7 +5581,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.NewConstitutionAction {
         const ret = WasmV4.NewConstitutionAction.from_bytes(bytes);
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       toHex(): string {
@@ -5595,7 +5590,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.NewConstitutionAction {
         const ret = WasmV4.NewConstitutionAction.from_hex(hexStr);
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       toJson(): string {
@@ -5604,28 +5599,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.NewConstitutionAction {
         const ret = WasmV4.NewConstitutionAction.from_json(json);
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       govActionId(): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.gov_action_id();
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       constitution(): WasmContract.Constitution {
         const ret = this.wasm.constitution();
-        return new $outer.Constitution(ret, $outer._ctx);
+        return new $outer.Constitution(ret);
       }
 
       static new(constitution: WasmContract.Constitution): WasmContract.NewConstitutionAction {
         const ret = WasmV4.NewConstitutionAction.new(constitution.wasm);
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       static newWithActionId(govActionId: WasmContract.GovernanceActionId, constitution: WasmContract.Constitution): WasmContract.NewConstitutionAction {
         const ret = WasmV4.NewConstitutionAction.new_with_action_id(govActionId.wasm, constitution.wasm);
-        return new $outer.NewConstitutionAction(ret, $outer._ctx);
+        return new $outer.NewConstitutionAction(ret);
       }
 
       hasScriptHash(): boolean {
@@ -5650,7 +5645,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.NoConfidenceAction {
         const ret = WasmV4.NoConfidenceAction.from_bytes(bytes);
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
       toHex(): string {
@@ -5659,7 +5654,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.NoConfidenceAction {
         const ret = WasmV4.NoConfidenceAction.from_hex(hexStr);
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
       toJson(): string {
@@ -5668,23 +5663,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.NoConfidenceAction {
         const ret = WasmV4.NoConfidenceAction.from_json(json);
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
       govActionId(): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.gov_action_id();
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       static new(): WasmContract.NoConfidenceAction {
         const ret = WasmV4.NoConfidenceAction.new();
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
       static newWithActionId(govActionId: WasmContract.GovernanceActionId): WasmContract.NoConfidenceAction {
         const ret = WasmV4.NoConfidenceAction.new_with_action_id(govActionId.wasm);
-        return new $outer.NoConfidenceAction(ret, $outer._ctx);
+        return new $outer.NoConfidenceAction(ret);
       }
 
     }
@@ -5705,7 +5700,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Nonce {
         const ret = WasmV4.Nonce.from_bytes(bytes);
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       toHex(): string {
@@ -5714,7 +5709,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Nonce {
         const ret = WasmV4.Nonce.from_hex(hexStr);
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       toJson(): string {
@@ -5723,17 +5718,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Nonce {
         const ret = WasmV4.Nonce.from_json(json);
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       static newIdentity(): WasmContract.Nonce {
         const ret = WasmV4.Nonce.new_identity();
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       static newFromHash(hash: Uint8Array): WasmContract.Nonce {
         const ret = WasmV4.Nonce.new_from_hash(hash);
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       getHash(): Optional<Uint8Array> {
@@ -5758,7 +5753,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.OperationalCert {
         const ret = WasmV4.OperationalCert.from_bytes(bytes);
-        return new $outer.OperationalCert(ret, $outer._ctx);
+        return new $outer.OperationalCert(ret);
       }
 
       toHex(): string {
@@ -5767,7 +5762,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.OperationalCert {
         const ret = WasmV4.OperationalCert.from_hex(hexStr);
-        return new $outer.OperationalCert(ret, $outer._ctx);
+        return new $outer.OperationalCert(ret);
       }
 
       toJson(): string {
@@ -5776,12 +5771,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.OperationalCert {
         const ret = WasmV4.OperationalCert.from_json(json);
-        return new $outer.OperationalCert(ret, $outer._ctx);
+        return new $outer.OperationalCert(ret);
       }
 
       hotVkey(): WasmContract.KESVKey {
         const ret = this.wasm.hot_vkey();
-        return new $outer.KESVKey(ret, $outer._ctx);
+        return new $outer.KESVKey(ret);
       }
 
       sequenceNumber(): number {
@@ -5794,12 +5789,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       sigma(): WasmContract.Ed25519Signature {
         const ret = this.wasm.sigma();
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
       static new(hotVkey: WasmContract.KESVKey, sequenceNumber: number, kesPeriod: number, sigma: WasmContract.Ed25519Signature): WasmContract.OperationalCert {
         const ret = WasmV4.OperationalCert.new(hotVkey.wasm, sequenceNumber, kesPeriod, sigma.wasm);
-        return new $outer.OperationalCert(ret, $outer._ctx);
+        return new $outer.OperationalCert(ret);
       }
 
     }
@@ -5816,24 +5811,24 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static newDataHash(dataHash: WasmContract.DataHash): WasmContract.OutputDatum {
         const ret = WasmV4.OutputDatum.new_data_hash(dataHash.wasm);
-        return new $outer.OutputDatum(ret, $outer._ctx);
+        return new $outer.OutputDatum(ret);
       }
 
       static newData(data: WasmContract.PlutusData): WasmContract.OutputDatum {
         const ret = WasmV4.OutputDatum.new_data(data.wasm);
-        return new $outer.OutputDatum(ret, $outer._ctx);
+        return new $outer.OutputDatum(ret);
       }
 
       dataHash(): Optional<WasmContract.DataHash> {
         const ret = this.wasm.data_hash();
         if (ret == null) return undefined;
-        return new $outer.DataHash(ret, $outer._ctx);
+        return new $outer.DataHash(ret);
       }
 
       data(): Optional<WasmContract.PlutusData> {
         const ret = this.wasm.data();
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
     }
@@ -5854,7 +5849,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.from_bytes(bytes);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       toHex(): string {
@@ -5863,7 +5858,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.from_hex(hexStr);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       toJson(): string {
@@ -5872,44 +5867,44 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.from_json(json);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       govActionId(): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.gov_action_id();
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       protocolParamUpdates(): WasmContract.ProtocolParamUpdate {
         const ret = this.wasm.protocol_param_updates();
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       policyHash(): Optional<WasmContract.ScriptHash> {
         const ret = this.wasm.policy_hash();
         if (ret == null) return undefined;
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       static new(protocolParamUpdates: WasmContract.ProtocolParamUpdate): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.new(protocolParamUpdates.wasm);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       static newWithActionId(govActionId: WasmContract.GovernanceActionId, protocolParamUpdates: WasmContract.ProtocolParamUpdate): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.new_with_action_id(govActionId.wasm, protocolParamUpdates.wasm);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       static newWithPolicyHash(protocolParamUpdates: WasmContract.ProtocolParamUpdate, policyHash: WasmContract.ScriptHash): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.new_with_policy_hash(protocolParamUpdates.wasm, policyHash.wasm);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
       static newWithPolicyHashAndActionId(govActionId: WasmContract.GovernanceActionId, protocolParamUpdates: WasmContract.ProtocolParamUpdate, policyHash: WasmContract.ScriptHash): WasmContract.ParameterChangeAction {
         const ret = WasmV4.ParameterChangeAction.new_with_policy_hash_and_action_id(govActionId.wasm, protocolParamUpdates.wasm, policyHash.wasm);
-        return new $outer.ParameterChangeAction(ret, $outer._ctx);
+        return new $outer.ParameterChangeAction(ret);
       }
 
     }
@@ -5930,7 +5925,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.from_bytes(bytes);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       toHex(): string {
@@ -5939,42 +5934,42 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.from_hex(hexStr);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newConstrPlutusData(constrPlutusData: WasmContract.ConstrPlutusData): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_constr_plutus_data(constrPlutusData.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newEmptyConstrPlutusData(alternative: WasmContract.BigNum): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_empty_constr_plutus_data(alternative.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newSingleValueConstrPlutusData(alternative: WasmContract.BigNum, plutusData: WasmContract.PlutusData): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_single_value_constr_plutus_data(alternative.wasm, plutusData.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newMap(map: WasmContract.PlutusMap): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_map(map.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newList(list: WasmContract.PlutusList): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_list(list.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newInteger(integer: WasmContract.BigInt): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_integer(integer.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static newBytes(bytes: Uint8Array): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.new_bytes(bytes);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       kind(): WasmContract.PlutusDataKind {
@@ -5984,25 +5979,25 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asConstrPlutusData(): Optional<WasmContract.ConstrPlutusData> {
         const ret = this.wasm.as_constr_plutus_data();
         if (ret == null) return undefined;
-        return new $outer.ConstrPlutusData(ret, $outer._ctx);
+        return new $outer.ConstrPlutusData(ret);
       }
 
       asMap(): Optional<WasmContract.PlutusMap> {
         const ret = this.wasm.as_map();
         if (ret == null) return undefined;
-        return new $outer.PlutusMap(ret, $outer._ctx);
+        return new $outer.PlutusMap(ret);
       }
 
       asList(): Optional<WasmContract.PlutusList> {
         const ret = this.wasm.as_list();
         if (ret == null) return undefined;
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       asInteger(): Optional<WasmContract.BigInt> {
         const ret = this.wasm.as_integer();
         if (ret == null) return undefined;
-        return new $outer.BigInt(ret, $outer._ctx);
+        return new $outer.BigInt(ret);
       }
 
       asBytes(): Optional<Uint8Array> {
@@ -6015,17 +6010,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string, schema: WasmContract.PlutusDatumSchema): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.from_json(json, schema);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       static fromAddress(address: WasmContract.Address): WasmContract.PlutusData {
         const ret = WasmV4.PlutusData.from_address(address.wasm);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       asAddress(network: WasmContract.NetworkInfo): WasmContract.Address {
         const ret = this.wasm.as_address(network.wasm);
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
     }
@@ -6046,7 +6041,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PlutusList {
         const ret = WasmV4.PlutusList.from_bytes(bytes);
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       toHex(): string {
@@ -6055,12 +6050,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PlutusList {
         const ret = WasmV4.PlutusList.from_hex(hexStr);
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       static new(): WasmContract.PlutusList {
         const ret = WasmV4.PlutusList.new();
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       len(): number {
@@ -6069,7 +6064,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.PlutusData {
         const ret = this.wasm.get(index);
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       add(elem: WasmContract.PlutusData): void {
@@ -6094,7 +6089,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PlutusMap {
         const ret = WasmV4.PlutusMap.from_bytes(bytes);
-        return new $outer.PlutusMap(ret, $outer._ctx);
+        return new $outer.PlutusMap(ret);
       }
 
       toHex(): string {
@@ -6103,12 +6098,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PlutusMap {
         const ret = WasmV4.PlutusMap.from_hex(hexStr);
-        return new $outer.PlutusMap(ret, $outer._ctx);
+        return new $outer.PlutusMap(ret);
       }
 
       static new(): WasmContract.PlutusMap {
         const ret = WasmV4.PlutusMap.new();
-        return new $outer.PlutusMap(ret, $outer._ctx);
+        return new $outer.PlutusMap(ret);
       }
 
       len(): number {
@@ -6118,18 +6113,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.PlutusData, values: WasmContract.PlutusMapValues): Optional<WasmContract.PlutusMapValues> {
         const ret = this.wasm.insert(key.wasm, values.wasm);
         if (ret == null) return undefined;
-        return new $outer.PlutusMapValues(ret, $outer._ctx);
+        return new $outer.PlutusMapValues(ret);
       }
 
       get(key: WasmContract.PlutusData): Optional<WasmContract.PlutusMapValues> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.PlutusMapValues(ret, $outer._ctx);
+        return new $outer.PlutusMapValues(ret);
       }
 
       keys(): WasmContract.PlutusList {
         const ret = this.wasm.keys();
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
     }
@@ -6146,7 +6141,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.PlutusMapValues {
         const ret = WasmV4.PlutusMapValues.new();
-        return new $outer.PlutusMapValues(ret, $outer._ctx);
+        return new $outer.PlutusMapValues(ret);
       }
 
       len(): number {
@@ -6156,7 +6151,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(index: number): Optional<WasmContract.PlutusData> {
         const ret = this.wasm.get(index);
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       add(elem: WasmContract.PlutusData): void {
@@ -6181,7 +6176,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_bytes(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       toHex(): string {
@@ -6190,27 +6185,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_hex(hexStr);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static new(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.new(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static newV2(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.new_v2(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static newV3(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.new_v3(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static newWithVersion(bytes: Uint8Array, language: WasmContract.Language): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.new_with_version(bytes, language.wasm);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       bytes(): Uint8Array {
@@ -6219,32 +6214,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytesV2(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_bytes_v2(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static fromBytesV3(bytes: Uint8Array): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_bytes_v3(bytes);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static fromBytesWithVersion(bytes: Uint8Array, language: WasmContract.Language): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_bytes_with_version(bytes, language.wasm);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       static fromHexWithVersion(hexStr: string, language: WasmContract.Language): WasmContract.PlutusScript {
         const ret = WasmV4.PlutusScript.from_hex_with_version(hexStr, language.wasm);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       hash(): WasmContract.ScriptHash {
         const ret = this.wasm.hash();
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       languageVersion(): WasmContract.Language {
         const ret = this.wasm.language_version();
-        return new $outer.Language(ret, $outer._ctx);
+        return new $outer.Language(ret);
       }
 
     }
@@ -6261,12 +6256,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(script: WasmContract.PlutusScript): WasmContract.PlutusScriptSource {
         const ret = WasmV4.PlutusScriptSource.new(script.wasm);
-        return new $outer.PlutusScriptSource(ret, $outer._ctx);
+        return new $outer.PlutusScriptSource(ret);
       }
 
       static newRefInput(scriptHash: WasmContract.ScriptHash, input: WasmContract.TransactionInput, langVer: WasmContract.Language, scriptSize: number): WasmContract.PlutusScriptSource {
         const ret = WasmV4.PlutusScriptSource.new_ref_input(scriptHash.wasm, input.wasm, langVer.wasm, scriptSize);
-        return new $outer.PlutusScriptSource(ret, $outer._ctx);
+        return new $outer.PlutusScriptSource(ret);
       }
 
       setRequiredSigners(keyHashes: WasmContract.Ed25519KeyHashes): void {
@@ -6295,7 +6290,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PlutusScripts {
         const ret = WasmV4.PlutusScripts.from_bytes(bytes);
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       toHex(): string {
@@ -6304,7 +6299,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PlutusScripts {
         const ret = WasmV4.PlutusScripts.from_hex(hexStr);
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       toJson(): string {
@@ -6313,12 +6308,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PlutusScripts {
         const ret = WasmV4.PlutusScripts.from_json(json);
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       static new(): WasmContract.PlutusScripts {
         const ret = WasmV4.PlutusScripts.new();
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       len(): number {
@@ -6327,7 +6322,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.PlutusScript {
         const ret = this.wasm.get(index);
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       add(elem: WasmContract.PlutusScript): void {
@@ -6348,39 +6343,39 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(script: WasmContract.PlutusScript, datum: WasmContract.PlutusData, redeemer: WasmContract.Redeemer): WasmContract.PlutusWitness {
         const ret = WasmV4.PlutusWitness.new(script.wasm, datum.wasm, redeemer.wasm);
-        return new $outer.PlutusWitness(ret, $outer._ctx);
+        return new $outer.PlutusWitness(ret);
       }
 
       static newWithRef(script: WasmContract.PlutusScriptSource, datum: WasmContract.DatumSource, redeemer: WasmContract.Redeemer): WasmContract.PlutusWitness {
         const ret = WasmV4.PlutusWitness.new_with_ref(script.wasm, datum.wasm, redeemer.wasm);
-        return new $outer.PlutusWitness(ret, $outer._ctx);
+        return new $outer.PlutusWitness(ret);
       }
 
       static newWithoutDatum(script: WasmContract.PlutusScript, redeemer: WasmContract.Redeemer): WasmContract.PlutusWitness {
         const ret = WasmV4.PlutusWitness.new_without_datum(script.wasm, redeemer.wasm);
-        return new $outer.PlutusWitness(ret, $outer._ctx);
+        return new $outer.PlutusWitness(ret);
       }
 
       static newWithRefWithoutDatum(script: WasmContract.PlutusScriptSource, redeemer: WasmContract.Redeemer): WasmContract.PlutusWitness {
         const ret = WasmV4.PlutusWitness.new_with_ref_without_datum(script.wasm, redeemer.wasm);
-        return new $outer.PlutusWitness(ret, $outer._ctx);
+        return new $outer.PlutusWitness(ret);
       }
 
       script(): Optional<WasmContract.PlutusScript> {
         const ret = this.wasm.script();
         if (ret == null) return undefined;
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       datum(): Optional<WasmContract.PlutusData> {
         const ret = this.wasm.datum();
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       redeemer(): WasmContract.Redeemer {
         const ret = this.wasm.redeemer();
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
     }
@@ -6397,7 +6392,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.PlutusWitnesses {
         const ret = WasmV4.PlutusWitnesses.new();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       len(): number {
@@ -6406,7 +6401,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.PlutusWitness {
         const ret = this.wasm.get(index);
-        return new $outer.PlutusWitness(ret, $outer._ctx);
+        return new $outer.PlutusWitness(ret);
       }
 
       add(elem: WasmContract.PlutusWitness): void {
@@ -6427,12 +6422,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(slot: number, txIndex: number, certIndex: number): WasmContract.Pointer {
         const ret = WasmV4.Pointer.new(slot, txIndex, certIndex);
-        return new $outer.Pointer(ret, $outer._ctx);
+        return new $outer.Pointer(ret);
       }
 
       static newPointer(slot: WasmContract.BigNum, txIndex: WasmContract.BigNum, certIndex: WasmContract.BigNum): WasmContract.Pointer {
         const ret = WasmV4.Pointer.new_pointer(slot.wasm, txIndex.wasm, certIndex.wasm);
-        return new $outer.Pointer(ret, $outer._ctx);
+        return new $outer.Pointer(ret);
       }
 
       slot(): number {
@@ -6449,17 +6444,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       slotBignum(): WasmContract.BigNum {
         const ret = this.wasm.slot_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       txIndexBignum(): WasmContract.BigNum {
         const ret = this.wasm.tx_index_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       certIndexBignum(): WasmContract.BigNum {
         const ret = this.wasm.cert_index_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
     }
@@ -6476,28 +6471,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(network: number, payment: WasmContract.Credential, stake: WasmContract.Pointer): WasmContract.PointerAddress {
         const ret = WasmV4.PointerAddress.new(network, payment.wasm, stake.wasm);
-        return new $outer.PointerAddress(ret, $outer._ctx);
+        return new $outer.PointerAddress(ret);
       }
 
       paymentCred(): WasmContract.Credential {
         const ret = this.wasm.payment_cred();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       stakePointer(): WasmContract.Pointer {
         const ret = this.wasm.stake_pointer();
-        return new $outer.Pointer(ret, $outer._ctx);
+        return new $outer.Pointer(ret);
       }
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.PointerAddress> {
         const ret = WasmV4.PointerAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.PointerAddress(ret, $outer._ctx);
+        return new $outer.PointerAddress(ret);
       }
 
       networkId(): number {
@@ -6522,7 +6517,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolMetadata {
         const ret = WasmV4.PoolMetadata.from_bytes(bytes);
-        return new $outer.PoolMetadata(ret, $outer._ctx);
+        return new $outer.PoolMetadata(ret);
       }
 
       toHex(): string {
@@ -6531,7 +6526,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PoolMetadata {
         const ret = WasmV4.PoolMetadata.from_hex(hexStr);
-        return new $outer.PoolMetadata(ret, $outer._ctx);
+        return new $outer.PoolMetadata(ret);
       }
 
       toJson(): string {
@@ -6540,22 +6535,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PoolMetadata {
         const ret = WasmV4.PoolMetadata.from_json(json);
-        return new $outer.PoolMetadata(ret, $outer._ctx);
+        return new $outer.PoolMetadata(ret);
       }
 
       url(): WasmContract.URL {
         const ret = this.wasm.url();
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       poolMetadataHash(): WasmContract.PoolMetadataHash {
         const ret = this.wasm.pool_metadata_hash();
-        return new $outer.PoolMetadataHash(ret, $outer._ctx);
+        return new $outer.PoolMetadataHash(ret);
       }
 
       static new(url: WasmContract.URL, poolMetadataHash: WasmContract.PoolMetadataHash): WasmContract.PoolMetadata {
         const ret = WasmV4.PoolMetadata.new(url.wasm, poolMetadataHash.wasm);
-        return new $outer.PoolMetadata(ret, $outer._ctx);
+        return new $outer.PoolMetadata(ret);
       }
 
     }
@@ -6572,7 +6567,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolMetadataHash {
         const ret = WasmV4.PoolMetadataHash.from_bytes(bytes);
-        return new $outer.PoolMetadataHash(ret, $outer._ctx);
+        return new $outer.PoolMetadataHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -6585,7 +6580,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.PoolMetadataHash {
         const ret = WasmV4.PoolMetadataHash.from_bech32(bechStr);
-        return new $outer.PoolMetadataHash(ret, $outer._ctx);
+        return new $outer.PoolMetadataHash(ret);
       }
 
       toHex(): string {
@@ -6594,7 +6589,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.PoolMetadataHash {
         const ret = WasmV4.PoolMetadataHash.from_hex(hex);
-        return new $outer.PoolMetadataHash(ret, $outer._ctx);
+        return new $outer.PoolMetadataHash(ret);
       }
 
     }
@@ -6615,7 +6610,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolParams {
         const ret = WasmV4.PoolParams.from_bytes(bytes);
-        return new $outer.PoolParams(ret, $outer._ctx);
+        return new $outer.PoolParams(ret);
       }
 
       toHex(): string {
@@ -6624,7 +6619,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PoolParams {
         const ret = WasmV4.PoolParams.from_hex(hexStr);
-        return new $outer.PoolParams(ret, $outer._ctx);
+        return new $outer.PoolParams(ret);
       }
 
       toJson(): string {
@@ -6633,58 +6628,58 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PoolParams {
         const ret = WasmV4.PoolParams.from_json(json);
-        return new $outer.PoolParams(ret, $outer._ctx);
+        return new $outer.PoolParams(ret);
       }
 
       operator(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.operator();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       vrfKeyhash(): WasmContract.VRFKeyHash {
         const ret = this.wasm.vrf_keyhash();
-        return new $outer.VRFKeyHash(ret, $outer._ctx);
+        return new $outer.VRFKeyHash(ret);
       }
 
       pledge(): WasmContract.BigNum {
         const ret = this.wasm.pledge();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       cost(): WasmContract.BigNum {
         const ret = this.wasm.cost();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       margin(): WasmContract.UnitInterval {
         const ret = this.wasm.margin();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       rewardAccount(): WasmContract.RewardAddress {
         const ret = this.wasm.reward_account();
-        return new $outer.RewardAddress(ret, $outer._ctx);
+        return new $outer.RewardAddress(ret);
       }
 
       poolOwners(): WasmContract.Ed25519KeyHashes {
         const ret = this.wasm.pool_owners();
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       relays(): WasmContract.Relays {
         const ret = this.wasm.relays();
-        return new $outer.Relays(ret, $outer._ctx);
+        return new $outer.Relays(ret);
       }
 
       poolMetadata(): Optional<WasmContract.PoolMetadata> {
         const ret = this.wasm.pool_metadata();
         if (ret == null) return undefined;
-        return new $outer.PoolMetadata(ret, $outer._ctx);
+        return new $outer.PoolMetadata(ret);
       }
 
       static new(operator: WasmContract.Ed25519KeyHash, vrfKeyhash: WasmContract.VRFKeyHash, pledge: WasmContract.BigNum, cost: WasmContract.BigNum, margin: WasmContract.UnitInterval, rewardAccount: WasmContract.RewardAddress, poolOwners: WasmContract.Ed25519KeyHashes, relays: WasmContract.Relays, poolMetadata: Optional<WasmContract.PoolMetadata>): WasmContract.PoolParams {
         const ret = WasmV4.PoolParams.new(operator.wasm, vrfKeyhash.wasm, pledge.wasm, cost.wasm, margin.wasm, rewardAccount.wasm, poolOwners.wasm, relays.wasm, poolMetadata?.wasm);
-        return new $outer.PoolParams(ret, $outer._ctx);
+        return new $outer.PoolParams(ret);
       }
 
     }
@@ -6705,7 +6700,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolRegistration {
         const ret = WasmV4.PoolRegistration.from_bytes(bytes);
-        return new $outer.PoolRegistration(ret, $outer._ctx);
+        return new $outer.PoolRegistration(ret);
       }
 
       toHex(): string {
@@ -6714,7 +6709,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PoolRegistration {
         const ret = WasmV4.PoolRegistration.from_hex(hexStr);
-        return new $outer.PoolRegistration(ret, $outer._ctx);
+        return new $outer.PoolRegistration(ret);
       }
 
       toJson(): string {
@@ -6723,17 +6718,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PoolRegistration {
         const ret = WasmV4.PoolRegistration.from_json(json);
-        return new $outer.PoolRegistration(ret, $outer._ctx);
+        return new $outer.PoolRegistration(ret);
       }
 
       poolParams(): WasmContract.PoolParams {
         const ret = this.wasm.pool_params();
-        return new $outer.PoolParams(ret, $outer._ctx);
+        return new $outer.PoolParams(ret);
       }
 
       static new(poolParams: WasmContract.PoolParams): WasmContract.PoolRegistration {
         const ret = WasmV4.PoolRegistration.new(poolParams.wasm);
-        return new $outer.PoolRegistration(ret, $outer._ctx);
+        return new $outer.PoolRegistration(ret);
       }
 
     }
@@ -6754,7 +6749,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolRetirement {
         const ret = WasmV4.PoolRetirement.from_bytes(bytes);
-        return new $outer.PoolRetirement(ret, $outer._ctx);
+        return new $outer.PoolRetirement(ret);
       }
 
       toHex(): string {
@@ -6763,7 +6758,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PoolRetirement {
         const ret = WasmV4.PoolRetirement.from_hex(hexStr);
-        return new $outer.PoolRetirement(ret, $outer._ctx);
+        return new $outer.PoolRetirement(ret);
       }
 
       toJson(): string {
@@ -6772,12 +6767,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PoolRetirement {
         const ret = WasmV4.PoolRetirement.from_json(json);
-        return new $outer.PoolRetirement(ret, $outer._ctx);
+        return new $outer.PoolRetirement(ret);
       }
 
       poolKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.pool_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       epoch(): number {
@@ -6786,7 +6781,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(poolKeyhash: WasmContract.Ed25519KeyHash, epoch: number): WasmContract.PoolRetirement {
         const ret = WasmV4.PoolRetirement.new(poolKeyhash.wasm, epoch);
-        return new $outer.PoolRetirement(ret, $outer._ctx);
+        return new $outer.PoolRetirement(ret);
       }
 
     }
@@ -6807,7 +6802,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PoolVotingThresholds {
         const ret = WasmV4.PoolVotingThresholds.from_bytes(bytes);
-        return new $outer.PoolVotingThresholds(ret, $outer._ctx);
+        return new $outer.PoolVotingThresholds(ret);
       }
 
       toHex(): string {
@@ -6816,7 +6811,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PoolVotingThresholds {
         const ret = WasmV4.PoolVotingThresholds.from_hex(hexStr);
-        return new $outer.PoolVotingThresholds(ret, $outer._ctx);
+        return new $outer.PoolVotingThresholds(ret);
       }
 
       toJson(): string {
@@ -6825,37 +6820,37 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.PoolVotingThresholds {
         const ret = WasmV4.PoolVotingThresholds.from_json(json);
-        return new $outer.PoolVotingThresholds(ret, $outer._ctx);
+        return new $outer.PoolVotingThresholds(ret);
       }
 
       static new(motionNoConfidence: WasmContract.UnitInterval, committeeNormal: WasmContract.UnitInterval, committeeNoConfidence: WasmContract.UnitInterval, hardForkInitiation: WasmContract.UnitInterval, securityRelevantThreshold: WasmContract.UnitInterval): WasmContract.PoolVotingThresholds {
         const ret = WasmV4.PoolVotingThresholds.new(motionNoConfidence.wasm, committeeNormal.wasm, committeeNoConfidence.wasm, hardForkInitiation.wasm, securityRelevantThreshold.wasm);
-        return new $outer.PoolVotingThresholds(ret, $outer._ctx);
+        return new $outer.PoolVotingThresholds(ret);
       }
 
       motionNoConfidence(): WasmContract.UnitInterval {
         const ret = this.wasm.motion_no_confidence();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       committeeNormal(): WasmContract.UnitInterval {
         const ret = this.wasm.committee_normal();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       committeeNoConfidence(): WasmContract.UnitInterval {
         const ret = this.wasm.committee_no_confidence();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       hardForkInitiation(): WasmContract.UnitInterval {
         const ret = this.wasm.hard_fork_initiation();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       securityRelevantThreshold(): WasmContract.UnitInterval {
         const ret = this.wasm.security_relevant_threshold();
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
     }
@@ -6872,22 +6867,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       toPublic(): WasmContract.PublicKey {
         const ret = this.wasm.to_public();
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
       static generateEd25519(): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.generate_ed25519();
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       static generateEd25519extended(): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.generate_ed25519extended();
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       static fromBech32(bech32Str: string): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.from_bech32(bech32Str);
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       toBech32(): string {
@@ -6900,17 +6895,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromExtendedBytes(bytes: Uint8Array): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.from_extended_bytes(bytes);
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       static fromNormalBytes(bytes: Uint8Array): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.from_normal_bytes(bytes);
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
       sign(message: Uint8Array): WasmContract.Ed25519Signature {
         const ret = this.wasm.sign(message);
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
       toHex(): string {
@@ -6919,7 +6914,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PrivateKey {
         const ret = WasmV4.PrivateKey.from_hex(hexStr);
-        return new $outer.PrivateKey(ret, $outer._ctx);
+        return new $outer.PrivateKey(ret);
       }
 
     }
@@ -6940,7 +6935,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ProposedProtocolParameterUpdates {
         const ret = WasmV4.ProposedProtocolParameterUpdates.from_bytes(bytes);
-        return new $outer.ProposedProtocolParameterUpdates(ret, $outer._ctx);
+        return new $outer.ProposedProtocolParameterUpdates(ret);
       }
 
       toHex(): string {
@@ -6949,7 +6944,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ProposedProtocolParameterUpdates {
         const ret = WasmV4.ProposedProtocolParameterUpdates.from_hex(hexStr);
-        return new $outer.ProposedProtocolParameterUpdates(ret, $outer._ctx);
+        return new $outer.ProposedProtocolParameterUpdates(ret);
       }
 
       toJson(): string {
@@ -6958,12 +6953,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ProposedProtocolParameterUpdates {
         const ret = WasmV4.ProposedProtocolParameterUpdates.from_json(json);
-        return new $outer.ProposedProtocolParameterUpdates(ret, $outer._ctx);
+        return new $outer.ProposedProtocolParameterUpdates(ret);
       }
 
       static new(): WasmContract.ProposedProtocolParameterUpdates {
         const ret = WasmV4.ProposedProtocolParameterUpdates.new();
-        return new $outer.ProposedProtocolParameterUpdates(ret, $outer._ctx);
+        return new $outer.ProposedProtocolParameterUpdates(ret);
       }
 
       len(): number {
@@ -6973,18 +6968,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.GenesisHash, value: WasmContract.ProtocolParamUpdate): Optional<WasmContract.ProtocolParamUpdate> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       get(key: WasmContract.GenesisHash): Optional<WasmContract.ProtocolParamUpdate> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       keys(): WasmContract.GenesisHashes {
         const ret = this.wasm.keys();
-        return new $outer.GenesisHashes(ret, $outer._ctx);
+        return new $outer.GenesisHashes(ret);
       }
 
     }
@@ -7005,7 +7000,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ProtocolParamUpdate {
         const ret = WasmV4.ProtocolParamUpdate.from_bytes(bytes);
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       toHex(): string {
@@ -7014,7 +7009,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ProtocolParamUpdate {
         const ret = WasmV4.ProtocolParamUpdate.from_hex(hexStr);
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       toJson(): string {
@@ -7023,7 +7018,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ProtocolParamUpdate {
         const ret = WasmV4.ProtocolParamUpdate.from_json(json);
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
       setMinfeeA(minfeeA: WasmContract.BigNum): void {
@@ -7033,7 +7028,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       minfeeA(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.minfee_a();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setMinfeeB(minfeeB: WasmContract.BigNum): void {
@@ -7043,7 +7038,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       minfeeB(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.minfee_b();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setMaxBlockBodySize(maxBlockBodySize: number): void {
@@ -7077,7 +7072,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       keyDeposit(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.key_deposit();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setPoolDeposit(poolDeposit: WasmContract.BigNum): void {
@@ -7087,7 +7082,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       poolDeposit(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.pool_deposit();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setMaxEpoch(maxEpoch: number): void {
@@ -7113,7 +7108,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       poolPledgeInfluence(): Optional<WasmContract.UnitInterval> {
         const ret = this.wasm.pool_pledge_influence();
         if (ret == null) return undefined;
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       setExpansionRate(expansionRate: WasmContract.UnitInterval): void {
@@ -7123,7 +7118,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       expansionRate(): Optional<WasmContract.UnitInterval> {
         const ret = this.wasm.expansion_rate();
         if (ret == null) return undefined;
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       setTreasuryGrowthRate(treasuryGrowthRate: WasmContract.UnitInterval): void {
@@ -7133,19 +7128,19 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       treasuryGrowthRate(): Optional<WasmContract.UnitInterval> {
         const ret = this.wasm.treasury_growth_rate();
         if (ret == null) return undefined;
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       d(): Optional<WasmContract.UnitInterval> {
         const ret = this.wasm.d();
         if (ret == null) return undefined;
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       extraEntropy(): Optional<WasmContract.Nonce> {
         const ret = this.wasm.extra_entropy();
         if (ret == null) return undefined;
-        return new $outer.Nonce(ret, $outer._ctx);
+        return new $outer.Nonce(ret);
       }
 
       setProtocolVersion(protocolVersion: WasmContract.ProtocolVersion): void {
@@ -7155,7 +7150,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       protocolVersion(): Optional<WasmContract.ProtocolVersion> {
         const ret = this.wasm.protocol_version();
         if (ret == null) return undefined;
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       setMinPoolCost(minPoolCost: WasmContract.BigNum): void {
@@ -7165,7 +7160,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       minPoolCost(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.min_pool_cost();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setAdaPerUtxoByte(adaPerUtxoByte: WasmContract.BigNum): void {
@@ -7175,7 +7170,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       adaPerUtxoByte(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.ada_per_utxo_byte();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setCostModels(costModels: WasmContract.Costmdls): void {
@@ -7185,7 +7180,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       costModels(): Optional<WasmContract.Costmdls> {
         const ret = this.wasm.cost_models();
         if (ret == null) return undefined;
-        return new $outer.Costmdls(ret, $outer._ctx);
+        return new $outer.Costmdls(ret);
       }
 
       setExecutionCosts(executionCosts: WasmContract.ExUnitPrices): void {
@@ -7195,7 +7190,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       executionCosts(): Optional<WasmContract.ExUnitPrices> {
         const ret = this.wasm.execution_costs();
         if (ret == null) return undefined;
-        return new $outer.ExUnitPrices(ret, $outer._ctx);
+        return new $outer.ExUnitPrices(ret);
       }
 
       setMaxTxExUnits(maxTxExUnits: WasmContract.ExUnits): void {
@@ -7205,7 +7200,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       maxTxExUnits(): Optional<WasmContract.ExUnits> {
         const ret = this.wasm.max_tx_ex_units();
         if (ret == null) return undefined;
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       setMaxBlockExUnits(maxBlockExUnits: WasmContract.ExUnits): void {
@@ -7215,7 +7210,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       maxBlockExUnits(): Optional<WasmContract.ExUnits> {
         const ret = this.wasm.max_block_ex_units();
         if (ret == null) return undefined;
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       setMaxValueSize(maxValueSize: number): void {
@@ -7249,7 +7244,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       poolVotingThresholds(): Optional<WasmContract.PoolVotingThresholds> {
         const ret = this.wasm.pool_voting_thresholds();
         if (ret == null) return undefined;
-        return new $outer.PoolVotingThresholds(ret, $outer._ctx);
+        return new $outer.PoolVotingThresholds(ret);
       }
 
       setDrepVotingThresholds(drepVotingThresholds: WasmContract.DRepVotingThresholds): void {
@@ -7259,7 +7254,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       drepVotingThresholds(): Optional<WasmContract.DRepVotingThresholds> {
         const ret = this.wasm.drep_voting_thresholds();
         if (ret == null) return undefined;
-        return new $outer.DRepVotingThresholds(ret, $outer._ctx);
+        return new $outer.DRepVotingThresholds(ret);
       }
 
       setMinCommitteeSize(minCommitteeSize: number): void {
@@ -7293,7 +7288,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       governanceActionDeposit(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.governance_action_deposit();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setDrepDeposit(drepDeposit: WasmContract.BigNum): void {
@@ -7303,7 +7298,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       drepDeposit(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.drep_deposit();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setDrepInactivityPeriod(drepInactivityPeriod: number): void {
@@ -7321,12 +7316,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       refScriptCoinsPerByte(): Optional<WasmContract.UnitInterval> {
         const ret = this.wasm.ref_script_coins_per_byte();
         if (ret == null) return undefined;
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       static new(): WasmContract.ProtocolParamUpdate {
         const ret = WasmV4.ProtocolParamUpdate.new();
-        return new $outer.ProtocolParamUpdate(ret, $outer._ctx);
+        return new $outer.ProtocolParamUpdate(ret);
       }
 
     }
@@ -7347,7 +7342,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ProtocolVersion {
         const ret = WasmV4.ProtocolVersion.from_bytes(bytes);
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       toHex(): string {
@@ -7356,7 +7351,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ProtocolVersion {
         const ret = WasmV4.ProtocolVersion.from_hex(hexStr);
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       toJson(): string {
@@ -7365,7 +7360,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ProtocolVersion {
         const ret = WasmV4.ProtocolVersion.from_json(json);
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
       major(): number {
@@ -7378,7 +7373,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(major: number, minor: number): WasmContract.ProtocolVersion {
         const ret = WasmV4.ProtocolVersion.new(major, minor);
-        return new $outer.ProtocolVersion(ret, $outer._ctx);
+        return new $outer.ProtocolVersion(ret);
       }
 
     }
@@ -7395,7 +7390,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bech32Str: string): WasmContract.PublicKey {
         const ret = WasmV4.PublicKey.from_bech32(bech32Str);
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
       toBech32(): string {
@@ -7408,7 +7403,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.PublicKey {
         const ret = WasmV4.PublicKey.from_bytes(bytes);
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
       verify(data: Uint8Array, signature: WasmContract.Ed25519Signature): boolean {
@@ -7417,7 +7412,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       hash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.hash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       toHex(): string {
@@ -7426,7 +7421,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.PublicKey {
         const ret = WasmV4.PublicKey.from_hex(hexStr);
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
     }
@@ -7443,7 +7438,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.PublicKeys {
         const ret = new WasmV4.PublicKeys();
-        return new $outer.PublicKeys(ret, $outer._ctx);
+        return new $outer.PublicKeys(ret);
       }
 
       size(): number {
@@ -7452,7 +7447,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.PublicKey {
         const ret = this.wasm.get(index);
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
       add(key: WasmContract.PublicKey): void {
@@ -7477,7 +7472,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Redeemer {
         const ret = WasmV4.Redeemer.from_bytes(bytes);
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
       toHex(): string {
@@ -7486,7 +7481,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Redeemer {
         const ret = WasmV4.Redeemer.from_hex(hexStr);
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
       toJson(): string {
@@ -7495,32 +7490,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Redeemer {
         const ret = WasmV4.Redeemer.from_json(json);
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
       tag(): WasmContract.RedeemerTag {
         const ret = this.wasm.tag();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       index(): WasmContract.BigNum {
         const ret = this.wasm.index();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       data(): WasmContract.PlutusData {
         const ret = this.wasm.data();
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       exUnits(): WasmContract.ExUnits {
         const ret = this.wasm.ex_units();
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
       static new(tag: WasmContract.RedeemerTag, index: WasmContract.BigNum, data: WasmContract.PlutusData, exUnits: WasmContract.ExUnits): WasmContract.Redeemer {
         const ret = WasmV4.Redeemer.new(tag.wasm, index.wasm, data.wasm, exUnits.wasm);
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
     }
@@ -7541,7 +7536,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.from_bytes(bytes);
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       toHex(): string {
@@ -7550,7 +7545,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.from_hex(hexStr);
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       toJson(): string {
@@ -7559,37 +7554,37 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.from_json(json);
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newSpend(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_spend();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newMint(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_mint();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newCert(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_cert();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newReward(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_reward();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newVote(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_vote();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       static newVotingProposal(): WasmContract.RedeemerTag {
         const ret = WasmV4.RedeemerTag.new_voting_proposal();
-        return new $outer.RedeemerTag(ret, $outer._ctx);
+        return new $outer.RedeemerTag(ret);
       }
 
       kind(): WasmContract.RedeemerTagKind {
@@ -7614,7 +7609,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Redeemers {
         const ret = WasmV4.Redeemers.from_bytes(bytes);
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       toHex(): string {
@@ -7623,7 +7618,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Redeemers {
         const ret = WasmV4.Redeemers.from_hex(hexStr);
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       toJson(): string {
@@ -7632,12 +7627,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Redeemers {
         const ret = WasmV4.Redeemers.from_json(json);
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       static new(): WasmContract.Redeemers {
         const ret = WasmV4.Redeemers.new();
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       len(): number {
@@ -7646,7 +7641,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Redeemer {
         const ret = this.wasm.get(index);
-        return new $outer.Redeemer(ret, $outer._ctx);
+        return new $outer.Redeemer(ret);
       }
 
       add(elem: WasmContract.Redeemer): void {
@@ -7659,7 +7654,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       totalExUnits(): WasmContract.ExUnits {
         const ret = this.wasm.total_ex_units();
-        return new $outer.ExUnits(ret, $outer._ctx);
+        return new $outer.ExUnits(ret);
       }
 
     }
@@ -7680,7 +7675,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Relay {
         const ret = WasmV4.Relay.from_bytes(bytes);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       toHex(): string {
@@ -7689,7 +7684,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Relay {
         const ret = WasmV4.Relay.from_hex(hexStr);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       toJson(): string {
@@ -7698,22 +7693,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Relay {
         const ret = WasmV4.Relay.from_json(json);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       static newSingleHostAddr(singleHostAddr: WasmContract.SingleHostAddr): WasmContract.Relay {
         const ret = WasmV4.Relay.new_single_host_addr(singleHostAddr.wasm);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       static newSingleHostName(singleHostName: WasmContract.SingleHostName): WasmContract.Relay {
         const ret = WasmV4.Relay.new_single_host_name(singleHostName.wasm);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       static newMultiHostName(multiHostName: WasmContract.MultiHostName): WasmContract.Relay {
         const ret = WasmV4.Relay.new_multi_host_name(multiHostName.wasm);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       kind(): WasmContract.RelayKind {
@@ -7723,19 +7718,19 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       asSingleHostAddr(): Optional<WasmContract.SingleHostAddr> {
         const ret = this.wasm.as_single_host_addr();
         if (ret == null) return undefined;
-        return new $outer.SingleHostAddr(ret, $outer._ctx);
+        return new $outer.SingleHostAddr(ret);
       }
 
       asSingleHostName(): Optional<WasmContract.SingleHostName> {
         const ret = this.wasm.as_single_host_name();
         if (ret == null) return undefined;
-        return new $outer.SingleHostName(ret, $outer._ctx);
+        return new $outer.SingleHostName(ret);
       }
 
       asMultiHostName(): Optional<WasmContract.MultiHostName> {
         const ret = this.wasm.as_multi_host_name();
         if (ret == null) return undefined;
-        return new $outer.MultiHostName(ret, $outer._ctx);
+        return new $outer.MultiHostName(ret);
       }
 
     }
@@ -7756,7 +7751,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Relays {
         const ret = WasmV4.Relays.from_bytes(bytes);
-        return new $outer.Relays(ret, $outer._ctx);
+        return new $outer.Relays(ret);
       }
 
       toHex(): string {
@@ -7765,7 +7760,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Relays {
         const ret = WasmV4.Relays.from_hex(hexStr);
-        return new $outer.Relays(ret, $outer._ctx);
+        return new $outer.Relays(ret);
       }
 
       toJson(): string {
@@ -7774,12 +7769,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Relays {
         const ret = WasmV4.Relays.from_json(json);
-        return new $outer.Relays(ret, $outer._ctx);
+        return new $outer.Relays(ret);
       }
 
       static new(): WasmContract.Relays {
         const ret = WasmV4.Relays.new();
-        return new $outer.Relays(ret, $outer._ctx);
+        return new $outer.Relays(ret);
       }
 
       len(): number {
@@ -7788,7 +7783,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Relay {
         const ret = this.wasm.get(index);
-        return new $outer.Relay(ret, $outer._ctx);
+        return new $outer.Relay(ret);
       }
 
       add(elem: WasmContract.Relay): void {
@@ -7809,23 +7804,23 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(network: number, payment: WasmContract.Credential): WasmContract.RewardAddress {
         const ret = WasmV4.RewardAddress.new(network, payment.wasm);
-        return new $outer.RewardAddress(ret, $outer._ctx);
+        return new $outer.RewardAddress(ret);
       }
 
       paymentCred(): WasmContract.Credential {
         const ret = this.wasm.payment_cred();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toAddress(): WasmContract.Address {
         const ret = this.wasm.to_address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       static fromAddress(addr: WasmContract.Address): Optional<WasmContract.RewardAddress> {
         const ret = WasmV4.RewardAddress.from_address(addr.wasm);
         if (ret == null) return undefined;
-        return new $outer.RewardAddress(ret, $outer._ctx);
+        return new $outer.RewardAddress(ret);
       }
 
       networkId(): number {
@@ -7850,7 +7845,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.RewardAddresses {
         const ret = WasmV4.RewardAddresses.from_bytes(bytes);
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
       toHex(): string {
@@ -7859,7 +7854,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.RewardAddresses {
         const ret = WasmV4.RewardAddresses.from_hex(hexStr);
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
       toJson(): string {
@@ -7868,12 +7863,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.RewardAddresses {
         const ret = WasmV4.RewardAddresses.from_json(json);
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
       static new(): WasmContract.RewardAddresses {
         const ret = WasmV4.RewardAddresses.new();
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
       len(): number {
@@ -7882,7 +7877,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.RewardAddress {
         const ret = this.wasm.get(index);
-        return new $outer.RewardAddress(ret, $outer._ctx);
+        return new $outer.RewardAddress(ret);
       }
 
       add(elem: WasmContract.RewardAddress): void {
@@ -7907,7 +7902,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptAll {
         const ret = WasmV4.ScriptAll.from_bytes(bytes);
-        return new $outer.ScriptAll(ret, $outer._ctx);
+        return new $outer.ScriptAll(ret);
       }
 
       toHex(): string {
@@ -7916,7 +7911,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptAll {
         const ret = WasmV4.ScriptAll.from_hex(hexStr);
-        return new $outer.ScriptAll(ret, $outer._ctx);
+        return new $outer.ScriptAll(ret);
       }
 
       toJson(): string {
@@ -7925,17 +7920,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptAll {
         const ret = WasmV4.ScriptAll.from_json(json);
-        return new $outer.ScriptAll(ret, $outer._ctx);
+        return new $outer.ScriptAll(ret);
       }
 
       nativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       static new(nativeScripts: WasmContract.NativeScripts): WasmContract.ScriptAll {
         const ret = WasmV4.ScriptAll.new(nativeScripts.wasm);
-        return new $outer.ScriptAll(ret, $outer._ctx);
+        return new $outer.ScriptAll(ret);
       }
 
     }
@@ -7956,7 +7951,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptAny {
         const ret = WasmV4.ScriptAny.from_bytes(bytes);
-        return new $outer.ScriptAny(ret, $outer._ctx);
+        return new $outer.ScriptAny(ret);
       }
 
       toHex(): string {
@@ -7965,7 +7960,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptAny {
         const ret = WasmV4.ScriptAny.from_hex(hexStr);
-        return new $outer.ScriptAny(ret, $outer._ctx);
+        return new $outer.ScriptAny(ret);
       }
 
       toJson(): string {
@@ -7974,17 +7969,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptAny {
         const ret = WasmV4.ScriptAny.from_json(json);
-        return new $outer.ScriptAny(ret, $outer._ctx);
+        return new $outer.ScriptAny(ret);
       }
 
       nativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       static new(nativeScripts: WasmContract.NativeScripts): WasmContract.ScriptAny {
         const ret = WasmV4.ScriptAny.new(nativeScripts.wasm);
-        return new $outer.ScriptAny(ret, $outer._ctx);
+        return new $outer.ScriptAny(ret);
       }
 
     }
@@ -8001,7 +7996,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptDataHash {
         const ret = WasmV4.ScriptDataHash.from_bytes(bytes);
-        return new $outer.ScriptDataHash(ret, $outer._ctx);
+        return new $outer.ScriptDataHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -8014,7 +8009,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.ScriptDataHash {
         const ret = WasmV4.ScriptDataHash.from_bech32(bechStr);
-        return new $outer.ScriptDataHash(ret, $outer._ctx);
+        return new $outer.ScriptDataHash(ret);
       }
 
       toHex(): string {
@@ -8023,7 +8018,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.ScriptDataHash {
         const ret = WasmV4.ScriptDataHash.from_hex(hex);
-        return new $outer.ScriptDataHash(ret, $outer._ctx);
+        return new $outer.ScriptDataHash(ret);
       }
 
     }
@@ -8040,7 +8035,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptHash {
         const ret = WasmV4.ScriptHash.from_bytes(bytes);
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -8053,7 +8048,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.ScriptHash {
         const ret = WasmV4.ScriptHash.from_bech32(bechStr);
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       toHex(): string {
@@ -8062,7 +8057,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.ScriptHash {
         const ret = WasmV4.ScriptHash.from_hex(hex);
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
     }
@@ -8083,7 +8078,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptHashes {
         const ret = WasmV4.ScriptHashes.from_bytes(bytes);
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       toHex(): string {
@@ -8092,7 +8087,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptHashes {
         const ret = WasmV4.ScriptHashes.from_hex(hexStr);
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       toJson(): string {
@@ -8101,12 +8096,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptHashes {
         const ret = WasmV4.ScriptHashes.from_json(json);
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       static new(): WasmContract.ScriptHashes {
         const ret = WasmV4.ScriptHashes.new();
-        return new $outer.ScriptHashes(ret, $outer._ctx);
+        return new $outer.ScriptHashes(ret);
       }
 
       len(): number {
@@ -8115,7 +8110,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.ScriptHash {
         const ret = this.wasm.get(index);
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       add(elem: WasmContract.ScriptHash): void {
@@ -8140,7 +8135,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptNOfK {
         const ret = WasmV4.ScriptNOfK.from_bytes(bytes);
-        return new $outer.ScriptNOfK(ret, $outer._ctx);
+        return new $outer.ScriptNOfK(ret);
       }
 
       toHex(): string {
@@ -8149,7 +8144,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptNOfK {
         const ret = WasmV4.ScriptNOfK.from_hex(hexStr);
-        return new $outer.ScriptNOfK(ret, $outer._ctx);
+        return new $outer.ScriptNOfK(ret);
       }
 
       toJson(): string {
@@ -8158,7 +8153,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptNOfK {
         const ret = WasmV4.ScriptNOfK.from_json(json);
-        return new $outer.ScriptNOfK(ret, $outer._ctx);
+        return new $outer.ScriptNOfK(ret);
       }
 
       n(): number {
@@ -8167,12 +8162,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       nativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       static new(n: number, nativeScripts: WasmContract.NativeScripts): WasmContract.ScriptNOfK {
         const ret = WasmV4.ScriptNOfK.new(n, nativeScripts.wasm);
-        return new $outer.ScriptNOfK(ret, $outer._ctx);
+        return new $outer.ScriptNOfK(ret);
       }
 
     }
@@ -8193,7 +8188,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptPubkey {
         const ret = WasmV4.ScriptPubkey.from_bytes(bytes);
-        return new $outer.ScriptPubkey(ret, $outer._ctx);
+        return new $outer.ScriptPubkey(ret);
       }
 
       toHex(): string {
@@ -8202,7 +8197,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptPubkey {
         const ret = WasmV4.ScriptPubkey.from_hex(hexStr);
-        return new $outer.ScriptPubkey(ret, $outer._ctx);
+        return new $outer.ScriptPubkey(ret);
       }
 
       toJson(): string {
@@ -8211,17 +8206,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptPubkey {
         const ret = WasmV4.ScriptPubkey.from_json(json);
-        return new $outer.ScriptPubkey(ret, $outer._ctx);
+        return new $outer.ScriptPubkey(ret);
       }
 
       addrKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.addr_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       static new(addrKeyhash: WasmContract.Ed25519KeyHash): WasmContract.ScriptPubkey {
         const ret = WasmV4.ScriptPubkey.new(addrKeyhash.wasm);
-        return new $outer.ScriptPubkey(ret, $outer._ctx);
+        return new $outer.ScriptPubkey(ret);
       }
 
     }
@@ -8242,7 +8237,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.ScriptRef {
         const ret = WasmV4.ScriptRef.from_bytes(bytes);
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       toHex(): string {
@@ -8251,7 +8246,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.ScriptRef {
         const ret = WasmV4.ScriptRef.from_hex(hexStr);
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       toJson(): string {
@@ -8260,17 +8255,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.ScriptRef {
         const ret = WasmV4.ScriptRef.from_json(json);
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       static newNativeScript(nativeScript: WasmContract.NativeScript): WasmContract.ScriptRef {
         const ret = WasmV4.ScriptRef.new_native_script(nativeScript.wasm);
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       static newPlutusScript(plutusScript: WasmContract.PlutusScript): WasmContract.ScriptRef {
         const ret = WasmV4.ScriptRef.new_plutus_script(plutusScript.wasm);
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       isNativeScript(): boolean {
@@ -8284,13 +8279,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       nativeScript(): Optional<WasmContract.NativeScript> {
         const ret = this.wasm.native_script();
         if (ret == null) return undefined;
-        return new $outer.NativeScript(ret, $outer._ctx);
+        return new $outer.NativeScript(ret);
       }
 
       plutusScript(): Optional<WasmContract.PlutusScript> {
         const ret = this.wasm.plutus_script();
         if (ret == null) return undefined;
-        return new $outer.PlutusScript(ret, $outer._ctx);
+        return new $outer.PlutusScript(ret);
       }
 
       toUnwrappedBytes(): Uint8Array {
@@ -8315,7 +8310,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.SingleHostAddr {
         const ret = WasmV4.SingleHostAddr.from_bytes(bytes);
-        return new $outer.SingleHostAddr(ret, $outer._ctx);
+        return new $outer.SingleHostAddr(ret);
       }
 
       toHex(): string {
@@ -8324,7 +8319,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.SingleHostAddr {
         const ret = WasmV4.SingleHostAddr.from_hex(hexStr);
-        return new $outer.SingleHostAddr(ret, $outer._ctx);
+        return new $outer.SingleHostAddr(ret);
       }
 
       toJson(): string {
@@ -8333,7 +8328,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.SingleHostAddr {
         const ret = WasmV4.SingleHostAddr.from_json(json);
-        return new $outer.SingleHostAddr(ret, $outer._ctx);
+        return new $outer.SingleHostAddr(ret);
       }
 
       port(): Optional<number> {
@@ -8343,18 +8338,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       ipv4(): Optional<WasmContract.Ipv4> {
         const ret = this.wasm.ipv4();
         if (ret == null) return undefined;
-        return new $outer.Ipv4(ret, $outer._ctx);
+        return new $outer.Ipv4(ret);
       }
 
       ipv6(): Optional<WasmContract.Ipv6> {
         const ret = this.wasm.ipv6();
         if (ret == null) return undefined;
-        return new $outer.Ipv6(ret, $outer._ctx);
+        return new $outer.Ipv6(ret);
       }
 
       static new(port: Optional<number>, ipv4: Optional<WasmContract.Ipv4>, ipv6: Optional<WasmContract.Ipv6>): WasmContract.SingleHostAddr {
         const ret = WasmV4.SingleHostAddr.new(port, ipv4?.wasm, ipv6?.wasm);
-        return new $outer.SingleHostAddr(ret, $outer._ctx);
+        return new $outer.SingleHostAddr(ret);
       }
 
     }
@@ -8375,7 +8370,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.SingleHostName {
         const ret = WasmV4.SingleHostName.from_bytes(bytes);
-        return new $outer.SingleHostName(ret, $outer._ctx);
+        return new $outer.SingleHostName(ret);
       }
 
       toHex(): string {
@@ -8384,7 +8379,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.SingleHostName {
         const ret = WasmV4.SingleHostName.from_hex(hexStr);
-        return new $outer.SingleHostName(ret, $outer._ctx);
+        return new $outer.SingleHostName(ret);
       }
 
       toJson(): string {
@@ -8393,7 +8388,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.SingleHostName {
         const ret = WasmV4.SingleHostName.from_json(json);
-        return new $outer.SingleHostName(ret, $outer._ctx);
+        return new $outer.SingleHostName(ret);
       }
 
       port(): Optional<number> {
@@ -8402,12 +8397,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       dnsName(): WasmContract.DNSRecordAorAAAA {
         const ret = this.wasm.dns_name();
-        return new $outer.DNSRecordAorAAAA(ret, $outer._ctx);
+        return new $outer.DNSRecordAorAAAA(ret);
       }
 
       static new(port: Optional<number>, dnsName: WasmContract.DNSRecordAorAAAA): WasmContract.SingleHostName {
         const ret = WasmV4.SingleHostName.new(port, dnsName.wasm);
-        return new $outer.SingleHostName(ret, $outer._ctx);
+        return new $outer.SingleHostName(ret);
       }
 
     }
@@ -8428,7 +8423,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeAndVoteDelegation {
         const ret = WasmV4.StakeAndVoteDelegation.from_bytes(bytes);
-        return new $outer.StakeAndVoteDelegation(ret, $outer._ctx);
+        return new $outer.StakeAndVoteDelegation(ret);
       }
 
       toHex(): string {
@@ -8437,7 +8432,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeAndVoteDelegation {
         const ret = WasmV4.StakeAndVoteDelegation.from_hex(hexStr);
-        return new $outer.StakeAndVoteDelegation(ret, $outer._ctx);
+        return new $outer.StakeAndVoteDelegation(ret);
       }
 
       toJson(): string {
@@ -8446,27 +8441,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeAndVoteDelegation {
         const ret = WasmV4.StakeAndVoteDelegation.from_json(json);
-        return new $outer.StakeAndVoteDelegation(ret, $outer._ctx);
+        return new $outer.StakeAndVoteDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       poolKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.pool_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       drep(): WasmContract.DRep {
         const ret = this.wasm.drep();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, poolKeyhash: WasmContract.Ed25519KeyHash, drep: WasmContract.DRep): WasmContract.StakeAndVoteDelegation {
         const ret = WasmV4.StakeAndVoteDelegation.new(stakeCredential.wasm, poolKeyhash.wasm, drep.wasm);
-        return new $outer.StakeAndVoteDelegation(ret, $outer._ctx);
+        return new $outer.StakeAndVoteDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8491,7 +8486,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeDelegation {
         const ret = WasmV4.StakeDelegation.from_bytes(bytes);
-        return new $outer.StakeDelegation(ret, $outer._ctx);
+        return new $outer.StakeDelegation(ret);
       }
 
       toHex(): string {
@@ -8500,7 +8495,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeDelegation {
         const ret = WasmV4.StakeDelegation.from_hex(hexStr);
-        return new $outer.StakeDelegation(ret, $outer._ctx);
+        return new $outer.StakeDelegation(ret);
       }
 
       toJson(): string {
@@ -8509,22 +8504,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeDelegation {
         const ret = WasmV4.StakeDelegation.from_json(json);
-        return new $outer.StakeDelegation(ret, $outer._ctx);
+        return new $outer.StakeDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       poolKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.pool_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, poolKeyhash: WasmContract.Ed25519KeyHash): WasmContract.StakeDelegation {
         const ret = WasmV4.StakeDelegation.new(stakeCredential.wasm, poolKeyhash.wasm);
-        return new $outer.StakeDelegation(ret, $outer._ctx);
+        return new $outer.StakeDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8549,7 +8544,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeDeregistration {
         const ret = WasmV4.StakeDeregistration.from_bytes(bytes);
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       toHex(): string {
@@ -8558,7 +8553,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeDeregistration {
         const ret = WasmV4.StakeDeregistration.from_hex(hexStr);
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       toJson(): string {
@@ -8567,28 +8562,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeDeregistration {
         const ret = WasmV4.StakeDeregistration.from_json(json);
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       coin(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.coin();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential): WasmContract.StakeDeregistration {
         const ret = WasmV4.StakeDeregistration.new(stakeCredential.wasm);
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       static newWithExplicitRefund(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): WasmContract.StakeDeregistration {
         const ret = WasmV4.StakeDeregistration.new_with_explicit_refund(stakeCredential.wasm, coin.wasm);
-        return new $outer.StakeDeregistration(ret, $outer._ctx);
+        return new $outer.StakeDeregistration(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8613,7 +8608,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeRegistration {
         const ret = WasmV4.StakeRegistration.from_bytes(bytes);
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       toHex(): string {
@@ -8622,7 +8617,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeRegistration {
         const ret = WasmV4.StakeRegistration.from_hex(hexStr);
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       toJson(): string {
@@ -8631,28 +8626,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeRegistration {
         const ret = WasmV4.StakeRegistration.from_json(json);
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       coin(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.coin();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential): WasmContract.StakeRegistration {
         const ret = WasmV4.StakeRegistration.new(stakeCredential.wasm);
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       static newWithExplicitDeposit(stakeCredential: WasmContract.Credential, coin: WasmContract.BigNum): WasmContract.StakeRegistration {
         const ret = WasmV4.StakeRegistration.new_with_explicit_deposit(stakeCredential.wasm, coin.wasm);
-        return new $outer.StakeRegistration(ret, $outer._ctx);
+        return new $outer.StakeRegistration(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8677,7 +8672,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeRegistrationAndDelegation {
         const ret = WasmV4.StakeRegistrationAndDelegation.from_bytes(bytes);
-        return new $outer.StakeRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeRegistrationAndDelegation(ret);
       }
 
       toHex(): string {
@@ -8686,7 +8681,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeRegistrationAndDelegation {
         const ret = WasmV4.StakeRegistrationAndDelegation.from_hex(hexStr);
-        return new $outer.StakeRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeRegistrationAndDelegation(ret);
       }
 
       toJson(): string {
@@ -8695,27 +8690,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeRegistrationAndDelegation {
         const ret = WasmV4.StakeRegistrationAndDelegation.from_json(json);
-        return new $outer.StakeRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeRegistrationAndDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       poolKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.pool_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, poolKeyhash: WasmContract.Ed25519KeyHash, coin: WasmContract.BigNum): WasmContract.StakeRegistrationAndDelegation {
         const ret = WasmV4.StakeRegistrationAndDelegation.new(stakeCredential.wasm, poolKeyhash.wasm, coin.wasm);
-        return new $outer.StakeRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeRegistrationAndDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8740,7 +8735,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.StakeVoteRegistrationAndDelegation {
         const ret = WasmV4.StakeVoteRegistrationAndDelegation.from_bytes(bytes);
-        return new $outer.StakeVoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeVoteRegistrationAndDelegation(ret);
       }
 
       toHex(): string {
@@ -8749,7 +8744,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.StakeVoteRegistrationAndDelegation {
         const ret = WasmV4.StakeVoteRegistrationAndDelegation.from_hex(hexStr);
-        return new $outer.StakeVoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeVoteRegistrationAndDelegation(ret);
       }
 
       toJson(): string {
@@ -8758,32 +8753,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.StakeVoteRegistrationAndDelegation {
         const ret = WasmV4.StakeVoteRegistrationAndDelegation.from_json(json);
-        return new $outer.StakeVoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeVoteRegistrationAndDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       poolKeyhash(): WasmContract.Ed25519KeyHash {
         const ret = this.wasm.pool_keyhash();
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       drep(): WasmContract.DRep {
         const ret = this.wasm.drep();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, poolKeyhash: WasmContract.Ed25519KeyHash, drep: WasmContract.DRep, coin: WasmContract.BigNum): WasmContract.StakeVoteRegistrationAndDelegation {
         const ret = WasmV4.StakeVoteRegistrationAndDelegation.new(stakeCredential.wasm, poolKeyhash.wasm, drep.wasm, coin.wasm);
-        return new $outer.StakeVoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.StakeVoteRegistrationAndDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -8804,7 +8799,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.Strings {
         const ret = WasmV4.Strings.new();
-        return new $outer.Strings(ret, $outer._ctx);
+        return new $outer.Strings(ret);
       }
 
       len(): number {
@@ -8837,7 +8832,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TimelockExpiry {
         const ret = WasmV4.TimelockExpiry.from_bytes(bytes);
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
       toHex(): string {
@@ -8846,7 +8841,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TimelockExpiry {
         const ret = WasmV4.TimelockExpiry.from_hex(hexStr);
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
       toJson(): string {
@@ -8855,7 +8850,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TimelockExpiry {
         const ret = WasmV4.TimelockExpiry.from_json(json);
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
       slot(): number {
@@ -8864,17 +8859,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       slotBignum(): WasmContract.BigNum {
         const ret = this.wasm.slot_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(slot: number): WasmContract.TimelockExpiry {
         const ret = WasmV4.TimelockExpiry.new(slot);
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
       static newTimelockexpiry(slot: WasmContract.BigNum): WasmContract.TimelockExpiry {
         const ret = WasmV4.TimelockExpiry.new_timelockexpiry(slot.wasm);
-        return new $outer.TimelockExpiry(ret, $outer._ctx);
+        return new $outer.TimelockExpiry(ret);
       }
 
     }
@@ -8895,7 +8890,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TimelockStart {
         const ret = WasmV4.TimelockStart.from_bytes(bytes);
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
       toHex(): string {
@@ -8904,7 +8899,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TimelockStart {
         const ret = WasmV4.TimelockStart.from_hex(hexStr);
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
       toJson(): string {
@@ -8913,7 +8908,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TimelockStart {
         const ret = WasmV4.TimelockStart.from_json(json);
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
       slot(): number {
@@ -8922,17 +8917,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       slotBignum(): WasmContract.BigNum {
         const ret = this.wasm.slot_bignum();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(slot: number): WasmContract.TimelockStart {
         const ret = WasmV4.TimelockStart.new(slot);
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
       static newTimelockstart(slot: WasmContract.BigNum): WasmContract.TimelockStart {
         const ret = WasmV4.TimelockStart.new_timelockstart(slot.wasm);
-        return new $outer.TimelockStart(ret, $outer._ctx);
+        return new $outer.TimelockStart(ret);
       }
 
     }
@@ -8953,7 +8948,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Transaction {
         const ret = WasmV4.Transaction.from_bytes(bytes);
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
       toHex(): string {
@@ -8962,7 +8957,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Transaction {
         const ret = WasmV4.Transaction.from_hex(hexStr);
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
       toJson(): string {
@@ -8971,17 +8966,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Transaction {
         const ret = WasmV4.Transaction.from_json(json);
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
       body(): WasmContract.TransactionBody {
         const ret = this.wasm.body();
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       witnessSet(): WasmContract.TransactionWitnessSet {
         const ret = this.wasm.witness_set();
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       isValid(): boolean {
@@ -8991,7 +8986,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       auxiliaryData(): Optional<WasmContract.AuxiliaryData> {
         const ret = this.wasm.auxiliary_data();
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       setIsValid(valid: boolean): void {
@@ -9000,7 +8995,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(body: WasmContract.TransactionBody, witnessSet: WasmContract.TransactionWitnessSet, auxiliaryData: Optional<WasmContract.AuxiliaryData>): WasmContract.Transaction {
         const ret = WasmV4.Transaction.new(body.wasm, witnessSet.wasm, auxiliaryData?.wasm);
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
     }
@@ -9021,7 +9016,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Transaction {
         const ret = this.wasm.get(index);
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
     }
@@ -9042,7 +9037,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionBatch {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionBatch(ret, $outer._ctx);
+        return new $outer.TransactionBatch(ret);
       }
 
     }
@@ -9063,7 +9058,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionBodies {
         const ret = WasmV4.TransactionBodies.from_bytes(bytes);
-        return new $outer.TransactionBodies(ret, $outer._ctx);
+        return new $outer.TransactionBodies(ret);
       }
 
       toHex(): string {
@@ -9072,7 +9067,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionBodies {
         const ret = WasmV4.TransactionBodies.from_hex(hexStr);
-        return new $outer.TransactionBodies(ret, $outer._ctx);
+        return new $outer.TransactionBodies(ret);
       }
 
       toJson(): string {
@@ -9081,12 +9076,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionBodies {
         const ret = WasmV4.TransactionBodies.from_json(json);
-        return new $outer.TransactionBodies(ret, $outer._ctx);
+        return new $outer.TransactionBodies(ret);
       }
 
       static new(): WasmContract.TransactionBodies {
         const ret = WasmV4.TransactionBodies.new();
-        return new $outer.TransactionBodies(ret, $outer._ctx);
+        return new $outer.TransactionBodies(ret);
       }
 
       len(): number {
@@ -9095,7 +9090,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionBody {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       add(elem: WasmContract.TransactionBody): void {
@@ -9120,7 +9115,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionBody {
         const ret = WasmV4.TransactionBody.from_bytes(bytes);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       toHex(): string {
@@ -9129,7 +9124,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionBody {
         const ret = WasmV4.TransactionBody.from_hex(hexStr);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       toJson(): string {
@@ -9138,22 +9133,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionBody {
         const ret = WasmV4.TransactionBody.from_json(json);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       inputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       outputs(): WasmContract.TransactionOutputs {
         const ret = this.wasm.outputs();
-        return new $outer.TransactionOutputs(ret, $outer._ctx);
+        return new $outer.TransactionOutputs(ret);
       }
 
       fee(): WasmContract.BigNum {
         const ret = this.wasm.fee();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       ttl(): Optional<number> {
@@ -9163,7 +9158,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       ttlBignum(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.ttl_bignum();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setTtl(ttl: WasmContract.BigNum): void {
@@ -9181,7 +9176,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       certs(): Optional<WasmContract.Certificates> {
         const ret = this.wasm.certs();
         if (ret == null) return undefined;
-        return new $outer.Certificates(ret, $outer._ctx);
+        return new $outer.Certificates(ret);
       }
 
       setWithdrawals(withdrawals: WasmContract.Withdrawals): void {
@@ -9191,7 +9186,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       withdrawals(): Optional<WasmContract.Withdrawals> {
         const ret = this.wasm.withdrawals();
         if (ret == null) return undefined;
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
       setUpdate(update: WasmContract.Update): void {
@@ -9201,7 +9196,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       update(): Optional<WasmContract.Update> {
         const ret = this.wasm.update();
         if (ret == null) return undefined;
-        return new $outer.Update(ret, $outer._ctx);
+        return new $outer.Update(ret);
       }
 
       setAuxiliaryDataHash(auxiliaryDataHash: WasmContract.AuxiliaryDataHash): void {
@@ -9211,7 +9206,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       auxiliaryDataHash(): Optional<WasmContract.AuxiliaryDataHash> {
         const ret = this.wasm.auxiliary_data_hash();
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryDataHash(ret, $outer._ctx);
+        return new $outer.AuxiliaryDataHash(ret);
       }
 
       setValidityStartInterval(validityStartInterval: number): void {
@@ -9225,7 +9220,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       validityStartIntervalBignum(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.validity_start_interval_bignum();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       validityStartInterval(): Optional<number> {
@@ -9239,7 +9234,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       mint(): Optional<WasmContract.Mint> {
         const ret = this.wasm.mint();
         if (ret == null) return undefined;
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       setReferenceInputs(referenceInputs: WasmContract.TransactionInputs): void {
@@ -9249,7 +9244,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       referenceInputs(): Optional<WasmContract.TransactionInputs> {
         const ret = this.wasm.reference_inputs();
         if (ret == null) return undefined;
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       setScriptDataHash(scriptDataHash: WasmContract.ScriptDataHash): void {
@@ -9259,7 +9254,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       scriptDataHash(): Optional<WasmContract.ScriptDataHash> {
         const ret = this.wasm.script_data_hash();
         if (ret == null) return undefined;
-        return new $outer.ScriptDataHash(ret, $outer._ctx);
+        return new $outer.ScriptDataHash(ret);
       }
 
       setCollateral(collateral: WasmContract.TransactionInputs): void {
@@ -9269,7 +9264,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       collateral(): Optional<WasmContract.TransactionInputs> {
         const ret = this.wasm.collateral();
         if (ret == null) return undefined;
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       setRequiredSigners(requiredSigners: WasmContract.Ed25519KeyHashes): void {
@@ -9279,7 +9274,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       requiredSigners(): Optional<WasmContract.Ed25519KeyHashes> {
         const ret = this.wasm.required_signers();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHashes(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHashes(ret);
       }
 
       setNetworkId(networkId: WasmContract.NetworkId): void {
@@ -9289,7 +9284,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       networkId(): Optional<WasmContract.NetworkId> {
         const ret = this.wasm.network_id();
         if (ret == null) return undefined;
-        return new $outer.NetworkId(ret, $outer._ctx);
+        return new $outer.NetworkId(ret);
       }
 
       setCollateralReturn(collateralReturn: WasmContract.TransactionOutput): void {
@@ -9299,7 +9294,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       collateralReturn(): Optional<WasmContract.TransactionOutput> {
         const ret = this.wasm.collateral_return();
         if (ret == null) return undefined;
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       setTotalCollateral(totalCollateral: WasmContract.BigNum): void {
@@ -9309,7 +9304,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       totalCollateral(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.total_collateral();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setVotingProcedures(votingProcedures: WasmContract.VotingProcedures): void {
@@ -9319,7 +9314,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       votingProcedures(): Optional<WasmContract.VotingProcedures> {
         const ret = this.wasm.voting_procedures();
         if (ret == null) return undefined;
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
       setVotingProposals(votingProposals: WasmContract.VotingProposals): void {
@@ -9329,7 +9324,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       votingProposals(): Optional<WasmContract.VotingProposals> {
         const ret = this.wasm.voting_proposals();
         if (ret == null) return undefined;
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
       setDonation(donation: WasmContract.BigNum): void {
@@ -9339,7 +9334,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       donation(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.donation();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setCurrentTreasuryValue(currentTreasuryValue: WasmContract.BigNum): void {
@@ -9349,17 +9344,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       currentTreasuryValue(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.current_treasury_value();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(inputs: WasmContract.TransactionInputs, outputs: WasmContract.TransactionOutputs, fee: WasmContract.BigNum, ttl: Optional<number>): WasmContract.TransactionBody {
         const ret = WasmV4.TransactionBody.new(inputs.wasm, outputs.wasm, fee.wasm, ttl);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       static newTxBody(inputs: WasmContract.TransactionInputs, outputs: WasmContract.TransactionOutputs, fee: WasmContract.BigNum): WasmContract.TransactionBody {
         const ret = WasmV4.TransactionBody.new_tx_body(inputs.wasm, outputs.wasm, fee.wasm);
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
     }
@@ -9449,18 +9444,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getNativeInputScripts(): Optional<WasmContract.NativeScripts> {
         const ret = this.wasm.get_native_input_scripts();
         if (ret == null) return undefined;
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       getPlutusInputScripts(): Optional<WasmContract.PlutusWitnesses> {
         const ret = this.wasm.get_plutus_input_scripts();
         if (ret == null) return undefined;
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       feeForInput(address: WasmContract.Address, input: WasmContract.TransactionInput, amount: WasmContract.Value): WasmContract.BigNum {
         const ret = this.wasm.fee_for_input(address.wasm, input.wasm, amount.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       addOutput(output: WasmContract.TransactionOutput): void {
@@ -9469,7 +9464,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       feeForOutput(output: WasmContract.TransactionOutput): WasmContract.BigNum {
         const ret = this.wasm.fee_for_output(output.wasm);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setFee(fee: WasmContract.BigNum): void {
@@ -9539,7 +9534,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getAuxiliaryData(): Optional<WasmContract.AuxiliaryData> {
         const ret = this.wasm.get_auxiliary_data();
         if (ret == null) return undefined;
-        return new $outer.AuxiliaryData(ret, $outer._ctx);
+        return new $outer.AuxiliaryData(ret);
       }
 
       setAuxiliaryData(auxiliaryData: WasmContract.AuxiliaryData): void {
@@ -9577,7 +9572,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getMintBuilder(): Optional<WasmContract.MintBuilder> {
         const ret = this.wasm.get_mint_builder();
         if (ret == null) return undefined;
-        return new $outer.MintBuilder(ret, $outer._ctx);
+        return new $outer.MintBuilder(ret);
       }
 
       setMint(mint: WasmContract.Mint, mintScripts: WasmContract.NativeScripts): void {
@@ -9587,13 +9582,13 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getMint(): Optional<WasmContract.Mint> {
         const ret = this.wasm.get_mint();
         if (ret == null) return undefined;
-        return new $outer.Mint(ret, $outer._ctx);
+        return new $outer.Mint(ret);
       }
 
       getMintScripts(): Optional<WasmContract.NativeScripts> {
         const ret = this.wasm.get_mint_scripts();
         if (ret == null) return undefined;
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       setMintAsset(policyScript: WasmContract.NativeScript, mintAssets: WasmContract.MintAssets): void {
@@ -9619,7 +9614,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getExtraWitnessDatums(): Optional<WasmContract.PlutusList> {
         const ret = this.wasm.get_extra_witness_datums();
         if (ret == null) return undefined;
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       setDonation(donation: WasmContract.BigNum): void {
@@ -9629,7 +9624,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getDonation(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get_donation();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setCurrentTreasuryValue(currentTreasuryValue: WasmContract.BigNum): void {
@@ -9639,53 +9634,53 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       getCurrentTreasuryValue(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get_current_treasury_value();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(cfg: WasmContract.TransactionBuilderConfig): WasmContract.TransactionBuilder {
         const ret = WasmV4.TransactionBuilder.new(cfg.wasm);
-        return new $outer.TransactionBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilder(ret);
       }
 
       getReferenceInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_reference_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getExplicitInput(): WasmContract.Value {
         const ret = this.wasm.get_explicit_input();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getImplicitInput(): WasmContract.Value {
         const ret = this.wasm.get_implicit_input();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getTotalInput(): WasmContract.Value {
         const ret = this.wasm.get_total_input();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getTotalOutput(): WasmContract.Value {
         const ret = this.wasm.get_total_output();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getExplicitOutput(): WasmContract.Value {
         const ret = this.wasm.get_explicit_output();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       getDeposit(): WasmContract.BigNum {
         const ret = this.wasm.get_deposit();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       getFeeIfSet(): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get_fee_if_set();
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       addChangeIfNeeded(address: WasmContract.Address): boolean {
@@ -9722,22 +9717,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.TransactionBody {
         const ret = this.wasm.build();
-        return new $outer.TransactionBody(ret, $outer._ctx);
+        return new $outer.TransactionBody(ret);
       }
 
       buildTx(): WasmContract.Transaction {
         const ret = this.wasm.build_tx();
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
       buildTxUnsafe(): WasmContract.Transaction {
         const ret = this.wasm.build_tx_unsafe();
-        return new $outer.Transaction(ret, $outer._ctx);
+        return new $outer.Transaction(ret);
       }
 
       minFee(): WasmContract.BigNum {
         const ret = this.wasm.min_fee();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
     }
@@ -9766,67 +9761,67 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.TransactionBuilderConfigBuilder {
         const ret = WasmV4.TransactionBuilderConfigBuilder.new();
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       feeAlgo(feeAlgo: WasmContract.LinearFee): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.fee_algo(feeAlgo.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       coinsPerUtxoByte(coinsPerUtxoByte: WasmContract.BigNum): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.coins_per_utxo_byte(coinsPerUtxoByte.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       exUnitPrices(exUnitPrices: WasmContract.ExUnitPrices): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.ex_unit_prices(exUnitPrices.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       poolDeposit(poolDeposit: WasmContract.BigNum): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.pool_deposit(poolDeposit.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       keyDeposit(keyDeposit: WasmContract.BigNum): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.key_deposit(keyDeposit.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       maxValueSize(maxValueSize: number): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.max_value_size(maxValueSize);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       maxTxSize(maxTxSize: number): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.max_tx_size(maxTxSize);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       refScriptCoinsPerByte(refScriptCoinsPerByte: WasmContract.UnitInterval): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.ref_script_coins_per_byte(refScriptCoinsPerByte.wasm);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       preferPureChange(preferPureChange: boolean): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.prefer_pure_change(preferPureChange);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       deduplicateExplicitRefInputsWithRegularInputs(deduplicateExplicitRefInputsWithRegularInputs: boolean): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.deduplicate_explicit_ref_inputs_with_regular_inputs(deduplicateExplicitRefInputsWithRegularInputs);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       doNotBurnExtraChange(doNotBurnExtraChange: boolean): WasmContract.TransactionBuilderConfigBuilder {
         const ret = this.wasm.do_not_burn_extra_change(doNotBurnExtraChange);
-        return new $outer.TransactionBuilderConfigBuilder(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfigBuilder(ret);
       }
 
       build(): WasmContract.TransactionBuilderConfig {
         const ret = this.wasm.build();
-        return new $outer.TransactionBuilderConfig(ret, $outer._ctx);
+        return new $outer.TransactionBuilderConfig(ret);
       }
 
     }
@@ -9843,7 +9838,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionHash {
         const ret = WasmV4.TransactionHash.from_bytes(bytes);
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -9856,7 +9851,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.TransactionHash {
         const ret = WasmV4.TransactionHash.from_bech32(bechStr);
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       toHex(): string {
@@ -9865,7 +9860,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.TransactionHash {
         const ret = WasmV4.TransactionHash.from_hex(hex);
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
     }
@@ -9886,7 +9881,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionInput {
         const ret = WasmV4.TransactionInput.from_bytes(bytes);
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
       toHex(): string {
@@ -9895,7 +9890,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionInput {
         const ret = WasmV4.TransactionInput.from_hex(hexStr);
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
       toJson(): string {
@@ -9904,12 +9899,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionInput {
         const ret = WasmV4.TransactionInput.from_json(json);
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
       transactionId(): WasmContract.TransactionHash {
         const ret = this.wasm.transaction_id();
-        return new $outer.TransactionHash(ret, $outer._ctx);
+        return new $outer.TransactionHash(ret);
       }
 
       index(): number {
@@ -9918,7 +9913,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(transactionId: WasmContract.TransactionHash, index: number): WasmContract.TransactionInput {
         const ret = WasmV4.TransactionInput.new(transactionId.wasm, index);
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
     }
@@ -9939,7 +9934,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionInputs {
         const ret = WasmV4.TransactionInputs.from_bytes(bytes);
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       toHex(): string {
@@ -9948,7 +9943,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionInputs {
         const ret = WasmV4.TransactionInputs.from_hex(hexStr);
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       toJson(): string {
@@ -9957,12 +9952,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionInputs {
         const ret = WasmV4.TransactionInputs.from_json(json);
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       static new(): WasmContract.TransactionInputs {
         const ret = WasmV4.TransactionInputs.new();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       len(): number {
@@ -9971,7 +9966,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionInput {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
       add(input: WasmContract.TransactionInput): boolean {
@@ -9981,7 +9976,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toOption(): Optional<WasmContract.TransactionInputs> {
         const ret = this.wasm.to_option();
         if (ret == null) return undefined;
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
     }
@@ -10002,7 +9997,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.from_bytes(bytes);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       toHex(): string {
@@ -10011,32 +10006,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.from_hex(hexStr);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       static newMap(map: WasmContract.MetadataMap): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.new_map(map.wasm);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       static newList(list: WasmContract.MetadataList): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.new_list(list.wasm);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       static newInt(intValue: WasmContract.Int): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.new_int(intValue.wasm);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       static newBytes(bytes: Uint8Array): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.new_bytes(bytes);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       static newText(text: string): WasmContract.TransactionMetadatum {
         const ret = WasmV4.TransactionMetadatum.new_text(text);
-        return new $outer.TransactionMetadatum(ret, $outer._ctx);
+        return new $outer.TransactionMetadatum(ret);
       }
 
       kind(): WasmContract.TransactionMetadatumKind {
@@ -10045,17 +10040,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       asMap(): WasmContract.MetadataMap {
         const ret = this.wasm.as_map();
-        return new $outer.MetadataMap(ret, $outer._ctx);
+        return new $outer.MetadataMap(ret);
       }
 
       asList(): WasmContract.MetadataList {
         const ret = this.wasm.as_list();
-        return new $outer.MetadataList(ret, $outer._ctx);
+        return new $outer.MetadataList(ret);
       }
 
       asInt(): WasmContract.Int {
         const ret = this.wasm.as_int();
-        return new $outer.Int(ret, $outer._ctx);
+        return new $outer.Int(ret);
       }
 
       asBytes(): Uint8Array {
@@ -10084,7 +10079,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionMetadatumLabels {
         const ret = WasmV4.TransactionMetadatumLabels.from_bytes(bytes);
-        return new $outer.TransactionMetadatumLabels(ret, $outer._ctx);
+        return new $outer.TransactionMetadatumLabels(ret);
       }
 
       toHex(): string {
@@ -10093,12 +10088,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionMetadatumLabels {
         const ret = WasmV4.TransactionMetadatumLabels.from_hex(hexStr);
-        return new $outer.TransactionMetadatumLabels(ret, $outer._ctx);
+        return new $outer.TransactionMetadatumLabels(ret);
       }
 
       static new(): WasmContract.TransactionMetadatumLabels {
         const ret = WasmV4.TransactionMetadatumLabels.new();
-        return new $outer.TransactionMetadatumLabels(ret, $outer._ctx);
+        return new $outer.TransactionMetadatumLabels(ret);
       }
 
       len(): number {
@@ -10107,7 +10102,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.BigNum {
         const ret = this.wasm.get(index);
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       add(elem: WasmContract.BigNum): void {
@@ -10132,7 +10127,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionOutput {
         const ret = WasmV4.TransactionOutput.from_bytes(bytes);
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       toHex(): string {
@@ -10141,7 +10136,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionOutput {
         const ret = WasmV4.TransactionOutput.from_hex(hexStr);
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       toJson(): string {
@@ -10150,35 +10145,35 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionOutput {
         const ret = WasmV4.TransactionOutput.from_json(json);
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       address(): WasmContract.Address {
         const ret = this.wasm.address();
-        return new $outer.Address(ret, $outer._ctx);
+        return new $outer.Address(ret);
       }
 
       amount(): WasmContract.Value {
         const ret = this.wasm.amount();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       dataHash(): Optional<WasmContract.DataHash> {
         const ret = this.wasm.data_hash();
         if (ret == null) return undefined;
-        return new $outer.DataHash(ret, $outer._ctx);
+        return new $outer.DataHash(ret);
       }
 
       plutusData(): Optional<WasmContract.PlutusData> {
         const ret = this.wasm.plutus_data();
         if (ret == null) return undefined;
-        return new $outer.PlutusData(ret, $outer._ctx);
+        return new $outer.PlutusData(ret);
       }
 
       scriptRef(): Optional<WasmContract.ScriptRef> {
         const ret = this.wasm.script_ref();
         if (ret == null) return undefined;
-        return new $outer.ScriptRef(ret, $outer._ctx);
+        return new $outer.ScriptRef(ret);
       }
 
       setScriptRef(scriptRef: WasmContract.ScriptRef): void {
@@ -10207,7 +10202,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(address: WasmContract.Address, amount: WasmContract.Value): WasmContract.TransactionOutput {
         const ret = WasmV4.TransactionOutput.new(address.wasm, amount.wasm);
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       serializationFormat(): Optional<WasmContract.CborContainerType> {
@@ -10228,27 +10223,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       withValue(amount: WasmContract.Value): WasmContract.TransactionOutputAmountBuilder {
         const ret = this.wasm.with_value(amount.wasm);
-        return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputAmountBuilder(ret);
       }
 
       withCoin(coin: WasmContract.BigNum): WasmContract.TransactionOutputAmountBuilder {
         const ret = this.wasm.with_coin(coin.wasm);
-        return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputAmountBuilder(ret);
       }
 
       withCoinAndAsset(coin: WasmContract.BigNum, multiasset: WasmContract.MultiAsset): WasmContract.TransactionOutputAmountBuilder {
         const ret = this.wasm.with_coin_and_asset(coin.wasm, multiasset.wasm);
-        return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputAmountBuilder(ret);
       }
 
       withAssetAndMinRequiredCoinByUtxoCost(multiasset: WasmContract.MultiAsset, dataCost: WasmContract.DataCost): WasmContract.TransactionOutputAmountBuilder {
         const ret = this.wasm.with_asset_and_min_required_coin_by_utxo_cost(multiasset.wasm, dataCost.wasm);
-        return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputAmountBuilder(ret);
       }
 
       build(): WasmContract.TransactionOutput {
         const ret = this.wasm.build();
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
     }
@@ -10265,32 +10260,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.TransactionOutputBuilder {
         const ret = WasmV4.TransactionOutputBuilder.new();
-        return new $outer.TransactionOutputBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputBuilder(ret);
       }
 
       withAddress(address: WasmContract.Address): WasmContract.TransactionOutputBuilder {
         const ret = this.wasm.with_address(address.wasm);
-        return new $outer.TransactionOutputBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputBuilder(ret);
       }
 
       withDataHash(dataHash: WasmContract.DataHash): WasmContract.TransactionOutputBuilder {
         const ret = this.wasm.with_data_hash(dataHash.wasm);
-        return new $outer.TransactionOutputBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputBuilder(ret);
       }
 
       withPlutusData(data: WasmContract.PlutusData): WasmContract.TransactionOutputBuilder {
         const ret = this.wasm.with_plutus_data(data.wasm);
-        return new $outer.TransactionOutputBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputBuilder(ret);
       }
 
       withScriptRef(scriptRef: WasmContract.ScriptRef): WasmContract.TransactionOutputBuilder {
         const ret = this.wasm.with_script_ref(scriptRef.wasm);
-        return new $outer.TransactionOutputBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputBuilder(ret);
       }
 
       next(): WasmContract.TransactionOutputAmountBuilder {
         const ret = this.wasm.next();
-        return new $outer.TransactionOutputAmountBuilder(ret, $outer._ctx);
+        return new $outer.TransactionOutputAmountBuilder(ret);
       }
 
     }
@@ -10311,7 +10306,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionOutputs {
         const ret = WasmV4.TransactionOutputs.from_bytes(bytes);
-        return new $outer.TransactionOutputs(ret, $outer._ctx);
+        return new $outer.TransactionOutputs(ret);
       }
 
       toHex(): string {
@@ -10320,7 +10315,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionOutputs {
         const ret = WasmV4.TransactionOutputs.from_hex(hexStr);
-        return new $outer.TransactionOutputs(ret, $outer._ctx);
+        return new $outer.TransactionOutputs(ret);
       }
 
       toJson(): string {
@@ -10329,12 +10324,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionOutputs {
         const ret = WasmV4.TransactionOutputs.from_json(json);
-        return new $outer.TransactionOutputs(ret, $outer._ctx);
+        return new $outer.TransactionOutputs(ret);
       }
 
       static new(): WasmContract.TransactionOutputs {
         const ret = WasmV4.TransactionOutputs.new();
-        return new $outer.TransactionOutputs(ret, $outer._ctx);
+        return new $outer.TransactionOutputs(ret);
       }
 
       len(): number {
@@ -10343,7 +10338,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionOutput {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
       add(elem: WasmContract.TransactionOutput): void {
@@ -10368,7 +10363,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionUnspentOutput {
         const ret = WasmV4.TransactionUnspentOutput.from_bytes(bytes);
-        return new $outer.TransactionUnspentOutput(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutput(ret);
       }
 
       toHex(): string {
@@ -10377,7 +10372,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionUnspentOutput {
         const ret = WasmV4.TransactionUnspentOutput.from_hex(hexStr);
-        return new $outer.TransactionUnspentOutput(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutput(ret);
       }
 
       toJson(): string {
@@ -10386,22 +10381,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionUnspentOutput {
         const ret = WasmV4.TransactionUnspentOutput.from_json(json);
-        return new $outer.TransactionUnspentOutput(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutput(ret);
       }
 
       static new(input: WasmContract.TransactionInput, output: WasmContract.TransactionOutput): WasmContract.TransactionUnspentOutput {
         const ret = WasmV4.TransactionUnspentOutput.new(input.wasm, output.wasm);
-        return new $outer.TransactionUnspentOutput(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutput(ret);
       }
 
       input(): WasmContract.TransactionInput {
         const ret = this.wasm.input();
-        return new $outer.TransactionInput(ret, $outer._ctx);
+        return new $outer.TransactionInput(ret);
       }
 
       output(): WasmContract.TransactionOutput {
         const ret = this.wasm.output();
-        return new $outer.TransactionOutput(ret, $outer._ctx);
+        return new $outer.TransactionOutput(ret);
       }
 
     }
@@ -10422,12 +10417,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionUnspentOutputs {
         const ret = WasmV4.TransactionUnspentOutputs.from_json(json);
-        return new $outer.TransactionUnspentOutputs(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutputs(ret);
       }
 
       static new(): WasmContract.TransactionUnspentOutputs {
         const ret = WasmV4.TransactionUnspentOutputs.new();
-        return new $outer.TransactionUnspentOutputs(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutputs(ret);
       }
 
       len(): number {
@@ -10436,7 +10431,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionUnspentOutput {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionUnspentOutput(ret, $outer._ctx);
+        return new $outer.TransactionUnspentOutput(ret);
       }
 
       add(elem: WasmContract.TransactionUnspentOutput): void {
@@ -10461,7 +10456,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionWitnessSet {
         const ret = WasmV4.TransactionWitnessSet.from_bytes(bytes);
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       toHex(): string {
@@ -10470,7 +10465,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionWitnessSet {
         const ret = WasmV4.TransactionWitnessSet.from_hex(hexStr);
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       toJson(): string {
@@ -10479,7 +10474,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionWitnessSet {
         const ret = WasmV4.TransactionWitnessSet.from_json(json);
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       setVkeys(vkeys: WasmContract.Vkeywitnesses): void {
@@ -10489,7 +10484,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       vkeys(): Optional<WasmContract.Vkeywitnesses> {
         const ret = this.wasm.vkeys();
         if (ret == null) return undefined;
-        return new $outer.Vkeywitnesses(ret, $outer._ctx);
+        return new $outer.Vkeywitnesses(ret);
       }
 
       setNativeScripts(nativeScripts: WasmContract.NativeScripts): void {
@@ -10499,7 +10494,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       nativeScripts(): Optional<WasmContract.NativeScripts> {
         const ret = this.wasm.native_scripts();
         if (ret == null) return undefined;
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       setBootstraps(bootstraps: WasmContract.BootstrapWitnesses): void {
@@ -10509,7 +10504,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       bootstraps(): Optional<WasmContract.BootstrapWitnesses> {
         const ret = this.wasm.bootstraps();
         if (ret == null) return undefined;
-        return new $outer.BootstrapWitnesses(ret, $outer._ctx);
+        return new $outer.BootstrapWitnesses(ret);
       }
 
       setPlutusScripts(plutusScripts: WasmContract.PlutusScripts): void {
@@ -10519,7 +10514,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       plutusScripts(): Optional<WasmContract.PlutusScripts> {
         const ret = this.wasm.plutus_scripts();
         if (ret == null) return undefined;
-        return new $outer.PlutusScripts(ret, $outer._ctx);
+        return new $outer.PlutusScripts(ret);
       }
 
       setPlutusData(plutusData: WasmContract.PlutusList): void {
@@ -10529,7 +10524,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       plutusData(): Optional<WasmContract.PlutusList> {
         const ret = this.wasm.plutus_data();
         if (ret == null) return undefined;
-        return new $outer.PlutusList(ret, $outer._ctx);
+        return new $outer.PlutusList(ret);
       }
 
       setRedeemers(redeemers: WasmContract.Redeemers): void {
@@ -10539,12 +10534,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       redeemers(): Optional<WasmContract.Redeemers> {
         const ret = this.wasm.redeemers();
         if (ret == null) return undefined;
-        return new $outer.Redeemers(ret, $outer._ctx);
+        return new $outer.Redeemers(ret);
       }
 
       static new(): WasmContract.TransactionWitnessSet {
         const ret = WasmV4.TransactionWitnessSet.new();
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
     }
@@ -10565,7 +10560,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TransactionWitnessSets {
         const ret = WasmV4.TransactionWitnessSets.from_bytes(bytes);
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       toHex(): string {
@@ -10574,7 +10569,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TransactionWitnessSets {
         const ret = WasmV4.TransactionWitnessSets.from_hex(hexStr);
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       toJson(): string {
@@ -10583,12 +10578,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TransactionWitnessSets {
         const ret = WasmV4.TransactionWitnessSets.from_json(json);
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       static new(): WasmContract.TransactionWitnessSets {
         const ret = WasmV4.TransactionWitnessSets.new();
-        return new $outer.TransactionWitnessSets(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSets(ret);
       }
 
       len(): number {
@@ -10597,7 +10592,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.TransactionWitnessSet {
         const ret = this.wasm.get(index);
-        return new $outer.TransactionWitnessSet(ret, $outer._ctx);
+        return new $outer.TransactionWitnessSet(ret);
       }
 
       add(elem: WasmContract.TransactionWitnessSet): void {
@@ -10622,18 +10617,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TreasuryWithdrawals {
         const ret = WasmV4.TreasuryWithdrawals.from_json(json);
-        return new $outer.TreasuryWithdrawals(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawals(ret);
       }
 
       static new(): WasmContract.TreasuryWithdrawals {
         const ret = WasmV4.TreasuryWithdrawals.new();
-        return new $outer.TreasuryWithdrawals(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawals(ret);
       }
 
       get(key: WasmContract.RewardAddress): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       insert(key: WasmContract.RewardAddress, value: WasmContract.BigNum): void {
@@ -10642,7 +10637,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       keys(): WasmContract.RewardAddresses {
         const ret = this.wasm.keys();
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
       len(): number {
@@ -10667,7 +10662,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.TreasuryWithdrawalsAction {
         const ret = WasmV4.TreasuryWithdrawalsAction.from_bytes(bytes);
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
       toHex(): string {
@@ -10676,7 +10671,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.TreasuryWithdrawalsAction {
         const ret = WasmV4.TreasuryWithdrawalsAction.from_hex(hexStr);
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
       toJson(): string {
@@ -10685,28 +10680,28 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.TreasuryWithdrawalsAction {
         const ret = WasmV4.TreasuryWithdrawalsAction.from_json(json);
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
       withdrawals(): WasmContract.TreasuryWithdrawals {
         const ret = this.wasm.withdrawals();
-        return new $outer.TreasuryWithdrawals(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawals(ret);
       }
 
       policyHash(): Optional<WasmContract.ScriptHash> {
         const ret = this.wasm.policy_hash();
         if (ret == null) return undefined;
-        return new $outer.ScriptHash(ret, $outer._ctx);
+        return new $outer.ScriptHash(ret);
       }
 
       static new(withdrawals: WasmContract.TreasuryWithdrawals): WasmContract.TreasuryWithdrawalsAction {
         const ret = WasmV4.TreasuryWithdrawalsAction.new(withdrawals.wasm);
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
       static newWithPolicyHash(withdrawals: WasmContract.TreasuryWithdrawals, policyHash: WasmContract.ScriptHash): WasmContract.TreasuryWithdrawalsAction {
         const ret = WasmV4.TreasuryWithdrawalsAction.new_with_policy_hash(withdrawals.wasm, policyHash.wasm);
-        return new $outer.TreasuryWithdrawalsAction(ret, $outer._ctx);
+        return new $outer.TreasuryWithdrawalsAction(ret);
       }
 
     }
@@ -10723,7 +10718,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.TxInputsBuilder {
         const ret = WasmV4.TxInputsBuilder.new();
-        return new $outer.TxInputsBuilder(ret, $outer._ctx);
+        return new $outer.TxInputsBuilder(ret);
       }
 
       addRegularUtxo(utxo: WasmContract.TransactionUnspentOutput): void {
@@ -10760,19 +10755,19 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getNativeInputScripts(): Optional<WasmContract.NativeScripts> {
         const ret = this.wasm.get_native_input_scripts();
         if (ret == null) return undefined;
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       getPlutusInputScripts(): Optional<WasmContract.PlutusWitnesses> {
         const ret = this.wasm.get_plutus_input_scripts();
         if (ret == null) return undefined;
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       len(): number {
@@ -10789,18 +10784,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       totalValue(): WasmContract.Value {
         const ret = this.wasm.total_value();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       inputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       inputsOption(): Optional<WasmContract.TransactionInputs> {
         const ret = this.wasm.inputs_option();
         if (ret == null) return undefined;
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
     }
@@ -10821,7 +10816,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.URL {
         const ret = WasmV4.URL.from_bytes(bytes);
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       toHex(): string {
@@ -10830,7 +10825,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.URL {
         const ret = WasmV4.URL.from_hex(hexStr);
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       toJson(): string {
@@ -10839,12 +10834,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.URL {
         const ret = WasmV4.URL.from_json(json);
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       static new(url: string): WasmContract.URL {
         const ret = WasmV4.URL.new(url);
-        return new $outer.URL(ret, $outer._ctx);
+        return new $outer.URL(ret);
       }
 
       url(): string {
@@ -10869,7 +10864,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.UnitInterval {
         const ret = WasmV4.UnitInterval.from_bytes(bytes);
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       toHex(): string {
@@ -10878,7 +10873,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.UnitInterval {
         const ret = WasmV4.UnitInterval.from_hex(hexStr);
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       toJson(): string {
@@ -10887,22 +10882,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.UnitInterval {
         const ret = WasmV4.UnitInterval.from_json(json);
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
       numerator(): WasmContract.BigNum {
         const ret = this.wasm.numerator();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       denominator(): WasmContract.BigNum {
         const ret = this.wasm.denominator();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(numerator: WasmContract.BigNum, denominator: WasmContract.BigNum): WasmContract.UnitInterval {
         const ret = WasmV4.UnitInterval.new(numerator.wasm, denominator.wasm);
-        return new $outer.UnitInterval(ret, $outer._ctx);
+        return new $outer.UnitInterval(ret);
       }
 
     }
@@ -10923,7 +10918,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Update {
         const ret = WasmV4.Update.from_bytes(bytes);
-        return new $outer.Update(ret, $outer._ctx);
+        return new $outer.Update(ret);
       }
 
       toHex(): string {
@@ -10932,7 +10927,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Update {
         const ret = WasmV4.Update.from_hex(hexStr);
-        return new $outer.Update(ret, $outer._ctx);
+        return new $outer.Update(ret);
       }
 
       toJson(): string {
@@ -10941,12 +10936,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Update {
         const ret = WasmV4.Update.from_json(json);
-        return new $outer.Update(ret, $outer._ctx);
+        return new $outer.Update(ret);
       }
 
       proposedProtocolParameterUpdates(): WasmContract.ProposedProtocolParameterUpdates {
         const ret = this.wasm.proposed_protocol_parameter_updates();
-        return new $outer.ProposedProtocolParameterUpdates(ret, $outer._ctx);
+        return new $outer.ProposedProtocolParameterUpdates(ret);
       }
 
       epoch(): number {
@@ -10955,7 +10950,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(proposedProtocolParameterUpdates: WasmContract.ProposedProtocolParameterUpdates, epoch: number): WasmContract.Update {
         const ret = WasmV4.Update.new(proposedProtocolParameterUpdates.wasm, epoch);
-        return new $outer.Update(ret, $outer._ctx);
+        return new $outer.Update(ret);
       }
 
     }
@@ -10976,7 +10971,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.UpdateCommitteeAction {
         const ret = WasmV4.UpdateCommitteeAction.from_bytes(bytes);
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
       toHex(): string {
@@ -10985,7 +10980,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.UpdateCommitteeAction {
         const ret = WasmV4.UpdateCommitteeAction.from_hex(hexStr);
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
       toJson(): string {
@@ -10994,33 +10989,33 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.UpdateCommitteeAction {
         const ret = WasmV4.UpdateCommitteeAction.from_json(json);
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
       govActionId(): Optional<WasmContract.GovernanceActionId> {
         const ret = this.wasm.gov_action_id();
         if (ret == null) return undefined;
-        return new $outer.GovernanceActionId(ret, $outer._ctx);
+        return new $outer.GovernanceActionId(ret);
       }
 
       committee(): WasmContract.Committee {
         const ret = this.wasm.committee();
-        return new $outer.Committee(ret, $outer._ctx);
+        return new $outer.Committee(ret);
       }
 
       membersToRemove(): WasmContract.Credentials {
         const ret = this.wasm.members_to_remove();
-        return new $outer.Credentials(ret, $outer._ctx);
+        return new $outer.Credentials(ret);
       }
 
       static new(committee: WasmContract.Committee, membersToRemove: WasmContract.Credentials): WasmContract.UpdateCommitteeAction {
         const ret = WasmV4.UpdateCommitteeAction.new(committee.wasm, membersToRemove.wasm);
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
       static newWithActionId(govActionId: WasmContract.GovernanceActionId, committee: WasmContract.Committee, membersToRemove: WasmContract.Credentials): WasmContract.UpdateCommitteeAction {
         const ret = WasmV4.UpdateCommitteeAction.new_with_action_id(govActionId.wasm, committee.wasm, membersToRemove.wasm);
-        return new $outer.UpdateCommitteeAction(ret, $outer._ctx);
+        return new $outer.UpdateCommitteeAction(ret);
       }
 
     }
@@ -11041,7 +11036,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VRFCert {
         const ret = WasmV4.VRFCert.from_bytes(bytes);
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       toHex(): string {
@@ -11050,7 +11045,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VRFCert {
         const ret = WasmV4.VRFCert.from_hex(hexStr);
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       toJson(): string {
@@ -11059,7 +11054,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VRFCert {
         const ret = WasmV4.VRFCert.from_json(json);
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
       output(): Uint8Array {
@@ -11072,7 +11067,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(output: Uint8Array, proof: Uint8Array): WasmContract.VRFCert {
         const ret = WasmV4.VRFCert.new(output, proof);
-        return new $outer.VRFCert(ret, $outer._ctx);
+        return new $outer.VRFCert(ret);
       }
 
     }
@@ -11089,7 +11084,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VRFKeyHash {
         const ret = WasmV4.VRFKeyHash.from_bytes(bytes);
-        return new $outer.VRFKeyHash(ret, $outer._ctx);
+        return new $outer.VRFKeyHash(ret);
       }
 
       toBytes(): Uint8Array {
@@ -11102,7 +11097,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.VRFKeyHash {
         const ret = WasmV4.VRFKeyHash.from_bech32(bechStr);
-        return new $outer.VRFKeyHash(ret, $outer._ctx);
+        return new $outer.VRFKeyHash(ret);
       }
 
       toHex(): string {
@@ -11111,7 +11106,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.VRFKeyHash {
         const ret = WasmV4.VRFKeyHash.from_hex(hex);
-        return new $outer.VRFKeyHash(ret, $outer._ctx);
+        return new $outer.VRFKeyHash(ret);
       }
 
     }
@@ -11128,7 +11123,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VRFVKey {
         const ret = WasmV4.VRFVKey.from_bytes(bytes);
-        return new $outer.VRFVKey(ret, $outer._ctx);
+        return new $outer.VRFVKey(ret);
       }
 
       toBytes(): Uint8Array {
@@ -11141,7 +11136,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBech32(bechStr: string): WasmContract.VRFVKey {
         const ret = WasmV4.VRFVKey.from_bech32(bechStr);
-        return new $outer.VRFVKey(ret, $outer._ctx);
+        return new $outer.VRFVKey(ret);
       }
 
       toHex(): string {
@@ -11150,7 +11145,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hex: string): WasmContract.VRFVKey {
         const ret = WasmV4.VRFVKey.from_hex(hex);
-        return new $outer.VRFVKey(ret, $outer._ctx);
+        return new $outer.VRFVKey(ret);
       }
 
     }
@@ -11171,7 +11166,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Value {
         const ret = WasmV4.Value.from_bytes(bytes);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       toHex(): string {
@@ -11180,7 +11175,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Value {
         const ret = WasmV4.Value.from_hex(hexStr);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       toJson(): string {
@@ -11189,27 +11184,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Value {
         const ret = WasmV4.Value.from_json(json);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       static new(coin: WasmContract.BigNum): WasmContract.Value {
         const ret = WasmV4.Value.new(coin.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       static newFromAssets(multiasset: WasmContract.MultiAsset): WasmContract.Value {
         const ret = WasmV4.Value.new_from_assets(multiasset.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       static newWithAssets(coin: WasmContract.BigNum, multiasset: WasmContract.MultiAsset): WasmContract.Value {
         const ret = WasmV4.Value.new_with_assets(coin.wasm, multiasset.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       static zero(): WasmContract.Value {
         const ret = WasmV4.Value.zero();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       isZero(): boolean {
@@ -11218,7 +11213,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       setCoin(coin: WasmContract.BigNum): void {
@@ -11228,7 +11223,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       multiasset(): Optional<WasmContract.MultiAsset> {
         const ret = this.wasm.multiasset();
         if (ret == null) return undefined;
-        return new $outer.MultiAsset(ret, $outer._ctx);
+        return new $outer.MultiAsset(ret);
       }
 
       setMultiasset(multiasset: WasmContract.MultiAsset): void {
@@ -11237,17 +11232,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       checkedAdd(rhs: WasmContract.Value): WasmContract.Value {
         const ret = this.wasm.checked_add(rhs.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       checkedSub(rhsValue: WasmContract.Value): WasmContract.Value {
         const ret = this.wasm.checked_sub(rhsValue.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       clampedSub(rhsValue: WasmContract.Value): WasmContract.Value {
         const ret = this.wasm.clamped_sub(rhsValue.wasm);
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       compare(rhsValue: WasmContract.Value): Optional<number> {
@@ -11272,7 +11267,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VersionedBlock {
         const ret = WasmV4.VersionedBlock.from_bytes(bytes);
-        return new $outer.VersionedBlock(ret, $outer._ctx);
+        return new $outer.VersionedBlock(ret);
       }
 
       toHex(): string {
@@ -11281,7 +11276,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VersionedBlock {
         const ret = WasmV4.VersionedBlock.from_hex(hexStr);
-        return new $outer.VersionedBlock(ret, $outer._ctx);
+        return new $outer.VersionedBlock(ret);
       }
 
       toJson(): string {
@@ -11290,17 +11285,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VersionedBlock {
         const ret = WasmV4.VersionedBlock.from_json(json);
-        return new $outer.VersionedBlock(ret, $outer._ctx);
+        return new $outer.VersionedBlock(ret);
       }
 
       static new(block: WasmContract.Block, eraCode: number): WasmContract.VersionedBlock {
         const ret = WasmV4.VersionedBlock.new(block.wasm, eraCode);
-        return new $outer.VersionedBlock(ret, $outer._ctx);
+        return new $outer.VersionedBlock(ret);
       }
 
       block(): WasmContract.Block {
         const ret = this.wasm.block();
-        return new $outer.Block(ret, $outer._ctx);
+        return new $outer.Block(ret);
       }
 
       era(): WasmContract.BlockEra {
@@ -11325,7 +11320,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Vkey {
         const ret = WasmV4.Vkey.from_bytes(bytes);
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       toHex(): string {
@@ -11334,7 +11329,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Vkey {
         const ret = WasmV4.Vkey.from_hex(hexStr);
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       toJson(): string {
@@ -11343,17 +11338,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Vkey {
         const ret = WasmV4.Vkey.from_json(json);
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       static new(pk: WasmContract.PublicKey): WasmContract.Vkey {
         const ret = WasmV4.Vkey.new(pk.wasm);
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       publicKey(): WasmContract.PublicKey {
         const ret = this.wasm.public_key();
-        return new $outer.PublicKey(ret, $outer._ctx);
+        return new $outer.PublicKey(ret);
       }
 
     }
@@ -11370,7 +11365,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.Vkeys {
         const ret = WasmV4.Vkeys.new();
-        return new $outer.Vkeys(ret, $outer._ctx);
+        return new $outer.Vkeys(ret);
       }
 
       len(): number {
@@ -11379,7 +11374,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Vkey {
         const ret = this.wasm.get(index);
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       add(elem: WasmContract.Vkey): void {
@@ -11404,7 +11399,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Vkeywitness {
         const ret = WasmV4.Vkeywitness.from_bytes(bytes);
-        return new $outer.Vkeywitness(ret, $outer._ctx);
+        return new $outer.Vkeywitness(ret);
       }
 
       toHex(): string {
@@ -11413,7 +11408,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Vkeywitness {
         const ret = WasmV4.Vkeywitness.from_hex(hexStr);
-        return new $outer.Vkeywitness(ret, $outer._ctx);
+        return new $outer.Vkeywitness(ret);
       }
 
       toJson(): string {
@@ -11422,22 +11417,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Vkeywitness {
         const ret = WasmV4.Vkeywitness.from_json(json);
-        return new $outer.Vkeywitness(ret, $outer._ctx);
+        return new $outer.Vkeywitness(ret);
       }
 
       static new(vkey: WasmContract.Vkey, signature: WasmContract.Ed25519Signature): WasmContract.Vkeywitness {
         const ret = WasmV4.Vkeywitness.new(vkey.wasm, signature.wasm);
-        return new $outer.Vkeywitness(ret, $outer._ctx);
+        return new $outer.Vkeywitness(ret);
       }
 
       vkey(): WasmContract.Vkey {
         const ret = this.wasm.vkey();
-        return new $outer.Vkey(ret, $outer._ctx);
+        return new $outer.Vkey(ret);
       }
 
       signature(): WasmContract.Ed25519Signature {
         const ret = this.wasm.signature();
-        return new $outer.Ed25519Signature(ret, $outer._ctx);
+        return new $outer.Ed25519Signature(ret);
       }
 
     }
@@ -11458,7 +11453,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Vkeywitnesses {
         const ret = WasmV4.Vkeywitnesses.from_bytes(bytes);
-        return new $outer.Vkeywitnesses(ret, $outer._ctx);
+        return new $outer.Vkeywitnesses(ret);
       }
 
       toHex(): string {
@@ -11467,7 +11462,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Vkeywitnesses {
         const ret = WasmV4.Vkeywitnesses.from_hex(hexStr);
-        return new $outer.Vkeywitnesses(ret, $outer._ctx);
+        return new $outer.Vkeywitnesses(ret);
       }
 
       toJson(): string {
@@ -11476,12 +11471,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Vkeywitnesses {
         const ret = WasmV4.Vkeywitnesses.from_json(json);
-        return new $outer.Vkeywitnesses(ret, $outer._ctx);
+        return new $outer.Vkeywitnesses(ret);
       }
 
       static new(): WasmContract.Vkeywitnesses {
         const ret = WasmV4.Vkeywitnesses.new();
-        return new $outer.Vkeywitnesses(ret, $outer._ctx);
+        return new $outer.Vkeywitnesses(ret);
       }
 
       len(): number {
@@ -11490,7 +11485,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.Vkeywitness {
         const ret = this.wasm.get(index);
-        return new $outer.Vkeywitness(ret, $outer._ctx);
+        return new $outer.Vkeywitness(ret);
       }
 
       add(witness: WasmContract.Vkeywitness): boolean {
@@ -11515,7 +11510,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VoteDelegation {
         const ret = WasmV4.VoteDelegation.from_bytes(bytes);
-        return new $outer.VoteDelegation(ret, $outer._ctx);
+        return new $outer.VoteDelegation(ret);
       }
 
       toHex(): string {
@@ -11524,7 +11519,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VoteDelegation {
         const ret = WasmV4.VoteDelegation.from_hex(hexStr);
-        return new $outer.VoteDelegation(ret, $outer._ctx);
+        return new $outer.VoteDelegation(ret);
       }
 
       toJson(): string {
@@ -11533,22 +11528,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VoteDelegation {
         const ret = WasmV4.VoteDelegation.from_json(json);
-        return new $outer.VoteDelegation(ret, $outer._ctx);
+        return new $outer.VoteDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       drep(): WasmContract.DRep {
         const ret = this.wasm.drep();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, drep: WasmContract.DRep): WasmContract.VoteDelegation {
         const ret = WasmV4.VoteDelegation.new(stakeCredential.wasm, drep.wasm);
-        return new $outer.VoteDelegation(ret, $outer._ctx);
+        return new $outer.VoteDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -11573,7 +11568,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VoteRegistrationAndDelegation {
         const ret = WasmV4.VoteRegistrationAndDelegation.from_bytes(bytes);
-        return new $outer.VoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.VoteRegistrationAndDelegation(ret);
       }
 
       toHex(): string {
@@ -11582,7 +11577,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VoteRegistrationAndDelegation {
         const ret = WasmV4.VoteRegistrationAndDelegation.from_hex(hexStr);
-        return new $outer.VoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.VoteRegistrationAndDelegation(ret);
       }
 
       toJson(): string {
@@ -11591,27 +11586,27 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VoteRegistrationAndDelegation {
         const ret = WasmV4.VoteRegistrationAndDelegation.from_json(json);
-        return new $outer.VoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.VoteRegistrationAndDelegation(ret);
       }
 
       stakeCredential(): WasmContract.Credential {
         const ret = this.wasm.stake_credential();
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       drep(): WasmContract.DRep {
         const ret = this.wasm.drep();
-        return new $outer.DRep(ret, $outer._ctx);
+        return new $outer.DRep(ret);
       }
 
       coin(): WasmContract.BigNum {
         const ret = this.wasm.coin();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(stakeCredential: WasmContract.Credential, drep: WasmContract.DRep, coin: WasmContract.BigNum): WasmContract.VoteRegistrationAndDelegation {
         const ret = WasmV4.VoteRegistrationAndDelegation.new(stakeCredential.wasm, drep.wasm, coin.wasm);
-        return new $outer.VoteRegistrationAndDelegation(ret, $outer._ctx);
+        return new $outer.VoteRegistrationAndDelegation(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -11636,7 +11631,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Voter {
         const ret = WasmV4.Voter.from_bytes(bytes);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       toHex(): string {
@@ -11645,7 +11640,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Voter {
         const ret = WasmV4.Voter.from_hex(hexStr);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       toJson(): string {
@@ -11654,22 +11649,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Voter {
         const ret = WasmV4.Voter.from_json(json);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       static newConstitutionalCommitteeHotCredential(cred: WasmContract.Credential): WasmContract.Voter {
         const ret = WasmV4.Voter.new_constitutional_committee_hot_credential(cred.wasm);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       static newDrepCredential(cred: WasmContract.Credential): WasmContract.Voter {
         const ret = WasmV4.Voter.new_drep_credential(cred.wasm);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       static newStakePoolKeyHash(keyHash: WasmContract.Ed25519KeyHash): WasmContract.Voter {
         const ret = WasmV4.Voter.new_stake_pool_key_hash(keyHash.wasm);
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       kind(): WasmContract.VoterKind {
@@ -11679,19 +11674,19 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toConstitutionalCommitteeHotCredential(): Optional<WasmContract.Credential> {
         const ret = this.wasm.to_constitutional_committee_hot_credential();
         if (ret == null) return undefined;
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toDrepCredential(): Optional<WasmContract.Credential> {
         const ret = this.wasm.to_drep_credential();
         if (ret == null) return undefined;
-        return new $outer.Credential(ret, $outer._ctx);
+        return new $outer.Credential(ret);
       }
 
       toStakePoolKeyHash(): Optional<WasmContract.Ed25519KeyHash> {
         const ret = this.wasm.to_stake_pool_key_hash();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
       hasScriptCredentials(): boolean {
@@ -11701,7 +11696,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toKeyHash(): Optional<WasmContract.Ed25519KeyHash> {
         const ret = this.wasm.to_key_hash();
         if (ret == null) return undefined;
-        return new $outer.Ed25519KeyHash(ret, $outer._ctx);
+        return new $outer.Ed25519KeyHash(ret);
       }
 
     }
@@ -11722,12 +11717,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Voters {
         const ret = WasmV4.Voters.from_json(json);
-        return new $outer.Voters(ret, $outer._ctx);
+        return new $outer.Voters(ret);
       }
 
       static new(): WasmContract.Voters {
         const ret = WasmV4.Voters.new();
-        return new $outer.Voters(ret, $outer._ctx);
+        return new $outer.Voters(ret);
       }
 
       add(voter: WasmContract.Voter): void {
@@ -11737,7 +11732,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(index: number): Optional<WasmContract.Voter> {
         const ret = this.wasm.get(index);
         if (ret == null) return undefined;
-        return new $outer.Voter(ret, $outer._ctx);
+        return new $outer.Voter(ret);
       }
 
       len(): number {
@@ -11758,7 +11753,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.VotingBuilder {
         const ret = WasmV4.VotingBuilder.new();
-        return new $outer.VotingBuilder(ret, $outer._ctx);
+        return new $outer.VotingBuilder(ret);
       }
 
       add(voter: WasmContract.Voter, govActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure): void {
@@ -11775,17 +11770,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       getPlutusWitnesses(): WasmContract.PlutusWitnesses {
         const ret = this.wasm.get_plutus_witnesses();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getNativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.get_native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       hasPlutusScripts(): boolean {
@@ -11794,7 +11789,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.VotingProcedures {
         const ret = this.wasm.build();
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
     }
@@ -11815,7 +11810,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VotingProcedure {
         const ret = WasmV4.VotingProcedure.from_bytes(bytes);
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       toHex(): string {
@@ -11824,7 +11819,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VotingProcedure {
         const ret = WasmV4.VotingProcedure.from_hex(hexStr);
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       toJson(): string {
@@ -11833,17 +11828,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VotingProcedure {
         const ret = WasmV4.VotingProcedure.from_json(json);
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       static new(vote: WasmContract.VoteKind): WasmContract.VotingProcedure {
         const ret = WasmV4.VotingProcedure.new(vote);
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       static newWithAnchor(vote: WasmContract.VoteKind, anchor: WasmContract.Anchor): WasmContract.VotingProcedure {
         const ret = WasmV4.VotingProcedure.new_with_anchor(vote, anchor.wasm);
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       voteKind(): WasmContract.VoteKind {
@@ -11853,7 +11848,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       anchor(): Optional<WasmContract.Anchor> {
         const ret = this.wasm.anchor();
         if (ret == null) return undefined;
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
     }
@@ -11874,7 +11869,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VotingProcedures {
         const ret = WasmV4.VotingProcedures.from_bytes(bytes);
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
       toHex(): string {
@@ -11883,7 +11878,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VotingProcedures {
         const ret = WasmV4.VotingProcedures.from_hex(hexStr);
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
       toJson(): string {
@@ -11892,12 +11887,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VotingProcedures {
         const ret = WasmV4.VotingProcedures.from_json(json);
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
       static new(): WasmContract.VotingProcedures {
         const ret = WasmV4.VotingProcedures.new();
-        return new $outer.VotingProcedures(ret, $outer._ctx);
+        return new $outer.VotingProcedures(ret);
       }
 
       insert(voter: WasmContract.Voter, governanceActionId: WasmContract.GovernanceActionId, votingProcedure: WasmContract.VotingProcedure): void {
@@ -11907,17 +11902,17 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       get(voter: WasmContract.Voter, governanceActionId: WasmContract.GovernanceActionId): Optional<WasmContract.VotingProcedure> {
         const ret = this.wasm.get(voter.wasm, governanceActionId.wasm);
         if (ret == null) return undefined;
-        return new $outer.VotingProcedure(ret, $outer._ctx);
+        return new $outer.VotingProcedure(ret);
       }
 
       getVoters(): WasmContract.Voters {
         const ret = this.wasm.get_voters();
-        return new $outer.Voters(ret, $outer._ctx);
+        return new $outer.Voters(ret);
       }
 
       getGovernanceActionIdsByVoter(voter: WasmContract.Voter): WasmContract.GovernanceActionIds {
         const ret = this.wasm.get_governance_action_ids_by_voter(voter.wasm);
-        return new $outer.GovernanceActionIds(ret, $outer._ctx);
+        return new $outer.GovernanceActionIds(ret);
       }
 
     }
@@ -11938,7 +11933,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VotingProposal {
         const ret = WasmV4.VotingProposal.from_bytes(bytes);
-        return new $outer.VotingProposal(ret, $outer._ctx);
+        return new $outer.VotingProposal(ret);
       }
 
       toHex(): string {
@@ -11947,7 +11942,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VotingProposal {
         const ret = WasmV4.VotingProposal.from_hex(hexStr);
-        return new $outer.VotingProposal(ret, $outer._ctx);
+        return new $outer.VotingProposal(ret);
       }
 
       toJson(): string {
@@ -11956,32 +11951,32 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VotingProposal {
         const ret = WasmV4.VotingProposal.from_json(json);
-        return new $outer.VotingProposal(ret, $outer._ctx);
+        return new $outer.VotingProposal(ret);
       }
 
       governanceAction(): WasmContract.GovernanceAction {
         const ret = this.wasm.governance_action();
-        return new $outer.GovernanceAction(ret, $outer._ctx);
+        return new $outer.GovernanceAction(ret);
       }
 
       anchor(): WasmContract.Anchor {
         const ret = this.wasm.anchor();
-        return new $outer.Anchor(ret, $outer._ctx);
+        return new $outer.Anchor(ret);
       }
 
       rewardAccount(): WasmContract.RewardAddress {
         const ret = this.wasm.reward_account();
-        return new $outer.RewardAddress(ret, $outer._ctx);
+        return new $outer.RewardAddress(ret);
       }
 
       deposit(): WasmContract.BigNum {
         const ret = this.wasm.deposit();
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       static new(governanceAction: WasmContract.GovernanceAction, anchor: WasmContract.Anchor, rewardAccount: WasmContract.RewardAddress, deposit: WasmContract.BigNum): WasmContract.VotingProposal {
         const ret = WasmV4.VotingProposal.new(governanceAction.wasm, anchor.wasm, rewardAccount.wasm, deposit.wasm);
-        return new $outer.VotingProposal(ret, $outer._ctx);
+        return new $outer.VotingProposal(ret);
       }
 
     }
@@ -11998,7 +11993,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.VotingProposalBuilder {
         const ret = WasmV4.VotingProposalBuilder.new();
-        return new $outer.VotingProposalBuilder(ret, $outer._ctx);
+        return new $outer.VotingProposalBuilder(ret);
       }
 
       add(proposal: WasmContract.VotingProposal): void {
@@ -12011,12 +12006,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       getPlutusWitnesses(): WasmContract.PlutusWitnesses {
         const ret = this.wasm.get_plutus_witnesses();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       hasPlutusScripts(): boolean {
@@ -12025,7 +12020,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.VotingProposals {
         const ret = this.wasm.build();
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
     }
@@ -12046,7 +12041,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.VotingProposals {
         const ret = WasmV4.VotingProposals.from_bytes(bytes);
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
       toHex(): string {
@@ -12055,7 +12050,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.VotingProposals {
         const ret = WasmV4.VotingProposals.from_hex(hexStr);
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
       toJson(): string {
@@ -12064,12 +12059,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.VotingProposals {
         const ret = WasmV4.VotingProposals.from_json(json);
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
       static new(): WasmContract.VotingProposals {
         const ret = WasmV4.VotingProposals.new();
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
       len(): number {
@@ -12078,7 +12073,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       get(index: number): WasmContract.VotingProposal {
         const ret = this.wasm.get(index);
-        return new $outer.VotingProposal(ret, $outer._ctx);
+        return new $outer.VotingProposal(ret);
       }
 
       add(proposal: WasmContract.VotingProposal): boolean {
@@ -12092,7 +12087,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       toOption(): Optional<WasmContract.VotingProposals> {
         const ret = this.wasm.to_option();
         if (ret == null) return undefined;
-        return new $outer.VotingProposals(ret, $outer._ctx);
+        return new $outer.VotingProposals(ret);
       }
 
     }
@@ -12113,7 +12108,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromBytes(bytes: Uint8Array): WasmContract.Withdrawals {
         const ret = WasmV4.Withdrawals.from_bytes(bytes);
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
       toHex(): string {
@@ -12122,7 +12117,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromHex(hexStr: string): WasmContract.Withdrawals {
         const ret = WasmV4.Withdrawals.from_hex(hexStr);
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
       toJson(): string {
@@ -12131,12 +12126,12 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static fromJson(json: string): WasmContract.Withdrawals {
         const ret = WasmV4.Withdrawals.from_json(json);
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
       static new(): WasmContract.Withdrawals {
         const ret = WasmV4.Withdrawals.new();
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
       len(): number {
@@ -12146,18 +12141,18 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
       insert(key: WasmContract.RewardAddress, value: WasmContract.BigNum): Optional<WasmContract.BigNum> {
         const ret = this.wasm.insert(key.wasm, value.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       get(key: WasmContract.RewardAddress): Optional<WasmContract.BigNum> {
         const ret = this.wasm.get(key.wasm);
         if (ret == null) return undefined;
-        return new $outer.BigNum(ret, $outer._ctx);
+        return new $outer.BigNum(ret);
       }
 
       keys(): WasmContract.RewardAddresses {
         const ret = this.wasm.keys();
-        return new $outer.RewardAddresses(ret, $outer._ctx);
+        return new $outer.RewardAddresses(ret);
       }
 
     }
@@ -12174,7 +12169,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       static new(): WasmContract.WithdrawalsBuilder {
         const ret = WasmV4.WithdrawalsBuilder.new();
-        return new $outer.WithdrawalsBuilder(ret, $outer._ctx);
+        return new $outer.WithdrawalsBuilder(ret);
       }
 
       add(address: WasmContract.RewardAddress, coin: WasmContract.BigNum): void {
@@ -12191,22 +12186,22 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       getPlutusWitnesses(): WasmContract.PlutusWitnesses {
         const ret = this.wasm.get_plutus_witnesses();
-        return new $outer.PlutusWitnesses(ret, $outer._ctx);
+        return new $outer.PlutusWitnesses(ret);
       }
 
       getRefInputs(): WasmContract.TransactionInputs {
         const ret = this.wasm.get_ref_inputs();
-        return new $outer.TransactionInputs(ret, $outer._ctx);
+        return new $outer.TransactionInputs(ret);
       }
 
       getNativeScripts(): WasmContract.NativeScripts {
         const ret = this.wasm.get_native_scripts();
-        return new $outer.NativeScripts(ret, $outer._ctx);
+        return new $outer.NativeScripts(ret);
       }
 
       getTotalWithdrawals(): WasmContract.Value {
         const ret = this.wasm.get_total_withdrawals();
-        return new $outer.Value(ret, $outer._ctx);
+        return new $outer.Value(ret);
       }
 
       hasPlutusScripts(): boolean {
@@ -12215,7 +12210,7 @@ export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
 
       build(): WasmContract.Withdrawals {
         const ret = this.wasm.build();
-        return new $outer.Withdrawals(ret, $outer._ctx);
+        return new $outer.Withdrawals(ret);
       }
 
     }
