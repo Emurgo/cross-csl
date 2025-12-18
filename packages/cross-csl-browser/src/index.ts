@@ -9,7 +9,6 @@ export const init = (_ctx?: string): WasmContract.WasmModuleProxy => {
 };
 
 export class WasmModuleProxy implements WasmContract.WasmModuleProxy {
-  constructor() {}
 
   calculateExUnitsCeilCost(exUnits: WasmContract.ExUnits, exUnitPrices: WasmContract.ExUnitPrices): WasmContract.BigNum {
     const ret = WasmV4.calculate_ex_units_ceil_cost(exUnits.wasm, exUnitPrices.wasm);
