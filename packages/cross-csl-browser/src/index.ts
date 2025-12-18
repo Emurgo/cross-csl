@@ -1,4 +1,4 @@
-import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser';
+import * as WasmV4 from '@emurgo/cardano-serialization-lib-browser-gc';
 import * as WasmContract from '@emurgo/cross-csl-core';
 
 const { Ptr } = WasmContract;
